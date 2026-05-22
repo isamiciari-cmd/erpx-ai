@@ -1,5 +1,12 @@
 @custom-variant dark (&:is(.dark *));
 
+/* Force RTL and proper font for Arabic */
+html[lang="ar"] * {
+  direction: rtl !important;
+  font-family: 'IBM Plex Sans Arabic', 'Cairo', 'Tajawal', sans-serif !important;
+  unicode-bidi: isolate !important;
+}
+
 :root {
   --font-size: 16px;
   --background: #ffffff;

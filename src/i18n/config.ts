@@ -31,6 +31,15 @@ i18n.on('languageChanged', (lng) => {
   document.documentElement.dir = lng === 'ar' ? 'rtl' : 'ltr';
   document.body.dir = lng === 'ar' ? 'rtl' : 'ltr';
 
+  // Apply font family based on language
+  if (lng === 'ar') {
+    document.documentElement.style.fontFamily = "'IBM Plex Sans Arabic', 'Cairo', 'Tajawal', sans-serif";
+    document.body.style.fontFamily = "'IBM Plex Sans Arabic', 'Cairo', 'Tajawal', sans-serif";
+  } else {
+    document.documentElement.style.fontFamily = "-apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen', 'Ubuntu', 'Cantarell', 'Fira Sans', 'Droid Sans', 'Helvetica Neue', sans-serif";
+    document.body.style.fontFamily = "-apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen', 'Ubuntu', 'Cantarell', 'Fira Sans', 'Droid Sans', 'Helvetica Neue', sans-serif";
+  }
+
   // Force page reload to apply all RTL changes properly
   setTimeout(() => {
     window.location.reload();
@@ -40,5 +49,13 @@ i18n.on('languageChanged', (lng) => {
 const currentLang = i18n.language;
 document.documentElement.lang = currentLang;
 document.documentElement.dir = currentLang === 'ar' ? 'rtl' : 'ltr';
+document.body.dir = currentLang === 'ar' ? 'rtl' : 'ltr';
+
+// Apply font family based on language
+if (currentLang === 'ar') {
+  document.documentElement.style.fontFamily = "'IBM Plex Sans Arabic', 'Cairo', 'Tajawal', sans-serif";
+} else {
+  document.documentElement.style.fontFamily = "-apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen', 'Ubuntu', 'Cantarell', 'Fira Sans', 'Droid Sans', 'Helvetica Neue', sans-serif";
+}
 
 export default i18n;

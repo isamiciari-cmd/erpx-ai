@@ -11,16 +11,40 @@
 
 html[lang="ar"],
 html[lang="ar"] * {
-  font-family: var(--font-arabic);
-  direction: rtl;
-  text-align: right;
-  unicode-bidi: embed;
+  font-family: var(--font-arabic) !important;
+  direction: rtl !important;
+  text-align: right !important;
+  unicode-bidi: isolate !important;
 }
 
 html[lang="ar"] {
   text-rendering: optimizeLegibility;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
+}
+
+/* Ensure body also follows RTL for Arabic */
+html[lang="ar"] body {
+  direction: rtl !important;
+  font-family: var(--font-arabic) !important;
+}
+
+/* Specific fix for all text elements in Arabic */
+html[lang="ar"] h1,
+html[lang="ar"] h2,
+html[lang="ar"] h3,
+html[lang="ar"] h4,
+html[lang="ar"] h5,
+html[lang="ar"] h6,
+html[lang="ar"] p,
+html[lang="ar"] span,
+html[lang="ar"] div,
+html[lang="ar"] label,
+html[lang="ar"] input,
+html[lang="ar"] button {
+  font-family: var(--font-arabic) !important;
+  direction: inherit !important;
+  unicode-bidi: isolate !important;
 }
 
 html[lang="en"],
