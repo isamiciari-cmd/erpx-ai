@@ -429,8 +429,8 @@ export default function LandingPage() {
                     <AreaChart data={revenueData}>
                       <defs>
                         <linearGradient id="colorRevenue" x1="0" y1="0" x2="0" y2="1">
-                          <stop offset="5%" stopColor="#3b82f6" stopOpacity={0.3} />
-                          <stop offset="95%" stopColor="#3b82f6" stopOpacity={0} />
+                          <stop key="revenue-stop-1" offset="5%" stopColor="#3b82f6" stopOpacity={0.3} />
+                          <stop key="revenue-stop-2" offset="95%" stopColor="#3b82f6" stopOpacity={0} />
                         </linearGradient>
                       </defs>
                       <CartesianGrid strokeDasharray="3 3" stroke="#374151" />
@@ -474,8 +474,8 @@ export default function LandingPage() {
                       <Bar dataKey="growth" fill="url(#colorGrowth)" radius={[8, 8, 0, 0]} />
                       <defs>
                         <linearGradient id="colorGrowth" x1="0" y1="0" x2="0" y2="1">
-                          <stop offset="0%" stopColor="#a855f7" />
-                          <stop offset="100%" stopColor="#ec4899" />
+                          <stop key="growth-stop-1" offset="0%" stopColor="#a855f7" />
+                          <stop key="growth-stop-2" offset="100%" stopColor="#ec4899" />
                         </linearGradient>
                       </defs>
                     </BarChart>

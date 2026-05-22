@@ -19,7 +19,10 @@ const hasSupabaseConfig = supabaseUrl && supabaseAnonKey &&
 export const isDemoMode = !hasSupabaseConfig;
 
 if (isDemoMode) {
-  console.warn('[Supabase] ⚠️ Running in DEMO MODE - Supabase credentials not configured');
+  // Only show warning in development mode
+  if (import.meta.env.DEV) {
+    console.warn('[Supabase] ⚠️ Running in DEMO MODE - Supabase credentials not configured');
+  }
 } else {
   console.log('[Supabase] ✓ Supabase credentials validated');
 }
