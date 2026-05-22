@@ -1,5 +1,6 @@
 import { useState } from "react";
 import { motion } from "motion/react";
+import { Link } from "react-router";
 import { BarChart3, TrendingUp, Users, DollarSign, AlertCircle, Globe, Eye, EyeOff, Code2 } from "lucide-react";
 import { useTranslation } from "react-i18next";
 import { LanguageSwitcher } from "../../components/LanguageSwitcher";
@@ -151,18 +152,17 @@ export default function ProductionLogin({ onLoginSuccess }: ProductionLoginProps
         {/* Language Switcher and Website Button - Top Right */}
         <div className="absolute top-8 right-8 flex items-center gap-3">
           <LanguageSwitcher variant="compact" />
-          <motion.a
-            href="https://erpx-ai.com"
-            target="_blank"
-            rel="noopener noreferrer"
-            initial={{ opacity: 0, y: -20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ delay: 0.2, duration: 0.6 }}
-            className="flex items-center gap-2 px-6 py-3 bg-white/5 hover:bg-white/10 border border-white/10 rounded-lg text-white transition-all group"
-          >
-            <Globe className="w-5 h-5 text-blue-400 group-hover:text-blue-300 transition-colors" />
-            <span className="text-sm font-semibold">{t('auth.visitWebsite')}</span>
-          </motion.a>
+          <Link to="/">
+            <motion.div
+              initial={{ opacity: 0, y: -20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ delay: 0.2, duration: 0.6 }}
+              className="flex items-center gap-2 px-6 py-3 bg-white/5 hover:bg-white/10 border border-white/10 rounded-lg text-white transition-all group cursor-pointer"
+            >
+              <Globe className="w-5 h-5 text-blue-400 group-hover:text-blue-300 transition-colors" />
+              <span className="text-sm font-semibold">{t('auth.visitWebsite')}</span>
+            </motion.div>
+          </Link>
         </div>
 
         <div className="w-full max-w-md">

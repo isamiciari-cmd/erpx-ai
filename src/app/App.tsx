@@ -57,6 +57,9 @@ import DesignSystemShowcase from "./pages/DesignSystemShowcase";
 import FoodDeliveryDashboard from "./pages/FoodDeliveryDashboard";
 import ExecutiveDashboard from "./pages/ExecutiveDashboard";
 
+// Landing Page
+import LandingPage from "./pages/LandingPage";
+
 // HR Module Pages
 import HRDashboardPage from "./pages/hr/HRDashboardPage";
 import EmployeeListPage from "./pages/hr/EmployeeListPage";
@@ -90,6 +93,7 @@ export default function App() {
             <BrowserRouter>
           <Routes>
           {/* Public Routes - No Authentication Required */}
+          <Route path="/" element={<LandingPage />} />
           <Route path="/setup" element={<SetupAdminPage />} />
           <Route path="/register" element={<CompanyRegistrationForm />} />
           <Route path="/registration-success" element={<RegistrationSuccessPage />} />
