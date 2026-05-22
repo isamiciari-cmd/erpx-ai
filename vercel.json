@@ -3,6 +3,9 @@
   "outputDirectory": "dist",
   "installCommand": "pnpm install --no-frozen-lockfile",
   "framework": "vite",
+  "github": {
+    "silent": true
+  },
   "rewrites": [
     {
       "source": "/(.*)",
@@ -11,6 +14,7 @@
   ],
   "env": {
     "VITE_SUPABASE_URL": "https://svxmlejmhlocsjjtftxd.supabase.co",
-    "VITE_SUPABASE_ANON_KEY": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InN2eG1sZWptaGxvY3NqanRmdHhkIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzgxOTA2NDgsImV4cCI6MjA5Mzc2NjY0OH0.MlCFyiXpldP4aG0__AJywIeLyVjhzzC3gE6cZgSILhk"
+    "VITE_SUPABASE_ANON_KEY": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InN2eG1sZWptaGxvY3NqanRmdHhkIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzgxOTA2NDgsImV4cCI6MjA5Mzc2NjY0OH0.MlCFyiXpldP4aG0__AJywIeLyVjhzzC3gE6cZgSILhk",
+    "VITE_BUILD_TIMESTAMP": "2026-05-22T17:23:00Z"
   }
 }
