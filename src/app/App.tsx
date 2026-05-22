@@ -2,6 +2,7 @@ import { BrowserRouter, Routes, Route, Navigate } from "react-router";
 import { ToastProvider } from "./components/ui/Toast";
 import { ThemeProvider } from "./context/ThemeContext";
 import { AuthProvider } from "../contexts/AuthContext";
+import "../i18n/config";
 import { ErrorBoundary } from "./components/ErrorBoundary";
 import ProductionLogin from "./components/ProductionLogin";
 import ProtectedRoute from "./components/ProtectedRoute";

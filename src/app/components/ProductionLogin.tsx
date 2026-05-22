@@ -1,6 +1,8 @@
 import { useState } from "react";
 import { motion } from "motion/react";
 import { BarChart3, TrendingUp, Users, DollarSign, AlertCircle, Globe, Eye, EyeOff, Code2 } from "lucide-react";
+import { useTranslation } from "react-i18next";
+import { LanguageSwitcher } from "../../components/LanguageSwitcher";
 import { isDevBypassEnabled, DEV_ACCOUNT } from "../../lib/devMode";
 import { supabase } from "../../lib/supabase";
 
@@ -9,6 +11,7 @@ interface ProductionLoginProps {
 }
 
 export default function ProductionLogin({ onLoginSuccess }: ProductionLoginProps) {
+  const { t } = useTranslation();
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [rememberMe, setRememberMe] = useState(false);
@@ -59,7 +62,7 @@ export default function ProductionLogin({ onLoginSuccess }: ProductionLoginProps
   const handleForgotPassword = async () => {
     try {
       if (!email) {
-        alert('Please enter your email first');
+        alert(t('auth.enterEmailFirst'));
         return;
       }
 
@@ -72,7 +75,7 @@ export default function ProductionLogin({ onLoginSuccess }: ProductionLoginProps
         return;
       }
 
-      alert('Password reset link sent to your email');
+      alert(t('auth.passwordResetSent'));
     } catch (err) {
       console.error('Forgot password error:', err);
       alert('Failed to send reset password email');
@@ -101,7 +104,7 @@ export default function ProductionLogin({ onLoginSuccess }: ProductionLoginProps
             transition={{ delay: 0.3, duration: 0.6 }}
             className="text-4xl font-bold text-white mb-4"
           >
-            Welcome to ERPX
+            {t('welcome.title')}
           </motion.h2>
           <motion.p
             initial={{ opacity: 0, y: 20 }}
@@ -109,16 +112,16 @@ export default function ProductionLogin({ onLoginSuccess }: ProductionLoginProps
             transition={{ delay: 0.4, duration: 0.6 }}
             className="text-gray-400 mb-12"
           >
-            Next-generation business management platform with real-time analytics and intelligent automation.
+            {t('welcome.subtitle')}
           </motion.p>
 
           {/* Feature cards */}
           <div className="grid grid-cols-2 gap-4">
             {[
-              { icon: BarChart3, label: "Analytics" },
-              { icon: TrendingUp, label: "Growth" },
-              { icon: Users, label: "Team" },
-              { icon: DollarSign, label: "Revenue" },
+              { icon: BarChart3, label: t('welcome.analytics') },
+              { icon: TrendingUp, label: t('welcome.growth') },
+              { icon: Users, label: t('welcome.team') },
+              { icon: DollarSign, label: t('welcome.revenue') },
             ].map((feature, i) => (
               <motion.div
                 key={feature.label}
@@ -145,19 +148,22 @@ export default function ProductionLogin({ onLoginSuccess }: ProductionLoginProps
         transition={{ duration: 0.8 }}
         className="w-full lg:w-1/2 flex items-center justify-center px-8 bg-gray-950 relative"
       >
-        {/* Website Button - Top Right */}
-        <motion.a
-          href="https://erpx-ai.com"
-          target="_blank"
-          rel="noopener noreferrer"
-          initial={{ opacity: 0, y: -20 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ delay: 0.2, duration: 0.6 }}
-          className="absolute top-8 right-8 flex items-center gap-2 px-6 py-3 bg-white/5 hover:bg-white/10 border border-white/10 rounded-lg text-white transition-all group"
-        >
-          <Globe className="w-5 h-5 text-blue-400 group-hover:text-blue-300 transition-colors" />
-          <span className="text-sm font-semibold">Visit Website</span>
-        </motion.a>
+        {/* Language Switcher and Website Button - Top Right */}
+        <div className="absolute top-8 right-8 flex items-center gap-3">
+          <LanguageSwitcher variant="compact" />
+          <motion.a
+            href="https://erpx-ai.com"
+            target="_blank"
+            rel="noopener noreferrer"
+            initial={{ opacity: 0, y: -20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ delay: 0.2, duration: 0.6 }}
+            className="flex items-center gap-2 px-6 py-3 bg-white/5 hover:bg-white/10 border border-white/10 rounded-lg text-white transition-all group"
+          >
+            <Globe className="w-5 h-5 text-blue-400 group-hover:text-blue-300 transition-colors" />
+            <span className="text-sm font-semibold">{t('auth.visitWebsite')}</span>
+          </motion.a>
+        </div>
 
         <div className="w-full max-w-md">
           <motion.div
@@ -166,8 +172,8 @@ export default function ProductionLogin({ onLoginSuccess }: ProductionLoginProps
             transition={{ delay: 0.3, duration: 0.6 }}
             className="mb-12"
           >
-            <h2 className="text-3xl font-bold text-white mb-2">Sign In</h2>
-            <p className="text-gray-500">Enter your credentials to access ERPX</p>
+            <h2 className="text-3xl font-bold text-white mb-2">{t('auth.signIn')}</h2>
+            <p className="text-gray-500">{t('auth.enterCredentials')}</p>
           </motion.div>
 
           <form onSubmit={handleLogin} className="space-y-6">
@@ -188,7 +194,7 @@ export default function ProductionLogin({ onLoginSuccess }: ProductionLoginProps
               transition={{ delay: 0.4, duration: 0.6 }}
             >
               <label htmlFor="email" className="block text-sm text-gray-400 mb-2">
-                Email Address
+                {t('auth.email')}
               </label>
               <input
                 id="email"
@@ -208,7 +214,7 @@ export default function ProductionLogin({ onLoginSuccess }: ProductionLoginProps
               transition={{ delay: 0.5, duration: 0.6 }}
             >
               <label htmlFor="password" className="block text-sm text-gray-400 mb-2">
-                Password
+                {t('auth.password')}
               </label>
               <div className="relative">
                 <input
@@ -248,14 +254,14 @@ export default function ProductionLogin({ onLoginSuccess }: ProductionLoginProps
                   onChange={(e) => setRememberMe(e.target.checked)}
                   className="w-4 h-4 bg-white/5 border border-white/10 rounded focus:ring-2 focus:ring-blue-500 text-blue-500"
                 />
-                <span className="text-sm text-gray-400">Remember me</span>
+                <span className="text-sm text-gray-400">{t('auth.rememberMe')}</span>
               </label>
               <button
                 type="button"
                 onClick={handleForgotPassword}
                 className="text-sm text-blue-400 hover:text-blue-300 transition-colors"
               >
-                Forgot password?
+                {t('auth.forgotPassword')}
               </button>
             </motion.div>
 
@@ -268,7 +274,7 @@ export default function ProductionLogin({ onLoginSuccess }: ProductionLoginProps
             >
               <div className="absolute inset-0 bg-gradient-to-r from-blue-500 to-cyan-500 opacity-0 group-hover:opacity-100 transition-opacity" />
               <span className="relative flex items-center justify-center gap-2">
-                Sign In
+                {t('auth.signIn')}
               </span>
               <div className="absolute inset-0 shadow-[0_0_20px_rgba(59,130,246,0.5)] opacity-0 group-hover:opacity-100 transition-opacity" />
             </motion.button>
@@ -286,7 +292,7 @@ export default function ProductionLogin({ onLoginSuccess }: ProductionLoginProps
                 <div className="absolute inset-0 bg-gradient-to-r from-yellow-500 to-amber-500 opacity-0 group-hover:opacity-100 transition-opacity" />
                 <span className="relative flex items-center justify-center gap-2">
                   <Code2 className="w-4 h-4" />
-                  Developer Quick Login
+                  {t('auth.developerQuickLogin')}
                 </span>
               </motion.button>
             )}
@@ -303,7 +309,7 @@ export default function ProductionLogin({ onLoginSuccess }: ProductionLoginProps
               href="/register"
               className="block w-full py-3 px-6 bg-gradient-to-r from-purple-600 to-purple-500 hover:from-purple-500 hover:to-pink-500 text-white rounded-lg font-semibold transition-all text-center"
             >
-              Register New Company
+              {t('auth.registerNewCompany')}
             </a>
 
             <div className="flex items-center gap-4">
@@ -313,9 +319,9 @@ export default function ProductionLogin({ onLoginSuccess }: ProductionLoginProps
             </div>
 
             <p className="text-sm text-gray-500 text-center">
-              First time setup?{" "}
+              {t('auth.firstTimeSetup')}{" "}
               <a href="/setup" className="text-blue-400 hover:text-blue-300 transition-colors">
-                Create Admin User
+                {t('auth.createAdminUser')}
               </a>
             </p>
           </motion.div>
