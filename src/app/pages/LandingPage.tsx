@@ -1026,7 +1026,7 @@ export default function LandingPage() {
                   className="w-full py-4 bg-gradient-to-r from-purple-600 to-pink-600 rounded-xl font-bold text-lg hover:shadow-2xl hover:shadow-purple-500/50 transition-all flex items-center justify-center gap-2"
                 >
                   {i18n.language === "ar" ? "إرسال" : "Send Message"}
-                  <Send className="w-5 h-5" />
+                  <ArrowRight className="w-5 h-5" />
                 </button>
               </form>
 
