@@ -29,6 +29,12 @@ i18n.on('languageChanged', (lng) => {
   localStorage.setItem('language', lng);
   document.documentElement.lang = lng;
   document.documentElement.dir = lng === 'ar' ? 'rtl' : 'ltr';
+  document.body.dir = lng === 'ar' ? 'rtl' : 'ltr';
+
+  // Force page reload to apply all RTL changes properly
+  setTimeout(() => {
+    window.location.reload();
+  }, 100);
 });
 
 const currentLang = i18n.language;

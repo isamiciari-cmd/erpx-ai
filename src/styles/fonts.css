@@ -12,9 +12,20 @@
 html[lang="ar"],
 html[lang="ar"] * {
   font-family: var(--font-arabic);
+  direction: rtl;
+  text-align: right;
+  unicode-bidi: embed;
+}
+
+html[lang="ar"] {
+  text-rendering: optimizeLegibility;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
 }
 
 html[lang="en"],
 html[lang="en"] * {
   font-family: var(--font-english);
+  direction: ltr;
+  text-align: left;
 }
