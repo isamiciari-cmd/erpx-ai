@@ -1,21 +1,32 @@
 {
-  "buildCommand": "pnpm build",
+  "buildCommand": "rm -rf node_modules/.cache && pnpm build",
   "outputDirectory": "dist",
-  "installCommand": "pnpm install --no-frozen-lockfile",
-  "framework": "vite",
-  "github": {
-    "silent": true
-  },
+  "installCommand": "rm -rf node_modules pnpm-lock.yaml && pnpm install --no-frozen-lockfile --force",
+  "framework": null,
+  "cleanUrls": true,
+  "trailingSlash": false,
   "rewrites": [
     {
       "source": "/(.*)",
       "destination": "/index.html"
     }
   ],
+  "headers": [
+    {
+      "source": "/(.*)",
+      "headers": [
+        {
+          "key": "Cache-Control",
+          "value": "public, max-age=0, must-revalidate"
+        }
+      ]
+    }
+  ],
   "env": {
     "VITE_SUPABASE_URL": "https://svxmlejmhlocsjjtftxd.supabase.co",
     "VITE_SUPABASE_ANON_KEY": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InN2eG1sZWptaGxvY3NqanRmdHhkIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzgxOTA2NDgsImV4cCI6MjA5Mzc2NjY0OH0.MlCFyiXpldP4aG0__AJywIeLyVjhzzC3gE6cZgSILhk",
-    "VITE_BUILD_TIMESTAMP": "2026-05-22T20:40:00Z",
-    "VERCEL_FORCE_NO_BUILD_CACHE": "1"
+    "ENABLE_EXPERIMENTAL_COREPACK": "0",
+    "VERCEL_FORCE_NO_BUILD_CACHE": "1",
+    "NODE_ENV": "production"
   }
 }
