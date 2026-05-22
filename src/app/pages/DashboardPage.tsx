@@ -1,5 +1,7 @@
 import { useState, useEffect } from "react";
 import { motion, AnimatePresence } from "motion/react";
+import { useTranslation } from "react-i18next";
+import { LanguageSwitcher } from "../../components/LanguageSwitcher";
 import {
   DollarSign,
   Zap,
@@ -132,6 +134,7 @@ const quickStats = [
 ];
 
 export default function DashboardPage() {
+  const { t } = useTranslation();
   const [aiChatOpen, setAiChatOpen] = useState(false);
   const [aiChatMinimized, setAiChatMinimized] = useState(false);
   const [chatMessages, setChatMessages] = useState([
@@ -205,7 +208,7 @@ export default function DashboardPage() {
         <div>
           <div className="flex items-center gap-3 mb-2">
             <h1 className="text-4xl font-bold text-white tracking-tight">
-              Overview
+              {t('dashboard.overview')}
             </h1>
             <motion.div
               animate={{ rotate: 360 }}
@@ -218,6 +221,8 @@ export default function DashboardPage() {
 
         {/* Quick Actions */}
         <div className="flex items-center gap-3 flex-wrap">
+          <LanguageSwitcher variant="compact" />
+
           <select
             value={selectedTimeRange}
             onChange={(e) => setSelectedTimeRange(e.target.value)}
