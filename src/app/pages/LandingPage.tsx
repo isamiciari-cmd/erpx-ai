@@ -1046,7 +1046,7 @@ export default function LandingPage() {
                       <div className="text-sm text-gray-400 mb-1">
                         {i18n.language === "ar" ? "الهاتف" : "Phone"}
                       </div>
-                      <div className="font-semibold">+966 XX XXX XXXX</div>
+                      <div className="font-semibold" dir="ltr">+966 58 181 9226</div>
                     </div>
                   </div>
 
@@ -1069,7 +1069,7 @@ export default function LandingPage() {
 
         {/* WhatsApp Floating Button */}
         <motion.a
-          href="https://wa.me/966XXXXXXXXX"
+          href="https://wa.me/966581819226"
           target="_blank"
           rel="noopener noreferrer"
           whileHover={{ scale: 1.1 }}
