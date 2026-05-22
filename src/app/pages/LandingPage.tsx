@@ -44,6 +44,7 @@ import {
   Activity,
 } from "lucide-react";
 import { LanguageSwitcher } from "../../components/LanguageSwitcher";
+import { HeroAnimatedBackground } from "../components/HeroAnimatedBackground";
 import {
   LineChart,
   Line,
@@ -349,15 +350,8 @@ export default function LandingPage() {
 
       {/* Hero Section */}
       <section className="relative min-h-screen flex items-center justify-center overflow-hidden pt-20">
-        {/* Animated Background */}
-        <div className="absolute inset-0">
-          <div className="absolute top-20 left-20 w-96 h-96 bg-blue-500/20 rounded-full blur-[120px] animate-pulse" />
-          <div className="absolute bottom-20 right-20 w-96 h-96 bg-cyan-500/20 rounded-full blur-[120px] animate-pulse delay-1000" />
-          <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[600px] h-[600px] bg-purple-500/10 rounded-full blur-[150px]" />
-        </div>
-
-        {/* Grid Overlay */}
-        <div className="absolute inset-0 bg-[linear-gradient(rgba(59,130,246,0.03)_1px,transparent_1px),linear-gradient(90deg,rgba(59,130,246,0.03)_1px,transparent_1px)] bg-[size:50px_50px]" />
+        {/* Animated AI Background */}
+        <HeroAnimatedBackground />
 
         <motion.div
           style={{ opacity, scale }}
