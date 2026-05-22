@@ -1,0 +1,114 @@
+ERPX-AI COMPLETE PROJECT STRUCTURE
+==================================
+
+This project is located at: /workspaces/default/code
+
+CRITICAL FILES TO COPY:
+-----------------------
+
+ROOT DIRECTORY FILES:
+- package.json (dependencies)
+- pnpm-lock.yaml (lock file)
+- tsconfig.json (TypeScript config)
+- vite.config.ts (Vite config)
+- index.html (HTML entry point)
+- vercel.json (Vercel deployment config)
+- .npmrc (pnpm configuration)
+- .env (environment variables - ADD YOUR SUPABASE ANON KEY!)
+- .env.example (environment template)
+
+DOCUMENTATION:
+- README.md
+- DEPLOYMENT_WORKFLOW.md
+- DEPLOYMENT_FIX_COMPLETE.md
+- PUSH_TO_GITHUB_NOW.md
+- FIX_SUPABASE_CONNECTION.md
+- CASHIER_SYSTEM_COMPLETE.md
+- SETUP_INSTRUCTIONS.md
+- (and other .md files)
+
+SOURCE CODE DIRECTORY (src/):
+==============================
+
+src/
+├── main.tsx (React entry point)
+├── lib/
+│   ├── supabase.ts (Supabase client)
+│   └── validation/
+│       └── registrationSchema.ts
+├── services/
+│   ├── authService.ts
+│   ├── usersService.ts
+│   ├── productsService.ts
+│   ├── salesService.ts
+│   ├── customersService.ts
+│   ├── inventoryService.ts
+│   ├── invoicesService.ts
+│   ├── dashboardService.ts
+│   └── companyRegistrationService.ts
+├── contexts/
+│   └── AuthContext.tsx
+├── hooks/
+│   └── useRealtimeTable.ts
+├── styles/
+│   ├── index.css
+│   ├── theme.css
+│   ├── fonts.css
+│   └── (other CSS files)
+├── app/
+│   ├── App.tsx (Main app component)
+│   ├── components/
+│   │   ├── ProductionLogin.tsx
+│   │   ├── ProtectedRoute.tsx
+│   │   ├── ErrorBoundary.tsx
+│   │   ├── ui/ (UI components)
+│   │   └── registration/ (Registration components)
+│   ├── layout/
+│   │   ├── MainLayout.tsx
+│   │   └── CashierLayout.tsx
+│   ├── pages/
+│   │   ├── cashier/
+│   │   │   └── CashierPOSPage.tsx
+│   │   ├── finance/
+│   │   │   └── (finance pages)
+│   │   ├── hr/
+│   │   │   └── (HR pages)
+│   │   └── (other pages)
+│   └── context/
+│       └── ThemeContext.tsx
+
+DATABASE DIRECTORY (database/):
+================================
+
+database/
+├── DEPLOY_TO_SUPABASE.sql (Main database schema)
+├── CREATE_ADMIN_USER.sql (Admin user setup)
+├── CREATE_CASHIER_USER.sql (Cashier user setup)
+├── CREATE_SALES_TABLES.sql (Sales and shifts tables)
+├── ADD_REGISTRATION_TABLES.sql (Registration tables)
+├── SEED_DATA.sql (Sample data)
+└── (other SQL files)
+
+PUBLIC DIRECTORY (public/):
+============================
+
+public/
+└── (any static assets)
+
+TOTAL FILE COUNT:
+-----------------
+Run this to see: find /workspaces/default/code -type f | wc -l
+Approximately 200+ files
+
+IGNORE THESE (Don't copy):
+--------------------------
+- node_modules/ (will be regenerated with pnpm install)
+- .git/ (Git repository - optional)
+- dist/ (build output - will be regenerated)
+- .vite/ (cache)
+- .vercel/ (Vercel cache)
+
+SIZE ESTIMATE:
+--------------
+Without node_modules: ~50-100 MB
+With node_modules: ~500 MB+
