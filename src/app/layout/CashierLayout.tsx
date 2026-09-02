@@ -1,13 +1,9 @@
 import { ReactNode, useState, useEffect } from "react";
+import { Outlet, useNavigate } from "react-router-dom";
 import { LogOut, Clock, User, Building2, PlayCircle, StopCircle } from "lucide-react";
 import { useAuth } from "../../contexts/AuthContext";
-import { useNavigate } from "react-router";
 
-interface CashierLayoutProps {
-  children: ReactNode;
-}
-
-export default function CashierLayout({ children }: CashierLayoutProps) {
+export default function CashierLayout() {
   const { user, signOut } = useAuth();
   const navigate = useNavigate();
   const [currentTime, setCurrentTime] = useState(new Date());
@@ -129,7 +125,7 @@ export default function CashierLayout({ children }: CashierLayoutProps) {
 
       {/* POS Content */}
       <div className="flex-1 overflow-hidden">
-        {children}
+        <Outlet />
       </div>
     </div>
   );

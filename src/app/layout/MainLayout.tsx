@@ -1,13 +1,10 @@
 import { useState } from "react";
+import { Outlet } from "react-router-dom";
 import Sidebar from "./Sidebar";
 import Topbar from "./Topbar";
 import DevModeIndicator from "../components/DevModeIndicator";
 
-interface MainLayoutProps {
-  children: React.ReactNode;
-}
-
-export default function MainLayout({ children }: MainLayoutProps) {
+export default function MainLayout() {
   const [sidebarCollapsed, setSidebarCollapsed] = useState(false);
 
   return (
@@ -17,7 +14,7 @@ export default function MainLayout({ children }: MainLayoutProps) {
       <div className="flex-1 flex flex-col overflow-hidden">
         <Topbar />
         <div className="flex-1 overflow-auto p-8 bg-gradient-to-br from-[#0A0E17] via-[#0B0F19] to-[#0A0E17]">
-          {children}
+          <Outlet />
         </div>
       </div>
     </div>
