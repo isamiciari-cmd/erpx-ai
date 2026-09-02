@@ -1,6 +1,10 @@
 import { useState, useEffect } from "react";
 import { motion } from "motion/react";
-import cosmicBg from "../../imports/cosmic-background-with-colorful-laser-lights-perfect-digital-wallpaper.jpg";
+// Use a string path for the background image to avoid TypeScript module resolution
+// issues with importing .jpg files. Ensure the imag
+// e is placed in the public
+// folder at /imports/... so it can be served statically.
+const cosmicBg = "/imports/cosmic-background-with-colorful-laser-lights-perfect-digital-wallpaper.jpg";
 
 export function HeroCyberpunkBackground() {
   const [mousePosition, setMousePosition] = useState({ x: 0, y: 0 });

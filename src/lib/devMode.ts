@@ -61,12 +61,3 @@ export function getEnvironmentType(): 'production' | 'staging' | 'development' {
 
   return 'development';
 }
-
-/**
- * Developer test account credentials
- */
-export const DEV_ACCOUNT = {
-  email: 'i.1122@erpx-ai.com',
-  password: '@12345',
-  role: 'developer'
-};

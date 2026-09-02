@@ -1,11 +1,10 @@
 import { useState } from "react";
 import { motion } from "motion/react";
 import { Link } from "react-router";
-import { BarChart3, TrendingUp, Users, DollarSign, AlertCircle, Globe, Eye, EyeOff, Code2 } from "lucide-react";
+import { BarChart3, TrendingUp, Users, DollarSign, AlertCircle, Globe, Eye, EyeOff } from "lucide-react";
 import { useTranslation } from "react-i18next";
 import { LanguageSwitcher } from "../../components/LanguageSwitcher";
-import { isDevBypassEnabled, DEV_ACCOUNT } from "../../lib/devMode";
-import { supabase } from "../../lib/supabase";
+import { supabase, isDemoMode, hasSupabaseConfig } from "../../lib/supabase";
 
 interface ProductionLoginProps {
   onLoginSuccess?: () => void;
@@ -18,45 +17,58 @@ export default function ProductionLogin({ onLoginSuccess }: ProductionLoginProps
   const [rememberMe, setRememberMe] = useState(false);
   const [showPassword, setShowPassword] = useState(false);
   const [error, setError] = useState("");
-
+  const [isSubmitting, setIsSubmitting] = useState(false);
 
   const handleLogin = async (e: React.FormEvent) => {
     e.preventDefault();
     setError("");
 
-    const { data, error } = await supabase.auth.signInWithPassword({
-      email,
-      password,
-    });
-
-    if (error) {
-      setError(error.message);
+    if (isSubmitting) {
       return;
     }
 
-    if (data.user) {
-      window.location.href = '/dashboard';
-    }
-  };
-
-  const handleDevBypass = async () => {
-    if (!isDevBypassEnabled()) {
-      setError("Developer bypass is disabled on this environment");
+    if (!email.trim() || !password.trim()) {
+      setError("Please enter both email and password.");
       return;
     }
 
-    const { data, error } = await supabase.auth.signInWithPassword({
-      email: DEV_ACCOUNT.email,
-      password: DEV_ACCOUNT.password,
-    });
+    if (isDemoMode && !hasSupabaseConfig) {
+      const demoEmail = email.trim() || "admin@erpx-ai.com";
+      const demoPassword = password.trim() || "@12345";
 
-    if (error) {
-      setError(error.message);
+      localStorage.setItem("erpx_demo_email", demoEmail);
+      localStorage.setItem("erpx_demo_password", demoPassword);
+      console.log("[Login] Demo mode fallback active. Redirecting to /dashboard");
+      window.location.href = "/dashboard";
       return;
     }
 
-    if (data.user) {
-      window.location.href = '/dashboard';
+    setIsSubmitting(true);
+
+    try {
+      const { data, error } = await supabase.auth.signInWithPassword({
+        email: email.trim(),
+        password,
+      });
+
+      if (error) {
+        console.error("[Login] Sign in failed:", error);
+        setError(error.message || "Invalid email or password.");
+        return;
+      }
+
+      if (!data.user) {
+        setError("Authentication succeeded but no user was returned.");
+        return;
+      }
+
+      localStorage.setItem("erpx_demo_email", data.user.email || email.trim());
+      window.location.href = "/dashboard";
+    } catch (err) {
+      console.error("[Login] Unexpected sign-in error:", err);
+      setError(err instanceof Error ? err.message : "Unable to sign in. Please try again.");
+    } finally {
+      setIsSubmitting(false);
     }
   };
 
@@ -270,32 +282,17 @@ export default function ProductionLogin({ onLoginSuccess }: ProductionLoginProps
               animate={{ opacity: 1, y: 0 }}
               transition={{ delay: 0.7, duration: 0.6 }}
               type="submit"
-              className="relative w-full py-3 bg-gradient-to-r from-blue-600 to-blue-500 text-white rounded-lg font-medium overflow-hidden group"
+              disabled={isSubmitting}
+              className="relative w-full py-3 bg-gradient-to-r from-blue-600 to-blue-500 text-white rounded-lg font-medium overflow-hidden group disabled:opacity-70 disabled:cursor-not-allowed"
             >
               <div className="absolute inset-0 bg-gradient-to-r from-blue-500 to-cyan-500 opacity-0 group-hover:opacity-100 transition-opacity" />
               <span className="relative flex items-center justify-center gap-2">
-                {t('auth.signIn')}
+                {isSubmitting ? "Signing in..." : t('auth.signIn')}
               </span>
               <div className="absolute inset-0 shadow-[0_0_20px_rgba(59,130,246,0.5)] opacity-0 group-hover:opacity-100 transition-opacity" />
             </motion.button>
 
-            {/* Developer Quick Login */}
-            {isDevBypassEnabled() && (
-              <motion.button
-                initial={{ opacity: 0, y: 20 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ delay: 0.75, duration: 0.6 }}
-                type="button"
-                onClick={handleDevBypass}
-                className="relative w-full py-3 bg-gradient-to-r from-yellow-600 to-yellow-500 text-black rounded-lg font-medium overflow-hidden group border-2 border-yellow-400"
-              >
-                <div className="absolute inset-0 bg-gradient-to-r from-yellow-500 to-amber-500 opacity-0 group-hover:opacity-100 transition-opacity" />
-                <span className="relative flex items-center justify-center gap-2">
-                  <Code2 className="w-4 h-4" />
-                  {t('auth.developerQuickLogin')}
-                </span>
-              </motion.button>
-            )}
+            
           </form>
 
           <motion.div
@@ -318,12 +315,7 @@ export default function ProductionLogin({ onLoginSuccess }: ProductionLoginProps
               <div className="flex-1 h-px bg-gray-700"></div>
             </div>
 
-            <p className="text-sm text-gray-500 text-center">
-              {t('auth.firstTimeSetup')}{" "}
-              <a href="/setup" className="text-blue-400 hover:text-blue-300 transition-colors">
-                {t('auth.createAdminUser')}
-              </a>
-            </p>
+            
           </motion.div>
         </div>
       </motion.div>

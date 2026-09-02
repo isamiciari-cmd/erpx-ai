@@ -11,12 +11,32 @@ console.log('[Supabase] VITE_SUPABASE_URL:', supabaseUrl ? `✓ ${supabaseUrl.su
 console.log('[Supabase] VITE_SUPABASE_ANON_KEY:', supabaseAnonKey ? `✓ ${supabaseAnonKey.substring(0, 20)}...` : '✗ Missing');
 
 // Check if Supabase is configured
-const hasSupabaseConfig = supabaseUrl && supabaseAnonKey &&
+export const hasSupabaseConfig = Boolean(
+  supabaseUrl &&
+  supabaseAnonKey &&
   supabaseUrl !== 'your_supabase_url_here' &&
-  supabaseAnonKey !== 'your_supabase_anon_key_here';
+  supabaseAnonKey !== 'your_supabase_anon_key_here'
+);
 
 // Flag to indicate if running in demo mode (no Supabase credentials)
 export const isDemoMode = !hasSupabaseConfig;
+
+export function getDemoUser(email?: string) {
+  const resolvedEmail = email || 'admin@erpx-ai.com';
+
+  return {
+    id: 'demo-user-id',
+    email: resolvedEmail,
+    app_metadata: { provider: 'demo', providers: ['demo'] },
+    user_metadata: {
+      full_name: 'Demo User',
+      role: resolvedEmail.includes('cashier') ? 'cashier' : 'admin',
+    },
+    aud: 'authenticated',
+    created_at: new Date().toISOString(),
+    role: 'authenticated',
+  } as any;
+}
 
 if (isDemoMode) {
   // Only show warning in development mode

@@ -1,4 +1,4 @@
-import { Link } from 'react-router';
+import { Link } from 'react-router-dom';
 import { Mail, Linkedin, Twitter, Facebook } from 'lucide-react';
 
 export default function WebsiteFooter() {

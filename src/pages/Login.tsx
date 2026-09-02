@@ -1,11 +1,11 @@
 import { useState } from 'react';
-import { Navigate } from 'react-router';
+import { Navigate } from 'react-router-dom';
 import { motion } from 'motion/react';
 import { LogIn, Mail, Lock, AlertCircle } from 'lucide-react';
 import { useTranslation } from 'react-i18next';
 import { LanguageSwitcher } from '../components/LanguageSwitcher';
 import { useAuth } from '../contexts/AuthContext';
-import { supabase } from '../lib/supabase';
+import { supabase, isDemoMode, hasSupabaseConfig } from '../lib/supabase';
 
 export default function Login() {
   const { t } = useTranslation();
@@ -27,23 +27,54 @@ function LoginForm() {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [error, setError] = useState('');
+  const [isSubmitting, setIsSubmitting] = useState(false);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setError('');
 
-    const { data, error } = await supabase.auth.signInWithPassword({
-      email,
-      password,
-    });
-
-    if (error) {
-      setError(error.message);
+    if (isSubmitting) {
       return;
     }
 
-    if (data.user) {
+    if (!email.trim() || !password.trim()) {
+      setError('Please enter both email and password.');
+      return;
+    }
+
+    if (isDemoMode && !hasSupabaseConfig) {
+      localStorage.setItem('erpx_demo_email', email.trim());
+      localStorage.setItem('erpx_demo_password', password);
       window.location.href = '/dashboard';
+      return;
+    }
+
+    setIsSubmitting(true);
+
+    try {
+      const { data, error } = await supabase.auth.signInWithPassword({
+        email: email.trim(),
+        password,
+      });
+
+      if (error) {
+        console.error('[Login] Sign in failed:', error);
+        setError(error.message || 'Invalid email or password.');
+        return;
+      }
+
+      if (!data.user) {
+        setError('Authentication succeeded but no user was returned.');
+        return;
+      }
+
+      localStorage.setItem('erpx_demo_email', data.user.email || email.trim());
+      window.location.href = '/dashboard';
+    } catch (err) {
+      console.error('[Login] Unexpected login error:', err);
+      setError(err instanceof Error ? err.message : 'Unable to sign in. Please try again.');
+    } finally {
+      setIsSubmitting(false);
     }
   };
 

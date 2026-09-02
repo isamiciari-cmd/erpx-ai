@@ -1,7 +1,7 @@
 {
   "buildCommand": "rm -rf node_modules/.cache && pnpm build",
   "outputDirectory": "dist",
-  "installCommand": "rm -rf node_modules pnpm-lock.yaml && pnpm install --no-frozen-lockfile --force",
+  "installCommand": "pnpm install --frozen-lockfile",
   "framework": null,
   "cleanUrls": true,
   "trailingSlash": false,

@@ -1,5 +1,5 @@
 import { useState, ReactNode } from 'react';
-import { Link, useLocation } from 'react-router';
+import { Link, useLocation } from 'react-router-dom';
 import { motion, AnimatePresence } from 'motion/react';
 import { Menu, X, Home, Package, ShoppingCart, Users, Settings, TrendingUp } from 'lucide-react';
 
