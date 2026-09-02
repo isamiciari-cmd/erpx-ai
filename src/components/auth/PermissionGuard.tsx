@@ -51,7 +51,7 @@ export function PermissionGuard({
   requireAll = false,
   fallback = null,
   redirectTo,
-  showLoading = true
+  showLoading = true,
 }: PermissionGuardProps) {
   const { hasPermission, hasRole, loading } = usePermissions();
 
@@ -76,8 +76,8 @@ export function PermissionGuard({
   // Check multiple permissions
   if (permissions.length > 0) {
     const hasAccess = requireAll
-      ? permissions.every(p => hasPermission(p))
-      : permissions.some(p => hasPermission(p));
+      ? permissions.every((p) => hasPermission(p))
+      : permissions.some((p) => hasPermission(p));
 
     if (!hasAccess) {
       return redirectTo ? <Navigate to={redirectTo} replace /> : <>{fallback}</>;
@@ -86,9 +86,7 @@ export function PermissionGuard({
 
   // Check multiple roles
   if (roles.length > 0) {
-    const hasAccess = requireAll
-      ? roles.every(r => hasRole(r))
-      : roles.some(r => hasRole(r));
+    const hasAccess = requireAll ? roles.every((r) => hasRole(r)) : roles.some((r) => hasRole(r));
 
     if (!hasAccess) {
       return redirectTo ? <Navigate to={redirectTo} replace /> : <>{fallback}</>;

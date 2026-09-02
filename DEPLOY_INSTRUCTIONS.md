@@ -7,15 +7,18 @@
 Since you're working in a cloud environment, use this method:
 
 **1. Install Vercel CLI on YOUR LOCAL COMPUTER:**
+
 ```bash
 npm install -g vercel
 ```
 
 **2. Download this project to your computer**
-   - Ask your Figma Make administrator how to export/download the project
-   - Or manually recreate the key files (see below)
+
+- Ask your Figma Make administrator how to export/download the project
+- Or manually recreate the key files (see below)
 
 **3. Deploy:**
+
 ```bash
 cd path/to/your/project
 vercel login
@@ -31,6 +34,7 @@ vercel --prod
 Create a folder called `erpx-ai` and add these files:
 
 **File: `package.json`**
+
 ```json
 {
   "name": "erpx-ai",
@@ -60,6 +64,7 @@ Create a folder called `erpx-ai` and add these files:
 ```
 
 **File: `vercel.json`**
+
 ```json
 {
   "buildCommand": "npm run build",
@@ -74,6 +79,7 @@ Create a folder called `erpx-ai` and add these files:
 ```
 
 **Step 2: Go to Vercel**
+
 1. https://vercel.com/new
 2. Drag and drop your `erpx-ai` folder
 3. Click Deploy
@@ -124,5 +130,6 @@ Once deployed (any method above), Vercel will give you a URL like:
 ## 📧 Contact
 
 If you need the full source code emailed to you or need help:
+
 - Check if Figma Make has an export/download feature
 - Contact Figma Make support for project export options

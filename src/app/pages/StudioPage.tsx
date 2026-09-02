@@ -1,24 +1,23 @@
-import { useState, useEffect } from "react";
-import { motion, AnimatePresence } from "motion/react";
+import { useState, useEffect } from 'react';
+import { motion, AnimatePresence } from 'motion/react';
 import {
   Wand2,
   Plus,
   Settings,
   Database,
   Eye,
-  Code,
   Trash2,
   GitBranch,
   Shield,
   Zap,
   Layout,
   FileCode,
-} from "lucide-react";
+} from 'lucide-react';
 
 interface Field {
   name: string;
   label: string;
-  type: "text" | "number" | "email" | "select" | "date" | "textarea" | "checkbox";
+  type: 'text' | 'number' | 'email' | 'select' | 'date' | 'textarea' | 'checkbox';
   options?: string[];
   required?: boolean;
   defaultValue?: any;
@@ -58,7 +57,7 @@ const studioAPI = {
   nextModuleId: 1,
   nextRecordId: 1,
 
-  async createModule(module: Omit<Module, "id">): Promise<Module> {
+  async createModule(module: Omit<Module, 'id'>): Promise<Module> {
     const newModule = { ...module, id: this.nextModuleId++ };
     this.modules.push(newModule);
     return new Promise((resolve) => setTimeout(() => resolve(newModule), 300));
@@ -87,7 +86,7 @@ const studioAPI = {
 
   async findRecordsByModule(moduleId: number): Promise<DynamicRecord[]> {
     return new Promise((resolve) =>
-      setTimeout(() => resolve(this.records.filter((r) => r.moduleId === moduleId)), 300)
+      setTimeout(() => resolve(this.records.filter((r) => r.moduleId === moduleId)), 300),
     );
   },
 
@@ -95,19 +94,19 @@ const studioAPI = {
     for (const rule of rules) {
       const { condition, action, value } = rule;
 
-      if (condition.includes(">")) {
-        const [field, threshold] = condition.split(">").map((s) => s.trim());
+      if (condition.includes('>')) {
+        const [field, threshold] = condition.split('>').map((s) => s.trim());
         if (data[field] > Number(threshold)) {
           return action;
         }
-      } else if (condition.includes("=")) {
-        const [field, expectedValue] = condition.split("=").map((s) => s.trim());
+      } else if (condition.includes('=')) {
+        const [field, expectedValue] = condition.split('=').map((s) => s.trim());
         if (data[field] === expectedValue) {
           return action;
         }
       }
     }
-    return "pending";
+    return 'pending';
   },
 };
 
@@ -117,9 +116,9 @@ export default function StudioPage() {
   const [selectedModule, setSelectedModule] = useState<Module | null>(null);
   const [showPreview, setShowPreview] = useState(false);
 
-  const [moduleName, setModuleName] = useState("");
-  const [moduleDescription, setModuleDescription] = useState("");
-  const [moduleIcon, setModuleIcon] = useState("Box");
+  const [moduleName, setModuleName] = useState('');
+  const [moduleDescription, setModuleDescription] = useState('');
+  const [moduleIcon, setModuleIcon] = useState('Box');
   const [fields, setFields] = useState<Field[]>([]);
   const [workflows, setWorkflows] = useState<WorkflowRule[]>([]);
   const [permissions, setPermissions] = useState({
@@ -129,7 +128,7 @@ export default function StudioPage() {
     delete: false,
   });
 
-  const [aiPrompt, setAiPrompt] = useState("");
+  const [aiPrompt, setAiPrompt] = useState('');
   const [aiGenerating, setAiGenerating] = useState(false);
 
   const fetchModules = async () => {
@@ -138,10 +137,7 @@ export default function StudioPage() {
   };
 
   const addField = () => {
-    setFields([
-      ...fields,
-      { name: "", label: "", type: "text", required: false },
-    ]);
+    setFields([...fields, { name: '', label: '', type: 'text', required: false }]);
   };
 
   const updateField = (index: number, updates: Partial<Field>) => {
@@ -155,10 +151,7 @@ export default function StudioPage() {
   };
 
   const addWorkflow = () => {
-    setWorkflows([
-      ...workflows,
-      { condition: "", action: "approved", value: null },
-    ]);
+    setWorkflows([...workflows, { condition: '', action: 'approved', value: null }]);
   };
 
   const updateWorkflow = (index: number, updates: Partial<WorkflowRule>) => {
@@ -178,85 +171,79 @@ export default function StudioPage() {
 
     const prompt = aiPrompt.toLowerCase();
 
-    if (prompt.includes("hr") || prompt.includes("موظف")) {
-      setModuleName("HR Management");
-      setModuleDescription("Employee management system");
+    if (prompt.includes('hr') || prompt.includes('موظف')) {
+      setModuleName('HR Management');
+      setModuleDescription('Employee management system');
       setFields([
-        { name: "employeeName", label: "Employee Name", type: "text", required: true },
-        { name: "position", label: "Position", type: "text", required: true },
-        { name: "salary", label: "Salary", type: "number", required: true },
-        { name: "hireDate", label: "Hire Date", type: "date", required: true },
+        { name: 'employeeName', label: 'Employee Name', type: 'text', required: true },
+        { name: 'position', label: 'Position', type: 'text', required: true },
+        { name: 'salary', label: 'Salary', type: 'number', required: true },
+        { name: 'hireDate', label: 'Hire Date', type: 'date', required: true },
         {
-          name: "status",
-          label: "Status",
-          type: "select",
-          options: ["Active", "On Leave", "Terminated"],
+          name: 'status',
+          label: 'Status',
+          type: 'select',
+          options: ['Active', 'On Leave', 'Terminated'],
           required: true,
         },
       ]);
-      setWorkflows([
-        { condition: "salary > 15000", action: "require_approval", value: null },
-      ]);
-    } else if (prompt.includes("invoice") || prompt.includes("فاتورة")) {
-      setModuleName("Invoice System");
-      setModuleDescription("Dynamic invoice management");
+      setWorkflows([{ condition: 'salary > 15000', action: 'require_approval', value: null }]);
+    } else if (prompt.includes('invoice') || prompt.includes('فاتورة')) {
+      setModuleName('Invoice System');
+      setModuleDescription('Dynamic invoice management');
       setFields([
-        { name: "invoiceNumber", label: "Invoice Number", type: "text", required: true },
-        { name: "customerName", label: "Customer Name", type: "text", required: true },
-        { name: "amount", label: "Amount", type: "number", required: true },
+        { name: 'invoiceNumber', label: 'Invoice Number', type: 'text', required: true },
+        { name: 'customerName', label: 'Customer Name', type: 'text', required: true },
+        { name: 'amount', label: 'Amount', type: 'number', required: true },
         {
-          name: "status",
-          label: "Status",
-          type: "select",
-          options: ["Draft", "Sent", "Paid", "Overdue"],
+          name: 'status',
+          label: 'Status',
+          type: 'select',
+          options: ['Draft', 'Sent', 'Paid', 'Overdue'],
           required: true,
         },
-        { name: "dueDate", label: "Due Date", type: "date", required: true },
+        { name: 'dueDate', label: 'Due Date', type: 'date', required: true },
       ]);
-      setWorkflows([
-        { condition: "amount > 10000", action: "auto_approve", value: null },
-      ]);
-    } else if (prompt.includes("ticket") || prompt.includes("support")) {
-      setModuleName("Support Tickets");
-      setModuleDescription("Customer support ticket system");
+      setWorkflows([{ condition: 'amount > 10000', action: 'auto_approve', value: null }]);
+    } else if (prompt.includes('ticket') || prompt.includes('support')) {
+      setModuleName('Support Tickets');
+      setModuleDescription('Customer support ticket system');
       setFields([
-        { name: "ticketId", label: "Ticket ID", type: "text", required: true },
-        { name: "subject", label: "Subject", type: "text", required: true },
-        { name: "description", label: "Description", type: "textarea", required: true },
+        { name: 'ticketId', label: 'Ticket ID', type: 'text', required: true },
+        { name: 'subject', label: 'Subject', type: 'text', required: true },
+        { name: 'description', label: 'Description', type: 'textarea', required: true },
         {
-          name: "priority",
-          label: "Priority",
-          type: "select",
-          options: ["Low", "Medium", "High", "Urgent"],
+          name: 'priority',
+          label: 'Priority',
+          type: 'select',
+          options: ['Low', 'Medium', 'High', 'Urgent'],
           required: true,
         },
         {
-          name: "status",
-          label: "Status",
-          type: "select",
-          options: ["Open", "In Progress", "Resolved", "Closed"],
+          name: 'status',
+          label: 'Status',
+          type: 'select',
+          options: ['Open', 'In Progress', 'Resolved', 'Closed'],
           required: true,
         },
       ]);
-      setWorkflows([
-        { condition: "priority = Urgent", action: "notify_team", value: null },
-      ]);
+      setWorkflows([{ condition: 'priority = Urgent', action: 'notify_team', value: null }]);
     } else {
-      setModuleName("Custom Module");
-      setModuleDescription("Generated from your request");
+      setModuleName('Custom Module');
+      setModuleDescription('Generated from your request');
       setFields([
-        { name: "title", label: "Title", type: "text", required: true },
-        { name: "description", label: "Description", type: "textarea", required: false },
+        { name: 'title', label: 'Title', type: 'text', required: true },
+        { name: 'description', label: 'Description', type: 'textarea', required: false },
       ]);
     }
 
     setAiGenerating(false);
-    setAiPrompt("");
+    setAiPrompt('');
   };
 
   const createModule = async () => {
     if (!moduleName || fields.length === 0) {
-      alert("Please provide module name and at least one field");
+      alert('Please provide module name and at least one field');
       return;
     }
 
@@ -269,8 +256,8 @@ export default function StudioPage() {
       workflows,
     });
 
-    setModuleName("");
-    setModuleDescription("");
+    setModuleName('');
+    setModuleDescription('');
     setFields([]);
     setWorkflows([]);
     setShowBuilder(false);
@@ -278,7 +265,7 @@ export default function StudioPage() {
   };
 
   const deleteModule = async (id: number) => {
-    if (confirm("Delete this module and all its data?")) {
+    if (confirm('Delete this module and all its data?')) {
       await studioAPI.deleteModule(id);
       fetchModules();
     }
@@ -334,7 +321,7 @@ export default function StudioPage() {
                 onChange={(e) => setAiPrompt(e.target.value)}
                 placeholder="e.g. أريد نظام HR / I need invoice system / Support ticket system"
                 className="flex-1 px-4 py-3 bg-white/5 border border-white/10 rounded-xl text-white placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-purple-500"
-                onKeyDown={(e) => e.key === "Enter" && generateModuleFromAI()}
+                onKeyDown={(e) => e.key === 'Enter' && generateModuleFromAI()}
               />
               <motion.button
                 whileHover={{ scale: 1.02 }}
@@ -365,7 +352,7 @@ export default function StudioPage() {
         {showBuilder && (
           <motion.div
             initial={{ opacity: 0, height: 0 }}
-            animate={{ opacity: 1, height: "auto" }}
+            animate={{ opacity: 1, height: 'auto' }}
             exit={{ opacity: 0, height: 0 }}
             className="mb-8 overflow-hidden"
           >
@@ -444,7 +431,7 @@ export default function StudioPage() {
                           value={field.type}
                           onChange={(e) =>
                             updateField(i, {
-                              type: e.target.value as Field["type"],
+                              type: e.target.value as Field['type'],
                             })
                           }
                           className="px-3 py-2 bg-white/5 border border-white/10 rounded-lg text-white text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
@@ -476,13 +463,13 @@ export default function StudioPage() {
                         </div>
                       </div>
 
-                      {field.type === "select" && (
+                      {field.type === 'select' && (
                         <input
                           type="text"
-                          value={field.options?.join(", ") || ""}
+                          value={field.options?.join(', ') || ''}
                           onChange={(e) =>
                             updateField(i, {
-                              options: e.target.value.split(",").map((s) => s.trim()),
+                              options: e.target.value.split(',').map((s) => s.trim()),
                             })
                           }
                           placeholder="Options (comma separated): Active, Inactive, Pending"
@@ -689,7 +676,7 @@ export default function StudioPage() {
                       {field.label} {field.required && <span className="text-red-400">*</span>}
                     </label>
 
-                    {field.type === "text" && (
+                    {field.type === 'text' && (
                       <input
                         type="text"
                         placeholder={`Enter ${field.label.toLowerCase()}`}
@@ -697,7 +684,7 @@ export default function StudioPage() {
                       />
                     )}
 
-                    {field.type === "number" && (
+                    {field.type === 'number' && (
                       <input
                         type="number"
                         placeholder={`Enter ${field.label.toLowerCase()}`}
@@ -705,7 +692,7 @@ export default function StudioPage() {
                       />
                     )}
 
-                    {field.type === "email" && (
+                    {field.type === 'email' && (
                       <input
                         type="email"
                         placeholder={`Enter ${field.label.toLowerCase()}`}
@@ -713,14 +700,14 @@ export default function StudioPage() {
                       />
                     )}
 
-                    {field.type === "date" && (
+                    {field.type === 'date' && (
                       <input
                         type="date"
                         className="w-full px-4 py-3 bg-white/5 border border-white/10 rounded-xl text-white focus:outline-none focus:ring-2 focus:ring-purple-500"
                       />
                     )}
 
-                    {field.type === "textarea" && (
+                    {field.type === 'textarea' && (
                       <textarea
                         placeholder={`Enter ${field.label.toLowerCase()}`}
                         rows={4}
@@ -728,7 +715,7 @@ export default function StudioPage() {
                       />
                     )}
 
-                    {field.type === "select" && (
+                    {field.type === 'select' && (
                       <select className="w-full px-4 py-3 bg-white/5 border border-white/10 rounded-xl text-white focus:outline-none focus:ring-2 focus:ring-purple-500">
                         <option value="">Select {field.label.toLowerCase()}</option>
                         {field.options?.map((opt, j) => (
@@ -739,7 +726,7 @@ export default function StudioPage() {
                       </select>
                     )}
 
-                    {field.type === "checkbox" && (
+                    {field.type === 'checkbox' && (
                       <label className="flex items-center gap-2 text-white">
                         <input type="checkbox" className="rounded" />
                         {field.label}

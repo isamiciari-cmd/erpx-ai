@@ -43,12 +43,14 @@ export async function getCurrentUser(authId: string): Promise<UserWithDetails | 
 
   const { data, error } = await supabase
     .from('users')
-    .select(`
+    .select(
+      `
       *,
       role:roles(*),
       company:companies(id, name, currency),
       branch:branches(id, name)
-    `)
+    `,
+    )
     .eq('auth_id', authId)
     .single();
 
@@ -86,11 +88,7 @@ export async function createUser(userData: Partial<User>): Promise<User> {
     throw new Error('Demo mode: Cannot create users');
   }
 
-  const { data, error } = await supabase
-    .from('users')
-    .insert(userData)
-    .select()
-    .single();
+  const { data, error } = await supabase.from('users').insert(userData).select().single();
 
   if (error) {
     console.error('[Supabase] createUser error:', error);
@@ -127,10 +125,7 @@ export async function deleteUser(userId: string): Promise<void> {
     throw new Error('Demo mode: Cannot delete users');
   }
 
-  const { error } = await supabase
-    .from('users')
-    .delete()
-    .eq('id', userId);
+  const { error } = await supabase.from('users').delete().eq('id', userId);
 
   if (error) {
     console.error('[Supabase] deleteUser error:', error);

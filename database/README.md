@@ -1,12 +1,15 @@
 # ERPX-AI Database Architecture
 
 ## Overview
+
 This directory contains the complete PostgreSQL database schema for ERPX-AI, a multi-tenant enterprise resource planning system built on Supabase.
 
 ## Database Files
 
 ### 1. `01_schema.sql`
+
 Complete database schema including:
+
 - **Core System Tables**: Companies, Branches, Users, Roles
 - **Finance Module**: Chart of Accounts, Journal Entries, Budgets
 - **Sales & CRM**: Customers, Sales Orders, Invoices, Payments
@@ -18,14 +21,18 @@ Complete database schema including:
 **Total Tables**: 40+ tables with complete relationships
 
 ### 2. `02_rls_policies.sql`
+
 Row Level Security policies for:
+
 - Multi-tenant data isolation (company_id based)
 - Role-based access control (RBAC)
 - Permission-based operations
 - User-specific data access
 
 ### 3. `03_seed_data.sql`
+
 Sample data for testing:
+
 - Demo company setup
 - Sample customers, suppliers, products
 - Chart of accounts structure
@@ -34,6 +41,7 @@ Sample data for testing:
 ## Setup Instructions
 
 ### Step 1: Create Database
+
 ```bash
 # In Supabase SQL Editor, run in order:
 1. 01_schema.sql
@@ -42,17 +50,18 @@ Sample data for testing:
 ```
 
 ### Step 2: Verify Installation
+
 ```sql
 -- Check tables created
-SELECT table_name 
-FROM information_schema.tables 
-WHERE table_schema = 'public' 
+SELECT table_name
+FROM information_schema.tables
+WHERE table_schema = 'public'
 ORDER BY table_name;
 
 -- Verify RLS is enabled
-SELECT tablename, rowsecurity 
-FROM pg_tables 
-WHERE schemaname = 'public' 
+SELECT tablename, rowsecurity
+FROM pg_tables
+WHERE schemaname = 'public'
 AND rowsecurity = true;
 
 -- Check sample data
@@ -61,6 +70,7 @@ SELECT * FROM products LIMIT 5;
 ```
 
 ### Step 3: Create First User
+
 ```sql
 -- After user signs up via Supabase Auth, add their profile:
 INSERT INTO users (
@@ -85,12 +95,15 @@ INSERT INTO users (
 ## Multi-Tenancy Architecture
 
 ### Data Isolation
+
 Every table with company data includes `company_id`:
+
 ```sql
 company_id UUID NOT NULL REFERENCES companies(id) ON DELETE CASCADE
 ```
 
 ### RLS Helper Functions
+
 ```sql
 -- Get current user's company
 get_user_company_id() RETURNS UUID
@@ -100,13 +113,14 @@ user_has_permission(permission TEXT) RETURNS BOOLEAN
 ```
 
 ### Policy Pattern
+
 ```sql
 -- SELECT: View data in your company
 USING (company_id = get_user_company_id())
 
 -- INSERT: Create data for your company with permission
 WITH CHECK (
-  company_id = get_user_company_id() 
+  company_id = get_user_company_id()
   AND user_has_permission('module_name')
 )
 ```
@@ -114,25 +128,29 @@ WITH CHECK (
 ## Permission System
 
 ### System Roles
+
 - **admin**: Full access to all modules
 - **manager**: Access to all operational modules
 - **employee**: Read-only access
 
 ### Module Permissions
+
 ```json
 {
-  "all": true,              // Super admin
-  "finance": true,          // Finance module
-  "sales": true,            // Sales & CRM
-  "purchases": true,        // Purchasing
-  "inventory": true,        // Inventory management
-  "hr": true,               // Human resources
-  "reports": true           // Reporting access
+  "all": true, // Super admin
+  "finance": true, // Finance module
+  "sales": true, // Sales & CRM
+  "purchases": true, // Purchasing
+  "inventory": true, // Inventory management
+  "hr": true, // Human resources
+  "reports": true // Reporting access
 }
 ```
 
 ### Custom Roles
+
 Companies can create custom roles:
+
 ```sql
 INSERT INTO roles (company_id, name, display_name, permissions)
 VALUES (
@@ -146,6 +164,7 @@ VALUES (
 ## Indexes & Performance
 
 ### Indexed Columns
+
 - All `company_id` fields
 - Foreign key relationships
 - Status fields for filtering
@@ -153,9 +172,10 @@ VALUES (
 - Email and code fields for lookups
 
 ### Query Optimization
+
 ```sql
 -- Always filter by company_id first
-SELECT * FROM products 
+SELECT * FROM products
 WHERE company_id = get_user_company_id()
   AND is_active = true;
 
@@ -163,7 +183,7 @@ WHERE company_id = get_user_company_id()
 SELECT * FROM customers
 WHERE company_id = get_user_company_id()
   AND (
-    company_name ILIKE '%search%' 
+    company_name ILIKE '%search%'
     OR customer_code ILIKE '%search%'
   );
 ```
@@ -171,19 +191,24 @@ WHERE company_id = get_user_company_id()
 ## Audit Trail
 
 ### Automatic Tracking
+
 All major tables include:
+
 - `created_at TIMESTAMPTZ DEFAULT NOW()`
 - `updated_at TIMESTAMPTZ DEFAULT NOW()`
 - Auto-update trigger on UPDATE
 
 ### Audit Logs Table
+
 Captures:
+
 - User actions (INSERT, UPDATE, DELETE)
 - Old and new values (JSONB)
 - IP address and user agent
 - Entity type and ID
 
 ### Enable Audit Logging
+
 ```sql
 -- Create trigger function for audit logging
 CREATE OR REPLACE FUNCTION log_audit()
@@ -219,11 +244,13 @@ FOR EACH ROW EXECUTE FUNCTION log_audit();
 ## Backup Strategy
 
 ### Supabase Automated Backups
+
 - Daily automated backups (Pro plan)
 - Point-in-time recovery
 - Backup retention based on plan
 
 ### Manual Backup
+
 ```bash
 # Using pg_dump
 pg_dump -h db.project.supabase.co \
@@ -237,6 +264,7 @@ supabase db dump -f backup.sql
 ```
 
 ### Restore
+
 ```bash
 # Full restore
 pg_restore -h db.project.supabase.co \
@@ -251,16 +279,17 @@ pg_restore -h db.project.supabase.co \
 ## Migrations
 
 ### Schema Changes
+
 ```sql
 -- Always use transactions for schema changes
 BEGIN;
 
 -- Add new column
-ALTER TABLE products 
+ALTER TABLE products
 ADD COLUMN new_field VARCHAR(100);
 
 -- Create index
-CREATE INDEX idx_products_new_field 
+CREATE INDEX idx_products_new_field
 ON products(new_field);
 
 -- Update RLS policy if needed
@@ -271,6 +300,7 @@ COMMIT;
 ```
 
 ### Data Migrations
+
 ```sql
 -- Batch updates for large tables
 UPDATE products
@@ -283,6 +313,7 @@ LIMIT 1000;
 ## Monitoring
 
 ### Database Health
+
 ```sql
 -- Table sizes
 SELECT
@@ -315,6 +346,7 @@ LIMIT 10;
 ```
 
 ### RLS Performance
+
 ```sql
 -- Check policy execution
 SELECT * FROM pg_policies;
@@ -339,7 +371,7 @@ WHERE company_id = get_user_company_id();
 ## Support
 
 For issues or questions:
+
 - Check Supabase docs: https://supabase.com/docs
 - Database migrations: https://supabase.com/docs/guides/database/migrations
 - RLS policies: https://supabase.com/docs/guides/auth/row-level-security
-

@@ -40,18 +40,21 @@ I tested your Supabase connection and found issues:
 **Look for these indicators:**
 
 **If you see "Paused" or "Inactive":**
+
 - ⚠️ Free tier projects auto-pause after 7 days of inactivity
 - Click **"Resume Project"** or **"Restore Project"**
 - Wait 2-3 minutes for it to wake up
 - Then try again
 
 **If you see the project listed:**
+
 - ✅ Click on the project name
 - Go to **Settings** → **API**
 - **Copy the Project URL** (should start with `https://...supabase.co`)
 - **Copy the anon key** again (to make sure it's correct)
 
 **If you DON'T see the project:**
+
 - ❌ Project was deleted
 - You'll need to create a new Supabase project
 - See instructions below
@@ -84,6 +87,7 @@ If your project was deleted or you want to start fresh:
 ### Step 3: Update Your .env
 
 Tell me the new:
+
 - **Project URL**
 - **Anon Key**
 
@@ -97,30 +101,35 @@ After creating the new project, you need to set up the database:
 2. Run these scripts **in order:**
 
 **a) Main Schema:**
+
 ```sql
 -- Copy entire contents of database/DEPLOY_TO_SUPABASE.sql
 -- Click "Run"
 ```
 
 **b) Registration Tables:**
+
 ```sql
 -- Copy entire contents of database/ADD_REGISTRATION_TABLES.sql
 -- Click "Run"
 ```
 
 **c) Sales Tables:**
+
 ```sql
 -- Copy entire contents of database/CREATE_SALES_TABLES.sql
 -- Click "Run"
 ```
 
 **d) Admin User:**
+
 ```sql
 -- Copy entire contents of database/CREATE_ADMIN_USER.sql
 -- Click "Run"
 ```
 
 **e) Cashier User:**
+
 ```sql
 -- Copy entire contents of database/CREATE_CASHIER_USER.sql
 -- Click "Run"
@@ -150,14 +159,17 @@ After creating the new project, you need to set up the database:
 ### Common Issues
 
 **Issue 1: Wrong Project URL**
+
 - ❌ You have: `https://svxmlejmhlocsjjtftxd.supabase.co`
 - ✅ Should be: `https://[your-actual-project-ref].supabase.co`
 
 **Issue 2: Anon Key from Different Project**
+
 - The anon key you provided might be from a different Supabase project
 - Get the key specifically from the project with URL `svxmlejmhlocsjjtftxd`
 
 **Issue 3: Project Paused**
+
 - Free tier projects pause after 7 days of inactivity
 - Just click "Resume" and wait 2-3 minutes
 
@@ -190,6 +202,7 @@ After creating the new project, you need to set up the database:
 6. **I'll update .env file**
 
 7. **Restart dev server:**
+
    ```bash
    pnpm dev
    ```

@@ -1,13 +1,22 @@
 import { useState } from 'react';
 import { Sparkles, TrendingUp, AlertTriangle, DollarSign, Send } from 'lucide-react';
-import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer } from 'recharts';
+import {
+  LineChart,
+  Line,
+  XAxis,
+  YAxis,
+  CartesianGrid,
+  Tooltip,
+  ResponsiveContainer,
+} from 'recharts';
 
 const aiInsights = [
   {
     id: 1,
     type: 'prediction',
     title: 'Cash Flow Forecast',
-    description: 'Based on current trends, you will have a cash surplus of $125,000 by end of Q2 2026',
+    description:
+      'Based on current trends, you will have a cash surplus of $125,000 by end of Q2 2026',
     confidence: 92,
     icon: <DollarSign className="w-5 h-5" />,
     color: 'blue',
@@ -34,7 +43,8 @@ const aiInsights = [
     id: 4,
     type: 'recommendation',
     title: 'Budget Adjustment Suggested',
-    description: 'IT budget shows consistent underspending. Consider reallocating $15,000 to Marketing.',
+    description:
+      'IT budget shows consistent underspending. Consider reallocating $15,000 to Marketing.',
     confidence: 85,
     icon: <TrendingUp className="w-5 h-5" />,
     color: 'green',
@@ -49,28 +59,63 @@ const cashFlowForecast = [
 ];
 
 const aiFeatures = [
-  { icon: '🔮', title: 'Cash Flow Prediction', description: 'AI-powered 6-month cash flow forecasting' },
-  { icon: '🎯', title: 'Expense Anomaly Detection', description: 'Identify unusual spending patterns automatically' },
-  { icon: '⚠️', title: 'Overdue Risk Scoring', description: 'Predict which invoices are at risk of late payment' },
-  { icon: '💡', title: 'Budget Recommendations', description: 'Smart suggestions for budget optimization' },
-  { icon: '📊', title: 'Revenue Forecasting', description: 'Predict future revenue based on trends' },
-  { icon: '📈', title: 'Profitability Analysis', description: 'Deep dive into profit drivers and margins' },
+  {
+    icon: '🔮',
+    title: 'Cash Flow Prediction',
+    description: 'AI-powered 6-month cash flow forecasting',
+  },
+  {
+    icon: '🎯',
+    title: 'Expense Anomaly Detection',
+    description: 'Identify unusual spending patterns automatically',
+  },
+  {
+    icon: '⚠️',
+    title: 'Overdue Risk Scoring',
+    description: 'Predict which invoices are at risk of late payment',
+  },
+  {
+    icon: '💡',
+    title: 'Budget Recommendations',
+    description: 'Smart suggestions for budget optimization',
+  },
+  {
+    icon: '📊',
+    title: 'Revenue Forecasting',
+    description: 'Predict future revenue based on trends',
+  },
+  {
+    icon: '📈',
+    title: 'Profitability Analysis',
+    description: 'Deep dive into profit drivers and margins',
+  },
   { icon: '🔍', title: 'Duplicate Detection', description: 'Find duplicate invoices and payments' },
-  { icon: '📝', title: 'Auto Report Generation', description: 'Generate insights summaries automatically' },
+  {
+    icon: '📝',
+    title: 'Auto Report Generation',
+    description: 'Generate insights summaries automatically',
+  },
 ];
 
 export default function AIFinanceAssistantPage() {
   const [chatMessages, setChatMessages] = useState([
-    { role: 'assistant', text: 'Hello! I\'m your AI Finance Assistant. I can help you with cash flow predictions, expense analysis, budget recommendations, and more. What would you like to know?' }
+    {
+      role: 'assistant',
+      text: "Hello! I'm your AI Finance Assistant. I can help you with cash flow predictions, expense analysis, budget recommendations, and more. What would you like to know?",
+    },
   ]);
   const [inputMessage, setInputMessage] = useState('');
 
   const handleSendMessage = () => {
     if (!inputMessage.trim()) return;
 
-    setChatMessages([...chatMessages,
+    setChatMessages([
+      ...chatMessages,
       { role: 'user', text: inputMessage },
-      { role: 'assistant', text: 'I\'m analyzing your financial data... This is a demo response. In production, I would provide real AI-powered insights based on your query.' }
+      {
+        role: 'assistant',
+        text: "I'm analyzing your financial data... This is a demo response. In production, I would provide real AI-powered insights based on your query.",
+      },
     ]);
     setInputMessage('');
   };
@@ -83,7 +128,9 @@ export default function AIFinanceAssistantPage() {
         </div>
         <div>
           <h1 className="text-3xl font-bold mb-1">AI Finance Assistant</h1>
-          <p className="text-gray-600">Intelligent insights and predictions for smarter financial decisions</p>
+          <p className="text-gray-600">
+            Intelligent insights and predictions for smarter financial decisions
+          </p>
         </div>
       </div>
 
@@ -98,11 +145,12 @@ export default function AIFinanceAssistantPage() {
           };
 
           return (
-            <div key={insight.id} className={`border rounded-lg p-5 ${colorClasses[insight.color as keyof typeof colorClasses]}`}>
+            <div
+              key={insight.id}
+              className={`border rounded-lg p-5 ${colorClasses[insight.color as keyof typeof colorClasses]}`}
+            >
               <div className="flex items-start gap-3 mb-3">
-                <div className="p-2 rounded-lg bg-white bg-opacity-50">
-                  {insight.icon}
-                </div>
+                <div className="p-2 rounded-lg bg-white bg-opacity-50">{insight.icon}</div>
                 <div className="flex-1">
                   <h3 className="font-semibold text-lg mb-1">{insight.title}</h3>
                   <p className="text-sm opacity-90">{insight.description}</p>
@@ -126,9 +174,27 @@ export default function AIFinanceAssistantPage() {
             <XAxis dataKey="month" />
             <YAxis />
             <Tooltip formatter={(value) => `$${value.toLocaleString()}`} />
-            <Line type="monotone" dataKey="projected" stroke="#8b5cf6" strokeWidth={3} name="Projected" />
-            <Line type="monotone" dataKey="lower" stroke="#cbd5e1" strokeDasharray="5 5" name="Lower Bound" />
-            <Line type="monotone" dataKey="upper" stroke="#cbd5e1" strokeDasharray="5 5" name="Upper Bound" />
+            <Line
+              type="monotone"
+              dataKey="projected"
+              stroke="#8b5cf6"
+              strokeWidth={3}
+              name="Projected"
+            />
+            <Line
+              type="monotone"
+              dataKey="lower"
+              stroke="#cbd5e1"
+              strokeDasharray="5 5"
+              name="Lower Bound"
+            />
+            <Line
+              type="monotone"
+              dataKey="upper"
+              stroke="#cbd5e1"
+              strokeDasharray="5 5"
+              name="Upper Bound"
+            />
           </LineChart>
         </ResponsiveContainer>
       </div>
@@ -141,12 +207,15 @@ export default function AIFinanceAssistantPage() {
           </div>
           <div className="flex-1 overflow-y-auto p-6 space-y-4">
             {chatMessages.map((msg, index) => (
-              <div key={index} className={`flex ${msg.role === 'user' ? 'justify-end' : 'justify-start'}`}>
-                <div className={`max-w-[80%] rounded-lg p-3 ${
-                  msg.role === 'user'
-                    ? 'bg-blue-600 text-white'
-                    : 'bg-gray-100 text-gray-900'
-                }`}>
+              <div
+                key={index}
+                className={`flex ${msg.role === 'user' ? 'justify-end' : 'justify-start'}`}
+              >
+                <div
+                  className={`max-w-[80%] rounded-lg p-3 ${
+                    msg.role === 'user' ? 'bg-blue-600 text-white' : 'bg-gray-100 text-gray-900'
+                  }`}
+                >
                   {msg.text}
                 </div>
               </div>
@@ -180,7 +249,10 @@ export default function AIFinanceAssistantPage() {
           <div className="p-6">
             <div className="grid grid-cols-1 gap-3">
               {aiFeatures.map((feature, index) => (
-                <div key={index} className="flex items-start gap-3 p-3 border rounded-lg hover:border-blue-500 hover:bg-blue-50 transition-all cursor-pointer">
+                <div
+                  key={index}
+                  className="flex items-start gap-3 p-3 border rounded-lg hover:border-blue-500 hover:bg-blue-50 transition-all cursor-pointer"
+                >
                   <div className="text-2xl">{feature.icon}</div>
                   <div>
                     <h3 className="font-semibold">{feature.title}</h3>

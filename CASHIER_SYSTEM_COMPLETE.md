@@ -5,9 +5,11 @@
 Your ERPX-AI system now has a complete cashier role with dedicated POS interface and role-based routing.
 
 ### 1. Cashier Role & Permissions ✅
+
 **File:** `database/CREATE_CASHIER_USER.sql`
 
 Cashier role includes ONLY these permissions:
+
 - ✅ POS access and sales creation
 - ✅ Product search and barcode scanning
 - ✅ Add to cart and manage quantities
@@ -20,6 +22,7 @@ Cashier role includes ONLY these permissions:
 - ✅ View product availability
 
 **BLOCKED from:**
+
 - ❌ Finance module
 - ❌ HR module
 - ❌ Inventory management
@@ -30,9 +33,11 @@ Cashier role includes ONLY these permissions:
 - ❌ Delete permissions
 
 ### 2. Cashier Layout Component ✅
+
 **File:** `src/app/layout/CashierLayout.tsx`
 
 Simple POS-focused interface with:
+
 - **Top Bar** showing:
   - Branch name
   - Cashier name
@@ -44,9 +49,11 @@ Simple POS-focused interface with:
 - **Shift Management** - Open/close shift with confirmation dialogs
 
 ### 3. Cashier POS Page ✅
+
 **File:** `src/app/pages/cashier/CashierPOSPage.tsx`
 
 Full-featured POS interface:
+
 - **Left Panel (Products):**
   - Search bar (by name or barcode)
   - Scan barcode button
@@ -62,19 +69,23 @@ Full-featured POS interface:
   - Complete Payment button
 
 ### 4. Role-Based Routing ✅
+
 **Files:**
+
 - `src/contexts/AuthContext.tsx` - Added `isCashier()` helper
 - `src/app/App.tsx` - Added cashier routes
 - `src/app/components/ProtectedRoute.tsx` - Cashier access restrictions
 - `src/app/components/ProductionLogin.tsx` - Role-based redirects
 
 **Routing Logic:**
+
 - Cashier login → Automatically redirects to `/cashier/pos`
 - Admin login → Redirects to `/` (ExecutiveDashboard)
 - Finance user login → Redirects to `/finance/dashboard`
 - HR user login → Redirects to `/hr/dashboard`
 
 **Access Restrictions:**
+
 - Cashiers **CANNOT** access admin routes (auto-redirected to POS)
 - Non-cashiers **CANNOT** access cashier routes (access denied screen)
 
@@ -122,6 +133,7 @@ git push origin main
 ```
 
 Or use GitHub Desktop:
+
 1. Open GitHub Desktop
 2. File → Add Local Repository
 3. Choose the erpx-ai folder
@@ -139,6 +151,7 @@ Or use GitHub Desktop:
 After deployment, test the following:
 
 ### ✅ Cashier Login
+
 1. Go to: https://erpx-ai.com/login
 2. Login with:
    - Email: `cashier@erpx-ai.com`
@@ -146,6 +159,7 @@ After deployment, test the following:
 3. Should automatically redirect to: `/cashier/pos`
 
 ### ✅ POS Functionality
+
 1. Search for products
 2. Add products to cart
 3. Adjust quantities (+/- buttons)
@@ -157,12 +171,14 @@ After deployment, test the following:
 9. Add items and click "Complete Payment"
 
 ### ✅ Shift Management
+
 1. Click "Open Shift" button in top bar
 2. Should turn green with "Close Shift" label
 3. Try to logout - should warn about active shift
 4. Click "Close Shift" - should require confirmation
 
 ### ✅ Access Restrictions
+
 1. While logged in as cashier, try to visit: `/finance/dashboard`
 2. Should automatically redirect to `/cashier/pos`
 3. Try to visit: `/hr/dashboard`
@@ -171,6 +187,7 @@ After deployment, test the following:
 6. Should automatically redirect to `/cashier/pos`
 
 ### ✅ Logout & Re-login
+
 1. Click Logout button
 2. Should return to login page
 3. Login as admin: `admin-1@erpx-ai.com` / `@12345@`
@@ -217,6 +234,7 @@ After deployment, test the following:
 🎉 **The cashier role system is complete and ready to test!**
 
 You just need to:
+
 1. ✅ Create the cashier user in Supabase (5 minutes)
 2. ✅ Push code to GitHub (1 minute)
 3. ✅ Test the system (10 minutes)

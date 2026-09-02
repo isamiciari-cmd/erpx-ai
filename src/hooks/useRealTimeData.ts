@@ -12,7 +12,7 @@ interface UseRealTimeDataOptions {
  */
 export function useRealTimeData<T>(
   fetchFn: () => Promise<T>,
-  options: UseRealTimeDataOptions = {}
+  options: UseRealTimeDataOptions = {},
 ) {
   const { refreshInterval = 5000, enabled = true } = options;
   const [data, setData] = useState<T | null>(null);
@@ -63,7 +63,7 @@ export function useDashboardAnalytics() {
       if (!companyId) throw new Error('No company ID');
       return db.analytics.getDashboard(companyId);
     },
-    { refreshInterval: 5000, enabled: !!companyId }
+    { refreshInterval: 5000, enabled: !!companyId },
   );
 }
 
@@ -79,7 +79,7 @@ export function useFinancialSummary() {
       if (!companyId) throw new Error('No company ID');
       return db.analytics.getFinancialSummary(companyId);
     },
-    { refreshInterval: 10000, enabled: !!companyId }
+    { refreshInterval: 10000, enabled: !!companyId },
   );
 }
 
@@ -95,7 +95,7 @@ export function useInventory(warehouseId?: string) {
       if (!companyId) throw new Error('No company ID');
       return db.inventory.getAll(companyId, warehouseId);
     },
-    { refreshInterval: 5000, enabled: !!companyId }
+    { refreshInterval: 5000, enabled: !!companyId },
   );
 }
 
@@ -111,7 +111,7 @@ export function useLowStockItems() {
       if (!companyId) throw new Error('No company ID');
       return db.inventory.getLowStock(companyId);
     },
-    { refreshInterval: 10000, enabled: !!companyId }
+    { refreshInterval: 10000, enabled: !!companyId },
   );
 }
 
@@ -127,7 +127,7 @@ export function useInvoices(filters?: any) {
       if (!companyId) throw new Error('No company ID');
       return db.invoices.getAll(companyId, filters);
     },
-    { refreshInterval: 10000, enabled: !!companyId }
+    { refreshInterval: 10000, enabled: !!companyId },
   );
 }
 
@@ -143,7 +143,7 @@ export function useSalesOrders(filters?: any) {
       if (!companyId) throw new Error('No company ID');
       return db.salesOrders.getAll(companyId, filters);
     },
-    { refreshInterval: 10000, enabled: !!companyId }
+    { refreshInterval: 10000, enabled: !!companyId },
   );
 }
 
@@ -159,7 +159,7 @@ export function useCustomers() {
       if (!companyId) throw new Error('No company ID');
       return db.customers.getAll(companyId);
     },
-    { refreshInterval: 30000, enabled: !!companyId }
+    { refreshInterval: 30000, enabled: !!companyId },
   );
 }
 
@@ -175,6 +175,6 @@ export function useProducts() {
       if (!companyId) throw new Error('No company ID');
       return db.products.getAll(companyId);
     },
-    { refreshInterval: 30000, enabled: !!companyId }
+    { refreshInterval: 30000, enabled: !!companyId },
   );
 }

@@ -3,6 +3,7 @@ Add a complete Human Resources (HRM) module to ERPX-AI with global ERP-level fun
 HR Module Features:
 
 1. HR Dashboard
+
 - Total employees
 - Active employees
 - New hires
@@ -19,6 +20,7 @@ HR Module Features:
 - HR alerts and notifications
 
 2. Employee Management
+
 - Employee list
 - Add/edit employee
 - Employee profile
@@ -43,6 +45,7 @@ HR Module Features:
 - Employee status (Active / Terminated / On Leave)
 
 3. Organizational Structure
+
 - Company structure
 - Branches
 - Departments
@@ -52,6 +55,7 @@ HR Module Features:
 - Org chart visualization
 
 4. Attendance Management
+
 - Clock-in / Clock-out
 - Attendance logs
 - Late arrivals
@@ -65,6 +69,7 @@ HR Module Features:
 - Attendance approval workflow
 
 5. Leave Management
+
 - Leave types (Annual / Sick / Unpaid / Emergency)
 - Leave request
 - Leave balance
@@ -76,6 +81,7 @@ HR Module Features:
 - Leave history
 
 6. Payroll Management
+
 - Salary structure
 - Basic salary
 - Allowances (Housing, Transport, etc.)
@@ -90,6 +96,7 @@ HR Module Features:
 - Multi-currency support
 
 7. Contracts Management
+
 - Employee contracts
 - Contract templates
 - Contract renewal
@@ -98,6 +105,7 @@ HR Module Features:
 - Digital signature support
 
 8. Recruitment Management (ATS)
+
 - Job postings
 - Candidates
 - Applications
@@ -110,6 +118,7 @@ HR Module Features:
 - Convert candidate to employee
 
 9. Performance Management
+
 - KPIs
 - Performance reviews
 - Review cycles
@@ -120,6 +129,7 @@ HR Module Features:
 - Promotion recommendations
 
 10. Training and Development
+
 - Training programs
 - Courses
 - Employee training records
@@ -130,6 +140,7 @@ HR Module Features:
 - Development plans
 
 11. Employee Self-Service (ESS)
+
 - View profile
 - Update personal info
 - Request leave
@@ -140,6 +151,7 @@ HR Module Features:
 - Notifications
 
 12. Overtime Management
+
 - Overtime requests
 - Overtime approval
 - Overtime rules
@@ -147,6 +159,7 @@ HR Module Features:
 - Link overtime with payroll
 
 13. Loans and Advances
+
 - Employee loan request
 - Loan approval
 - Loan repayment schedule
@@ -154,6 +167,7 @@ HR Module Features:
 - Loan balance tracking
 
 14. Disciplinary Actions
+
 - Warnings
 - Penalties
 - Violations
@@ -161,6 +175,7 @@ HR Module Features:
 - Approval workflow
 
 15. HR Reports
+
 - Employee report
 - Attendance report
 - Leave report
@@ -172,6 +187,7 @@ HR Module Features:
 - Employee turnover report
 
 16. AI HR Assistant
+
 - Predict employee turnover
 - Analyze attendance patterns
 - Suggest promotions
@@ -182,7 +198,8 @@ HR Module Features:
 - Generate HR reports automatically
 
 17. HR Permissions
-Roles:
+    Roles:
+
 - Admin
 - HR Manager
 - HR Officer
@@ -191,6 +208,7 @@ Roles:
 - Employee
 
 Permissions:
+
 - View employees
 - Add employee
 - Edit employee
@@ -208,6 +226,7 @@ Permissions:
 HR Database Schema:
 
 employees
+
 - id
 - employee_code
 - first_name
@@ -234,17 +253,20 @@ employees
 - updated_at
 
 departments
+
 - id
 - name
 - branch_id
 - manager_id
 
 job_roles
+
 - id
 - name
 - description
 
 attendance
+
 - id
 - employee_id
 - date
@@ -255,6 +277,7 @@ attendance
 - status
 
 shifts
+
 - id
 - name
 - start_time
@@ -262,12 +285,14 @@ shifts
 - break_time
 
 employee_shifts
+
 - id
 - employee_id
 - shift_id
 - effective_date
 
 leave_types
+
 - id
 - name
 - max_days
@@ -275,6 +300,7 @@ leave_types
 - paid
 
 leave_requests
+
 - id
 - employee_id
 - leave_type_id
@@ -287,6 +313,7 @@ leave_requests
 - created_at
 
 payroll
+
 - id
 - employee_id
 - payroll_period
@@ -302,6 +329,7 @@ payroll
 - created_at
 
 contracts
+
 - id
 - employee_id
 - contract_type
@@ -312,6 +340,7 @@ contracts
 - signed_at
 
 candidates
+
 - id
 - full_name
 - email
@@ -322,6 +351,7 @@ candidates
 - created_at
 
 interviews
+
 - id
 - candidate_id
 - interview_date
@@ -330,6 +360,7 @@ interviews
 - rating
 
 performance_reviews
+
 - id
 - employee_id
 - review_period
@@ -339,6 +370,7 @@ performance_reviews
 - created_at
 
 training_programs
+
 - id
 - name
 - description
@@ -346,6 +378,7 @@ training_programs
 - end_date
 
 employee_training
+
 - id
 - employee_id
 - training_id
@@ -353,6 +386,7 @@ employee_training
 - certificate_url
 
 overtime_requests
+
 - id
 - employee_id
 - date
@@ -362,6 +396,7 @@ overtime_requests
 - approved_by
 
 employee_loans
+
 - id
 - employee_id
 - loan_amount
@@ -370,6 +405,7 @@ employee_loans
 - status
 
 disciplinary_actions
+
 - id
 - employee_id
 - action_type
@@ -442,54 +478,55 @@ POST /api/hr/ai/generate-report
 Flutter HR UI Structure:
 
 lib/
-  modules/
-    hr/
-      models/
-        employee_model.dart
-        department_model.dart
-        attendance_model.dart
-        leave_model.dart
-        payroll_model.dart
-        contract_model.dart
-        candidate_model.dart
-        performance_model.dart
-        training_model.dart
-        overtime_model.dart
-        loan_model.dart
-      services/
-        hr_api_service.dart
-        hr_ai_service.dart
-      providers/
-        hr_provider.dart
-        employee_provider.dart
-        payroll_provider.dart
-      screens/
-        hr_dashboard_screen.dart
-        employee_list_screen.dart
-        employee_form_screen.dart
-        employee_profile_screen.dart
-        attendance_screen.dart
-        leave_management_screen.dart
-        payroll_screen.dart
-        contracts_screen.dart
-        recruitment_screen.dart
-        performance_screen.dart
-        training_screen.dart
-        overtime_screen.dart
-        loans_screen.dart
-        disciplinary_screen.dart
-        hr_reports_screen.dart
-        hr_ai_assistant_screen.dart
-      widgets/
-        hr_kpi_card.dart
-        employee_table.dart
-        attendance_chart.dart
-        leave_calendar.dart
-        payroll_card.dart
-        performance_chart.dart
-        approval_status_badge.dart
+modules/
+hr/
+models/
+employee_model.dart
+department_model.dart
+attendance_model.dart
+leave_model.dart
+payroll_model.dart
+contract_model.dart
+candidate_model.dart
+performance_model.dart
+training_model.dart
+overtime_model.dart
+loan_model.dart
+services/
+hr_api_service.dart
+hr_ai_service.dart
+providers/
+hr_provider.dart
+employee_provider.dart
+payroll_provider.dart
+screens/
+hr_dashboard_screen.dart
+employee_list_screen.dart
+employee_form_screen.dart
+employee_profile_screen.dart
+attendance_screen.dart
+leave_management_screen.dart
+payroll_screen.dart
+contracts_screen.dart
+recruitment_screen.dart
+performance_screen.dart
+training_screen.dart
+overtime_screen.dart
+loans_screen.dart
+disciplinary_screen.dart
+hr_reports_screen.dart
+hr_ai_assistant_screen.dart
+widgets/
+hr_kpi_card.dart
+employee_table.dart
+attendance_chart.dart
+leave_calendar.dart
+payroll_card.dart
+performance_chart.dart
+approval_status_badge.dart
 
 HR UI Pages to Generate:
+
 1. HR Dashboard
 2. Employee List
 3. Employee Profile
@@ -509,6 +546,7 @@ HR UI Pages to Generate:
 17. HR Permission Matrix
 
 Important Integration Logic:
+
 - Payroll must generate journal entries in Finance.
 - Overtime must be included in payroll calculation.
 - Employee loans must deduct from salary.

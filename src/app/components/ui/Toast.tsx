@@ -43,21 +43,33 @@ export function ToastProvider({ children }: { children: ReactNode }) {
     }, duration);
   }, []);
 
-  const success = useCallback((message: string, duration?: number) => {
-    showToast('success', message, duration);
-  }, [showToast]);
+  const success = useCallback(
+    (message: string, duration?: number) => {
+      showToast('success', message, duration);
+    },
+    [showToast],
+  );
 
-  const error = useCallback((message: string, duration?: number) => {
-    showToast('error', message, duration);
-  }, [showToast]);
+  const error = useCallback(
+    (message: string, duration?: number) => {
+      showToast('error', message, duration);
+    },
+    [showToast],
+  );
 
-  const warning = useCallback((message: string, duration?: number) => {
-    showToast('warning', message, duration);
-  }, [showToast]);
+  const warning = useCallback(
+    (message: string, duration?: number) => {
+      showToast('warning', message, duration);
+    },
+    [showToast],
+  );
 
-  const info = useCallback((message: string, duration?: number) => {
-    showToast('info', message, duration);
-  }, [showToast]);
+  const info = useCallback(
+    (message: string, duration?: number) => {
+      showToast('info', message, duration);
+    },
+    [showToast],
+  );
 
   const removeToast = (id: string) => {
     setToasts((prev) => prev.filter((t) => t.id !== id));
@@ -105,7 +117,9 @@ function ToastItem({ toast, onClose }: { toast: Toast; onClose: () => void }) {
     >
       <div className="bg-gray-900 border border-white/10 rounded-xl p-4 shadow-2xl min-w-[300px] max-w-md">
         <div className="flex items-start gap-3">
-          <div className={`w-10 h-10 rounded-lg bg-gradient-to-br ${colors[toast.type]} flex items-center justify-center flex-shrink-0`}>
+          <div
+            className={`w-10 h-10 rounded-lg bg-gradient-to-br ${colors[toast.type]} flex items-center justify-center flex-shrink-0`}
+          >
             <Icon className="w-5 h-5 text-white" />
           </div>
           <div className="flex-1 pt-1">

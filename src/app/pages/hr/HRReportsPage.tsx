@@ -1,21 +1,93 @@
 import { FileText, Download, Calendar } from 'lucide-react';
 
 const reports = [
-  { id: 1, name: 'Employee Report', description: 'Complete employee list with details', category: 'Employees', icon: '👥' },
-  { id: 2, name: 'Attendance Report', description: 'Daily/monthly attendance records', category: 'Attendance', icon: '📅' },
-  { id: 3, name: 'Leave Report', description: 'Leave requests and balances', category: 'Leave', icon: '🏖️' },
-  { id: 4, name: 'Payroll Report', description: 'Salary breakdown and payments', category: 'Payroll', icon: '💰' },
-  { id: 5, name: 'Overtime Report', description: 'Overtime hours and payments', category: 'Overtime', icon: '⏰' },
-  { id: 6, name: 'Performance Report', description: 'Performance reviews and ratings', category: 'Performance', icon: '📊' },
-  { id: 7, name: 'Recruitment Report', description: 'Hiring pipeline and candidates', category: 'Recruitment', icon: '🎯' },
-  { id: 8, name: 'Training Report', description: 'Employee training and certifications', category: 'Training', icon: '📚' },
-  { id: 9, name: 'Turnover Report', description: 'Employee turnover analysis', category: 'Analytics', icon: '📉' },
-  { id: 10, name: 'Headcount Report', description: 'Employees by department/branch', category: 'Analytics', icon: '👨‍💼' },
-  { id: 11, name: 'Contract Expiry Report', description: 'Contracts expiring soon', category: 'Contracts', icon: '📄' },
-  { id: 12, name: 'Loan Report', description: 'Employee loans and repayments', category: 'Loans', icon: '💵' },
+  {
+    id: 1,
+    name: 'Employee Report',
+    description: 'Complete employee list with details',
+    category: 'Employees',
+    icon: '👥',
+  },
+  {
+    id: 2,
+    name: 'Attendance Report',
+    description: 'Daily/monthly attendance records',
+    category: 'Attendance',
+    icon: '📅',
+  },
+  {
+    id: 3,
+    name: 'Leave Report',
+    description: 'Leave requests and balances',
+    category: 'Leave',
+    icon: '🏖️',
+  },
+  {
+    id: 4,
+    name: 'Payroll Report',
+    description: 'Salary breakdown and payments',
+    category: 'Payroll',
+    icon: '💰',
+  },
+  {
+    id: 5,
+    name: 'Overtime Report',
+    description: 'Overtime hours and payments',
+    category: 'Overtime',
+    icon: '⏰',
+  },
+  {
+    id: 6,
+    name: 'Performance Report',
+    description: 'Performance reviews and ratings',
+    category: 'Performance',
+    icon: '📊',
+  },
+  {
+    id: 7,
+    name: 'Recruitment Report',
+    description: 'Hiring pipeline and candidates',
+    category: 'Recruitment',
+    icon: '🎯',
+  },
+  {
+    id: 8,
+    name: 'Training Report',
+    description: 'Employee training and certifications',
+    category: 'Training',
+    icon: '📚',
+  },
+  {
+    id: 9,
+    name: 'Turnover Report',
+    description: 'Employee turnover analysis',
+    category: 'Analytics',
+    icon: '📉',
+  },
+  {
+    id: 10,
+    name: 'Headcount Report',
+    description: 'Employees by department/branch',
+    category: 'Analytics',
+    icon: '👨‍💼',
+  },
+  {
+    id: 11,
+    name: 'Contract Expiry Report',
+    description: 'Contracts expiring soon',
+    category: 'Contracts',
+    icon: '📄',
+  },
+  {
+    id: 12,
+    name: 'Loan Report',
+    description: 'Employee loans and repayments',
+    category: 'Loans',
+    icon: '💵',
+  },
 ];
 
-const categories = [...new Set(reports.map(r => r.category))];
+const categories = [...new Set(reports.map((r) => r.category))];
 
 export default function HRReportsPage() {
   return (
@@ -75,7 +147,7 @@ export default function HRReportsPage() {
           <div className="p-6">
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
               {reports
-                .filter(r => r.category === category)
+                .filter((r) => r.category === category)
                 .map((report) => (
                   <div
                     key={report.id}

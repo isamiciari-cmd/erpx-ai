@@ -3,6 +3,7 @@ Add a complete Purchases / Procurement Management module to ERPX-AI with global 
 Purchases Module Features:
 
 1. Purchases Dashboard
+
 - Total purchases
 - Monthly purchases
 - Pending purchase requests
@@ -21,6 +22,7 @@ Purchases Module Features:
 - Purchase approval status
 
 2. Supplier Management
+
 - Supplier list
 - Add/edit supplier
 - Supplier profile
@@ -41,6 +43,7 @@ Purchases Module Features:
 - Supplier transaction history
 
 3. Purchase Requests
+
 - Create purchase request
 - Request number
 - Requesting department
@@ -56,6 +59,7 @@ Purchases Module Features:
 - Status: Draft / Submitted / Approved / Rejected / Converted to RFQ / Converted to PO
 
 4. Request for Quotation RFQ
+
 - Create RFQ
 - Select suppliers
 - Linked purchase request
@@ -69,6 +73,7 @@ Purchases Module Features:
 - Convert selected RFQ to purchase order
 
 5. Purchase Orders
+
 - Create purchase order
 - PO number
 - Supplier
@@ -88,6 +93,7 @@ Purchases Module Features:
 - Contract linkage
 
 6. Goods Receipt
+
 - Receive goods against purchase order
 - GRN number
 - Supplier
@@ -105,6 +111,7 @@ Purchases Module Features:
 - Partial receipt support
 
 7. Supplier Invoices
+
 - Create supplier invoice
 - Linked purchase order
 - Linked goods receipt
@@ -122,6 +129,7 @@ Purchases Module Features:
 - Accounts payable posting
 
 8. Supplier Payments
+
 - Record supplier payment
 - Payment method: Cash / Bank Transfer / Card / Online Payment
 - Payment reference number
@@ -131,6 +139,7 @@ Purchases Module Features:
 - Finance module integration
 
 9. Purchase Returns
+
 - Create purchase return
 - Linked PO / GRN / supplier invoice
 - Returned items
@@ -142,6 +151,7 @@ Purchases Module Features:
 - Approval workflow
 
 10. Purchase Contracts
+
 - Supplier contracts
 - Contract start date
 - Contract end date
@@ -155,6 +165,7 @@ Purchases Module Features:
 - Contract compliance tracking
 
 11. Budget Control
+
 - Department purchase budget
 - Branch purchase budget
 - Budget period
@@ -166,6 +177,7 @@ Purchases Module Features:
 - Budget variance report
 
 12. Supplier Evaluation
+
 - Delivery performance
 - Price competitiveness
 - Quality score
@@ -176,6 +188,7 @@ Purchases Module Features:
 - Preferred supplier marking
 
 13. Purchase Reports
+
 - Purchase summary report
 - Purchases by supplier
 - Purchases by item
@@ -191,6 +204,7 @@ Purchases Module Features:
 - Cost saving report
 
 14. AI Procurement Assistant
+
 - Suggest best supplier
 - Predict purchase demand
 - Detect abnormal purchase cost
@@ -203,7 +217,8 @@ Purchases Module Features:
 - Detect duplicate invoices
 
 15. Purchase Permissions
-Roles:
+    Roles:
+
 - Admin
 - Procurement Manager
 - Purchase Officer
@@ -213,6 +228,7 @@ Roles:
 - Auditor
 
 Permissions:
+
 - View purchases dashboard
 - Add supplier
 - Edit supplier
@@ -238,6 +254,7 @@ Permissions:
 Purchases Database Schema:
 
 suppliers
+
 - id
 - supplier_code
 - company_name
@@ -258,6 +275,7 @@ suppliers
 - updated_at
 
 purchase_requests
+
 - id
 - request_number
 - department_id
@@ -273,6 +291,7 @@ purchase_requests
 - approved_at
 
 purchase_request_items
+
 - id
 - purchase_request_id
 - item_id
@@ -281,6 +300,7 @@ purchase_request_items
 - notes
 
 purchase_rfqs
+
 - id
 - rfq_number
 - purchase_request_id
@@ -291,6 +311,7 @@ purchase_rfqs
 - created_at
 
 purchase_rfq_suppliers
+
 - id
 - rfq_id
 - supplier_id
@@ -301,6 +322,7 @@ purchase_rfq_suppliers
 - notes
 
 purchase_rfq_items
+
 - id
 - rfq_id
 - supplier_id
@@ -312,6 +334,7 @@ purchase_rfq_items
 - total
 
 purchase_orders
+
 - id
 - po_number
 - supplier_id
@@ -334,6 +357,7 @@ purchase_orders
 - approved_at
 
 purchase_order_items
+
 - id
 - purchase_order_id
 - item_id
@@ -345,6 +369,7 @@ purchase_order_items
 - total
 
 goods_receipts
+
 - id
 - grn_number
 - purchase_order_id
@@ -357,6 +382,7 @@ goods_receipts
 - created_at
 
 goods_receipt_items
+
 - id
 - goods_receipt_id
 - item_id
@@ -370,6 +396,7 @@ goods_receipt_items
 - quality_status
 
 supplier_invoices
+
 - id
 - invoice_number
 - supplier_id
@@ -391,6 +418,7 @@ supplier_invoices
 - created_at
 
 supplier_invoice_items
+
 - id
 - supplier_invoice_id
 - item_id
@@ -401,6 +429,7 @@ supplier_invoice_items
 - total
 
 supplier_payments
+
 - id
 - payment_number
 - supplier_id
@@ -412,6 +441,7 @@ supplier_payments
 - created_by
 
 purchase_returns
+
 - id
 - return_number
 - supplier_id
@@ -426,6 +456,7 @@ purchase_returns
 - created_at
 
 purchase_return_items
+
 - id
 - purchase_return_id
 - item_id
@@ -434,6 +465,7 @@ purchase_return_items
 - total
 
 purchase_contracts
+
 - id
 - contract_number
 - supplier_id
@@ -448,6 +480,7 @@ purchase_contracts
 - created_at
 
 purchase_contract_items
+
 - id
 - contract_id
 - item_id
@@ -456,6 +489,7 @@ purchase_contract_items
 - maximum_quantity
 
 purchase_budgets
+
 - id
 - department_id
 - branch_id
@@ -467,6 +501,7 @@ purchase_budgets
 - status
 
 supplier_evaluations
+
 - id
 - supplier_id
 - evaluation_period
@@ -583,60 +618,61 @@ POST /api/purchases/ai/generate-report
 Flutter Purchases UI Structure:
 
 lib/
-  modules/
-    purchases/
-      models/
-        supplier_model.dart
-        purchase_request_model.dart
-        rfq_model.dart
-        purchase_order_model.dart
-        goods_receipt_model.dart
-        supplier_invoice_model.dart
-        supplier_payment_model.dart
-        purchase_return_model.dart
-        purchase_contract_model.dart
-        purchase_budget_model.dart
-        supplier_evaluation_model.dart
-      services/
-        purchases_api_service.dart
-        purchases_ai_service.dart
-      providers/
-        purchases_provider.dart
-        supplier_provider.dart
-        purchase_order_provider.dart
-        supplier_invoice_provider.dart
-      screens/
-        purchases_dashboard_screen.dart
-        supplier_list_screen.dart
-        supplier_form_screen.dart
-        supplier_details_screen.dart
-        purchase_request_list_screen.dart
-        purchase_request_form_screen.dart
-        rfq_list_screen.dart
-        rfq_comparison_screen.dart
-        purchase_order_list_screen.dart
-        purchase_order_form_screen.dart
-        goods_receipt_screen.dart
-        supplier_invoice_screen.dart
-        supplier_payment_screen.dart
-        purchase_return_screen.dart
-        purchase_contracts_screen.dart
-        purchase_budget_screen.dart
-        supplier_evaluation_screen.dart
-        purchases_reports_screen.dart
-        purchases_ai_assistant_screen.dart
-      widgets/
-        purchases_kpi_card.dart
-        supplier_table.dart
-        purchase_order_status_badge.dart
-        rfq_comparison_table.dart
-        goods_receipt_table.dart
-        three_way_match_card.dart
-        supplier_rating_card.dart
-        budget_usage_chart.dart
-        approval_status_badge.dart
+modules/
+purchases/
+models/
+supplier_model.dart
+purchase_request_model.dart
+rfq_model.dart
+purchase_order_model.dart
+goods_receipt_model.dart
+supplier_invoice_model.dart
+supplier_payment_model.dart
+purchase_return_model.dart
+purchase_contract_model.dart
+purchase_budget_model.dart
+supplier_evaluation_model.dart
+services/
+purchases_api_service.dart
+purchases_ai_service.dart
+providers/
+purchases_provider.dart
+supplier_provider.dart
+purchase_order_provider.dart
+supplier_invoice_provider.dart
+screens/
+purchases_dashboard_screen.dart
+supplier_list_screen.dart
+supplier_form_screen.dart
+supplier_details_screen.dart
+purchase_request_list_screen.dart
+purchase_request_form_screen.dart
+rfq_list_screen.dart
+rfq_comparison_screen.dart
+purchase_order_list_screen.dart
+purchase_order_form_screen.dart
+goods_receipt_screen.dart
+supplier_invoice_screen.dart
+supplier_payment_screen.dart
+purchase_return_screen.dart
+purchase_contracts_screen.dart
+purchase_budget_screen.dart
+supplier_evaluation_screen.dart
+purchases_reports_screen.dart
+purchases_ai_assistant_screen.dart
+widgets/
+purchases_kpi_card.dart
+supplier_table.dart
+purchase_order_status_badge.dart
+rfq_comparison_table.dart
+goods_receipt_table.dart
+three_way_match_card.dart
+supplier_rating_card.dart
+budget_usage_chart.dart
+approval_status_badge.dart
 
 Purchases UI Pages to Generate:
+
 1. Purchases Dashboard
 2. Supplier List
 3. Supplier Profile
@@ -659,6 +695,7 @@ Purchases UI Pages to Generate:
 20. Purchases Permission Matrix
 
 Important Integration Logic:
+
 - Approved purchase orders must create pending commitments in Finance.
 - Goods receipts must increase stock automatically in Inventory.
 - Supplier invoices must create accounts payable entries in Finance.

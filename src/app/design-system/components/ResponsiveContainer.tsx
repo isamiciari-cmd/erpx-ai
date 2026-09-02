@@ -7,12 +7,14 @@ interface ResponsiveContainerProps {
 
 export function ResponsiveContainer({ children, className = '' }: ResponsiveContainerProps) {
   return (
-    <div className={`
+    <div
+      className={`
       w-full mx-auto
       px-4 sm:px-6 md:px-8 lg:px-12 xl:px-16
       max-w-[375px] sm:max-w-[768px] lg:max-w-[1024px] xl:max-w-[1440px]
       ${className}
-    `}>
+    `}
+    >
       {children}
     </div>
   );
@@ -37,10 +39,11 @@ export function ResponsiveGrid({
   children,
   cols = { mobile: 1, tablet: 2, desktop: 3 },
   gap = { mobile: 4, tablet: 6, desktop: 8 },
-  className = ''
+  className = '',
 }: GridProps) {
   return (
-    <div className={`
+    <div
+      className={`
       grid
       grid-cols-${cols.mobile || 1}
       sm:grid-cols-${cols.tablet || 2}
@@ -49,7 +52,8 @@ export function ResponsiveGrid({
       sm:gap-${gap.tablet || 6}
       lg:gap-${gap.desktop || 8}
       ${className}
-    `}>
+    `}
+    >
       {children}
     </div>
   );
@@ -76,20 +80,22 @@ export function ResponsiveFlex({
   gap = 4,
   align = 'start',
   justify = 'start',
-  className = ''
+  className = '',
 }: FlexProps) {
   const responsiveDir = responsive
     ? `flex-${responsive.mobile || direction} sm:flex-${responsive.tablet || direction} lg:flex-${responsive.desktop || direction}`
     : `flex-${direction}`;
 
   return (
-    <div className={`
+    <div
+      className={`
       flex ${responsiveDir}
       gap-${gap}
       items-${align}
       justify-${justify}
       ${className}
-    `}>
+    `}
+    >
       {children}
     </div>
   );
@@ -102,17 +108,9 @@ interface StackProps {
 }
 
 export function Stack({ children, spacing = 4, className = '' }: StackProps) {
-  return (
-    <div className={`flex flex-col gap-${spacing} ${className}`}>
-      {children}
-    </div>
-  );
+  return <div className={`flex flex-col gap-${spacing} ${className}`}>{children}</div>;
 }
 
 export function HStack({ children, spacing = 4, className = '' }: StackProps) {
-  return (
-    <div className={`flex flex-row gap-${spacing} ${className}`}>
-      {children}
-    </div>
-  );
+  return <div className={`flex flex-row gap-${spacing} ${className}`}>{children}</div>;
 }

@@ -14,9 +14,9 @@ const MovementBarChart = React.memo(({ data }: MovementBarChartProps) => {
         <YAxis stroke="#9CA3AF" />
         <Tooltip
           contentStyle={{
-            backgroundColor: "#1F2937",
-            border: "1px solid #374151",
-            borderRadius: "8px",
+            backgroundColor: '#1F2937',
+            border: '1px solid #374151',
+            borderRadius: '8px',
           }}
         />
         <Bar dataKey="in" fill="#10B981" radius={[4, 4, 0, 0]} name="Stock In" />

@@ -1,10 +1,9 @@
-import { useState, useEffect } from 'react';
+import { useState } from 'react';
 import { motion, AnimatePresence } from 'motion/react';
 import ThemeToggle from '../components/ThemeToggle';
 import {
   DollarSign,
   TrendingUp,
-  TrendingDown,
   Download,
   ChevronRight,
   FileText,
@@ -14,7 +13,6 @@ import {
   Users,
   ShoppingCart,
   Package,
-  Briefcase,
   AlertCircle,
   CheckCircle,
   Clock,
@@ -33,12 +31,9 @@ import {
   Zap,
   AlertTriangle,
   Send,
-  Printer,
   QrCode,
   Plus,
-  Edit,
   Eye,
-  Trash2,
   Filter,
   Search,
   Building2,
@@ -48,7 +43,6 @@ import {
   BarChart,
   FileCheck,
   XCircle,
-  MessageSquare,
   RefreshCw,
   Warehouse,
 } from 'lucide-react';
@@ -67,7 +61,6 @@ import {
   CartesianGrid,
   Tooltip,
   ResponsiveContainer,
-  ComposedChart,
 } from 'recharts';
 import { useDashboardAnalytics, useInvoices } from '../../hooks/useSupabaseQuery';
 import { useAuth } from '../../contexts/AuthContext';
@@ -107,7 +100,7 @@ function processMonthlyData(invoices: any[], salesOrders: any[]) {
       cashFlow,
       moneyIn: revenue,
       moneyOut: expenses,
-      profit: revenue - expenses
+      profit: revenue - expenses,
     };
   });
 }
@@ -313,11 +306,56 @@ const invoiceStatusData = [
 
 // Recent Invoices
 const recentInvoices = [
-  { id: 'INV-2024-001', customer: 'Acme Corp', date: '2024-06-01', dueDate: '2024-06-15', amount: 12500, vat: 1875, status: 'Paid', hasQR: true },
-  { id: 'INV-2024-002', customer: 'TechStart Inc', date: '2024-06-03', dueDate: '2024-06-17', amount: 8900, vat: 1335, status: 'Unpaid', hasQR: true },
-  { id: 'INV-2024-003', customer: 'Global Trade', date: '2024-05-28', dueDate: '2024-06-11', amount: 15200, vat: 2280, status: 'Overdue', hasQR: true },
-  { id: 'INV-2024-004', customer: 'Retail Plus', date: '2024-06-05', dueDate: '2024-06-19', amount: 6750, vat: 1012.5, status: 'Paid', hasQR: true },
-  { id: 'INV-2024-005', customer: 'Manufacturing Co', date: '2024-06-02', dueDate: '2024-06-16', amount: 22400, vat: 3360, status: 'Unpaid', hasQR: true },
+  {
+    id: 'INV-2024-001',
+    customer: 'Acme Corp',
+    date: '2024-06-01',
+    dueDate: '2024-06-15',
+    amount: 12500,
+    vat: 1875,
+    status: 'Paid',
+    hasQR: true,
+  },
+  {
+    id: 'INV-2024-002',
+    customer: 'TechStart Inc',
+    date: '2024-06-03',
+    dueDate: '2024-06-17',
+    amount: 8900,
+    vat: 1335,
+    status: 'Unpaid',
+    hasQR: true,
+  },
+  {
+    id: 'INV-2024-003',
+    customer: 'Global Trade',
+    date: '2024-05-28',
+    dueDate: '2024-06-11',
+    amount: 15200,
+    vat: 2280,
+    status: 'Overdue',
+    hasQR: true,
+  },
+  {
+    id: 'INV-2024-004',
+    customer: 'Retail Plus',
+    date: '2024-06-05',
+    dueDate: '2024-06-19',
+    amount: 6750,
+    vat: 1012.5,
+    status: 'Paid',
+    hasQR: true,
+  },
+  {
+    id: 'INV-2024-005',
+    customer: 'Manufacturing Co',
+    date: '2024-06-02',
+    dueDate: '2024-06-16',
+    amount: 22400,
+    vat: 3360,
+    status: 'Unpaid',
+    hasQR: true,
+  },
 ];
 
 // AI Insights Data
@@ -418,7 +456,12 @@ export default function ExecutiveDashboard() {
   const [showInvoiceBuilder, setShowInvoiceBuilder] = useState(false);
 
   // Fetch real-time data from PostgreSQL
-  const { data: analytics, loading: analyticsLoading, error: analyticsError, refetch: refetchAnalytics } = useDashboardAnalytics();
+  const {
+    data: analytics,
+    loading: analyticsLoading,
+    error: analyticsError,
+    refetch: refetchAnalytics,
+  } = useDashboardAnalytics();
   const { data: allInvoices, loading: invoicesLoading } = useInvoices();
 
   // Calculate real KPIs from database data
@@ -433,21 +476,26 @@ export default function ExecutiveDashboard() {
   const totalExpenses = 0; // TODO: Fetch from expenses table
   const netProfit = totalRevenue - totalExpenses;
   const cashBalance = totalRevenue; // Simplified - should track actual cash
-  const stockValue = inventory.reduce((sum: number, item: any) =>
-    sum + (item.quantityAvailable * item.product.unitPrice), 0
+  const stockValue = inventory.reduce(
+    (sum: number, item: any) => sum + item.quantityAvailable * item.product.unitPrice,
+    0,
   );
-  const availableStock = inventory.reduce((sum: number, item: any) => sum + item.quantityAvailable, 0);
-  const reservedStock = inventory.reduce((sum: number, item: any) => sum + item.quantityReserved, 0);
+  const availableStock = inventory.reduce(
+    (sum: number, item: any) => sum + item.quantityAvailable,
+    0,
+  );
+  const reservedStock = inventory.reduce(
+    (sum: number, item: any) => sum + item.quantityReserved,
+    0,
+  );
 
   // Invoice KPIs - Real calculations
   const paidInvoices = invoices.filter((inv: any) => inv.status === 'PAID');
   const unpaidInvoices = invoices.filter((inv: any) => inv.status === 'UNPAID');
-  const overdueInvoices = invoices.filter((inv: any) =>
-    inv.status === 'UNPAID' && new Date(inv.dueDate) < new Date()
+  const overdueInvoices = invoices.filter(
+    (inv: any) => inv.status === 'UNPAID' && new Date(inv.dueDate) < new Date(),
   );
-  const vatCollected = invoices.reduce((sum: number, inv: any) =>
-    sum + (inv.vatAmount || 0), 0
-  );
+  const vatCollected = invoices.reduce((sum: number, inv: any) => sum + (inv.vatAmount || 0), 0);
 
   // Chart data - Process from database
   const monthlyData = processMonthlyData(invoices, salesOrders);
@@ -555,7 +603,12 @@ export default function ExecutiveDashboard() {
                 Business Dashboard
               </h1>
               <p className="text-gray-600 dark:text-gray-400 text-lg font-medium">
-                Financial Control & Operational Excellence • {new Date().toLocaleDateString('en-US', { month: 'long', day: 'numeric', year: 'numeric' })}
+                Financial Control & Operational Excellence •{' '}
+                {new Date().toLocaleDateString('en-US', {
+                  month: 'long',
+                  day: 'numeric',
+                  year: 'numeric',
+                })}
               </p>
             </div>
 
@@ -673,7 +726,13 @@ export default function ExecutiveDashboard() {
                     </linearGradient>
                   </defs>
                   <CartesianGrid strokeDasharray="3 3" stroke="#374151" opacity={0.3} />
-                  <XAxis dataKey="month" stroke="#6B7280" fontSize={12} tickLine={false} axisLine={false} />
+                  <XAxis
+                    dataKey="month"
+                    stroke="#6B7280"
+                    fontSize={12}
+                    tickLine={false}
+                    axisLine={false}
+                  />
                   <YAxis stroke="#6B7280" fontSize={12} tickLine={false} axisLine={false} />
                   <Tooltip content={<CustomTooltip />} />
                   <Line
@@ -706,10 +765,21 @@ export default function ExecutiveDashboard() {
                     </linearGradient>
                   </defs>
                   <CartesianGrid strokeDasharray="3 3" stroke="#374151" opacity={0.3} />
-                  <XAxis dataKey="month" stroke="#6B7280" fontSize={12} tickLine={false} axisLine={false} />
+                  <XAxis
+                    dataKey="month"
+                    stroke="#6B7280"
+                    fontSize={12}
+                    tickLine={false}
+                    axisLine={false}
+                  />
                   <YAxis stroke="#6B7280" fontSize={12} tickLine={false} axisLine={false} />
                   <Tooltip content={<CustomTooltip />} />
-                  <Bar dataKey="cashFlow" fill="url(#cashFlowBar)" radius={[12, 12, 0, 0]} name="Cash Flow" />
+                  <Bar
+                    dataKey="cashFlow"
+                    fill="url(#cashFlowBar)"
+                    radius={[12, 12, 0, 0]}
+                    name="Cash Flow"
+                  />
                 </RechartsBarChart>
               </ResponsiveContainer>
             </ChartCard>
@@ -719,8 +789,18 @@ export default function ExecutiveDashboard() {
                 <RechartsPieChart>
                   <Pie
                     data={[
-                      { id: 'revenue-paid', name: 'Paid Invoices', value: totalRevenue, color: '#10B981' },
-                      { id: 'revenue-outstanding', name: 'Outstanding', value: outstandingBalance, color: '#F59E0B' },
+                      {
+                        id: 'revenue-paid',
+                        name: 'Paid Invoices',
+                        value: totalRevenue,
+                        color: '#10B981',
+                      },
+                      {
+                        id: 'revenue-outstanding',
+                        name: 'Outstanding',
+                        value: outstandingBalance,
+                        color: '#F59E0B',
+                      },
                     ]}
                     cx="50%"
                     cy="50%"
@@ -730,8 +810,18 @@ export default function ExecutiveDashboard() {
                     dataKey="value"
                   >
                     {[
-                      { id: 'revenue-paid', name: 'Paid Invoices', value: totalRevenue, color: '#10B981' },
-                      { id: 'revenue-outstanding', name: 'Outstanding', value: outstandingBalance, color: '#F59E0B' },
+                      {
+                        id: 'revenue-paid',
+                        name: 'Paid Invoices',
+                        value: totalRevenue,
+                        color: '#10B981',
+                      },
+                      {
+                        id: 'revenue-outstanding',
+                        name: 'Outstanding',
+                        value: outstandingBalance,
+                        color: '#F59E0B',
+                      },
                     ].map((entry) => (
                       <Cell key={entry.id} fill={entry.color} />
                     ))}
@@ -757,11 +847,22 @@ export default function ExecutiveDashboard() {
                   <defs>
                     <linearGradient id="profitArea" x1="0" y1="0" x2="0" y2="1">
                       <stop key="profit-stop-0" offset="0%" stopColor="#10B981" stopOpacity={0.4} />
-                      <stop key="profit-stop-1" offset="100%" stopColor="#10B981" stopOpacity={0.05} />
+                      <stop
+                        key="profit-stop-1"
+                        offset="100%"
+                        stopColor="#10B981"
+                        stopOpacity={0.05}
+                      />
                     </linearGradient>
                   </defs>
                   <CartesianGrid strokeDasharray="3 3" stroke="#374151" opacity={0.3} />
-                  <XAxis dataKey="month" stroke="#6B7280" fontSize={12} tickLine={false} axisLine={false} />
+                  <XAxis
+                    dataKey="month"
+                    stroke="#6B7280"
+                    fontSize={12}
+                    tickLine={false}
+                    axisLine={false}
+                  />
                   <YAxis stroke="#6B7280" fontSize={12} tickLine={false} axisLine={false} />
                   <Tooltip content={<CustomTooltip />} />
                   <Area
@@ -906,8 +1007,9 @@ export default function ExecutiveDashboard() {
               dueDate: new Date(inv.dueDate).toISOString().split('T')[0],
               amount: inv.totalAmount,
               vat: inv.vatAmount,
-              status: inv.status === 'PAID' ? 'Paid' : inv.status === 'UNPAID' ? 'Unpaid' : 'Overdue',
-              hasQR: !!inv.qrCode
+              status:
+                inv.status === 'PAID' ? 'Paid' : inv.status === 'UNPAID' ? 'Unpaid' : 'Overdue',
+              hasQR: !!inv.qrCode,
             }))}
           />
         </div>
@@ -927,7 +1029,11 @@ export default function ExecutiveDashboard() {
                 color: 'from-blue-500 to-cyan-500',
                 kpis: [
                   { label: 'Orders', value: salesOrders.length.toString(), change: '+12%' },
-                  { label: 'Revenue', value: `$${(totalRevenue / 1000).toFixed(0)}K`, change: '+18%' },
+                  {
+                    label: 'Revenue',
+                    value: `$${(totalRevenue / 1000).toFixed(0)}K`,
+                    change: '+18%',
+                  },
                   { label: 'Invoices', value: invoices.length.toString(), change: '+8%' },
                 ],
               }}
@@ -940,7 +1046,11 @@ export default function ExecutiveDashboard() {
                 color: 'from-purple-500 to-pink-500',
                 kpis: [
                   { label: 'Products', value: inventory.length.toString(), change: '+45' },
-                  { label: 'Stock Value', value: `$${(stockValue / 1000).toFixed(0)}K`, change: '+5%' },
+                  {
+                    label: 'Stock Value',
+                    value: `$${(stockValue / 1000).toFixed(0)}K`,
+                    change: '+5%',
+                  },
                   { label: 'Available', value: availableStock.toString(), change: '-3' },
                 ],
               }}
@@ -952,7 +1062,11 @@ export default function ExecutiveDashboard() {
                 icon: DollarSign,
                 color: 'from-green-500 to-emerald-500',
                 kpis: [
-                  { label: 'Revenue', value: `$${(totalRevenue / 1000).toFixed(0)}K`, change: '+12%' },
+                  {
+                    label: 'Revenue',
+                    value: `$${(totalRevenue / 1000).toFixed(0)}K`,
+                    change: '+12%',
+                  },
                   { label: 'Profit', value: `$${(netProfit / 1000).toFixed(0)}K`, change: '+18%' },
                   { label: 'VAT', value: `$${(vatCollected / 1000).toFixed(0)}K`, change: '+5%' },
                 ],
@@ -1039,9 +1153,7 @@ export default function ExecutiveDashboard() {
 
       {/* Invoice Builder Modal */}
       <AnimatePresence>
-        {showInvoiceBuilder && (
-          <InvoiceBuilderModal onClose={() => setShowInvoiceBuilder(false)} />
-        )}
+        {showInvoiceBuilder && <InvoiceBuilderModal onClose={() => setShowInvoiceBuilder(false)} />}
       </AnimatePresence>
     </div>
   );
@@ -1049,7 +1161,7 @@ export default function ExecutiveDashboard() {
 
 // Financial KPI Card Component
 interface FinancialKPICardProps {
-  kpi: typeof financialKPIs[0];
+  kpi: (typeof financialKPIs)[0];
   index: number;
 }
 
@@ -1062,11 +1174,15 @@ function FinancialKPICard({ kpi, index }: FinancialKPICardProps) {
       whileHover={{ y: -4, scale: 1.02 }}
       className="relative bg-gradient-to-br from-white/80 to-gray-50/80 dark:from-gray-900/60 dark:to-gray-900/40 backdrop-blur-xl border border-gray-200/50 dark:border-gray-800/50 rounded-3xl p-6 hover:border-gray-300/50 dark:hover:border-gray-700/50 transition-all group overflow-hidden shadow-lg dark:shadow-none"
     >
-      <div className={`absolute inset-0 bg-gradient-to-br ${kpi.color} opacity-0 group-hover:opacity-5 dark:group-hover:opacity-5 transition-opacity duration-500`} />
+      <div
+        className={`absolute inset-0 bg-gradient-to-br ${kpi.color} opacity-0 group-hover:opacity-5 dark:group-hover:opacity-5 transition-opacity duration-500`}
+      />
 
       <div className="relative">
         <div className="flex items-start justify-between mb-4">
-          <div className={`w-14 h-14 bg-gradient-to-br ${kpi.color} rounded-2xl flex items-center justify-center shadow-lg`}>
+          <div
+            className={`w-14 h-14 bg-gradient-to-br ${kpi.color} rounded-2xl flex items-center justify-center shadow-lg`}
+          >
             <kpi.icon className="w-7 h-7 text-white" />
           </div>
           <div className="flex items-center gap-2">
@@ -1075,7 +1191,9 @@ function FinancialKPICard({ kpi, index }: FinancialKPICardProps) {
             ) : (
               <ArrowDownRight className="w-5 h-5 text-red-500 dark:text-red-400" />
             )}
-            <span className={`text-sm font-bold ${kpi.trend === 'up' ? 'text-green-600 dark:text-green-400' : 'text-red-600 dark:text-red-400'}`}>
+            <span
+              className={`text-sm font-bold ${kpi.trend === 'up' ? 'text-green-600 dark:text-green-400' : 'text-red-600 dark:text-red-400'}`}
+            >
               {kpi.change}
             </span>
           </div>
@@ -1093,7 +1211,7 @@ function FinancialKPICard({ kpi, index }: FinancialKPICardProps) {
 
 // Invoice KPI Card
 interface InvoiceKPICardProps {
-  kpi: typeof invoiceKPIs[0];
+  kpi: (typeof invoiceKPIs)[0];
   index: number;
 }
 
@@ -1106,11 +1224,15 @@ function InvoiceKPICard({ kpi, index }: InvoiceKPICardProps) {
       whileHover={{ y: -2, scale: 1.02 }}
       className="relative bg-gradient-to-br from-white/80 to-gray-50/80 dark:from-gray-900/60 dark:to-gray-900/40 backdrop-blur-xl border border-gray-200/50 dark:border-gray-800/50 rounded-2xl p-5 hover:border-gray-300/50 dark:hover:border-gray-700/50 transition-all group overflow-hidden shadow-md dark:shadow-none"
     >
-      <div className={`absolute inset-0 bg-gradient-to-br ${kpi.color} opacity-0 group-hover:opacity-5 dark:group-hover:opacity-5 transition-opacity duration-500`} />
+      <div
+        className={`absolute inset-0 bg-gradient-to-br ${kpi.color} opacity-0 group-hover:opacity-5 dark:group-hover:opacity-5 transition-opacity duration-500`}
+      />
 
       <div className="relative">
         <div className="flex items-start justify-between mb-3">
-          <div className={`w-12 h-12 bg-gradient-to-br ${kpi.color} rounded-xl flex items-center justify-center shadow-lg`}>
+          <div
+            className={`w-12 h-12 bg-gradient-to-br ${kpi.color} rounded-xl flex items-center justify-center shadow-lg`}
+          >
             <kpi.icon className="w-6 h-6 text-white" />
           </div>
           <div className="flex items-center gap-1">
@@ -1119,7 +1241,9 @@ function InvoiceKPICard({ kpi, index }: InvoiceKPICardProps) {
             ) : (
               <ArrowDownRight className="w-4 h-4 text-red-500 dark:text-red-400" />
             )}
-            <span className={`text-xs font-bold ${kpi.trend === 'up' ? 'text-green-600 dark:text-green-400' : 'text-red-600 dark:text-red-400'}`}>
+            <span
+              className={`text-xs font-bold ${kpi.trend === 'up' ? 'text-green-600 dark:text-green-400' : 'text-red-600 dark:text-red-400'}`}
+            >
               {kpi.change}
             </span>
           </div>
@@ -1143,12 +1267,20 @@ interface SectionHeaderProps {
   onCloseDownload?: () => void;
 }
 
-function SectionHeader({ title, subtitle, onDownload, downloadMenuOpen, onCloseDownload }: SectionHeaderProps) {
+function SectionHeader({
+  title,
+  subtitle,
+  onDownload,
+  downloadMenuOpen,
+  onCloseDownload,
+}: SectionHeaderProps) {
   return (
     <div className="flex items-center justify-between mb-6">
       <div>
         <h2 className="text-3xl font-bold text-gray-900 dark:text-white mb-1">{title}</h2>
-        {subtitle && <p className="text-gray-600 dark:text-gray-400 text-sm font-medium">{subtitle}</p>}
+        {subtitle && (
+          <p className="text-gray-600 dark:text-gray-400 text-sm font-medium">{subtitle}</p>
+        )}
       </div>
 
       {onDownload && (
@@ -1228,7 +1360,9 @@ function ChartCard({ title, icon: Icon, color, children }: ChartCardProps) {
       className="bg-gradient-to-br from-white/80 to-gray-50/80 dark:from-gray-900/60 dark:to-gray-900/40 backdrop-blur-xl border border-gray-200/50 dark:border-gray-800/50 rounded-3xl p-6 hover:border-gray-300/50 dark:hover:border-gray-700/50 transition-all shadow-lg dark:shadow-none"
     >
       <div className="flex items-center gap-3 mb-6">
-        <div className={`w-12 h-12 bg-gradient-to-br ${colorMap[color]} rounded-2xl flex items-center justify-center shadow-lg`}>
+        <div
+          className={`w-12 h-12 bg-gradient-to-br ${colorMap[color]} rounded-2xl flex items-center justify-center shadow-lg`}
+        >
           <Icon className="w-6 h-6 text-white" />
         </div>
         <h3 className="text-xl font-bold text-gray-900 dark:text-white">{title}</h3>
@@ -1292,7 +1426,9 @@ function ActionButton({ icon: Icon, label, color, onClick }: ActionButtonProps) 
       onClick={onClick}
       className="w-full px-4 py-3 bg-gray-100 dark:bg-gray-800/50 hover:bg-gray-200 dark:hover:bg-gray-800 border border-gray-300 dark:border-gray-700/50 hover:border-gray-400 dark:hover:border-gray-600/50 rounded-xl flex items-center gap-3 text-gray-900 dark:text-white transition-all group"
     >
-      <div className={`w-10 h-10 bg-gradient-to-br ${colorMap[color]} rounded-xl flex items-center justify-center shadow-lg`}>
+      <div
+        className={`w-10 h-10 bg-gradient-to-br ${colorMap[color]} rounded-xl flex items-center justify-center shadow-lg`}
+      >
         <Icon className="w-5 h-5 text-white" />
       </div>
       <span className="font-semibold text-sm">{label}</span>
@@ -1326,15 +1462,21 @@ function VATSummaryCard({ vatCollected }: VATSummaryCardProps) {
       <div className="space-y-4">
         <div className="flex items-center justify-between">
           <span className="text-sm text-gray-600 dark:text-gray-400">VAT Collected</span>
-          <span className="text-lg font-bold text-gray-900 dark:text-white">${vatCollected.toLocaleString()}</span>
+          <span className="text-lg font-bold text-gray-900 dark:text-white">
+            ${vatCollected.toLocaleString()}
+          </span>
         </div>
         <div className="flex items-center justify-between">
           <span className="text-sm text-gray-600 dark:text-gray-400">VAT Payable</span>
-          <span className="text-lg font-bold text-gray-900 dark:text-white">${vatPayable.toLocaleString()}</span>
+          <span className="text-lg font-bold text-gray-900 dark:text-white">
+            ${vatPayable.toLocaleString()}
+          </span>
         </div>
         <div className="flex items-center justify-between pt-4 border-t border-gray-300 dark:border-gray-800/50">
           <span className="text-sm font-semibold text-gray-700 dark:text-gray-300">Net VAT</span>
-          <span className="text-xl font-bold text-green-600 dark:text-green-400">${netVat.toLocaleString()}</span>
+          <span className="text-xl font-bold text-green-600 dark:text-green-400">
+            ${netVat.toLocaleString()}
+          </span>
         </div>
 
         <motion.button
@@ -1409,16 +1551,20 @@ function InvoicesTable({ invoices }: InvoicesTableProps) {
                 <td className="py-4 text-sm text-white">{invoice.customer}</td>
                 <td className="py-4 text-sm text-gray-400">{invoice.date}</td>
                 <td className="py-4 text-sm text-gray-400">{invoice.dueDate}</td>
-                <td className="py-4 text-sm text-right font-semibold text-white">${invoice.amount.toLocaleString()}</td>
-                <td className="py-4 text-sm text-right text-gray-400">${invoice.vat.toLocaleString()}</td>
+                <td className="py-4 text-sm text-right font-semibold text-white">
+                  ${invoice.amount.toLocaleString()}
+                </td>
+                <td className="py-4 text-sm text-right text-gray-400">
+                  ${invoice.vat.toLocaleString()}
+                </td>
                 <td className="py-4">
                   <span
                     className={`inline-flex px-3 py-1 rounded-full text-xs font-semibold ${
                       invoice.status === 'Paid'
                         ? 'bg-green-500/20 text-green-400'
                         : invoice.status === 'Unpaid'
-                        ? 'bg-yellow-500/20 text-yellow-400'
-                        : 'bg-red-500/20 text-red-400'
+                          ? 'bg-yellow-500/20 text-yellow-400'
+                          : 'bg-red-500/20 text-red-400'
                     }`}
                   >
                     {invoice.status}
@@ -1463,7 +1609,7 @@ function InvoicesTable({ invoices }: InvoicesTableProps) {
 
 // Business Module Card
 interface BusinessModuleCardProps {
-  module: typeof moduleStats[0];
+  module: (typeof moduleStats)[0];
   index: number;
 }
 
@@ -1477,7 +1623,9 @@ function BusinessModuleCard({ module, index }: BusinessModuleCardProps) {
       className="bg-gradient-to-br from-gray-900/60 to-gray-900/40 backdrop-blur-xl border border-gray-800/50 rounded-3xl p-6 hover:border-gray-700/50 transition-all group"
     >
       <div className="flex items-center gap-3 mb-6">
-        <div className={`w-14 h-14 bg-gradient-to-br ${module.color} rounded-2xl flex items-center justify-center shadow-lg`}>
+        <div
+          className={`w-14 h-14 bg-gradient-to-br ${module.color} rounded-2xl flex items-center justify-center shadow-lg`}
+        >
           <module.icon className="w-7 h-7 text-white" />
         </div>
         <h3 className="text-xl font-bold text-white">{module.module}</h3>
@@ -1509,7 +1657,7 @@ function BusinessModuleCard({ module, index }: BusinessModuleCardProps) {
 
 // AI Insight Card
 interface AIInsightCardProps {
-  insight: typeof aiInsights[0];
+  insight: (typeof aiInsights)[0];
   index: number;
 }
 
@@ -1553,7 +1701,9 @@ function AIInsightCard({ insight, index }: AIInsightCardProps) {
       </div>
 
       <h3 className="text-lg font-bold text-gray-900 dark:text-white mb-2">{insight.title}</h3>
-      <p className="text-sm text-gray-700 dark:text-gray-400 leading-relaxed mb-4">{insight.message}</p>
+      <p className="text-sm text-gray-700 dark:text-gray-400 leading-relaxed mb-4">
+        {insight.message}
+      </p>
 
       <motion.button
         whileHover={{ scale: 1.05 }}
@@ -1615,7 +1765,9 @@ function ReportCard({ title, description, icon: Icon, color }: ReportCardProps) 
       whileHover={{ y: -4, scale: 1.02 }}
       className={`bg-gradient-to-br ${config.gradient} backdrop-blur-xl border border-gray-800/50 rounded-3xl p-6 hover:border-gray-700/50 transition-all`}
     >
-      <div className={`w-14 h-14 bg-gradient-to-br ${config.icon} rounded-2xl flex items-center justify-center mb-4 shadow-lg`}>
+      <div
+        className={`w-14 h-14 bg-gradient-to-br ${config.icon} rounded-2xl flex items-center justify-center mb-4 shadow-lg`}
+      >
         <Icon className="w-7 h-7 text-white" />
       </div>
 
@@ -1698,7 +1850,9 @@ function InvoiceBuilderModal({ onClose }: InvoiceBuilderModalProps) {
                 </select>
               </div>
               <div>
-                <label className="block text-sm font-semibold text-gray-400 mb-2">Invoice Date</label>
+                <label className="block text-sm font-semibold text-gray-400 mb-2">
+                  Invoice Date
+                </label>
                 <input
                   type="date"
                   className="w-full px-4 py-3 bg-gray-800/50 border border-gray-700/50 rounded-xl text-white focus:outline-none focus:ring-2 focus:ring-blue-500/50"
@@ -1731,7 +1885,9 @@ function InvoiceBuilderModal({ onClose }: InvoiceBuilderModalProps) {
                     placeholder="Price"
                     className="px-3 py-2 bg-gray-900/50 border border-gray-700/50 rounded-lg text-sm text-white focus:outline-none focus:ring-2 focus:ring-blue-500/50"
                   />
-                  <div className="px-3 py-2 bg-gray-900/50 border border-gray-700/50 rounded-lg text-sm text-white text-right">$0.00</div>
+                  <div className="px-3 py-2 bg-gray-900/50 border border-gray-700/50 rounded-lg text-sm text-white text-right">
+                    $0.00
+                  </div>
                 </div>
               </div>
 

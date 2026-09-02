@@ -1,10 +1,19 @@
-import { useState } from "react";
-import { motion } from "motion/react";
-import { Link } from "react-router";
-import { BarChart3, TrendingUp, Users, DollarSign, AlertCircle, Globe, Eye, EyeOff } from "lucide-react";
-import { useTranslation } from "react-i18next";
-import { LanguageSwitcher } from "../../components/LanguageSwitcher";
-import { supabase, isDemoMode, hasSupabaseConfig } from "../../lib/supabase";
+import { useState } from 'react';
+import { motion } from 'motion/react';
+import { Link } from 'react-router';
+import {
+  BarChart3,
+  TrendingUp,
+  Users,
+  DollarSign,
+  AlertCircle,
+  Globe,
+  Eye,
+  EyeOff,
+} from 'lucide-react';
+import { useTranslation } from 'react-i18next';
+import { LanguageSwitcher } from '../../components/LanguageSwitcher';
+import { supabase, isDemoMode, hasSupabaseConfig } from '../../lib/supabase';
 
 interface ProductionLoginProps {
   onLoginSuccess?: () => void;
@@ -12,61 +21,76 @@ interface ProductionLoginProps {
 
 export default function ProductionLogin({ onLoginSuccess }: ProductionLoginProps) {
   const { t } = useTranslation();
-  const [email, setEmail] = useState("");
-  const [password, setPassword] = useState("");
+  const [email, setEmail] = useState('');
+  const [password, setPassword] = useState('');
   const [rememberMe, setRememberMe] = useState(false);
   const [showPassword, setShowPassword] = useState(false);
-  const [error, setError] = useState("");
+  const [error, setError] = useState('');
   const [isSubmitting, setIsSubmitting] = useState(false);
 
   const handleLogin = async (e: React.FormEvent) => {
     e.preventDefault();
-    setError("");
+    setError('');
 
     if (isSubmitting) {
       return;
     }
 
     if (!email.trim() || !password.trim()) {
-      setError("Please enter both email and password.");
+      setError('Please enter both email and password.');
       return;
     }
 
     if (isDemoMode && !hasSupabaseConfig) {
-      const demoEmail = email.trim() || "admin@erpx-ai.com";
-      const demoPassword = password.trim() || "@12345";
+      const demoEmail = email.trim() || 'admin@erpx-ai.com';
+      const demoPassword = password.trim() || '@12345';
 
-      localStorage.setItem("erpx_demo_email", demoEmail);
-      localStorage.setItem("erpx_demo_password", demoPassword);
-      console.log("[Login] Demo mode fallback active. Redirecting to /dashboard");
-      window.location.href = "/dashboard";
+      localStorage.setItem('erpx_demo_email', demoEmail);
+      localStorage.setItem('erpx_demo_password', demoPassword);
+      console.log('[Login] Demo mode fallback active. Redirecting to /dashboard');
+      window.location.href = '/dashboard';
       return;
     }
 
     setIsSubmitting(true);
 
     try {
+      const trimmedEmail = email.trim();
+      console.log('[Login] Attempting sign-in', {
+        email: trimmedEmail,
+        hasSupabaseConfig,
+        isDemoMode,
+        authUrl: import.meta.env.VITE_SUPABASE_URL,
+      });
+
       const { data, error } = await supabase.auth.signInWithPassword({
-        email: email.trim(),
+        email: trimmedEmail,
         password,
       });
 
+      console.log('[Login] signInWithPassword result', {
+        user: data?.user?.id ?? null,
+        error: error?.message ?? null,
+      });
+
       if (error) {
-        console.error("[Login] Sign in failed:", error);
-        setError(error.message || "Invalid email or password.");
+        console.error('[Login] Sign in failed:', error);
+        setError(error.message || 'Invalid email or password.');
         return;
       }
 
       if (!data.user) {
-        setError("Authentication succeeded but no user was returned.");
+        console.error('[Login] Auth succeeded but no user returned from Supabase.', data);
+        setError('Authentication succeeded but no user was returned.');
         return;
       }
 
-      localStorage.setItem("erpx_demo_email", data.user.email || email.trim());
-      window.location.href = "/dashboard";
+      localStorage.setItem('erpx_demo_email', data.user.email || trimmedEmail);
+      console.log('[Login] Redirecting to /dashboard with user', data.user.id);
+      window.location.href = '/dashboard';
     } catch (err) {
-      console.error("[Login] Unexpected sign-in error:", err);
-      setError(err instanceof Error ? err.message : "Unable to sign in. Please try again.");
+      console.error('[Login] Unexpected sign-in error:', err);
+      setError(err instanceof Error ? err.message : 'Unable to sign in. Please try again.');
     } finally {
       setIsSubmitting(false);
     }
@@ -231,7 +255,7 @@ export default function ProductionLogin({ onLoginSuccess }: ProductionLoginProps
               <div className="relative">
                 <input
                   id="password"
-                  type={showPassword ? "text" : "password"}
+                  type={showPassword ? 'text' : 'password'}
                   value={password}
                   onChange={(e) => setPassword(e.target.value)}
                   className="w-full px-4 py-3 bg-white/5 backdrop-blur-sm border border-white/10 rounded-lg text-white placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all pr-12"
@@ -244,11 +268,7 @@ export default function ProductionLogin({ onLoginSuccess }: ProductionLoginProps
                   onClick={() => setShowPassword(!showPassword)}
                   className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400 hover:text-white transition-colors"
                 >
-                  {showPassword ? (
-                    <EyeOff className="w-5 h-5" />
-                  ) : (
-                    <Eye className="w-5 h-5" />
-                  )}
+                  {showPassword ? <EyeOff className="w-5 h-5" /> : <Eye className="w-5 h-5" />}
                 </button>
               </div>
             </motion.div>
@@ -287,12 +307,10 @@ export default function ProductionLogin({ onLoginSuccess }: ProductionLoginProps
             >
               <div className="absolute inset-0 bg-gradient-to-r from-blue-500 to-cyan-500 opacity-0 group-hover:opacity-100 transition-opacity" />
               <span className="relative flex items-center justify-center gap-2">
-                {isSubmitting ? "Signing in..." : t('auth.signIn')}
+                {isSubmitting ? 'Signing in...' : t('auth.signIn')}
               </span>
               <div className="absolute inset-0 shadow-[0_0_20px_rgba(59,130,246,0.5)] opacity-0 group-hover:opacity-100 transition-opacity" />
             </motion.button>
-
-            
           </form>
 
           <motion.div
@@ -314,8 +332,6 @@ export default function ProductionLogin({ onLoginSuccess }: ProductionLoginProps
               <p className="text-xs text-gray-500">OR</p>
               <div className="flex-1 h-px bg-gray-700"></div>
             </div>
-
-            
           </motion.div>
         </div>
       </motion.div>

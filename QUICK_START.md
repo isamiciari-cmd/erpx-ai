@@ -11,7 +11,7 @@
 ✅ **Multi-Tenant SaaS** - Full admin platform with billing & automation  
 ✅ **AI Features** - Predictions, chatbot, voice control, decision engine  
 ✅ **Saudi Compliance** - ZATCA e-invoicing with UBL XML & QR codes  
-✅ **Full Documentation** - Architecture guide, README, file manifest  
+✅ **Full Documentation** - Architecture guide, README, file manifest
 
 ## 📂 Extract the Archive
 
@@ -44,6 +44,7 @@ pnpm install
 ## 📚 Documentation Files
 
 ### 1. **README.md** - Start Here!
+
 - Complete feature list
 - Technology stack
 - All routes and pages
@@ -51,6 +52,7 @@ pnpm install
 - Development guide
 
 ### 2. **ARCHITECTURE.md** - System Design
+
 - Entity models with TypeScript types
 - Integration flows (POS → Finance → Inventory → HR)
 - Multi-tenant architecture
@@ -58,6 +60,7 @@ pnpm install
 - RBAC system
 
 ### 3. **FILE_MANIFEST.md** - File Guide
+
 - Complete file listing (99 files)
 - What each file does
 - Where to find specific features
@@ -112,6 +115,7 @@ src/app/
 ## 🎨 Features by Module
 
 ### 💰 Finance (5 pages)
+
 - Chart of Accounts
 - Multi-currency invoicing
 - Expense tracking
@@ -119,15 +123,18 @@ src/app/
 - **ZATCA e-invoicing** ⭐
 
 ### 👥 HR (1 page)
+
 - Employee management
 - Contract tracking
 - Payroll calculation
 
 ### 📦 Operations (2 pages)
+
 - Inventory management
 - **POS Terminal** ⭐
 
 ### 🏢 Admin SaaS (7 pages)
+
 - **Control Tower** ⭐
 - Tenant management
 - **ERPX Studio** (Low-code builder) ⭐
@@ -137,6 +144,7 @@ src/app/
 - Automation rules
 
 ### 🤖 AI Features
+
 - Revenue forecasting
 - Anomaly detection
 - **AI Chatbot** ⭐
@@ -156,9 +164,11 @@ Dashboard
 ## 🌐 Available Routes
 
 ### Public
+
 - `/pricing` - Pricing page with signup
 
 ### Main App (After login)
+
 - `/` - Dashboard
 - `/finance/*` - Finance modules
 - `/hr/employees` - HR management
@@ -178,6 +188,7 @@ Dashboard
 ## 🔐 User Roles & Permissions
 
 ### Roles (in `services/PermissionsManager.ts`)
+
 1. **super_admin** - Full platform access
 2. **admin** - Platform management
 3. **tenant_admin** - Manage own tenant
@@ -185,6 +196,7 @@ Dashboard
 5. **viewer** - Read-only
 
 ### Test with
+
 Login with any credentials, system defaults to super_admin for demo.
 
 ## 🤖 Automation Rules (4 rules)
@@ -201,6 +213,7 @@ Test by running simulation in `/admin/automation`
 ## 📊 Data Flow Example
 
 ### POS Transaction Flow
+
 ```typescript
 // src/app/pages/POSPage.tsx
 
@@ -218,28 +231,34 @@ See integration in: `POSPage.tsx` lines 250-280
 ## 🎯 Common Tasks
 
 ### Add a new page?
+
 1. Create file in `src/app/pages/YourPage.tsx`
 2. Add route in `src/app/App.tsx`
 3. Add menu item in `src/app/layout/Sidebar.tsx`
 
 ### Customize colors?
+
 Edit `src/styles/theme.css` for design tokens
 
 ### Add new automation rule?
+
 Edit `src/app/services/AutomationEngine.ts`
 
 ### Change permissions?
+
 Edit `src/app/services/PermissionsManager.ts`
 
 ## 🐛 Important Notes
 
 ⚠️ **This is a demo/prototype**:
+
 - All APIs are **mock** (no real backend)
 - Data stored in **memory** (resets on refresh)
 - Stripe is **simulated** (no real billing)
 - AI is **rule-based** (not real ML)
 
 ✅ **Perfect for**:
+
 - Understanding ERP architecture
 - Learning React + TypeScript patterns
 - Building real implementation on top

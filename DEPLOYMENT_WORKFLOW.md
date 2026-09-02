@@ -46,6 +46,7 @@ git push -u origin main
 ```
 
 **Get GitHub Token:**
+
 1. Go to: https://github.com/settings/tokens
 2. Click "Generate new token (classic)"
 3. Check `repo` scope
@@ -79,6 +80,7 @@ git push -u origin main
 6. Click "Deploy"
 
 **Important Settings:**
+
 - ✅ Enable "Auto Deploy" for main branch
 - ✅ Add production domain: `erpx-ai.com`
 - ✅ Add redirect URLs in Supabase Authentication settings
@@ -148,11 +150,13 @@ After Vercel finishes deploying:
 ### Making Changes to ERPX-AI
 
 #### 1. Design Changes in Figma
+
 ```
 Figma → Export design → Convert to React components → Push to GitHub → Auto-deploy
 ```
 
 **Process:**
+
 1. Design in Figma
 2. Use Figma Dev Mode to get code
 3. Convert to React/TypeScript components
@@ -161,11 +165,13 @@ Figma → Export design → Convert to React components → Push to GitHub → A
 6. Vercel auto-deploys
 
 #### 2. Code Changes
+
 ```
 Claude Code / VS Code → Test locally → Commit → Push to GitHub → Auto-deploy
 ```
 
 **Process:**
+
 1. Make code changes
 2. Test locally: `pnpm dev`
 3. Commit: `git add . && git commit -m "description"`
@@ -173,17 +179,20 @@ Claude Code / VS Code → Test locally → Commit → Push to GitHub → Auto-de
 5. Vercel auto-deploys (takes 1-2 minutes)
 
 #### 3. Database Changes
+
 ```
 Supabase SQL Editor → Run migration → App automatically uses new data
 ```
 
 **Process:**
+
 1. Write SQL in Supabase SQL Editor
 2. Run migration
 3. Update TypeScript types if needed
 4. App reflects changes immediately (no redeploy needed for data)
 
 #### 4. Emergency Rollback
+
 ```
 Vercel Dashboard → Deployments → Find previous working version → Promote
 ```
@@ -197,6 +206,7 @@ Vercel Dashboard → Deployments → Find previous working version → Promote
 **Cause:** Code wasn't pushed to GitHub, Vercel deployed old code
 
 **Fix:**
+
 1. Make sure code is committed locally: `git status`
 2. Push to GitHub: `git push origin main`
 3. Wait for Vercel to auto-deploy
@@ -207,6 +217,7 @@ Vercel Dashboard → Deployments → Find previous working version → Promote
 **Cause:** Supabase environment variables not set
 
 **Fix:**
+
 1. Check Vercel → Settings → Environment Variables
 2. Make sure both `VITE_SUPABASE_URL` and `VITE_SUPABASE_ANON_KEY` are set
 3. Redeploy after adding variables
@@ -216,6 +227,7 @@ Vercel Dashboard → Deployments → Find previous working version → Promote
 **Cause:** Static/demo data instead of Supabase queries
 
 **Fix:**
+
 1. Check if component uses `useState` with hardcoded arrays
 2. Replace with Supabase query in `useEffect`
 3. See "Replacing Static Data" section below
@@ -225,6 +237,7 @@ Vercel Dashboard → Deployments → Find previous working version → Promote
 **Cause:** TypeScript errors or missing dependencies
 
 **Fix:**
+
 1. Test build locally: `pnpm build`
 2. Fix any errors
 3. Push fix to GitHub
@@ -235,14 +248,16 @@ Vercel Dashboard → Deployments → Find previous working version → Promote
 ## Replacing Static Data with Supabase
 
 ### Before (Static Data):
+
 ```typescript
 const [products, setProducts] = useState([
-  { id: "1", name: "Product A", price: 100 },
-  { id: "2", name: "Product B", price: 250 },
+  { id: '1', name: 'Product A', price: 100 },
+  { id: '2', name: 'Product B', price: 250 },
 ]);
 ```
 
 ### After (Supabase Data):
+
 ```typescript
 const [products, setProducts] = useState([]);
 const [loading, setLoading] = useState(true);
@@ -253,33 +268,31 @@ useEffect(() => {
       .from('products')
       .select('*')
       .eq('company_id', user.company_id);
-    
+
     if (data) setProducts(data);
     setLoading(false);
   }
-  
+
   fetchProducts();
 }, [user.company_id]);
 ```
 
 ### With Realtime:
+
 ```typescript
 useEffect(() => {
   // Initial fetch
   fetchProducts();
-  
+
   // Subscribe to changes
   const subscription = supabase
     .channel('products_changes')
-    .on('postgres_changes', 
-      { event: '*', schema: 'public', table: 'products' },
-      (payload) => {
-        console.log('Product changed:', payload);
-        fetchProducts(); // Refresh data
-      }
-    )
+    .on('postgres_changes', { event: '*', schema: 'public', table: 'products' }, (payload) => {
+      console.log('Product changed:', payload);
+      fetchProducts(); // Refresh data
+    })
     .subscribe();
-  
+
   return () => {
     subscription.unsubscribe();
   };
@@ -291,6 +304,7 @@ useEffect(() => {
 ## Environment Variables Checklist
 
 ### Local Development (.env file)
+
 ```env
 VITE_SUPABASE_URL=https://svxmlejmhlocsjjtftxd.supabase.co
 VITE_SUPABASE_ANON_KEY=[your-anon-key]
@@ -299,33 +313,38 @@ VITE_ENV=development
 ```
 
 ### Vercel Production
+
 Go to Vercel → Settings → Environment Variables:
 
-| Variable Name | Value | Environments |
-|--------------|-------|--------------|
-| `VITE_SUPABASE_URL` | `https://svxmlejmhlocsjjtftxd.supabase.co` | Production, Preview, Development |
-| `VITE_SUPABASE_ANON_KEY` | [Your anon key] | Production, Preview, Development |
+| Variable Name            | Value                                      | Environments                     |
+| ------------------------ | ------------------------------------------ | -------------------------------- |
+| `VITE_SUPABASE_URL`      | `https://svxmlejmhlocsjjtftxd.supabase.co` | Production, Preview, Development |
+| `VITE_SUPABASE_ANON_KEY` | [Your anon key]                            | Production, Preview, Development |
 
 ---
 
 ## Monitoring & Debugging
 
 ### Check Deployment Status
+
 - Vercel Dashboard: https://vercel.com/dashboard
 - See build logs for errors
 - Check deployment URL
 
 ### Check Database Queries
+
 - Supabase Dashboard → Logs → Postgres Logs
 - See all queries and errors
 - Check for slow queries
 
 ### Check Realtime Connections
+
 - Supabase Dashboard → Logs → Realtime Logs
 - See active subscriptions
 - Debug connection issues
 
 ### Check Application Errors
+
 - Browser Console (F12) → Console tab
 - See JavaScript errors
 - Check network tab for failed requests
@@ -335,6 +354,7 @@ Go to Vercel → Settings → Environment Variables:
 ## Summary
 
 ✅ **To Fix Deployment:**
+
 1. Push code to GitHub (YOU must do this - I can't access your credentials)
 2. Connect Vercel to GitHub repository
 3. Set environment variables in Vercel
@@ -342,11 +362,13 @@ Go to Vercel → Settings → Environment Variables:
 5. Replace static data with Supabase queries (I'll help with this)
 
 ✅ **Workflow:**
+
 - Figma → Code → GitHub → Vercel → Production
 - Database changes in Supabase reflect immediately
 - Code changes auto-deploy from GitHub
 
 ✅ **Need Help?**
+
 - See FIX_SUPABASE_CONNECTION.md for database issues
 - See CASHIER_SYSTEM_COMPLETE.md for cashier role setup
 - See README_DEPLOY_NOW.md for alternative deployment methods

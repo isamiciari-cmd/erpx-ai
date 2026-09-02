@@ -1,5 +1,14 @@
 import { FileText, Download } from 'lucide-react';
-import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer } from 'recharts';
+import {
+  BarChart,
+  Bar,
+  XAxis,
+  YAxis,
+  CartesianGrid,
+  Tooltip,
+  Legend,
+  ResponsiveContainer,
+} from 'recharts';
 
 const taxCodes = [
   { id: 1, code: 'VAT-15', name: 'Standard VAT 15%', rate: 15, type: 'Output', status: 'Active' },
@@ -44,17 +53,27 @@ export default function VATTaxPage() {
         <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
           <div className="border-r pr-6">
             <p className="text-sm text-gray-600 mb-1">Output VAT (Sales)</p>
-            <p className="text-3xl font-bold text-green-600 mb-2">${currentPeriod.outputVAT.toLocaleString()}</p>
-            <p className="text-sm text-gray-500">From ${currentPeriod.taxableSales.toLocaleString()} taxable sales</p>
+            <p className="text-3xl font-bold text-green-600 mb-2">
+              ${currentPeriod.outputVAT.toLocaleString()}
+            </p>
+            <p className="text-sm text-gray-500">
+              From ${currentPeriod.taxableSales.toLocaleString()} taxable sales
+            </p>
           </div>
           <div className="border-r pr-6">
             <p className="text-sm text-gray-600 mb-1">Input VAT (Purchases)</p>
-            <p className="text-3xl font-bold text-red-600 mb-2">${currentPeriod.inputVAT.toLocaleString()}</p>
-            <p className="text-sm text-gray-500">From ${currentPeriod.taxablePurchases.toLocaleString()} taxable purchases</p>
+            <p className="text-3xl font-bold text-red-600 mb-2">
+              ${currentPeriod.inputVAT.toLocaleString()}
+            </p>
+            <p className="text-sm text-gray-500">
+              From ${currentPeriod.taxablePurchases.toLocaleString()} taxable purchases
+            </p>
           </div>
           <div>
             <p className="text-sm text-gray-600 mb-1">Net VAT Payable</p>
-            <p className="text-3xl font-bold text-purple-600 mb-2">${currentPeriod.netVAT.toLocaleString()}</p>
+            <p className="text-3xl font-bold text-purple-600 mb-2">
+              ${currentPeriod.netVAT.toLocaleString()}
+            </p>
             <p className="text-sm text-gray-500">Due: May 31, 2026</p>
           </div>
         </div>
@@ -87,10 +106,18 @@ export default function VATTaxPage() {
             <table className="w-full">
               <thead className="bg-gray-50">
                 <tr>
-                  <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase">Code</th>
-                  <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase">Name</th>
-                  <th className="px-4 py-3 text-right text-xs font-medium text-gray-500 uppercase">Rate</th>
-                  <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase">Type</th>
+                  <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase">
+                    Code
+                  </th>
+                  <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase">
+                    Name
+                  </th>
+                  <th className="px-4 py-3 text-right text-xs font-medium text-gray-500 uppercase">
+                    Rate
+                  </th>
+                  <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase">
+                    Type
+                  </th>
                 </tr>
               </thead>
               <tbody className="divide-y">
@@ -100,11 +127,15 @@ export default function VATTaxPage() {
                     <td className="px-4 py-3 text-sm">{code.name}</td>
                     <td className="px-4 py-3 text-sm text-right font-bold">{code.rate}%</td>
                     <td className="px-4 py-3">
-                      <span className={`px-2 py-1 text-xs rounded-full ${
-                        code.type === 'Output' ? 'bg-green-100 text-green-800' :
-                        code.type === 'Input' ? 'bg-red-100 text-red-800' :
-                        'bg-gray-100 text-gray-800'
-                      }`}>
+                      <span
+                        className={`px-2 py-1 text-xs rounded-full ${
+                          code.type === 'Output'
+                            ? 'bg-green-100 text-green-800'
+                            : code.type === 'Input'
+                              ? 'bg-red-100 text-red-800'
+                              : 'bg-gray-100 text-gray-800'
+                        }`}
+                      >
                         {code.type}
                       </span>
                     </td>

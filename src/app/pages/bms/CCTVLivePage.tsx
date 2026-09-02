@@ -1,49 +1,143 @@
-import { useState, useEffect } from "react";
-import { motion, AnimatePresence } from "motion/react";
+import { useState } from 'react';
+import { motion } from 'motion/react';
 import {
   Camera,
-  Grid3x3,
   Maximize2,
   Play,
   Pause,
   Volume2,
   VolumeX,
-  RotateCcw,
   AlertTriangle,
   CheckCircle,
-  Circle,
   Zap,
-  User,
-  Car,
   Download,
   Settings,
-  MapPin,
   Activity,
   Monitor,
-} from "lucide-react";
+} from 'lucide-react';
 
 // Sample Camera Data
 const cameras = [
-  { id: 1, name: "Main Entrance", location: "Floor 1 - Gate A", status: "online", recording: true, motion: false, type: "entrance" },
-  { id: 2, name: "Parking Lot", location: "Basement - Zone B", status: "online", recording: true, motion: true, type: "parking" },
-  { id: 3, name: "Office Floor 2", location: "Floor 2 - Office Area", status: "online", recording: true, motion: false, type: "office" },
-  { id: 4, name: "Back Door", location: "Floor 1 - Service Entry", status: "offline", recording: false, motion: false, type: "entrance" },
-  { id: 5, name: "Lobby", location: "Floor 1 - Main Lobby", status: "online", recording: true, motion: true, type: "lobby" },
-  { id: 6, name: "Server Room", location: "Floor 3 - IT Department", status: "online", recording: true, motion: false, type: "critical" },
-  { id: 7, name: "Warehouse", location: "Building B - Storage", status: "online", recording: true, motion: false, type: "warehouse" },
-  { id: 8, name: "Emergency Exit", location: "Floor 2 - East Wing", status: "online", recording: true, motion: false, type: "exit" },
-  { id: 9, name: "Conference Room", location: "Floor 3 - Room 301", status: "online", recording: false, motion: false, type: "office" },
+  {
+    id: 1,
+    name: 'Main Entrance',
+    location: 'Floor 1 - Gate A',
+    status: 'online',
+    recording: true,
+    motion: false,
+    type: 'entrance',
+  },
+  {
+    id: 2,
+    name: 'Parking Lot',
+    location: 'Basement - Zone B',
+    status: 'online',
+    recording: true,
+    motion: true,
+    type: 'parking',
+  },
+  {
+    id: 3,
+    name: 'Office Floor 2',
+    location: 'Floor 2 - Office Area',
+    status: 'online',
+    recording: true,
+    motion: false,
+    type: 'office',
+  },
+  {
+    id: 4,
+    name: 'Back Door',
+    location: 'Floor 1 - Service Entry',
+    status: 'offline',
+    recording: false,
+    motion: false,
+    type: 'entrance',
+  },
+  {
+    id: 5,
+    name: 'Lobby',
+    location: 'Floor 1 - Main Lobby',
+    status: 'online',
+    recording: true,
+    motion: true,
+    type: 'lobby',
+  },
+  {
+    id: 6,
+    name: 'Server Room',
+    location: 'Floor 3 - IT Department',
+    status: 'online',
+    recording: true,
+    motion: false,
+    type: 'critical',
+  },
+  {
+    id: 7,
+    name: 'Warehouse',
+    location: 'Building B - Storage',
+    status: 'online',
+    recording: true,
+    motion: false,
+    type: 'warehouse',
+  },
+  {
+    id: 8,
+    name: 'Emergency Exit',
+    location: 'Floor 2 - East Wing',
+    status: 'online',
+    recording: true,
+    motion: false,
+    type: 'exit',
+  },
+  {
+    id: 9,
+    name: 'Conference Room',
+    location: 'Floor 3 - Room 301',
+    status: 'online',
+    recording: false,
+    motion: false,
+    type: 'office',
+  },
 ];
 
 const recentEvents = [
-  { id: 1, camera: "Parking Lot", event: "Motion Detected", time: "2m ago", severity: "medium", type: "motion" },
-  { id: 2, camera: "Lobby", event: "Person Detected", time: "5m ago", severity: "low", type: "person" },
-  { id: 3, camera: "Back Door", event: "Camera Offline", time: "12m ago", severity: "high", type: "offline" },
-  { id: 4, camera: "Main Entrance", event: "Vehicle Detected", time: "18m ago", severity: "low", type: "vehicle" },
+  {
+    id: 1,
+    camera: 'Parking Lot',
+    event: 'Motion Detected',
+    time: '2m ago',
+    severity: 'medium',
+    type: 'motion',
+  },
+  {
+    id: 2,
+    camera: 'Lobby',
+    event: 'Person Detected',
+    time: '5m ago',
+    severity: 'low',
+    type: 'person',
+  },
+  {
+    id: 3,
+    camera: 'Back Door',
+    event: 'Camera Offline',
+    time: '12m ago',
+    severity: 'high',
+    type: 'offline',
+  },
+  {
+    id: 4,
+    camera: 'Main Entrance',
+    event: 'Vehicle Detected',
+    time: '18m ago',
+    severity: 'low',
+    type: 'vehicle',
+  },
 ];
 
 export default function CCTVLivePage() {
-  const [gridLayout, setGridLayout] = useState<"2x2" | "3x3" | "4x4">("2x2");
+  const [gridLayout, setGridLayout] = useState<'2x2' | '3x3' | '4x4'>('2x2');
   const [selectedCamera, setSelectedCamera] = useState<number | null>(null);
   const [fullscreen, setFullscreen] = useState(false);
   const [stats, setStats] = useState({
@@ -54,15 +148,15 @@ export default function CCTVLivePage() {
   });
 
   const gridCols = {
-    "2x2": "grid-cols-2",
-    "3x3": "grid-cols-3",
-    "4x4": "grid-cols-4",
+    '2x2': 'grid-cols-2',
+    '3x3': 'grid-cols-3',
+    '4x4': 'grid-cols-4',
   };
 
   const camerasToShow = {
-    "2x2": 4,
-    "3x3": 9,
-    "4x4": 16,
+    '2x2': 4,
+    '3x3': 9,
+    '4x4': 16,
   };
 
   return (
@@ -74,13 +168,15 @@ export default function CCTVLivePage() {
             <Camera className="w-10 h-10 text-blue-400" />
             CCTV Live Monitoring
           </h1>
-          <p className="text-gray-400 text-sm font-medium mt-2">Real-time surveillance across all locations</p>
+          <p className="text-gray-400 text-sm font-medium mt-2">
+            Real-time surveillance across all locations
+          </p>
         </div>
 
         {/* Grid Layout Selector */}
         <div className="flex items-center gap-4">
           <div className="flex items-center gap-2 bg-gray-800/50 border border-gray-700/50 rounded-xl p-1">
-            {(["2x2", "3x3", "4x4"] as const).map((layout) => (
+            {(['2x2', '3x3', '4x4'] as const).map((layout) => (
               <motion.button
                 key={layout}
                 whileHover={{ scale: 1.05 }}
@@ -88,8 +184,8 @@ export default function CCTVLivePage() {
                 onClick={() => setGridLayout(layout)}
                 className={`px-4 py-2 rounded-lg text-sm font-semibold transition-all ${
                   gridLayout === layout
-                    ? "bg-blue-500 text-white"
-                    : "text-gray-400 hover:text-white hover:bg-gray-700/50"
+                    ? 'bg-blue-500 text-white'
+                    : 'text-gray-400 hover:text-white hover:bg-gray-700/50'
                 }`}
               >
                 {layout}
@@ -112,8 +208,18 @@ export default function CCTVLivePage() {
       <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
         <StatCard icon={Camera} label="Total Cameras" value={stats.total.toString()} color="blue" />
         <StatCard icon={CheckCircle} label="Online" value={stats.online.toString()} color="green" />
-        <StatCard icon={Activity} label="Recording" value={stats.recording.toString()} color="purple" />
-        <StatCard icon={AlertTriangle} label="Active Alerts" value={stats.alerts.toString()} color="red" />
+        <StatCard
+          icon={Activity}
+          label="Recording"
+          value={stats.recording.toString()}
+          color="purple"
+        />
+        <StatCard
+          icon={AlertTriangle}
+          label="Active Alerts"
+          value={stats.alerts.toString()}
+          color="red"
+        />
       </div>
 
       <div className="grid grid-cols-1 xl:grid-cols-4 gap-6">
@@ -155,21 +261,21 @@ export default function CCTVLivePage() {
                   key={event.id}
                   whileHover={{ scale: 1.02, x: 4 }}
                   className={`p-4 rounded-2xl border cursor-pointer ${
-                    event.severity === "high"
-                      ? "bg-red-500/5 border-red-500/30"
-                      : event.severity === "medium"
-                      ? "bg-yellow-500/5 border-yellow-500/30"
-                      : "bg-blue-500/5 border-blue-500/30"
+                    event.severity === 'high'
+                      ? 'bg-red-500/5 border-red-500/30'
+                      : event.severity === 'medium'
+                        ? 'bg-yellow-500/5 border-yellow-500/30'
+                        : 'bg-blue-500/5 border-blue-500/30'
                   }`}
                 >
                   <div className="flex items-start gap-3">
                     <div
                       className={`w-2 h-2 rounded-full mt-2 ${
-                        event.severity === "high"
-                          ? "bg-red-400"
-                          : event.severity === "medium"
-                          ? "bg-yellow-400"
-                          : "bg-blue-400"
+                        event.severity === 'high'
+                          ? 'bg-red-400'
+                          : event.severity === 'medium'
+                            ? 'bg-yellow-400'
+                            : 'bg-blue-400'
                       }`}
                     />
                     <div className="flex-1 min-w-0">
@@ -196,7 +302,9 @@ export default function CCTVLivePage() {
               </div>
               <div>
                 <h3 className="text-lg font-bold text-white">All Cameras</h3>
-                <p className="text-xs text-gray-400">{stats.online}/{stats.total} online</p>
+                <p className="text-xs text-gray-400">
+                  {stats.online}/{stats.total} online
+                </p>
               </div>
             </div>
 
@@ -208,15 +316,15 @@ export default function CCTVLivePage() {
                   onClick={() => setSelectedCamera(camera.id)}
                   className={`p-3 rounded-xl cursor-pointer transition-all ${
                     selectedCamera === camera.id
-                      ? "bg-blue-500/20 border border-blue-500/30"
-                      : "bg-gray-800/30 hover:bg-gray-800/50 border border-transparent"
+                      ? 'bg-blue-500/20 border border-blue-500/30'
+                      : 'bg-gray-800/30 hover:bg-gray-800/50 border border-transparent'
                   }`}
                 >
                   <div className="flex items-center justify-between">
                     <div className="flex items-center gap-3">
                       <div
                         className={`w-2 h-2 rounded-full ${
-                          camera.status === "online" ? "bg-green-400 animate-pulse" : "bg-red-400"
+                          camera.status === 'online' ? 'bg-green-400 animate-pulse' : 'bg-red-400'
                         }`}
                       />
                       <div>
@@ -246,10 +354,10 @@ interface StatCardProps {
 
 function StatCard({ icon: Icon, label, value, color }: StatCardProps) {
   const colorClasses = {
-    blue: "from-blue-500 to-cyan-500",
-    green: "from-green-500 to-emerald-500",
-    purple: "from-purple-500 to-pink-500",
-    red: "from-red-500 to-orange-500",
+    blue: 'from-blue-500 to-cyan-500',
+    green: 'from-green-500 to-emerald-500',
+    purple: 'from-purple-500 to-pink-500',
+    red: 'from-red-500 to-orange-500',
   };
 
   return (
@@ -260,7 +368,9 @@ function StatCard({ icon: Icon, label, value, color }: StatCardProps) {
       className="bg-gradient-to-br from-gray-800/40 to-gray-900/40 backdrop-blur-xl border border-gray-700/50 rounded-2xl p-5"
     >
       <div className="flex items-center gap-3 mb-3">
-        <div className={`w-10 h-10 bg-gradient-to-br ${colorClasses[color]} rounded-xl flex items-center justify-center`}>
+        <div
+          className={`w-10 h-10 bg-gradient-to-br ${colorClasses[color]} rounded-xl flex items-center justify-center`}
+        >
           <Icon className="w-5 h-5 text-white" />
         </div>
       </div>
@@ -286,12 +396,12 @@ function CameraFeed({ camera, isSelected, onSelect }: CameraFeedProps) {
       whileHover={{ scale: 1.02 }}
       onClick={onSelect}
       className={`relative aspect-video rounded-2xl overflow-hidden cursor-pointer border-2 transition-all ${
-        isSelected ? "border-blue-500 shadow-xl shadow-blue-500/20" : "border-gray-700/50"
-      } ${camera.status === "offline" ? "opacity-50" : ""}`}
+        isSelected ? 'border-blue-500 shadow-xl shadow-blue-500/20' : 'border-gray-700/50'
+      } ${camera.status === 'offline' ? 'opacity-50' : ''}`}
     >
       {/* Camera Feed Placeholder */}
       <div className="absolute inset-0 bg-gradient-to-br from-gray-800 to-gray-900 flex items-center justify-center">
-        {camera.status === "offline" ? (
+        {camera.status === 'offline' ? (
           <div className="text-center">
             <AlertTriangle className="w-12 h-12 text-red-400 mx-auto mb-2" />
             <p className="text-sm text-red-400 font-semibold">Camera Offline</p>
@@ -312,7 +422,7 @@ function CameraFeed({ camera, isSelected, onSelect }: CameraFeedProps) {
         </div>
 
         <div className="flex items-center gap-2">
-          {camera.status === "online" && (
+          {camera.status === 'online' && (
             <div className="bg-green-500/20 backdrop-blur-sm px-2 py-1 rounded-lg flex items-center gap-1">
               <div className="w-2 h-2 bg-green-400 rounded-full animate-pulse" />
               <span className="text-xs font-semibold text-green-400">LIVE</span>
@@ -327,7 +437,7 @@ function CameraFeed({ camera, isSelected, onSelect }: CameraFeedProps) {
       </div>
 
       {/* Motion Detection Indicator */}
-      {camera.motion && camera.status === "online" && (
+      {camera.motion && camera.status === 'online' && (
         <motion.div
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}

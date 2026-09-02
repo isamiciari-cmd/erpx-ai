@@ -88,9 +88,7 @@ export default function Modal({
               )}
 
               {/* Content */}
-              <div className="overflow-y-auto max-h-[calc(90vh-80px)]">
-                {children}
-              </div>
+              <div className="overflow-y-auto max-h-[calc(90vh-80px)]">{children}</div>
             </motion.div>
           </div>
         </>

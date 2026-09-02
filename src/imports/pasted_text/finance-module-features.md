@@ -3,6 +3,7 @@ Add a complete Finance & Accounting Management module to ERPX-AI with global ERP
 Finance Module Features:
 
 1. Finance Dashboard
+
 - Total revenue
 - Total expenses
 - Net profit
@@ -22,6 +23,7 @@ Finance Module Features:
 - Financial alerts
 
 2. Chart of Accounts
+
 - Account list
 - Add/edit account
 - Account code
@@ -40,6 +42,7 @@ Finance Module Features:
 - Multi-branch account mapping
 
 3. General Ledger
+
 - Journal entries
 - Debit and credit lines
 - Posting date
@@ -53,6 +56,7 @@ Finance Module Features:
 - Audit trail
 
 4. Accounts Receivable
+
 - Customer invoices
 - Customer payments
 - Customer balances
@@ -64,6 +68,7 @@ Finance Module Features:
 - Customer statement
 
 5. Accounts Payable
+
 - Supplier invoices
 - Supplier payments
 - Supplier balances
@@ -74,6 +79,7 @@ Finance Module Features:
 - Supplier statement
 
 6. Cash and Bank Management
+
 - Cash accounts
 - Bank accounts
 - Bank transactions
@@ -86,6 +92,7 @@ Finance Module Features:
 - Attach bank statements
 
 7. Expense Management
+
 - Expense categories
 - Expense claims
 - Employee expenses
@@ -96,6 +103,7 @@ Finance Module Features:
 - Expense allocation by department/project/branch
 
 8. Budgeting
+
 - Annual budget
 - Monthly budget
 - Department budget
@@ -108,6 +116,7 @@ Finance Module Features:
 - Over-budget restrictions
 
 9. Fixed Assets
+
 - Asset register
 - Asset category
 - Purchase cost
@@ -121,6 +130,7 @@ Finance Module Features:
 - Asset maintenance tracking
 
 10. Tax and VAT
+
 - VAT configuration
 - Tax codes
 - Input VAT
@@ -133,6 +143,7 @@ Finance Module Features:
 - Tax audit trail
 
 11. Financial Statements
+
 - Profit and Loss Statement
 - Balance Sheet
 - Cash Flow Statement
@@ -144,6 +155,7 @@ Finance Module Features:
 - Comparative financial statements
 
 12. Payroll Integration
+
 - Salary expenses
 - Overtime expenses
 - Deductions
@@ -153,6 +165,7 @@ Finance Module Features:
 - Payroll approval posting
 
 13. Multi-Branch Finance
+
 - Branch revenue
 - Branch expenses
 - Branch profitability
@@ -161,6 +174,7 @@ Finance Module Features:
 - Consolidated financial reporting
 
 14. Cost Centers and Projects
+
 - Cost center list
 - Department cost centers
 - Branch cost centers
@@ -169,6 +183,7 @@ Finance Module Features:
 - Cost center profitability report
 
 15. Financial Approvals
+
 - Journal entry approval
 - Expense approval
 - Payment approval
@@ -178,6 +193,7 @@ Finance Module Features:
 - Approval limits by role
 
 16. Audit and Compliance
+
 - Full audit trail
 - User activity log
 - Financial transaction history
@@ -188,6 +204,7 @@ Finance Module Features:
 - Compliance reports
 
 17. AI Finance Assistant
+
 - Predict cash flow
 - Detect abnormal expenses
 - Identify overdue risk
@@ -200,7 +217,8 @@ Finance Module Features:
 - Recommend cost-saving actions
 
 18. Finance Permissions
-Roles:
+    Roles:
+
 - Admin
 - Finance Manager
 - Accountant
@@ -209,6 +227,7 @@ Roles:
 - Payroll Officer
 
 Permissions:
+
 - View finance dashboard
 - Manage chart of accounts
 - Create journal entry
@@ -233,6 +252,7 @@ Permissions:
 Finance Database Schema:
 
 chart_of_accounts
+
 - id
 - account_code
 - account_name
@@ -246,6 +266,7 @@ chart_of_accounts
 - updated_at
 
 journal_entries
+
 - id
 - entry_number
 - posting_date
@@ -262,6 +283,7 @@ journal_entries
 - approved_at
 
 journal_entry_lines
+
 - id
 - journal_entry_id
 - account_id
@@ -272,6 +294,7 @@ journal_entry_lines
 - description
 
 accounts_receivable
+
 - id
 - customer_id
 - invoice_id
@@ -283,6 +306,7 @@ accounts_receivable
 - created_at
 
 accounts_payable
+
 - id
 - supplier_id
 - supplier_invoice_id
@@ -294,6 +318,7 @@ accounts_payable
 - created_at
 
 cash_accounts
+
 - id
 - account_name
 - branch_id
@@ -302,6 +327,7 @@ cash_accounts
 - status
 
 bank_accounts
+
 - id
 - bank_name
 - account_name
@@ -313,6 +339,7 @@ bank_accounts
 - status
 
 bank_transactions
+
 - id
 - bank_account_id
 - transaction_type
@@ -324,6 +351,7 @@ bank_transactions
 - created_at
 
 payments
+
 - id
 - payment_number
 - payment_type
@@ -340,6 +368,7 @@ payments
 - approved_by
 
 expenses
+
 - id
 - expense_number
 - expense_category_id
@@ -357,6 +386,7 @@ expenses
 - created_at
 
 expense_categories
+
 - id
 - name
 - account_id
@@ -364,6 +394,7 @@ expense_categories
 - status
 
 budgets
+
 - id
 - budget_name
 - budget_type
@@ -379,6 +410,7 @@ budgets
 - status
 
 budget_lines
+
 - id
 - budget_id
 - account_id
@@ -387,6 +419,7 @@ budget_lines
 - variance_amount
 
 fixed_assets
+
 - id
 - asset_code
 - asset_name
@@ -401,6 +434,7 @@ fixed_assets
 - status
 
 asset_categories
+
 - id
 - name
 - asset_account_id
@@ -408,6 +442,7 @@ asset_categories
 - expense_account_id
 
 tax_codes
+
 - id
 - code
 - name
@@ -416,6 +451,7 @@ tax_codes
 - status
 
 vat_transactions
+
 - id
 - source_module
 - source_id
@@ -426,6 +462,7 @@ vat_transactions
 - type
 
 cost_centers
+
 - id
 - code
 - name
@@ -435,6 +472,7 @@ cost_centers
 - status
 
 accounting_periods
+
 - id
 - period_name
 - start_date
@@ -444,6 +482,7 @@ accounting_periods
 - closed_at
 
 financial_approvals
+
 - id
 - approval_type
 - reference_id
@@ -558,64 +597,65 @@ POST /api/finance/ai/generate-report
 Flutter Finance UI Structure:
 
 lib/
-  modules/
-    finance/
-      models/
-        chart_account_model.dart
-        journal_entry_model.dart
-        journal_entry_line_model.dart
-        accounts_receivable_model.dart
-        accounts_payable_model.dart
-        cash_account_model.dart
-        bank_account_model.dart
-        bank_transaction_model.dart
-        payment_model.dart
-        expense_model.dart
-        budget_model.dart
-        fixed_asset_model.dart
-        tax_code_model.dart
-        cost_center_model.dart
-        accounting_period_model.dart
-      services/
-        finance_api_service.dart
-        finance_ai_service.dart
-      providers/
-        finance_provider.dart
-        chart_of_accounts_provider.dart
-        journal_entry_provider.dart
-        payment_provider.dart
-        budget_provider.dart
-      screens/
-        finance_dashboard_screen.dart
-        chart_of_accounts_screen.dart
-        journal_entries_screen.dart
-        journal_entry_form_screen.dart
-        general_ledger_screen.dart
-        accounts_receivable_screen.dart
-        accounts_payable_screen.dart
-        cash_bank_management_screen.dart
-        bank_reconciliation_screen.dart
-        expense_management_screen.dart
-        budget_management_screen.dart
-        fixed_assets_screen.dart
-        vat_tax_screen.dart
-        cost_centers_screen.dart
-        accounting_periods_screen.dart
-        financial_reports_screen.dart
-        finance_ai_assistant_screen.dart
-      widgets/
-        finance_kpi_card.dart
-        profit_loss_chart.dart
-        cash_flow_chart.dart
-        account_tree_view.dart
-        journal_entry_table.dart
-        debit_credit_lines.dart
-        payment_status_badge.dart
-        budget_variance_card.dart
-        reconciliation_status_badge.dart
-        approval_status_badge.dart
+modules/
+finance/
+models/
+chart_account_model.dart
+journal_entry_model.dart
+journal_entry_line_model.dart
+accounts_receivable_model.dart
+accounts_payable_model.dart
+cash_account_model.dart
+bank_account_model.dart
+bank_transaction_model.dart
+payment_model.dart
+expense_model.dart
+budget_model.dart
+fixed_asset_model.dart
+tax_code_model.dart
+cost_center_model.dart
+accounting_period_model.dart
+services/
+finance_api_service.dart
+finance_ai_service.dart
+providers/
+finance_provider.dart
+chart_of_accounts_provider.dart
+journal_entry_provider.dart
+payment_provider.dart
+budget_provider.dart
+screens/
+finance_dashboard_screen.dart
+chart_of_accounts_screen.dart
+journal_entries_screen.dart
+journal_entry_form_screen.dart
+general_ledger_screen.dart
+accounts_receivable_screen.dart
+accounts_payable_screen.dart
+cash_bank_management_screen.dart
+bank_reconciliation_screen.dart
+expense_management_screen.dart
+budget_management_screen.dart
+fixed_assets_screen.dart
+vat_tax_screen.dart
+cost_centers_screen.dart
+accounting_periods_screen.dart
+financial_reports_screen.dart
+finance_ai_assistant_screen.dart
+widgets/
+finance_kpi_card.dart
+profit_loss_chart.dart
+cash_flow_chart.dart
+account_tree_view.dart
+journal_entry_table.dart
+debit_credit_lines.dart
+payment_status_badge.dart
+budget_variance_card.dart
+reconciliation_status_badge.dart
+approval_status_badge.dart
 
 Finance UI Pages to Generate:
+
 1. Finance Dashboard
 2. Chart of Accounts
 3. Account Details Page
@@ -638,6 +678,7 @@ Finance UI Pages to Generate:
 20. Finance Permission Matrix
 
 Important Integration Logic:
+
 - Sales invoices must automatically create revenue and accounts receivable journal entries.
 - Customer payments must update cash/bank accounts and accounts receivable.
 - Purchase invoices must create accounts payable and expense/inventory entries.

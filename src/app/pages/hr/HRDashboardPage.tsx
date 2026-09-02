@@ -1,5 +1,27 @@
-import { Users, UserCheck, UserPlus, UserMinus, Clock, AlertTriangle, DollarSign, TrendingUp } from 'lucide-react';
-import { PieChart, Pie, Cell, BarChart, Bar, LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer } from 'recharts';
+import {
+  Users,
+  UserCheck,
+  UserPlus,
+  UserMinus,
+  Clock,
+  AlertTriangle,
+  DollarSign,
+} from 'lucide-react';
+import {
+  PieChart,
+  Pie,
+  Cell,
+  BarChart,
+  Bar,
+  LineChart,
+  Line,
+  XAxis,
+  YAxis,
+  CartesianGrid,
+  Tooltip,
+  Legend,
+  ResponsiveContainer,
+} from 'recharts';
 
 const employeesByDepartment = [
   { name: 'Sales', count: 45, color: '#3b82f6' },
@@ -24,15 +46,43 @@ const attendanceTrend = [
 ];
 
 const contractExpiry = [
-  { id: 1, employee: 'Ahmed Ali', position: 'Sales Manager', expiryDate: '2026-05-15', daysLeft: 15 },
-  { id: 2, employee: 'Sara Mohamed', position: 'IT Specialist', expiryDate: '2026-05-20', daysLeft: 20 },
-  { id: 3, employee: 'Omar Ibrahim', position: 'Accountant', expiryDate: '2026-06-01', daysLeft: 32 },
+  {
+    id: 1,
+    employee: 'Ahmed Ali',
+    position: 'Sales Manager',
+    expiryDate: '2026-05-15',
+    daysLeft: 15,
+  },
+  {
+    id: 2,
+    employee: 'Sara Mohamed',
+    position: 'IT Specialist',
+    expiryDate: '2026-05-20',
+    daysLeft: 20,
+  },
+  {
+    id: 3,
+    employee: 'Omar Ibrahim',
+    position: 'Accountant',
+    expiryDate: '2026-06-01',
+    daysLeft: 32,
+  },
 ];
 
 const hrAlerts = [
-  { id: 1, type: 'warning', message: '3 contracts expiring in next 30 days', action: 'Review renewals' },
+  {
+    id: 1,
+    type: 'warning',
+    message: '3 contracts expiring in next 30 days',
+    action: 'Review renewals',
+  },
   { id: 2, type: 'info', message: '15 leave requests pending approval', action: 'Approve leaves' },
-  { id: 3, type: 'critical', message: 'Payroll for April needs approval', action: 'Process payroll' },
+  {
+    id: 3,
+    type: 'critical',
+    message: 'Payroll for April needs approval',
+    action: 'Process payroll',
+  },
 ];
 
 export default function HRDashboardPage() {
@@ -56,18 +106,27 @@ export default function HRDashboardPage() {
       <div className="bg-white rounded-lg shadow p-6">
         <h2 className="text-xl font-semibold mb-4">HR Alerts & Notifications</h2>
         <div className="space-y-3">
-          {hrAlerts.map(alert => (
-            <div key={alert.id} className={`flex items-center justify-between p-4 rounded-lg ${
-              alert.type === 'critical' ? 'bg-red-50 border border-red-200' :
-              alert.type === 'warning' ? 'bg-yellow-50 border border-yellow-200' :
-              'bg-blue-50 border border-blue-200'
-            }`}>
+          {hrAlerts.map((alert) => (
+            <div
+              key={alert.id}
+              className={`flex items-center justify-between p-4 rounded-lg ${
+                alert.type === 'critical'
+                  ? 'bg-red-50 border border-red-200'
+                  : alert.type === 'warning'
+                    ? 'bg-yellow-50 border border-yellow-200'
+                    : 'bg-blue-50 border border-blue-200'
+              }`}
+            >
               <div className="flex items-center gap-3">
-                <AlertTriangle className={`w-5 h-5 ${
-                  alert.type === 'critical' ? 'text-red-600' :
-                  alert.type === 'warning' ? 'text-yellow-600' :
-                  'text-blue-600'
-                }`} />
+                <AlertTriangle
+                  className={`w-5 h-5 ${
+                    alert.type === 'critical'
+                      ? 'text-red-600'
+                      : alert.type === 'warning'
+                        ? 'text-yellow-600'
+                        : 'text-blue-600'
+                  }`}
+                />
                 <span className="font-medium">{alert.message}</span>
               </div>
               <button className="px-4 py-2 bg-white border border-gray-300 rounded-lg hover:bg-gray-50 text-sm font-medium">
@@ -202,7 +261,13 @@ export default function HRDashboardPage() {
             <YAxis />
             <Tooltip />
             <Legend />
-            <Line type="monotone" dataKey="present" stroke="#10b981" strokeWidth={2} name="Present" />
+            <Line
+              type="monotone"
+              dataKey="present"
+              stroke="#10b981"
+              strokeWidth={2}
+              name="Present"
+            />
             <Line type="monotone" dataKey="absent" stroke="#ef4444" strokeWidth={2} name="Absent" />
             <Line type="monotone" dataKey="late" stroke="#f59e0b" strokeWidth={2} name="Late" />
           </LineChart>
@@ -218,11 +283,21 @@ export default function HRDashboardPage() {
           <table className="w-full">
             <thead className="bg-gray-50">
               <tr>
-                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Employee</th>
-                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Position</th>
-                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Expiry Date</th>
-                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Days Left</th>
-                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Action</th>
+                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">
+                  Employee
+                </th>
+                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">
+                  Position
+                </th>
+                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">
+                  Expiry Date
+                </th>
+                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">
+                  Days Left
+                </th>
+                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">
+                  Action
+                </th>
               </tr>
             </thead>
             <tbody className="divide-y">
@@ -232,11 +307,15 @@ export default function HRDashboardPage() {
                   <td className="px-6 py-4 text-sm">{contract.position}</td>
                   <td className="px-6 py-4 text-sm">{contract.expiryDate}</td>
                   <td className="px-6 py-4">
-                    <span className={`px-2 py-1 text-xs rounded-full ${
-                      contract.daysLeft <= 15 ? 'bg-red-100 text-red-800' :
-                      contract.daysLeft <= 30 ? 'bg-yellow-100 text-yellow-800' :
-                      'bg-green-100 text-green-800'
-                    }`}>
+                    <span
+                      className={`px-2 py-1 text-xs rounded-full ${
+                        contract.daysLeft <= 15
+                          ? 'bg-red-100 text-red-800'
+                          : contract.daysLeft <= 30
+                            ? 'bg-yellow-100 text-yellow-800'
+                            : 'bg-green-100 text-green-800'
+                      }`}
+                    >
                       {contract.daysLeft} days
                     </span>
                   </td>
@@ -286,9 +365,7 @@ function MetricCard({ title, value, subtitle, icon, color }: any) {
   return (
     <div className="bg-white rounded-lg shadow p-6">
       <div className="flex items-start justify-between mb-3">
-        <div className={`p-3 rounded-lg ${colorClasses[color]}`}>
-          {icon}
-        </div>
+        <div className={`p-3 rounded-lg ${colorClasses[color]}`}>{icon}</div>
       </div>
       <h3 className="text-sm text-gray-600 mb-1">{title}</h3>
       <p className="text-2xl font-bold mb-1">{value}</p>

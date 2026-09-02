@@ -1,6 +1,7 @@
 # 🔧 Fix "Failed to fetch" Error
 
 ## Problem
+
 The app is trying to connect to Supabase but doesn't have valid credentials.
 
 ## Solution
@@ -54,10 +55,12 @@ VITE_ENV=development
 If you can't find your anon key right now, you can test with demo mode:
 
 1. Open `.env` and set:
+
    ```env
    VITE_SUPABASE_URL=
    VITE_SUPABASE_ANON_KEY=
    ```
+
    (Leave them empty)
 
 2. The app will run in demo mode with mock data

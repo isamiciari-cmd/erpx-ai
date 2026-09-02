@@ -51,10 +51,18 @@ export default function OAuthConsentPage() {
         </div>
 
         <div className="rounded-xl border border-slate-700 bg-slate-800/70 p-4 text-sm text-slate-200">
-          <p><span className="text-slate-400">Client:</span> {clientId}</p>
-          <p><span className="text-slate-400">Redirect:</span> {redirectUri}</p>
-          <p><span className="text-slate-400">Response type:</span> {responseType}</p>
-          <p><span className="text-slate-400">Scope:</span> {scope}</p>
+          <p>
+            <span className="text-slate-400">Client:</span> {clientId}
+          </p>
+          <p>
+            <span className="text-slate-400">Redirect:</span> {redirectUri}
+          </p>
+          <p>
+            <span className="text-slate-400">Response type:</span> {responseType}
+          </p>
+          <p>
+            <span className="text-slate-400">Scope:</span> {scope}
+          </p>
         </div>
 
         <p className="mt-6 text-slate-300">

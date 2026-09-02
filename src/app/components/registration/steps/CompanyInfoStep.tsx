@@ -1,36 +1,36 @@
-import { motion } from "motion/react";
-import { UseFormReturn } from "react-hook-form";
-import type { CompanyInfo } from "../../../../lib/validation/registrationSchema";
+import { motion } from 'motion/react';
+import { UseFormReturn } from 'react-hook-form';
+import type { CompanyInfo } from '../../../../lib/validation/registrationSchema';
 
 interface CompanyInfoStepProps {
   form: UseFormReturn<CompanyInfo>;
 }
 
 const businessSectors = [
-  "Technology",
-  "Retail",
-  "Manufacturing",
-  "Healthcare",
-  "Finance",
-  "Education",
-  "Real Estate",
-  "Food & Beverage",
-  "Transportation",
-  "Construction",
-  "Other",
+  'Technology',
+  'Retail',
+  'Manufacturing',
+  'Healthcare',
+  'Finance',
+  'Education',
+  'Real Estate',
+  'Food & Beverage',
+  'Transportation',
+  'Construction',
+  'Other',
 ];
 
 const countries = [
-  "Saudi Arabia",
-  "United Arab Emirates",
-  "Kuwait",
-  "Qatar",
-  "Bahrain",
-  "Oman",
-  "Egypt",
-  "Jordan",
-  "Lebanon",
-  "Other",
+  'Saudi Arabia',
+  'United Arab Emirates',
+  'Kuwait',
+  'Qatar',
+  'Bahrain',
+  'Oman',
+  'Egypt',
+  'Jordan',
+  'Lebanon',
+  'Other',
 ];
 
 export default function CompanyInfoStep({ form }: CompanyInfoStepProps) {
@@ -52,15 +52,13 @@ export default function CompanyInfoStep({ form }: CompanyInfoStepProps) {
           Company Name <span className="text-red-400">*</span>
         </label>
         <input
-          {...register("companyName")}
+          {...register('companyName')}
           type="text"
           className="w-full px-4 py-3 bg-white/5 border border-white/10 rounded-lg text-white placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-blue-500"
           placeholder="Enter company name"
         />
         {errors.companyName && (
-          <p className="text-red-400 text-sm mt-1">
-            {errors.companyName.message}
-          </p>
+          <p className="text-red-400 text-sm mt-1">{errors.companyName.message}</p>
         )}
       </div>
 
@@ -71,7 +69,7 @@ export default function CompanyInfoStep({ form }: CompanyInfoStepProps) {
             Commercial Registration Number <span className="text-red-400">*</span>
           </label>
           <input
-            {...register("commercialRegistrationNumber")}
+            {...register('commercialRegistrationNumber')}
             type="text"
             className="w-full px-4 py-3 bg-white/5 border border-white/10 rounded-lg text-white placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-blue-500"
             placeholder="1234567890"
@@ -84,19 +82,15 @@ export default function CompanyInfoStep({ form }: CompanyInfoStepProps) {
         </div>
 
         <div>
-          <label className="block text-sm text-gray-400 mb-2">
-            VAT Number
-          </label>
+          <label className="block text-sm text-gray-400 mb-2">VAT Number</label>
           <input
-            {...register("vatNumber")}
+            {...register('vatNumber')}
             type="text"
             className="w-full px-4 py-3 bg-white/5 border border-white/10 rounded-lg text-white placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-blue-500"
             placeholder="Optional"
           />
           {errors.vatNumber && (
-            <p className="text-red-400 text-sm mt-1">
-              {errors.vatNumber.message}
-            </p>
+            <p className="text-red-400 text-sm mt-1">{errors.vatNumber.message}</p>
           )}
         </div>
       </div>
@@ -108,7 +102,7 @@ export default function CompanyInfoStep({ form }: CompanyInfoStepProps) {
             Business Sector <span className="text-red-400">*</span>
           </label>
           <select
-            {...register("businessSector")}
+            {...register('businessSector')}
             className="w-full px-4 py-3 bg-white/5 border border-white/10 rounded-lg text-white focus:outline-none focus:ring-2 focus:ring-blue-500"
           >
             <option value="">Select sector</option>
@@ -119,9 +113,7 @@ export default function CompanyInfoStep({ form }: CompanyInfoStepProps) {
             ))}
           </select>
           {errors.businessSector && (
-            <p className="text-red-400 text-sm mt-1">
-              {errors.businessSector.message}
-            </p>
+            <p className="text-red-400 text-sm mt-1">{errors.businessSector.message}</p>
           )}
         </div>
 
@@ -130,7 +122,7 @@ export default function CompanyInfoStep({ form }: CompanyInfoStepProps) {
             Company Size <span className="text-red-400">*</span>
           </label>
           <select
-            {...register("companySize")}
+            {...register('companySize')}
             className="w-full px-4 py-3 bg-white/5 border border-white/10 rounded-lg text-white focus:outline-none focus:ring-2 focus:ring-blue-500"
           >
             <option value="">Select size</option>
@@ -141,9 +133,7 @@ export default function CompanyInfoStep({ form }: CompanyInfoStepProps) {
             <option value="500+">500+ employees</option>
           </select>
           {errors.companySize && (
-            <p className="text-red-400 text-sm mt-1">
-              {errors.companySize.message}
-            </p>
+            <p className="text-red-400 text-sm mt-1">{errors.companySize.message}</p>
           )}
         </div>
       </div>
@@ -155,7 +145,7 @@ export default function CompanyInfoStep({ form }: CompanyInfoStepProps) {
             Country <span className="text-red-400">*</span>
           </label>
           <select
-            {...register("country")}
+            {...register('country')}
             className="w-full px-4 py-3 bg-white/5 border border-white/10 rounded-lg text-white focus:outline-none focus:ring-2 focus:ring-blue-500"
           >
             <option value="">Select country</option>
@@ -165,11 +155,7 @@ export default function CompanyInfoStep({ form }: CompanyInfoStepProps) {
               </option>
             ))}
           </select>
-          {errors.country && (
-            <p className="text-red-400 text-sm mt-1">
-              {errors.country.message}
-            </p>
-          )}
+          {errors.country && <p className="text-red-400 text-sm mt-1">{errors.country.message}</p>}
         </div>
 
         <div>
@@ -177,16 +163,12 @@ export default function CompanyInfoStep({ form }: CompanyInfoStepProps) {
             City <span className="text-red-400">*</span>
           </label>
           <input
-            {...register("city")}
+            {...register('city')}
             type="text"
             className="w-full px-4 py-3 bg-white/5 border border-white/10 rounded-lg text-white placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-blue-500"
             placeholder="Enter city"
           />
-          {errors.city && (
-            <p className="text-red-400 text-sm mt-1">
-              {errors.city.message}
-            </p>
-          )}
+          {errors.city && <p className="text-red-400 text-sm mt-1">{errors.city.message}</p>}
         </div>
       </div>
 
@@ -196,34 +178,24 @@ export default function CompanyInfoStep({ form }: CompanyInfoStepProps) {
           Address <span className="text-red-400">*</span>
         </label>
         <textarea
-          {...register("address")}
+          {...register('address')}
           rows={3}
           className="w-full px-4 py-3 bg-white/5 border border-white/10 rounded-lg text-white placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-blue-500"
           placeholder="Enter complete address"
         />
-        {errors.address && (
-          <p className="text-red-400 text-sm mt-1">
-            {errors.address.message}
-          </p>
-        )}
+        {errors.address && <p className="text-red-400 text-sm mt-1">{errors.address.message}</p>}
       </div>
 
       {/* Website */}
       <div>
-        <label className="block text-sm text-gray-400 mb-2">
-          Official Website
-        </label>
+        <label className="block text-sm text-gray-400 mb-2">Official Website</label>
         <input
-          {...register("website")}
+          {...register('website')}
           type="url"
           className="w-full px-4 py-3 bg-white/5 border border-white/10 rounded-lg text-white placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-blue-500"
           placeholder="https://example.com (optional)"
         />
-        {errors.website && (
-          <p className="text-red-400 text-sm mt-1">
-            {errors.website.message}
-          </p>
-        )}
+        {errors.website && <p className="text-red-400 text-sm mt-1">{errors.website.message}</p>}
       </div>
     </motion.div>
   );

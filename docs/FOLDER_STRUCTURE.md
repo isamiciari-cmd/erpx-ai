@@ -133,35 +133,45 @@ erpx-ai/
 ## Directory Descriptions
 
 ### `/database/`
+
 Contains all database-related files including schema definitions, Row Level Security policies, seed data, and migrations. Critical for setting up the PostgreSQL database in Supabase.
 
 ### `/docs/`
+
 Comprehensive documentation for deployment, security, production readiness, and project structure. Essential reading for DevOps and security teams.
 
 ### `/src/app/`
+
 Main application code following a feature-based structure. Each module (Finance, HR, Inventory, etc.) has its own subdirectory for better organization.
 
 ### `/src/components/`
+
 Reusable UI components shared across the application. Includes base components from Radix UI and custom components for common patterns.
 
 ### `/src/contexts/`
+
 React Context providers for global state management (Authentication, Theme, etc.).
 
 ### `/src/hooks/`
+
 Custom React hooks for data fetching, authentication, and other reusable logic.
 
 ### `/src/lib/`
+
 Core libraries and utilities including Supabase client, realtime manager, and helper functions.
 
 ### `/src/services/`
+
 Service layer that abstracts database operations. Each service handles CRUD operations for a specific domain (users, customers, products, etc.).
 
 ### `/src/styles/`
+
 Global styles and theme configuration. Uses Tailwind CSS v4 with custom theme tokens.
 
 ## Key Files
 
 ### Configuration Files
+
 - **`.env`** - Environment variables (Supabase URL and keys)
 - **`package.json`** - Project dependencies and scripts
 - **`tsconfig.json`** - TypeScript compiler settings
@@ -169,6 +179,7 @@ Global styles and theme configuration. Uses Tailwind CSS v4 with custom theme to
 - **`tailwind.config.js`** - Tailwind CSS theme customization
 
 ### Core Application Files
+
 - **`src/main.tsx`** - Application entry point
 - **`src/app/App.tsx`** - Root component with routing
 - **`src/lib/supabase.ts`** - Supabase client setup
@@ -176,6 +187,7 @@ Global styles and theme configuration. Uses Tailwind CSS v4 with custom theme to
 - **`src/hooks/useSupabaseQuery.ts`** - Data fetching hooks
 
 ### Database Files
+
 - **`database/01_schema.sql`** - Complete database schema (40+ tables)
 - **`database/02_rls_policies.sql`** - Security policies for multi-tenant isolation
 - **`database/03_seed_data.sql`** - Sample data for development/testing
@@ -183,7 +195,9 @@ Global styles and theme configuration. Uses Tailwind CSS v4 with custom theme to
 ## Module Organization
 
 ### Finance Module
+
 Located in `/src/app/pages/finance/`, includes:
+
 - Dashboard, Journal Entries, General Ledger
 - Accounts Receivable/Payable
 - Cash & Bank Management
@@ -193,7 +207,9 @@ Located in `/src/app/pages/finance/`, includes:
 - AI Assistant
 
 ### HR Module
+
 Located in `/src/app/pages/hr/`, includes:
+
 - Dashboard, Employee Management
 - Attendance Tracking
 - Leave Management
@@ -203,14 +219,18 @@ Located in `/src/app/pages/hr/`, includes:
 - AI Assistant
 
 ### Inventory Module
+
 Located in `/src/app/pages/inventory/`, includes:
+
 - Inventory Management
 - Stock Levels
 - Warehouses
 - Movements
 
 ### Sales Module
+
 Pages for:
+
 - Sales Orders
 - Customer Management (CRM)
 - Invoicing
@@ -218,7 +238,9 @@ Pages for:
 - Quotations
 
 ### Purchasing Module
+
 Pages for:
+
 - Purchase Orders
 - Supplier Management
 - Goods Receipts
@@ -237,10 +259,7 @@ export async function listItems(companyId: string) {
     return MOCK_DATA;
   }
 
-  const { data, error } = await supabase
-    .from('items')
-    .select('*')
-    .eq('company_id', companyId);
+  const { data, error } = await supabase.from('items').select('*').eq('company_id', companyId);
 
   if (error) throw error;
   return data;
@@ -251,11 +270,7 @@ export async function createItem(itemData: any) {
     throw new Error('Cannot create in demo mode');
   }
 
-  const { data, error } = await supabase
-    .from('items')
-    .insert([itemData])
-    .select()
-    .single();
+  const { data, error } = await supabase.from('items').insert([itemData]).select().single();
 
   if (error) throw error;
   return data;
@@ -265,6 +280,7 @@ export async function createItem(itemData: any) {
 ## Naming Conventions
 
 ### Files
+
 - **Components:** PascalCase (e.g., `Button.tsx`, `DashboardCard.tsx`)
 - **Utilities:** camelCase (e.g., `formatDate.ts`, `apiClient.ts`)
 - **Services:** camelCase with `Service` suffix (e.g., `usersService.ts`)
@@ -272,6 +288,7 @@ export async function createItem(itemData: any) {
 - **Types:** PascalCase with `.types.ts` suffix (e.g., `User.types.ts`)
 
 ### Code
+
 - **Variables:** camelCase (e.g., `userName`, `totalAmount`)
 - **Constants:** UPPER_SNAKE_CASE (e.g., `API_URL`, `MAX_RETRY_COUNT`)
 - **Types/Interfaces:** PascalCase (e.g., `User`, `ProductData`)
@@ -280,6 +297,7 @@ export async function createItem(itemData: any) {
 ## Import Organization
 
 Organize imports in this order:
+
 1. React imports
 2. Third-party libraries
 3. Internal utilities and services
@@ -305,6 +323,7 @@ import type { Product } from '../../types/product.types';
 ## Build Output
 
 After running `pnpm run build`:
+
 ```
 dist/
 ├── assets/
@@ -315,6 +334,7 @@ dist/
 ```
 
 Deploy the `dist/` directory to:
+
 - AWS S3 + CloudFront
 - AWS Amplify
 - ECS Fargate (with Nginx)
@@ -322,6 +342,7 @@ Deploy the `dist/` directory to:
 ## Environment Variables
 
 Required variables in `.env`:
+
 ```bash
 VITE_SUPABASE_URL=https://your-project.supabase.co
 VITE_SUPABASE_ANON_KEY=your-anon-key-here
@@ -349,4 +370,3 @@ pnpm run preview    # Preview production build locally
 8. **Performance** - Use React.memo for expensive components
 9. **Security** - Never expose service_role key, only anon key
 10. **Documentation** - Comment complex logic, not obvious code
-

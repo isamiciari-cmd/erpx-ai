@@ -1,5 +1,5 @@
-import { useState, useEffect } from "react";
-import { motion } from "motion/react";
+import { useState, useEffect } from 'react';
+import { motion } from 'motion/react';
 import {
   UserCheck,
   Plus,
@@ -7,10 +7,9 @@ import {
   Trash2,
   Calendar,
   DollarSign,
-  Clock,
   Users,
   Briefcase,
-} from "lucide-react";
+} from 'lucide-react';
 
 interface Employee {
   id: number;
@@ -20,7 +19,7 @@ interface Employee {
   salary: number;
   contractStart: string;
   contractEnd: string;
-  status: "active" | "inactive";
+  status: 'active' | 'inactive';
   email: string;
   phone: string;
 }
@@ -30,39 +29,39 @@ const employeeAPI = {
   employees: [
     {
       id: 1,
-      name: "Ahmed Al-Mutairi",
-      position: "Senior Developer",
-      department: "IT",
+      name: 'Ahmed Al-Mutairi',
+      position: 'Senior Developer',
+      department: 'IT',
       salary: 12000,
-      contractStart: "2023-01-15",
-      contractEnd: "2025-01-15",
-      status: "active" as const,
-      email: "ahmed@erpx.sa",
-      phone: "+966 50 123 4567",
+      contractStart: '2023-01-15',
+      contractEnd: '2025-01-15',
+      status: 'active' as const,
+      email: 'ahmed@erpx.sa',
+      phone: '+966 50 123 4567',
     },
     {
       id: 2,
-      name: "Fatima Hassan",
-      position: "Finance Manager",
-      department: "Finance",
+      name: 'Fatima Hassan',
+      position: 'Finance Manager',
+      department: 'Finance',
       salary: 15000,
-      contractStart: "2022-06-01",
-      contractEnd: "2024-06-01",
-      status: "active" as const,
-      email: "fatima@erpx.sa",
-      phone: "+966 55 234 5678",
+      contractStart: '2022-06-01',
+      contractEnd: '2024-06-01',
+      status: 'active' as const,
+      email: 'fatima@erpx.sa',
+      phone: '+966 55 234 5678',
     },
     {
       id: 3,
-      name: "Mohammed Saeed",
-      position: "HR Specialist",
-      department: "HR",
+      name: 'Mohammed Saeed',
+      position: 'HR Specialist',
+      department: 'HR',
       salary: 10000,
-      contractStart: "2023-03-10",
-      contractEnd: "2025-03-10",
-      status: "active" as const,
-      email: "mohammed@erpx.sa",
-      phone: "+966 50 345 6789",
+      contractStart: '2023-03-10',
+      contractEnd: '2025-03-10',
+      status: 'active' as const,
+      email: 'mohammed@erpx.sa',
+      phone: '+966 50 345 6789',
     },
   ] as Employee[],
   nextId: 4,
@@ -71,7 +70,7 @@ const employeeAPI = {
     return new Promise((resolve) => setTimeout(() => resolve([...this.employees]), 300));
   },
 
-  async create(data: Omit<Employee, "id">): Promise<Employee> {
+  async create(data: Omit<Employee, 'id'>): Promise<Employee> {
     const employee = { ...data, id: this.nextId++ };
     this.employees.push(employee);
     return new Promise((resolve) => setTimeout(() => resolve(employee), 300));
@@ -96,14 +95,14 @@ export default function EmployeesPage() {
   const [showForm, setShowForm] = useState(false);
 
   // Form state
-  const [name, setName] = useState("");
-  const [position, setPosition] = useState("");
-  const [department, setDepartment] = useState("");
-  const [salary, setSalary] = useState("");
-  const [contractStart, setContractStart] = useState("");
-  const [contractEnd, setContractEnd] = useState("");
-  const [email, setEmail] = useState("");
-  const [phone, setPhone] = useState("");
+  const [name, setName] = useState('');
+  const [position, setPosition] = useState('');
+  const [department, setDepartment] = useState('');
+  const [salary, setSalary] = useState('');
+  const [contractStart, setContractStart] = useState('');
+  const [contractEnd, setContractEnd] = useState('');
+  const [email, setEmail] = useState('');
+  const [phone, setPhone] = useState('');
 
   const fetchEmployees = async () => {
     const data = await employeeAPI.findAll();
@@ -120,26 +119,26 @@ export default function EmployeesPage() {
       salary: Number(salary),
       contractStart,
       contractEnd,
-      status: "active",
+      status: 'active',
       email,
       phone,
     });
 
     // Reset form
-    setName("");
-    setPosition("");
-    setDepartment("");
-    setSalary("");
-    setContractStart("");
-    setContractEnd("");
-    setEmail("");
-    setPhone("");
+    setName('');
+    setPosition('');
+    setDepartment('');
+    setSalary('');
+    setContractStart('');
+    setContractEnd('');
+    setEmail('');
+    setPhone('');
     setShowForm(false);
     fetchEmployees();
   };
 
   const deleteEmployee = async (id: number) => {
-    if (confirm("Are you sure you want to remove this employee?")) {
+    if (confirm('Are you sure you want to remove this employee?')) {
       await employeeAPI.delete(id);
       fetchEmployees();
     }
@@ -151,28 +150,28 @@ export default function EmployeesPage() {
 
   const stats = [
     {
-      label: "Total Employees",
+      label: 'Total Employees',
       value: employees.length.toString(),
       icon: Users,
-      color: "from-blue-500 to-cyan-500",
+      color: 'from-blue-500 to-cyan-500',
     },
     {
-      label: "Active Contracts",
-      value: employees.filter((e) => e.status === "active").length.toString(),
+      label: 'Active Contracts',
+      value: employees.filter((e) => e.status === 'active').length.toString(),
       icon: Briefcase,
-      color: "from-green-500 to-emerald-500",
+      color: 'from-green-500 to-emerald-500',
     },
     {
-      label: "Total Payroll",
+      label: 'Total Payroll',
       value: `SAR ${employees.reduce((sum, e) => sum + e.salary, 0).toLocaleString()}`,
       icon: DollarSign,
-      color: "from-purple-500 to-pink-500",
+      color: 'from-purple-500 to-pink-500',
     },
     {
-      label: "Departments",
+      label: 'Departments',
       value: new Set(employees.map((e) => e.department)).size.toString(),
       icon: UserCheck,
-      color: "from-orange-500 to-yellow-500",
+      color: 'from-orange-500 to-yellow-500',
     },
   ];
 
@@ -211,7 +210,9 @@ export default function EmployeesPage() {
             whileHover={{ scale: 1.02, y: -4 }}
             className="bg-gradient-to-br from-gray-900/80 to-gray-950/80 backdrop-blur-xl border border-white/10 rounded-2xl p-6 hover:border-blue-500/50 hover:shadow-2xl hover:shadow-blue-500/10 transition-all"
           >
-            <div className={`w-14 h-14 bg-gradient-to-br ${stat.color} rounded-xl flex items-center justify-center shadow-lg mb-4`}>
+            <div
+              className={`w-14 h-14 bg-gradient-to-br ${stat.color} rounded-xl flex items-center justify-center shadow-lg mb-4`}
+            >
               <stat.icon className="w-7 h-7 text-white" />
             </div>
             <h3 className="text-3xl font-bold text-white mb-1">{stat.value}</h3>
@@ -407,7 +408,7 @@ export default function EmployeesPage() {
                   <td className="px-6 py-4">
                     <div className="flex items-center gap-2 text-xs text-gray-400">
                       <Calendar className="w-3 h-3" />
-                      {new Date(employee.contractStart).toLocaleDateString()} -{" "}
+                      {new Date(employee.contractStart).toLocaleDateString()} -{' '}
                       {new Date(employee.contractEnd).toLocaleDateString()}
                     </div>
                   </td>

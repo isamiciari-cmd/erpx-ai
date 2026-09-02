@@ -1,5 +1,5 @@
-import { useState } from "react";
-import { motion, AnimatePresence } from "motion/react";
+import { useState } from 'react';
+import { motion, AnimatePresence } from 'motion/react';
 import {
   Search,
   ShoppingCart,
@@ -12,75 +12,75 @@ import {
   Tag,
   User,
   X,
-} from "lucide-react";
+} from 'lucide-react';
 
 // Product categories
-const categories = ["All", "Electronics", "Clothing", "Food", "Home", "Sports"];
+const categories = ['All', 'Electronics', 'Clothing', 'Food', 'Home', 'Sports'];
 
 // Products data
 const products = [
   {
     id: 1,
-    name: "Wireless Headphones",
+    name: 'Wireless Headphones',
     price: 49.99,
-    category: "Electronics",
-    image: "https://images.unsplash.com/photo-1505740420928-5e560c06d30e?w=200&h=200&fit=crop",
+    category: 'Electronics',
+    image: 'https://images.unsplash.com/photo-1505740420928-5e560c06d30e?w=200&h=200&fit=crop',
     stock: 15,
   },
   {
     id: 2,
-    name: "Smart Watch",
+    name: 'Smart Watch',
     price: 199.99,
-    category: "Electronics",
-    image: "https://images.unsplash.com/photo-1523275335684-37898b6baf30?w=200&h=200&fit=crop",
+    category: 'Electronics',
+    image: 'https://images.unsplash.com/photo-1523275335684-37898b6baf30?w=200&h=200&fit=crop',
     stock: 8,
   },
   {
     id: 3,
-    name: "Cotton T-Shirt",
+    name: 'Cotton T-Shirt',
     price: 24.99,
-    category: "Clothing",
-    image: "https://images.unsplash.com/photo-1521572163474-6864f9cf17ab?w=200&h=200&fit=crop",
+    category: 'Clothing',
+    image: 'https://images.unsplash.com/photo-1521572163474-6864f9cf17ab?w=200&h=200&fit=crop',
     stock: 50,
   },
   {
     id: 4,
-    name: "Coffee Beans",
+    name: 'Coffee Beans',
     price: 12.99,
-    category: "Food",
-    image: "https://images.unsplash.com/photo-1559056199-641a0ac8b55e?w=200&h=200&fit=crop",
+    category: 'Food',
+    image: 'https://images.unsplash.com/photo-1559056199-641a0ac8b55e?w=200&h=200&fit=crop',
     stock: 100,
   },
   {
     id: 5,
-    name: "Desk Lamp",
+    name: 'Desk Lamp',
     price: 34.99,
-    category: "Home",
-    image: "https://images.unsplash.com/photo-1507473885765-e6ed057f782f?w=200&h=200&fit=crop",
+    category: 'Home',
+    image: 'https://images.unsplash.com/photo-1507473885765-e6ed057f782f?w=200&h=200&fit=crop',
     stock: 20,
   },
   {
     id: 6,
-    name: "Yoga Mat",
+    name: 'Yoga Mat',
     price: 29.99,
-    category: "Sports",
-    image: "https://images.unsplash.com/photo-1601925260368-ae2f83cf8b7f?w=200&h=200&fit=crop",
+    category: 'Sports',
+    image: 'https://images.unsplash.com/photo-1601925260368-ae2f83cf8b7f?w=200&h=200&fit=crop',
     stock: 30,
   },
   {
     id: 7,
-    name: "USB-C Cable",
+    name: 'USB-C Cable',
     price: 9.99,
-    category: "Electronics",
-    image: "https://images.unsplash.com/photo-1625948515291-69613efd103f?w=200&h=200&fit=crop",
+    category: 'Electronics',
+    image: 'https://images.unsplash.com/photo-1625948515291-69613efd103f?w=200&h=200&fit=crop',
     stock: 75,
   },
   {
     id: 8,
-    name: "Running Shoes",
+    name: 'Running Shoes',
     price: 89.99,
-    category: "Sports",
-    image: "https://images.unsplash.com/photo-1542291026-7eec264c27ff?w=200&h=200&fit=crop",
+    category: 'Sports',
+    image: 'https://images.unsplash.com/photo-1542291026-7eec264c27ff?w=200&h=200&fit=crop',
     stock: 12,
   },
 ];
@@ -94,26 +94,26 @@ interface CartItem {
 }
 
 export default function POSPage() {
-  const [selectedCategory, setSelectedCategory] = useState("All");
-  const [searchQuery, setSearchQuery] = useState("");
+  const [selectedCategory, setSelectedCategory] = useState('All');
+  const [searchQuery, setSearchQuery] = useState('');
   const [cart, setCart] = useState<CartItem[]>([]);
   const [discount, setDiscount] = useState(0);
   const [showCheckout, setShowCheckout] = useState(false);
-  const [customerName, setCustomerName] = useState("");
+  const [customerName, setCustomerName] = useState('');
 
   const filteredProducts = products.filter((product) => {
-    const matchesCategory = selectedCategory === "All" || product.category === selectedCategory;
+    const matchesCategory = selectedCategory === 'All' || product.category === selectedCategory;
     const matchesSearch = product.name.toLowerCase().includes(searchQuery.toLowerCase());
     return matchesCategory && matchesSearch;
   });
 
-  const addToCart = (product: typeof products[0]) => {
+  const addToCart = (product: (typeof products)[0]) => {
     const existingItem = cart.find((item) => item.id === product.id);
     if (existingItem) {
       setCart(
         cart.map((item) =>
-          item.id === product.id ? { ...item, quantity: item.quantity + 1 } : item
-        )
+          item.id === product.id ? { ...item, quantity: item.quantity + 1 } : item,
+        ),
       );
     } else {
       setCart([
@@ -143,7 +143,7 @@ export default function POSPage() {
           }
           return item;
         })
-        .filter((item) => item.quantity > 0)
+        .filter((item) => item.quantity > 0),
     );
   };
 
@@ -159,9 +159,9 @@ export default function POSPage() {
     // Reset
     setCart([]);
     setDiscount(0);
-    setCustomerName("");
+    setCustomerName('');
     setShowCheckout(false);
-    alert("Order completed successfully!");
+    alert('Order completed successfully!');
   };
 
   return (
@@ -192,8 +192,8 @@ export default function POSPage() {
                 onClick={() => setSelectedCategory(category)}
                 className={`px-4 py-2 rounded-lg text-sm font-medium whitespace-nowrap transition-all ${
                   selectedCategory === category
-                    ? "bg-blue-500 text-white shadow-lg shadow-blue-500/30"
-                    : "bg-gray-800 text-gray-300 hover:bg-gray-700"
+                    ? 'bg-blue-500 text-white shadow-lg shadow-blue-500/30'
+                    : 'bg-gray-800 text-gray-300 hover:bg-gray-700'
                 }`}
               >
                 {category}
@@ -331,7 +331,7 @@ export default function POSPage() {
               <input
                 type="number"
                 placeholder="Discount %"
-                value={discount || ""}
+                value={discount || ''}
                 onChange={(e) => setDiscount(Number(e.target.value))}
                 className="flex-1 px-3 py-2 bg-gray-800/50 border border-gray-700 rounded-lg text-white placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-blue-500 text-sm"
               />
@@ -421,7 +421,7 @@ export default function POSPage() {
                   <div className="flex justify-between text-lg">
                     <span className="text-gray-400">Customer:</span>
                     <span className="text-white font-semibold">
-                      {customerName || "Walk-in Customer"}
+                      {customerName || 'Walk-in Customer'}
                     </span>
                   </div>
                   <div className="flex justify-between text-lg">

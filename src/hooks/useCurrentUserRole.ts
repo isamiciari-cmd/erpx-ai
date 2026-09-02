@@ -40,7 +40,7 @@ export function useCurrentUserRole(): UseCurrentUserRoleReturn {
         // Get all user roles and highest role level
         const [rolesResult, levelResult] = await Promise.all([
           supabase.rpc('get_user_roles', { p_user_id: currentUser.id }),
-          supabase.rpc('get_highest_role_level', { p_user_id: currentUser.id })
+          supabase.rpc('get_highest_role_level', { p_user_id: currentUser.id }),
         ]);
 
         if (rolesResult.error) {
@@ -84,6 +84,6 @@ export function useCurrentUserRole(): UseCurrentUserRoleReturn {
     allRoles,
     roleLevel,
     loading,
-    error
+    error,
   };
 }

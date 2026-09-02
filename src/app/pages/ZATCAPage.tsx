@@ -1,5 +1,5 @@
-import { useState, useEffect } from "react";
-import { motion } from "motion/react";
+import { useState, useEffect } from 'react';
+import { motion } from 'motion/react';
 import {
   FileText,
   Shield,
@@ -12,7 +12,7 @@ import {
   Download,
   Eye,
   RefreshCw,
-} from "lucide-react";
+} from 'lucide-react';
 
 interface ZATCAInvoice {
   id: number;
@@ -26,7 +26,7 @@ interface ZATCAInvoice {
   xml: string;
   signature: string;
   qrCode: string;
-  zatcaStatus: "pending" | "cleared" | "reported" | "rejected";
+  zatcaStatus: 'pending' | 'cleared' | 'reported' | 'rejected';
   zatcaResponse?: string;
   createdAt: string;
   submittedAt?: string;
@@ -39,9 +39,9 @@ const zatcaAPI = {
   nextId: 1,
 
   generateUUID(): string {
-    return "xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx".replace(/[xy]/g, (c) => {
+    return 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, (c) => {
       const r = (Math.random() * 16) | 0;
-      const v = c === "x" ? r : (r & 0x3) | 0x8;
+      const v = c === 'x' ? r : (r & 0x3) | 0x8;
       return v.toString(16);
     });
   },
@@ -51,8 +51,8 @@ const zatcaAPI = {
 <Invoice xmlns="urn:oasis:names:specification:ubl:schema:xsd:Invoice-2">
   <cbc:ID>${invoice.invoiceNumber}</cbc:ID>
   <cbc:UUID>${invoice.uuid}</cbc:UUID>
-  <cbc:IssueDate>${new Date().toISOString().split("T")[0]}</cbc:IssueDate>
-  <cbc:IssueTime>${new Date().toISOString().split("T")[1].split(".")[0]}</cbc:IssueTime>
+  <cbc:IssueDate>${new Date().toISOString().split('T')[0]}</cbc:IssueDate>
+  <cbc:IssueTime>${new Date().toISOString().split('T')[1].split('.')[0]}</cbc:IssueTime>
 
   <cac:AccountingSupplierParty>
     <cac:Party>
@@ -94,7 +94,7 @@ const zatcaAPI = {
   generateQRCode(invoice: Partial<ZATCAInvoice>): string {
     // TLV format for ZATCA QR Code
     const data = {
-      sellerName: "ERPX Company",
+      sellerName: 'ERPX Company',
       vatNumber: invoice.supplierVAT,
       timestamp: new Date().toISOString(),
       total: invoice.total,
@@ -106,8 +106,11 @@ const zatcaAPI = {
     return `data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAADUlEQVR42mNk+M9QDwADhgGAWjR9awAAAABJRU5ErkJggg==`;
   },
 
-  async submitToZATCA(invoice: ZATCAInvoice, retryCount = 0): Promise<{
-    status: "cleared" | "reported" | "rejected";
+  async submitToZATCA(
+    invoice: ZATCAInvoice,
+    retryCount = 0,
+  ): Promise<{
+    status: 'cleared' | 'reported' | 'rejected';
     message: string;
   }> {
     // Simulate API call with random success/failure
@@ -118,27 +121,32 @@ const zatcaAPI = {
         if (random < 0.7) {
           // 70% success - cleared
           resolve({
-            status: "cleared",
-            message: "Invoice successfully cleared by ZATCA",
+            status: 'cleared',
+            message: 'Invoice successfully cleared by ZATCA',
           });
         } else if (random < 0.9) {
           // 20% reported (warning)
           resolve({
-            status: "reported",
-            message: "Invoice reported with warnings",
+            status: 'reported',
+            message: 'Invoice reported with warnings',
           });
         } else {
           // 10% rejected
           resolve({
-            status: "rejected",
-            message: "Invoice rejected: Invalid VAT number format",
+            status: 'rejected',
+            message: 'Invoice rejected: Invalid VAT number format',
           });
         }
       }, 2000);
     });
   },
 
-  async create(data: Omit<ZATCAInvoice, "id" | "uuid" | "xml" | "signature" | "qrCode" | "zatcaStatus" | "createdAt" | "retryCount">): Promise<ZATCAInvoice> {
+  async create(
+    data: Omit<
+      ZATCAInvoice,
+      'id' | 'uuid' | 'xml' | 'signature' | 'qrCode' | 'zatcaStatus' | 'createdAt' | 'retryCount'
+    >,
+  ): Promise<ZATCAInvoice> {
     const uuid = this.generateUUID();
     const xml = this.generateXML({ ...data, uuid });
     const signature = this.signInvoice(xml);
@@ -151,7 +159,7 @@ const zatcaAPI = {
       xml,
       signature,
       qrCode,
-      zatcaStatus: "pending",
+      zatcaStatus: 'pending',
       createdAt: new Date().toISOString(),
       retryCount: 0,
     };
@@ -164,7 +172,11 @@ const zatcaAPI = {
     return new Promise((resolve) => setTimeout(() => resolve([...this.invoices]), 300));
   },
 
-  async updateStatus(id: number, status: ZATCAInvoice["zatcaStatus"], response: string): Promise<void> {
+  async updateStatus(
+    id: number,
+    status: ZATCAInvoice['zatcaStatus'],
+    response: string,
+  ): Promise<void> {
     const invoice = this.invoices.find((i) => i.id === id);
     if (invoice) {
       invoice.zatcaStatus = status;
@@ -182,12 +194,12 @@ export default function ZATCAPage() {
   const [submitting, setSubmitting] = useState<number | null>(null);
 
   // Form state
-  const [invoiceNumber, setInvoiceNumber] = useState("");
-  const [customerName, setCustomerName] = useState("");
-  const [customerVAT, setCustomerVAT] = useState("");
-  const [supplierVAT, setSupplierVAT] = useState("300000000000003");
-  const [total, setTotal] = useState("1000");
-  const [vat, setVat] = useState("150");
+  const [invoiceNumber, setInvoiceNumber] = useState('');
+  const [customerName, setCustomerName] = useState('');
+  const [customerVAT, setCustomerVAT] = useState('');
+  const [supplierVAT, setSupplierVAT] = useState('300000000000003');
+  const [total, setTotal] = useState('1000');
+  const [vat, setVat] = useState('150');
 
   const fetchInvoices = async () => {
     const data = await zatcaAPI.findAll();
@@ -206,11 +218,11 @@ export default function ZATCAPage() {
       vat: Number(vat),
     });
 
-    setInvoiceNumber("");
-    setCustomerName("");
-    setCustomerVAT("");
-    setTotal("1000");
-    setVat("150");
+    setInvoiceNumber('');
+    setCustomerName('');
+    setCustomerVAT('');
+    setTotal('1000');
+    setVat('150');
     setShowForm(false);
     fetchInvoices();
   };
@@ -221,7 +233,7 @@ export default function ZATCAPage() {
     try {
       const response = await zatcaAPI.submitToZATCA(invoice, retryCount);
 
-      if (response.status === "rejected" && retryCount < 3) {
+      if (response.status === 'rejected' && retryCount < 3) {
         // Retry logic
         console.log(`Retry attempt ${retryCount + 1}/3 for invoice ${invoice.invoiceNumber}`);
         await new Promise((resolve) => setTimeout(resolve, 1000));
@@ -231,7 +243,7 @@ export default function ZATCAPage() {
       await zatcaAPI.updateStatus(invoice.id, response.status, response.message);
       fetchInvoices();
     } catch (error) {
-      console.error("ZATCA submission failed:", error);
+      console.error('ZATCA submission failed:', error);
     } finally {
       setSubmitting(null);
     }
@@ -241,26 +253,26 @@ export default function ZATCAPage() {
     fetchInvoices();
   }, []);
 
-  const getStatusColor = (status: ZATCAInvoice["zatcaStatus"]) => {
+  const getStatusColor = (status: ZATCAInvoice['zatcaStatus']) => {
     switch (status) {
-      case "cleared":
-        return "bg-green-500/10 text-green-400 border-green-500/20";
-      case "reported":
-        return "bg-yellow-500/10 text-yellow-400 border-yellow-500/20";
-      case "rejected":
-        return "bg-red-500/10 text-red-400 border-red-500/20";
+      case 'cleared':
+        return 'bg-green-500/10 text-green-400 border-green-500/20';
+      case 'reported':
+        return 'bg-yellow-500/10 text-yellow-400 border-yellow-500/20';
+      case 'rejected':
+        return 'bg-red-500/10 text-red-400 border-red-500/20';
       default:
-        return "bg-gray-500/10 text-gray-400 border-gray-500/20";
+        return 'bg-gray-500/10 text-gray-400 border-gray-500/20';
     }
   };
 
-  const getStatusIcon = (status: ZATCAInvoice["zatcaStatus"]) => {
+  const getStatusIcon = (status: ZATCAInvoice['zatcaStatus']) => {
     switch (status) {
-      case "cleared":
+      case 'cleared':
         return <CheckCircle className="w-4 h-4" />;
-      case "reported":
+      case 'reported':
         return <AlertTriangle className="w-4 h-4" />;
-      case "rejected":
+      case 'rejected':
         return <XCircle className="w-4 h-4" />;
       default:
         return <Clock className="w-4 h-4" />;
@@ -300,13 +312,13 @@ export default function ZATCAPage() {
         <h3 className="text-lg font-bold text-white mb-4">ZATCA Integration Flow</h3>
         <div className="grid grid-cols-2 md:grid-cols-7 gap-4">
           {[
-            { icon: FileText, label: "Create Invoice" },
-            { icon: Shield, label: "Generate XML (UBL)" },
-            { icon: Shield, label: "Digital Sign (ECDSA)" },
-            { icon: QrCode, label: "Generate QR" },
-            { icon: Send, label: "Submit to ZATCA" },
-            { icon: RefreshCw, label: "Retry (3x)" },
-            { icon: CheckCircle, label: "Cleared/Reported" },
+            { icon: FileText, label: 'Create Invoice' },
+            { icon: Shield, label: 'Generate XML (UBL)' },
+            { icon: Shield, label: 'Digital Sign (ECDSA)' },
+            { icon: QrCode, label: 'Generate QR' },
+            { icon: Send, label: 'Submit to ZATCA' },
+            { icon: RefreshCw, label: 'Retry (3x)' },
+            { icon: CheckCircle, label: 'Cleared/Reported' },
           ].map((step, i) => (
             <div key={i} className="flex flex-col items-center text-center">
               <div className="w-12 h-12 bg-gradient-to-br from-blue-500 to-cyan-500 rounded-xl flex items-center justify-center mb-2">
@@ -475,7 +487,7 @@ export default function ZATCAPage() {
                     <td className="px-6 py-4">
                       <span
                         className={`inline-flex items-center gap-2 px-3 py-1.5 rounded-full text-xs font-semibold border ${getStatusColor(
-                          invoice.zatcaStatus
+                          invoice.zatcaStatus,
                         )}`}
                       >
                         {getStatusIcon(invoice.zatcaStatus)}
@@ -484,7 +496,7 @@ export default function ZATCAPage() {
                     </td>
                     <td className="px-6 py-4">
                       <div className="flex items-center gap-2">
-                        {invoice.zatcaStatus === "pending" && (
+                        {invoice.zatcaStatus === 'pending' && (
                           <motion.button
                             whileHover={{ scale: 1.1 }}
                             whileTap={{ scale: 0.9 }}
@@ -515,9 +527,9 @@ export default function ZATCAPage() {
                           whileHover={{ scale: 1.1 }}
                           whileTap={{ scale: 0.9 }}
                           onClick={() => {
-                            const blob = new Blob([invoice.xml], { type: "text/xml" });
+                            const blob = new Blob([invoice.xml], { type: 'text/xml' });
                             const url = URL.createObjectURL(blob);
-                            const a = document.createElement("a");
+                            const a = document.createElement('a');
                             a.href = url;
                             a.download = `${invoice.invoiceNumber}.xml`;
                             a.click();
@@ -577,9 +589,7 @@ export default function ZATCAPage() {
                 </div>
                 <div>
                   <p className="text-sm text-gray-400">Total</p>
-                  <p className="text-white font-semibold">
-                    {selectedInvoice.total.toFixed(2)} SAR
-                  </p>
+                  <p className="text-white font-semibold">{selectedInvoice.total.toFixed(2)} SAR</p>
                 </div>
               </div>
 
@@ -593,11 +603,7 @@ export default function ZATCAPage() {
               <div className="border-t border-white/10 pt-4">
                 <p className="text-sm text-gray-400 mb-2">QR Code</p>
                 <div className="bg-white p-4 rounded-lg inline-block">
-                  <img
-                    src={selectedInvoice.qrCode}
-                    alt="QR Code"
-                    className="w-32 h-32"
-                  />
+                  <img src={selectedInvoice.qrCode} alt="QR Code" className="w-32 h-32" />
                 </div>
               </div>
 

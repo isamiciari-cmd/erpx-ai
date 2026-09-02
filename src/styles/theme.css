@@ -1,7 +1,7 @@
 @custom-variant dark (&:is(.dark *));
 
 /* Force RTL and proper font for Arabic */
-html[lang="ar"] * {
+html[lang='ar'] * {
   direction: rtl !important;
   font-family: 'IBM Plex Sans Arabic', 'Cairo', 'Tajawal', sans-serif !important;
   unicode-bidi: isolate !important;
@@ -188,49 +188,49 @@ html[lang="ar"] * {
 }
 
 /* RTL Support */
-[dir="rtl"] {
+[dir='rtl'] {
   direction: rtl;
   text-align: right;
 }
 
-[dir="rtl"] .rtl\:text-left {
+[dir='rtl'] .rtl\:text-left {
   text-align: left;
 }
 
-[dir="rtl"] .rtl\:text-right {
+[dir='rtl'] .rtl\:text-right {
   text-align: right;
 }
 
 /* Flip margins and paddings for RTL */
-[dir="rtl"] .ml-auto {
+[dir='rtl'] .ml-auto {
   margin-left: 0;
   margin-right: auto;
 }
 
-[dir="rtl"] .mr-auto {
+[dir='rtl'] .mr-auto {
   margin-right: 0;
   margin-left: auto;
 }
 
 /* Flip flex directions for RTL */
-[dir="rtl"] .flex-row {
+[dir='rtl'] .flex-row {
   flex-direction: row-reverse;
 }
 
 /* Flip icons and chevrons for RTL */
-[dir="rtl"] .rtl\:rotate-180 {
+[dir='rtl'] .rtl\:rotate-180 {
   transform: rotate(180deg);
 }
 
 /* Border radius flip for RTL */
-[dir="rtl"] .rounded-l-lg {
+[dir='rtl'] .rounded-l-lg {
   border-top-left-radius: 0;
   border-bottom-left-radius: 0;
   border-top-right-radius: var(--radius);
   border-bottom-right-radius: var(--radius);
 }
 
-[dir="rtl"] .rounded-r-lg {
+[dir='rtl'] .rounded-r-lg {
   border-top-right-radius: 0;
   border-bottom-right-radius: 0;
   border-top-left-radius: var(--radius);
@@ -238,16 +238,16 @@ html[lang="ar"] * {
 }
 
 /* Sidebar positioning for RTL */
-[dir="rtl"] .sidebar {
+[dir='rtl'] .sidebar {
   left: auto;
   right: 0;
 }
 
 /* Transform translate for RTL */
-[dir="rtl"] .translate-x-full {
+[dir='rtl'] .translate-x-full {
   transform: translateX(-100%);
 }
 
-[dir="rtl"] .-translate-x-full {
+[dir='rtl'] .-translate-x-full {
   transform: translateX(100%);
 }

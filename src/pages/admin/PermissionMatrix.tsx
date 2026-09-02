@@ -64,14 +64,14 @@ export function PermissionMatrix() {
 
       // Build matrix
       const newMatrix: PermissionMatrix = {};
-      (rolesData || []).forEach(role => {
+      (rolesData || []).forEach((role) => {
         newMatrix[role.id] = {};
-        (permissionsData || []).forEach(perm => {
+        (permissionsData || []).forEach((perm) => {
           newMatrix[role.id][perm.id] = false;
         });
       });
 
-      (mappings || []).forEach(mapping => {
+      (mappings || []).forEach((mapping) => {
         if (newMatrix[mapping.role_id]) {
           newMatrix[mapping.role_id][mapping.permission_id] = true;
         }
@@ -88,11 +88,12 @@ export function PermissionMatrix() {
     }
   };
 
-  const categories = ['all', ...Array.from(new Set(permissions.map(p => p.category)))];
+  const categories = ['all', ...Array.from(new Set(permissions.map((p) => p.category)))];
 
-  const filteredPermissions = selectedCategory === 'all'
-    ? permissions
-    : permissions.filter(p => p.category === selectedCategory);
+  const filteredPermissions =
+    selectedCategory === 'all'
+      ? permissions
+      : permissions.filter((p) => p.category === selectedCategory);
 
   const getRoleLevelColor = (level: number) => {
     if (level >= 1000) return 'bg-purple-600';
@@ -156,7 +157,9 @@ export function PermissionMatrix() {
                   {roles.map((role) => (
                     <th key={role.id} className="px-4 py-3 text-center min-w-[100px]">
                       <div className="flex flex-col items-center">
-                        <div className={`w-3 h-3 rounded-full ${getRoleLevelColor(role.level)} mb-1`}></div>
+                        <div
+                          className={`w-3 h-3 rounded-full ${getRoleLevelColor(role.level)} mb-1`}
+                        ></div>
                         <div className="text-xs font-medium text-gray-900">{role.display_name}</div>
                         <div className="text-xs text-gray-500">L{role.level}</div>
                       </div>
@@ -180,14 +183,30 @@ export function PermissionMatrix() {
                       <td key={role.id} className="px-4 py-4 text-center">
                         {matrix[role.id]?.[permission.id] ? (
                           <div className="flex justify-center">
-                            <svg className="h-6 w-6 text-green-500" fill="currentColor" viewBox="0 0 20 20">
-                              <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clipRule="evenodd" />
+                            <svg
+                              className="h-6 w-6 text-green-500"
+                              fill="currentColor"
+                              viewBox="0 0 20 20"
+                            >
+                              <path
+                                fillRule="evenodd"
+                                d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z"
+                                clipRule="evenodd"
+                              />
                             </svg>
                           </div>
                         ) : (
                           <div className="flex justify-center">
-                            <svg className="h-6 w-6 text-gray-300" fill="currentColor" viewBox="0 0 20 20">
-                              <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zM8.707 7.293a1 1 0 00-1.414 1.414L8.586 10l-1.293 1.293a1 1 0 101.414 1.414L10 11.414l1.293 1.293a1 1 0 001.414-1.414L11.414 10l1.293-1.293a1 1 0 00-1.414-1.414L10 8.586 8.707 7.293z" clipRule="evenodd" />
+                            <svg
+                              className="h-6 w-6 text-gray-300"
+                              fill="currentColor"
+                              viewBox="0 0 20 20"
+                            >
+                              <path
+                                fillRule="evenodd"
+                                d="M10 18a8 8 0 100-16 8 8 0 000 16zM8.707 7.293a1 1 0 00-1.414 1.414L8.586 10l-1.293 1.293a1 1 0 101.414 1.414L10 11.414l1.293 1.293a1 1 0 001.414-1.414L11.414 10l1.293-1.293a1 1 0 00-1.414-1.414L10 8.586 8.707 7.293z"
+                                clipRule="evenodd"
+                              />
                             </svg>
                           </div>
                         )}

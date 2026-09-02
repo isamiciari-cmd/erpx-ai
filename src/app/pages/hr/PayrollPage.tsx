@@ -1,11 +1,61 @@
-import { DollarSign, CheckCircle, Clock, Download, FileText } from 'lucide-react';
+import { CheckCircle, Download, FileText } from 'lucide-react';
 
 const payrollRecords = [
-  { id: 1, employee: 'Ahmed Ali', code: 'EMP001', basicSalary: 18000, allowances: 3000, overtime: 500, deductions: 200, netSalary: 21300, status: 'Approved' },
-  { id: 2, employee: 'Sara Mohamed', code: 'EMP002', basicSalary: 15000, allowances: 2500, overtime: 400, deductions: 150, netSalary: 17750, status: 'Approved' },
-  { id: 3, employee: 'Omar Abdullah', code: 'EMP003', basicSalary: 12000, allowances: 2000, overtime: 300, deductions: 500, netSalary: 13800, status: 'Pending' },
-  { id: 4, employee: 'Fatima Hassan', code: 'EMP004', basicSalary: 11000, allowances: 1800, overtime: 250, deductions: 100, netSalary: 12950, status: 'Pending' },
-  { id: 5, employee: 'Khalid Ahmed', code: 'EMP005', basicSalary: 8000, allowances: 1200, overtime: 0, deductions: 0, netSalary: 9200, status: 'Pending' },
+  {
+    id: 1,
+    employee: 'Ahmed Ali',
+    code: 'EMP001',
+    basicSalary: 18000,
+    allowances: 3000,
+    overtime: 500,
+    deductions: 200,
+    netSalary: 21300,
+    status: 'Approved',
+  },
+  {
+    id: 2,
+    employee: 'Sara Mohamed',
+    code: 'EMP002',
+    basicSalary: 15000,
+    allowances: 2500,
+    overtime: 400,
+    deductions: 150,
+    netSalary: 17750,
+    status: 'Approved',
+  },
+  {
+    id: 3,
+    employee: 'Omar Abdullah',
+    code: 'EMP003',
+    basicSalary: 12000,
+    allowances: 2000,
+    overtime: 300,
+    deductions: 500,
+    netSalary: 13800,
+    status: 'Pending',
+  },
+  {
+    id: 4,
+    employee: 'Fatima Hassan',
+    code: 'EMP004',
+    basicSalary: 11000,
+    allowances: 1800,
+    overtime: 250,
+    deductions: 100,
+    netSalary: 12950,
+    status: 'Pending',
+  },
+  {
+    id: 5,
+    employee: 'Khalid Ahmed',
+    code: 'EMP005',
+    basicSalary: 8000,
+    allowances: 1200,
+    overtime: 0,
+    deductions: 0,
+    netSalary: 9200,
+    status: 'Pending',
+  },
 ];
 
 export default function PayrollPage() {
@@ -83,14 +133,30 @@ export default function PayrollPage() {
           <table className="w-full">
             <thead className="bg-gray-50">
               <tr>
-                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Employee</th>
-                <th className="px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase">Basic Salary</th>
-                <th className="px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase">Allowances</th>
-                <th className="px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase">Overtime</th>
-                <th className="px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase">Deductions</th>
-                <th className="px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase">Net Salary</th>
-                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Status</th>
-                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Actions</th>
+                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">
+                  Employee
+                </th>
+                <th className="px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase">
+                  Basic Salary
+                </th>
+                <th className="px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase">
+                  Allowances
+                </th>
+                <th className="px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase">
+                  Overtime
+                </th>
+                <th className="px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase">
+                  Deductions
+                </th>
+                <th className="px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase">
+                  Net Salary
+                </th>
+                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">
+                  Status
+                </th>
+                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">
+                  Actions
+                </th>
               </tr>
             </thead>
             <tbody className="divide-y">
@@ -103,10 +169,18 @@ export default function PayrollPage() {
                     </div>
                   </td>
                   <td className="px-6 py-4 text-right">${record.basicSalary.toLocaleString()}</td>
-                  <td className="px-6 py-4 text-right text-green-600">${record.allowances.toLocaleString()}</td>
-                  <td className="px-6 py-4 text-right text-purple-600">${record.overtime.toLocaleString()}</td>
-                  <td className="px-6 py-4 text-right text-red-600">${record.deductions.toLocaleString()}</td>
-                  <td className="px-6 py-4 text-right font-bold text-blue-600">${record.netSalary.toLocaleString()}</td>
+                  <td className="px-6 py-4 text-right text-green-600">
+                    ${record.allowances.toLocaleString()}
+                  </td>
+                  <td className="px-6 py-4 text-right text-purple-600">
+                    ${record.overtime.toLocaleString()}
+                  </td>
+                  <td className="px-6 py-4 text-right text-red-600">
+                    ${record.deductions.toLocaleString()}
+                  </td>
+                  <td className="px-6 py-4 text-right font-bold text-blue-600">
+                    ${record.netSalary.toLocaleString()}
+                  </td>
                   <td className="px-6 py-4">
                     <PayrollStatusBadge status={record.status} />
                   </td>
@@ -129,9 +203,15 @@ export default function PayrollPage() {
               <tr>
                 <td className="px-6 py-4">TOTAL</td>
                 <td className="px-6 py-4 text-right">${totalBasic.toLocaleString()}</td>
-                <td className="px-6 py-4 text-right text-green-600">${totalAllowances.toLocaleString()}</td>
-                <td className="px-6 py-4 text-right text-purple-600">${totalOvertime.toLocaleString()}</td>
-                <td className="px-6 py-4 text-right text-red-600">${totalDeductions.toLocaleString()}</td>
+                <td className="px-6 py-4 text-right text-green-600">
+                  ${totalAllowances.toLocaleString()}
+                </td>
+                <td className="px-6 py-4 text-right text-purple-600">
+                  ${totalOvertime.toLocaleString()}
+                </td>
+                <td className="px-6 py-4 text-right text-red-600">
+                  ${totalDeductions.toLocaleString()}
+                </td>
                 <td className="px-6 py-4 text-right text-blue-600">${totalNet.toLocaleString()}</td>
                 <td colSpan={2}></td>
               </tr>
@@ -164,7 +244,9 @@ function PayrollStatusBadge({ status }: { status: string }) {
   };
 
   return (
-    <span className={`px-2 py-1 text-xs rounded-full font-medium ${styles[status as keyof typeof styles]}`}>
+    <span
+      className={`px-2 py-1 text-xs rounded-full font-medium ${styles[status as keyof typeof styles]}`}
+    >
       {status}
     </span>
   );

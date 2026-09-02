@@ -1,9 +1,18 @@
-import { useState } from "react";
-import { motion, AnimatePresence } from "motion/react";
-import { useNavigate } from "react-router";
-import { ArrowLeft, ArrowRight, Check, Loader2, Building2, User, Package, FileCheck } from "lucide-react";
-import { useForm } from "react-hook-form";
-import { zodResolver } from "@hookform/resolvers/zod";
+import { useState } from 'react';
+import { motion, AnimatePresence } from 'motion/react';
+import { useNavigate } from 'react-router';
+import {
+  ArrowLeft,
+  ArrowRight,
+  Check,
+  Loader2,
+  Building2,
+  User,
+  Package,
+  FileCheck,
+} from 'lucide-react';
+import { useForm } from 'react-hook-form';
+import { zodResolver } from '@hookform/resolvers/zod';
 import {
   companyInfoSchema,
   adminUserSchema,
@@ -13,25 +22,25 @@ import {
   type AdminUser,
   type Subscription,
   type Review,
-} from "../../../lib/validation/registrationSchema";
-import { registerCompany } from "../../../services/companyRegistrationService";
-import CompanyInfoStep from "./steps/CompanyInfoStep";
-import AdminUserStep from "./steps/AdminUserStep";
-import SubscriptionStep from "./steps/SubscriptionStep";
-import ReviewStep from "./steps/ReviewStep";
+} from '../../../lib/validation/registrationSchema';
+import { registerCompany } from '../../../services/companyRegistrationService';
+import CompanyInfoStep from './steps/CompanyInfoStep';
+import AdminUserStep from './steps/AdminUserStep';
+import SubscriptionStep from './steps/SubscriptionStep';
+import ReviewStep from './steps/ReviewStep';
 
 const steps = [
-  { number: 1, title: "Company Information", icon: Building2, schema: companyInfoSchema },
-  { number: 2, title: "Admin User", icon: User, schema: adminUserSchema },
-  { number: 3, title: "Subscription & Modules", icon: Package, schema: subscriptionSchema },
-  { number: 4, title: "Review & Submit", icon: FileCheck, schema: reviewSchema },
+  { number: 1, title: 'Company Information', icon: Building2, schema: companyInfoSchema },
+  { number: 2, title: 'Admin User', icon: User, schema: adminUserSchema },
+  { number: 3, title: 'Subscription & Modules', icon: Package, schema: subscriptionSchema },
+  { number: 4, title: 'Review & Submit', icon: FileCheck, schema: reviewSchema },
 ];
 
 export default function CompanyRegistrationForm() {
   const navigate = useNavigate();
   const [currentStep, setCurrentStep] = useState(1);
   const [loading, setLoading] = useState(false);
-  const [error, setError] = useState("");
+  const [error, setError] = useState('');
 
   // Form data for each step
   const [companyData, setCompanyData] = useState<Partial<CompanyInfo>>({});
@@ -117,7 +126,7 @@ export default function CompanyRegistrationForm() {
   };
 
   const handleSubmit = async () => {
-    setError("");
+    setError('');
     setLoading(true);
 
     // Final validation
@@ -140,14 +149,14 @@ export default function CompanyRegistrationForm() {
 
     if (result.success) {
       // Redirect to success page or login
-      navigate("/registration-success", {
+      navigate('/registration-success', {
         state: {
           email: completeData.adminUser.email,
           companyName: completeData.company.companyName,
         },
       });
     } else {
-      setError(result.message || "Registration failed. Please try again.");
+      setError(result.message || 'Registration failed. Please try again.');
       setLoading(false);
     }
   };
@@ -163,12 +172,8 @@ export default function CompanyRegistrationForm() {
           animate={{ opacity: 1, y: 0 }}
           className="text-center mb-8"
         >
-          <h1 className="text-4xl font-bold text-white mb-2">
-            Register New Company
-          </h1>
-          <p className="text-gray-400">
-            Create your ERPX-AI enterprise account
-          </p>
+          <h1 className="text-4xl font-bold text-white mb-2">Register New Company</h1>
+          <p className="text-gray-400">Create your ERPX-AI enterprise account</p>
         </motion.div>
 
         {/* Progress Steps */}
@@ -180,10 +185,10 @@ export default function CompanyRegistrationForm() {
                   <div
                     className={`w-12 h-12 rounded-full flex items-center justify-center border-2 transition-all ${
                       currentStep > step.number
-                        ? "bg-green-500 border-green-500"
+                        ? 'bg-green-500 border-green-500'
                         : currentStep === step.number
-                        ? "bg-blue-500 border-blue-500"
-                        : "bg-gray-800 border-gray-700"
+                          ? 'bg-blue-500 border-blue-500'
+                          : 'bg-gray-800 border-gray-700'
                     }`}
                   >
                     {currentStep > step.number ? (
@@ -199,9 +204,7 @@ export default function CompanyRegistrationForm() {
                 {index < steps.length - 1 && (
                   <div
                     className={`flex-1 h-0.5 mx-2 transition-all ${
-                      currentStep > step.number
-                        ? "bg-green-500"
-                        : "bg-gray-700"
+                      currentStep > step.number ? 'bg-green-500' : 'bg-gray-700'
                     }`}
                   />
                 )}
@@ -222,9 +225,7 @@ export default function CompanyRegistrationForm() {
               <StepIcon className="w-6 h-6 text-blue-400" />
             </div>
             <div>
-              <h2 className="text-2xl font-bold text-white">
-                {steps[currentStep - 1].title}
-              </h2>
+              <h2 className="text-2xl font-bold text-white">{steps[currentStep - 1].title}</h2>
               <p className="text-sm text-gray-400">
                 Step {currentStep} of {steps.length}
               </p>
@@ -240,15 +241,9 @@ export default function CompanyRegistrationForm() {
 
           {/* Step Content */}
           <AnimatePresence mode="wait">
-            {currentStep === 1 && (
-              <CompanyInfoStep form={companyForm} key="step1" />
-            )}
-            {currentStep === 2 && (
-              <AdminUserStep form={adminForm} key="step2" />
-            )}
-            {currentStep === 3 && (
-              <SubscriptionStep form={subscriptionForm} key="step3" />
-            )}
+            {currentStep === 1 && <CompanyInfoStep form={companyForm} key="step1" />}
+            {currentStep === 2 && <AdminUserStep form={adminForm} key="step2" />}
+            {currentStep === 3 && <SubscriptionStep form={subscriptionForm} key="step3" />}
             {currentStep === 4 && (
               <ReviewStep
                 form={reviewForm}
@@ -276,7 +271,7 @@ export default function CompanyRegistrationForm() {
 
             <button
               type="button"
-              onClick={() => navigate("/login")}
+              onClick={() => navigate('/login')}
               className="px-6 py-3 text-gray-400 hover:text-white transition-colors"
             >
               Cancel
@@ -302,7 +297,7 @@ export default function CompanyRegistrationForm() {
                 className="px-8 py-3 bg-gradient-to-r from-green-600 to-green-500 text-white rounded-lg font-semibold hover:from-green-500 hover:to-emerald-500 transition-all disabled:opacity-50 flex items-center gap-2"
               >
                 {loading && <Loader2 className="w-5 h-5 animate-spin" />}
-                {loading ? "Creating Account..." : "Create Company Account"}
+                {loading ? 'Creating Account...' : 'Create Company Account'}
               </button>
             )}
           </div>

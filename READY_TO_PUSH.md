@@ -96,6 +96,7 @@ git push -u origin main
 ```
 
 **When prompted:**
+
 ```
 Username: isamiciari-cmd
 Password: [paste your ghp_... token]
@@ -156,6 +157,7 @@ git push -u origin main
 **264 files** including:
 
 ### Source Code
+
 - Complete React + TypeScript application
 - Vite build configuration
 - Tailwind CSS styling
@@ -165,6 +167,7 @@ git push -u origin main
 - Realtime data integration
 
 ### Database
+
 - Database schema (`01_schema.sql`)
 - RLS policies (`02_rls_policies.sql`)
 - Seed data (`03_seed_data.sql`)
@@ -172,18 +175,21 @@ git push -u origin main
 - Sales and shifts tables
 
 ### Documentation
+
 - Professional deployment guide
 - Troubleshooting documentation
 - Setup instructions
 - Architecture documentation
 
 ### Configuration
+
 - `.gitignore` (protects sensitive files)
 - `.env.example` (template for environment variables)
 - `vercel.json` (Vercel deployment config)
 - `package.json` (dependencies)
 
 **Protected:**
+
 - ✅ `.env` file excluded (your Supabase key is safe)
 - ✅ `node_modules` excluded
 - ✅ Build artifacts excluded
@@ -202,6 +208,7 @@ git push -u origin main
 ### 2. Vercel Will Auto-Deploy
 
 If Vercel is connected to your GitHub:
+
 - Deployment starts automatically (~30 seconds)
 - Build takes ~1-2 minutes
 - Your app goes live at https://erpx-ai.com
@@ -224,6 +231,7 @@ If Vercel is connected to your GitHub:
 Visit: https://erpx-ai.com
 
 **Test login:**
+
 - Admin: `admin-1@erpx-ai.com` / `@12345@`
 - Cashier: `cashier@erpx-ai.com` / `Aa12141312@`
 
@@ -237,7 +245,8 @@ Visit: https://erpx-ai.com
 
 ### "Repository not found"
 
-**Solution:** 
+**Solution:**
+
 1. Check if repository exists: https://github.com/isamiciari-cmd/erpx-ai
 2. Verify you're logged in to the correct GitHub account
 3. Check repository name spelling
@@ -245,6 +254,7 @@ Visit: https://erpx-ai.com
 ### "Permission denied (publickey)"
 
 **Solution (for SSH):**
+
 1. Make sure SSH key is added to GitHub
 2. Test connection: `ssh -T git@github.com`
 3. Should see: "Hi isamiciari-cmd! You've successfully authenticated..."
@@ -252,6 +262,7 @@ Visit: https://erpx-ai.com
 ### "Rejection - non-fast-forward"
 
 **Solution:**
+
 ```bash
 # Someone else pushed to the repo
 # Pull changes first
@@ -262,6 +273,7 @@ git push origin main
 ### "Fatal: remote origin already exists"
 
 **Solution:**
+
 ```bash
 # Update remote instead
 git remote set-url origin https://github.com/isamiciari-cmd/erpx-ai.git
@@ -300,6 +312,7 @@ git checkout main
 ## Summary
 
 **What I did:**
+
 1. ✅ Initialized Git repository
 2. ✅ Created `.gitignore` to protect sensitive files
 3. ✅ Committed all 264 files (63,817 lines of code)
@@ -307,6 +320,7 @@ git checkout main
 5. ✅ Ready for push on branch `main`
 
 **What you need to do:**
+
 1. Choose a method above (GitHub Desktop recommended)
 2. Push the code
 3. Set environment variables in Vercel
@@ -319,15 +333,18 @@ git checkout main
 ## Need Help?
 
 **Can't find the files in Claude Code?**
+
 - Look for Export/Download workspace option
 - See `DOWNLOAD_INSTRUCTIONS.md` for details
 
 **Stuck on a step?**
+
 - Tell me which method you're trying
 - Tell me what error you see
 - I'll give you specific instructions
 
 **Token expired?**
+
 - Go to https://github.com/settings/tokens
 - Generate new token
 - Use the new token

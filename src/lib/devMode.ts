@@ -5,11 +5,7 @@
  * Automatically disabled on production domain.
  */
 
-const PRODUCTION_DOMAINS = [
-  'erpx-ai.com',
-  'www.erpx-ai.com',
-  'app.erpx-ai.com'
-];
+const PRODUCTION_DOMAINS = ['erpx-ai.com', 'www.erpx-ai.com', 'app.erpx-ai.com'];
 
 /**
  * Check if the current environment allows dev authentication bypass
@@ -24,9 +20,7 @@ export function isDevBypassEnabled(): boolean {
 
   // Security check: Disable on production domain
   const currentDomain = window.location.hostname;
-  const isProductionDomain = PRODUCTION_DOMAINS.some(domain =>
-    currentDomain.includes(domain)
-  );
+  const isProductionDomain = PRODUCTION_DOMAINS.some((domain) => currentDomain.includes(domain));
 
   if (isProductionDomain) {
     console.warn('🔒 Dev bypass disabled: Running on production domain');
@@ -51,7 +45,7 @@ export function isDevBypassEnabled(): boolean {
 export function getEnvironmentType(): 'production' | 'staging' | 'development' {
   const currentDomain = window.location.hostname;
 
-  if (PRODUCTION_DOMAINS.some(domain => currentDomain.includes(domain))) {
+  if (PRODUCTION_DOMAINS.some((domain) => currentDomain.includes(domain))) {
     return 'production';
   }
 

@@ -12,12 +12,12 @@ Vercel cache ID: `71Y54FnU8ppkJADqnWxBbycDaXrB`
    - Select project: `erpx-ai`
 
 2. **Clear Build Cache (REQUIRED)**
-   
+
    **Option A - From Settings:**
    - Go to **Settings** → **General**
    - Scroll to **Build & Development Settings**
    - Click **"Clear Build Cache"** button
-   
+
    **Option B - From Deployment:**
    - Go to **Deployments** tab
    - Click on latest deployment
@@ -41,6 +41,7 @@ Vercel cache ID: `71Y54FnU8ppkJADqnWxBbycDaXrB`
 ## New vercel.json Configuration
 
 The deployment now:
+
 - Deletes node_modules before install
 - Deletes pnpm-lock.yaml from cache and regenerates
 - Forces fresh install with `--no-frozen-lockfile --force`
@@ -68,6 +69,7 @@ If deployment still fails:
 ## Environment Variables
 
 All required env vars are in `vercel.json`:
+
 - `VITE_SUPABASE_URL`
 - `VITE_SUPABASE_ANON_KEY`
 - `VERCEL_FORCE_NO_BUILD_CACHE=1`

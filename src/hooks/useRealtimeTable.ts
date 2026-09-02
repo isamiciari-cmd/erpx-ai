@@ -22,7 +22,7 @@ interface UseRealtimeTableReturn<T> {
  * Automatically updates when data changes in the database
  */
 export function useRealtimeTable<T = any>(
-  options: UseRealtimeTableOptions<T>
+  options: UseRealtimeTableOptions<T>,
 ): UseRealtimeTableReturn<T> {
   const { table, select = '*', filter, orderBy, enabled = true } = options;
 
@@ -89,7 +89,7 @@ export function useRealtimeTable<T = any>(
         (payload) => {
           console.log(`Realtime change in ${table}:`, payload);
           fetchData(); // Refetch on any change
-        }
+        },
       )
       .subscribe();
 

@@ -31,10 +31,10 @@ class AutomationEngine {
     this.rules = [
       // Rule 1: Auto-suspend tenant after 3 failed payments
       {
-        id: "suspend-unpaid-tenant",
-        name: "Auto-suspend unpaid tenant",
+        id: 'suspend-unpaid-tenant',
+        name: 'Auto-suspend unpaid tenant',
         condition: (tenant: TenantData) => {
-          return tenant.paymentFailed >= 3 && tenant.status === "active";
+          return tenant.paymentFailed >= 3 && tenant.status === 'active';
         },
         action: async (tenant: TenantData) => {
           console.log(`[AUTOMATION] Suspending tenant ${tenant.name} (ID: ${tenant.id})`);
@@ -46,24 +46,24 @@ class AutomationEngine {
 
       // Rule 2: Suggest upgrade if usage is high
       {
-        id: "suggest-upgrade",
-        name: "Suggest plan upgrade",
+        id: 'suggest-upgrade',
+        name: 'Suggest plan upgrade',
         condition: (tenant: TenantData) => {
-          return tenant.usage > 0.8 && tenant.plan === "Basic";
+          return tenant.usage > 0.8 && tenant.plan === 'Basic';
         },
         action: async (tenant: TenantData) => {
           console.log(`[AUTOMATION] Sending upgrade email to ${tenant.name}`);
-          await this.sendUpgradeEmail(tenant.id, "Pro");
+          await this.sendUpgradeEmail(tenant.id, 'Pro');
         },
         enabled: true,
       },
 
       // Rule 3: Churn risk detection - low usage
       {
-        id: "churn-risk-alert",
-        name: "Detect churn risk",
+        id: 'churn-risk-alert',
+        name: 'Detect churn risk',
         condition: (tenant: TenantData) => {
-          return tenant.usage < 0.2 && tenant.status === "active";
+          return tenant.usage < 0.2 && tenant.status === 'active';
         },
         action: async (tenant: TenantData) => {
           console.log(`[AUTOMATION] Churn risk detected for ${tenant.name}`);
@@ -75,15 +75,15 @@ class AutomationEngine {
 
       // Rule 4: Revenue drop alert
       {
-        id: "revenue-drop-alert",
-        name: "Alert on revenue drop",
+        id: 'revenue-drop-alert',
+        name: 'Alert on revenue drop',
         condition: (tenant: TenantData) => {
           return tenant.revenue < -0.2; // 20% drop
         },
         action: async (tenant: TenantData) => {
           console.log(`[AUTOMATION] Revenue drop alert for ${tenant.name}`);
           await this.notifyAdmin(
-            `Revenue dropped 20% for ${tenant.name}. Investigate immediately.`
+            `Revenue dropped 20% for ${tenant.name}. Investigate immediately.`,
           );
         },
         enabled: true,
@@ -119,7 +119,7 @@ class AutomationEngine {
     return new Promise((resolve) => {
       setTimeout(() => {
         console.log(
-          `API Call: POST /api/emails/upgrade { tenantId: ${tenantId}, plan: "${suggestedPlan}" }`
+          `API Call: POST /api/emails/upgrade { tenantId: ${tenantId}, plan: "${suggestedPlan}" }`,
         );
         resolve();
       }, 300);
@@ -152,7 +152,7 @@ class AutomationEngine {
     const rule = this.rules.find((r) => r.id === ruleId);
     if (rule) {
       rule.enabled = !rule.enabled;
-      console.log(`[AUTOMATION] Rule ${ruleId} is now ${rule.enabled ? "enabled" : "disabled"}`);
+      console.log(`[AUTOMATION] Rule ${ruleId} is now ${rule.enabled ? 'enabled' : 'disabled'}`);
     }
   }
 }
@@ -161,9 +161,9 @@ export const automationEngine = new AutomationEngine();
 
 // Example usage function
 export async function checkTenantHealth(tenantData: TenantData[]): Promise<void> {
-  console.log("[AUTOMATION] Running automated health checks...");
+  console.log('[AUTOMATION] Running automated health checks...');
   await automationEngine.executeRules(tenantData);
-  console.log("[AUTOMATION] Health checks completed");
+  console.log('[AUTOMATION] Health checks completed');
 }
 
 // Calculate MRR from revenue data
@@ -197,7 +197,7 @@ export function hasAccess(
   tenantId: number,
   feature: string,
   currentUsage: number,
-  plan: "Basic" | "Pro" | "Enterprise"
+  plan: 'Basic' | 'Pro' | 'Enterprise',
 ): boolean {
   const limits = {
     Basic: { Finance: 500, Inventory: 200, HR: 10, Sales: 100 },

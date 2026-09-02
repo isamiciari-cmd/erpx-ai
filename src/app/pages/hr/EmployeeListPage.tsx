@@ -1,13 +1,79 @@
 import { useState } from 'react';
-import { Plus, Search, Filter, Edit, Trash2, Eye, Download } from 'lucide-react';
+import { Plus, Search, Edit, Trash2, Eye, Download } from 'lucide-react';
 
 const employees = [
-  { id: 1, code: 'EMP001', name: 'Ahmed Ali Hassan', jobTitle: 'Sales Manager', department: 'Sales', branch: 'HQ - Riyadh', employmentType: 'Full-time', hireDate: '2020-03-15', salary: 18000, status: 'Active' },
-  { id: 2, code: 'EMP002', name: 'Sara Mohamed Ibrahim', jobTitle: 'IT Specialist', department: 'IT', branch: 'HQ - Riyadh', employmentType: 'Full-time', hireDate: '2021-06-20', salary: 15000, status: 'Active' },
-  { id: 3, code: 'EMP003', name: 'Omar Abdullah', jobTitle: 'Accountant', department: 'Finance', branch: 'Jeddah', employmentType: 'Full-time', hireDate: '2019-11-10', salary: 12000, status: 'Active' },
-  { id: 4, code: 'EMP004', name: 'Fatima Hassan', jobTitle: 'HR Officer', department: 'HR', branch: 'HQ - Riyadh', employmentType: 'Full-time', hireDate: '2022-01-08', salary: 11000, status: 'Active' },
-  { id: 5, code: 'EMP005', name: 'Khalid Ahmed', jobTitle: 'Marketing Coordinator', department: 'Marketing', branch: 'Dammam', employmentType: 'Part-time', hireDate: '2023-04-12', salary: 8000, status: 'Active' },
-  { id: 6, code: 'EMP006', name: 'Layla Mahmoud', jobTitle: 'Operations Manager', department: 'Operations', branch: 'Jeddah', employmentType: 'Full-time', hireDate: '2018-09-25', salary: 16000, status: 'On Leave' },
+  {
+    id: 1,
+    code: 'EMP001',
+    name: 'Ahmed Ali Hassan',
+    jobTitle: 'Sales Manager',
+    department: 'Sales',
+    branch: 'HQ - Riyadh',
+    employmentType: 'Full-time',
+    hireDate: '2020-03-15',
+    salary: 18000,
+    status: 'Active',
+  },
+  {
+    id: 2,
+    code: 'EMP002',
+    name: 'Sara Mohamed Ibrahim',
+    jobTitle: 'IT Specialist',
+    department: 'IT',
+    branch: 'HQ - Riyadh',
+    employmentType: 'Full-time',
+    hireDate: '2021-06-20',
+    salary: 15000,
+    status: 'Active',
+  },
+  {
+    id: 3,
+    code: 'EMP003',
+    name: 'Omar Abdullah',
+    jobTitle: 'Accountant',
+    department: 'Finance',
+    branch: 'Jeddah',
+    employmentType: 'Full-time',
+    hireDate: '2019-11-10',
+    salary: 12000,
+    status: 'Active',
+  },
+  {
+    id: 4,
+    code: 'EMP004',
+    name: 'Fatima Hassan',
+    jobTitle: 'HR Officer',
+    department: 'HR',
+    branch: 'HQ - Riyadh',
+    employmentType: 'Full-time',
+    hireDate: '2022-01-08',
+    salary: 11000,
+    status: 'Active',
+  },
+  {
+    id: 5,
+    code: 'EMP005',
+    name: 'Khalid Ahmed',
+    jobTitle: 'Marketing Coordinator',
+    department: 'Marketing',
+    branch: 'Dammam',
+    employmentType: 'Part-time',
+    hireDate: '2023-04-12',
+    salary: 8000,
+    status: 'Active',
+  },
+  {
+    id: 6,
+    code: 'EMP006',
+    name: 'Layla Mahmoud',
+    jobTitle: 'Operations Manager',
+    department: 'Operations',
+    branch: 'Jeddah',
+    employmentType: 'Full-time',
+    hireDate: '2018-09-25',
+    salary: 16000,
+    status: 'On Leave',
+  },
 ];
 
 export default function EmployeeListPage() {
@@ -15,10 +81,11 @@ export default function EmployeeListPage() {
   const [filterDepartment, setFilterDepartment] = useState('all');
   const [filterStatus, setFilterStatus] = useState('all');
 
-  const filteredEmployees = employees.filter(emp => {
-    const matchesSearch = emp.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
-                         emp.code.toLowerCase().includes(searchTerm.toLowerCase()) ||
-                         emp.jobTitle.toLowerCase().includes(searchTerm.toLowerCase());
+  const filteredEmployees = employees.filter((emp) => {
+    const matchesSearch =
+      emp.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
+      emp.code.toLowerCase().includes(searchTerm.toLowerCase()) ||
+      emp.jobTitle.toLowerCase().includes(searchTerm.toLowerCase());
     const matchesDepartment = filterDepartment === 'all' || emp.department === filterDepartment;
     const matchesStatus = filterStatus === 'all' || emp.status === filterStatus;
     return matchesSearch && matchesDepartment && matchesStatus;
@@ -46,19 +113,22 @@ export default function EmployeeListPage() {
         <div className="bg-white rounded-lg shadow p-6">
           <h3 className="text-sm text-gray-600 mb-1">Active</h3>
           <p className="text-3xl font-bold text-green-600">
-            {employees.filter(e => e.status === 'Active').length}
+            {employees.filter((e) => e.status === 'Active').length}
           </p>
         </div>
         <div className="bg-white rounded-lg shadow p-6">
           <h3 className="text-sm text-gray-600 mb-1">On Leave</h3>
           <p className="text-3xl font-bold text-yellow-600">
-            {employees.filter(e => e.status === 'On Leave').length}
+            {employees.filter((e) => e.status === 'On Leave').length}
           </p>
         </div>
         <div className="bg-white rounded-lg shadow p-6">
           <h3 className="text-sm text-gray-600 mb-1">Avg Salary</h3>
           <p className="text-3xl font-bold text-purple-600">
-            ${Math.round(employees.reduce((sum, e) => sum + e.salary, 0) / employees.length).toLocaleString()}
+            $
+            {Math.round(
+              employees.reduce((sum, e) => sum + e.salary, 0) / employees.length,
+            ).toLocaleString()}
           </p>
         </div>
       </div>
@@ -108,15 +178,33 @@ export default function EmployeeListPage() {
           <table className="w-full">
             <thead className="bg-gray-50 border-b">
               <tr>
-                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Employee ID</th>
-                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Name</th>
-                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Job Title</th>
-                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Department</th>
-                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Branch</th>
-                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Type</th>
-                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Hire Date</th>
-                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Status</th>
-                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Actions</th>
+                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                  Employee ID
+                </th>
+                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                  Name
+                </th>
+                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                  Job Title
+                </th>
+                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                  Department
+                </th>
+                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                  Branch
+                </th>
+                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                  Type
+                </th>
+                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                  Hire Date
+                </th>
+                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                  Status
+                </th>
+                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                  Actions
+                </th>
               </tr>
             </thead>
             <tbody className="bg-white divide-y divide-gray-200">
@@ -128,21 +216,31 @@ export default function EmployeeListPage() {
                   <td className="px-6 py-4 whitespace-nowrap">
                     <div className="font-medium text-gray-900">{employee.name}</div>
                   </td>
-                  <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">{employee.jobTitle}</td>
+                  <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
+                    {employee.jobTitle}
+                  </td>
                   <td className="px-6 py-4 whitespace-nowrap">
                     <span className="px-2 py-1 text-xs rounded-full bg-purple-100 text-purple-800">
                       {employee.department}
                     </span>
                   </td>
-                  <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">{employee.branch}</td>
+                  <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
+                    {employee.branch}
+                  </td>
                   <td className="px-6 py-4 whitespace-nowrap">
-                    <span className={`px-2 py-1 text-xs rounded-full ${
-                      employee.employmentType === 'Full-time' ? 'bg-blue-100 text-blue-800' : 'bg-orange-100 text-orange-800'
-                    }`}>
+                    <span
+                      className={`px-2 py-1 text-xs rounded-full ${
+                        employee.employmentType === 'Full-time'
+                          ? 'bg-blue-100 text-blue-800'
+                          : 'bg-orange-100 text-orange-800'
+                      }`}
+                    >
                       {employee.employmentType}
                     </span>
                   </td>
-                  <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">{employee.hireDate}</td>
+                  <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
+                    {employee.hireDate}
+                  </td>
                   <td className="px-6 py-4 whitespace-nowrap">
                     <StatusBadge status={employee.status} />
                   </td>
@@ -185,7 +283,9 @@ function StatusBadge({ status }: { status: string }) {
   };
 
   return (
-    <span className={`px-2 py-1 text-xs rounded-full font-medium ${styles[status as keyof typeof styles]}`}>
+    <span
+      className={`px-2 py-1 text-xs rounded-full font-medium ${styles[status as keyof typeof styles]}`}
+    >
       {status}
     </span>
   );

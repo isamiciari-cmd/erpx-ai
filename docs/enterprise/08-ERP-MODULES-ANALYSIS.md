@@ -2,7 +2,7 @@
 
 **Document Version:** 1.0  
 **Last Updated:** May 16, 2026  
-**Total Modules:** 16+ modules  
+**Total Modules:** 16+ modules
 
 ---
 
@@ -10,24 +10,24 @@
 
 ERPX-AI provides comprehensive enterprise management through integrated modules:
 
-| Module | Status | Pages | Key Features |
-|--------|--------|-------|--------------|
-| **Dashboard** | ✅ Production | 3 | Executive, Finance, HR dashboards |
-| **Finance & Accounting** | ✅ Production | 12 | Chart of accounts, journal entries, reports |
-| **Human Resources** | ✅ Production | 8 | Employees, payroll, attendance, recruitment |
-| **Inventory Management** | ✅ Production | 4 | Products, stock, warehouses, transfers |
-| **Point of Sale (POS)** | ✅ Production | 1 | Cashier system, shifts, sales |
-| **Sales & CRM** | ✅ Production | 3 | Customers, leads, sales pipeline |
-| **Purchases** | ✅ Production | 2 | Suppliers, purchase orders |
-| **Invoicing** | ✅ Production | 2 | Customer invoices, billing |
-| **Reporting** | ✅ Production | 5 | Financial reports, analytics |
-| **Settings** | ✅ Production | 4 | Company, users, roles, preferences |
-| **AI Assistant** | 🔄 Roadmap | - | Natural language queries |
-| **Projects** | 🔄 Roadmap | - | Project management |
-| **Manufacturing** | 🔄 Roadmap | - | MRP, BOM, production |
-| **E-commerce** | 🔄 Roadmap | - | Online store integration |
-| **Field Service** | 🔄 Roadmap | - | On-site service management |
-| **Helpdesk** | 🔄 Roadmap | - | Support tickets |
+| Module                   | Status        | Pages | Key Features                                |
+| ------------------------ | ------------- | ----- | ------------------------------------------- |
+| **Dashboard**            | ✅ Production | 3     | Executive, Finance, HR dashboards           |
+| **Finance & Accounting** | ✅ Production | 12    | Chart of accounts, journal entries, reports |
+| **Human Resources**      | ✅ Production | 8     | Employees, payroll, attendance, recruitment |
+| **Inventory Management** | ✅ Production | 4     | Products, stock, warehouses, transfers      |
+| **Point of Sale (POS)**  | ✅ Production | 1     | Cashier system, shifts, sales               |
+| **Sales & CRM**          | ✅ Production | 3     | Customers, leads, sales pipeline            |
+| **Purchases**            | ✅ Production | 2     | Suppliers, purchase orders                  |
+| **Invoicing**            | ✅ Production | 2     | Customer invoices, billing                  |
+| **Reporting**            | ✅ Production | 5     | Financial reports, analytics                |
+| **Settings**             | ✅ Production | 4     | Company, users, roles, preferences          |
+| **AI Assistant**         | 🔄 Roadmap    | -     | Natural language queries                    |
+| **Projects**             | 🔄 Roadmap    | -     | Project management                          |
+| **Manufacturing**        | 🔄 Roadmap    | -     | MRP, BOM, production                        |
+| **E-commerce**           | 🔄 Roadmap    | -     | Online store integration                    |
+| **Field Service**        | 🔄 Roadmap    | -     | On-site service management                  |
+| **Helpdesk**             | 🔄 Roadmap    | -     | Support tickets                             |
 
 ---
 
@@ -38,6 +38,7 @@ ERPX-AI provides comprehensive enterprise management through integrated modules:
 **Purpose:** High-level business overview for C-level executives
 
 **Key Metrics:**
+
 - Total Revenue (current period)
 - Profit Margin %
 - Cash Flow
@@ -47,6 +48,7 @@ ERPX-AI provides comprehensive enterprise management through integrated modules:
 - YoY Comparison
 
 **Visualizations:**
+
 - Revenue trend chart (Recharts line chart)
 - Sales breakdown pie chart
 - Top products table
@@ -54,17 +56,17 @@ ERPX-AI provides comprehensive enterprise management through integrated modules:
 - Real-time updates via WebSocket
 
 **Technical Implementation:**
+
 ```typescript
 // services/dashboardService.ts
 export const getExecutiveDashboard = async (companyId: string) => {
-  const { data, error } = await supabase
-    .rpc('get_executive_metrics', { company_id: companyId });
-  
+  const { data, error } = await supabase.rpc('get_executive_metrics', { company_id: companyId });
+
   return {
     revenue: data.total_revenue,
     profit: data.total_profit,
     orders: data.total_orders,
-    topProducts: data.top_products
+    topProducts: data.top_products,
   };
 };
 ```
@@ -72,6 +74,7 @@ export const getExecutiveDashboard = async (companyId: string) => {
 ### Finance Dashboard
 
 **Key Metrics:**
+
 - Accounts Receivable
 - Accounts Payable
 - Bank Balance
@@ -82,6 +85,7 @@ export const getExecutiveDashboard = async (companyId: string) => {
 ### HR Dashboard
 
 **Key Metrics:**
+
 - Total Employees
 - Attendance Rate
 - Pending Leave Requests
@@ -96,6 +100,7 @@ export const getExecutiveDashboard = async (companyId: string) => {
 ### 2.1 Chart of Accounts
 
 **Features:**
+
 - Hierarchical account structure
 - Account types (Asset, Liability, Equity, Revenue, Expense)
 - Account codes (e.g., 1000-1999 for Assets)
@@ -103,6 +108,7 @@ export const getExecutiveDashboard = async (companyId: string) => {
 - Drill-down to transactions
 
 **Account Structure:**
+
 ```
 1000 - Assets
   1100 - Current Assets
@@ -117,7 +123,7 @@ export const getExecutiveDashboard = async (companyId: string) => {
   2100 - Current Liabilities
     2110 - Accounts Payable
     2120 - Tax Payable
-    
+
 4000 - Revenue
   4100 - Sales Revenue
   4200 - Service Revenue
@@ -133,6 +139,7 @@ export const getExecutiveDashboard = async (companyId: string) => {
 ### 2.2 Journal Entries
 
 **Features:**
+
 - Manual journal entry creation
 - Double-entry bookkeeping
 - Automatic balancing check (debits = credits)
@@ -140,6 +147,7 @@ export const getExecutiveDashboard = async (companyId: string) => {
 - Attachment support (receipts, invoices)
 
 **Workflow:**
+
 1. Create journal entry header
 2. Add debit/credit lines
 3. Validate: sum(debits) == sum(credits)
@@ -149,6 +157,7 @@ export const getExecutiveDashboard = async (companyId: string) => {
 ### 2.3 General Ledger
 
 **Features:**
+
 - All posted transactions
 - Filter by account, date range, status
 - Export to Excel/PDF
@@ -157,6 +166,7 @@ export const getExecutiveDashboard = async (companyId: string) => {
 ### 2.4 Trial Balance
 
 **Features:**
+
 - All account balances
 - Debit and credit columns
 - Verification: Total Debits = Total Credits
@@ -165,6 +175,7 @@ export const getExecutiveDashboard = async (companyId: string) => {
 ### 2.5 Financial Reports
 
 **Income Statement (Profit & Loss):**
+
 - Revenue
 - Cost of Goods Sold
 - Gross Profit
@@ -172,11 +183,13 @@ export const getExecutiveDashboard = async (companyId: string) => {
 - Net Profit
 
 **Balance Sheet:**
+
 - Assets = Liabilities + Equity
 - Current vs Fixed Assets
 - Current vs Long-term Liabilities
 
 **Cash Flow Statement:**
+
 - Operating Activities
 - Investing Activities
 - Financing Activities
@@ -184,6 +197,7 @@ export const getExecutiveDashboard = async (companyId: string) => {
 ### 2.6 Budget Management
 
 **Features:**
+
 - Budget creation by account
 - Budget vs Actual comparison
 - Variance analysis
@@ -192,6 +206,7 @@ export const getExecutiveDashboard = async (companyId: string) => {
 ### 2.7 VAT/Tax Management
 
 **Features:**
+
 - Automatic VAT calculation (15% for Saudi Arabia)
 - VAT reports
 - ZATCA e-invoicing ready
@@ -204,6 +219,7 @@ export const getExecutiveDashboard = async (companyId: string) => {
 ### 3.1 Employee Management
 
 **Features:**
+
 - Employee profiles
 - Personal information
 - Employment history
@@ -211,6 +227,7 @@ export const getExecutiveDashboard = async (companyId: string) => {
 - Performance reviews
 
 **Employee Fields:**
+
 - Full name, date of birth, gender
 - National ID, passport
 - Department, position, grade
@@ -220,6 +237,7 @@ export const getExecutiveDashboard = async (companyId: string) => {
 ### 3.2 Attendance Tracking
 
 **Features:**
+
 - Daily check-in/check-out
 - Biometric integration (planned)
 - Late arrivals / Early departures
@@ -227,22 +245,22 @@ export const getExecutiveDashboard = async (companyId: string) => {
 - Monthly attendance reports
 
 **Implementation:**
+
 ```typescript
 // Mark attendance
-await supabase
-  .from('attendance')
-  .insert({
-    employee_id: 'uuid',
-    date: '2026-05-16',
-    check_in: '08:30:00',
-    check_out: '17:00:00',
-    status: 'present'
-  });
+await supabase.from('attendance').insert({
+  employee_id: 'uuid',
+  date: '2026-05-16',
+  check_in: '08:30:00',
+  check_out: '17:00:00',
+  status: 'present',
+});
 ```
 
 ### 3.3 Leave Management
 
 **Leave Types:**
+
 - Annual leave
 - Sick leave
 - Emergency leave
@@ -250,6 +268,7 @@ await supabase
 - Maternity/Paternity leave
 
 **Workflow:**
+
 1. Employee requests leave
 2. Manager reviews
 3. Approve/Reject
@@ -259,6 +278,7 @@ await supabase
 ### 3.4 Payroll Processing
 
 **Features:**
+
 - Salary calculation
 - Allowances (housing, transportation)
 - Deductions (GOSI, insurance)
@@ -266,6 +286,7 @@ await supabase
 - Bank transfer file export
 
 **Payroll Formula:**
+
 ```
 Gross Salary = Base Salary + Allowances
 Deductions = GOSI + Insurance + Loans
@@ -275,6 +296,7 @@ Net Salary = Gross Salary - Deductions
 ### 3.5 Recruitment
 
 **Features:**
+
 - Job postings
 - Applicant tracking
 - Resume database
@@ -284,6 +306,7 @@ Net Salary = Gross Salary - Deductions
 ### 3.6 Performance Management (Planned)
 
 **Features:**
+
 - Goal setting (OKRs)
 - Performance reviews
 - 360-degree feedback
@@ -296,6 +319,7 @@ Net Salary = Gross Salary - Deductions
 ### 4.1 Product Management
 
 **Features:**
+
 - Product catalog
 - SKU management
 - Barcode generation
@@ -304,6 +328,7 @@ Net Salary = Gross Salary - Deductions
 - Product images
 
 **Product Fields:**
+
 ```typescript
 interface Product {
   sku: string;
@@ -320,6 +345,7 @@ interface Product {
 ### 4.2 Stock Management
 
 **Features:**
+
 - Multi-location inventory
 - Stock levels per branch
 - Reorder point alerts
@@ -327,6 +353,7 @@ interface Product {
 - Stock takes (physical count)
 
 **Stock Tracking:**
+
 ```
 Product: Laptop Model X
 ├── Branch A: 15 units
@@ -338,12 +365,14 @@ Total: 65 units
 ### 4.3 Stock Transfers
 
 **Features:**
+
 - Transfer between branches
 - Transfer requests & approvals
 - In-transit tracking
 - Receiving confirmation
 
 **Workflow:**
+
 1. Create transfer request (Branch A → Branch B)
 2. Manager approval
 3. Mark as "In Transit"
@@ -353,6 +382,7 @@ Total: 65 units
 ### 4.4 Warehouse Management (Planned)
 
 **Features:**
+
 - Bin locations
 - Pick/pack/ship
 - Batch tracking
@@ -365,6 +395,7 @@ Total: 65 units
 ### 5.1 Cashier POS Interface
 
 **Features:**
+
 - Product search (barcode scan / name search)
 - Shopping cart
 - Multiple payment methods
@@ -373,6 +404,7 @@ Total: 65 units
 - Cash drawer management
 
 **Payment Methods:**
+
 - Cash
 - Credit/Debit Card
 - Mada (Saudi local card)
@@ -380,6 +412,7 @@ Total: 65 units
 - Split payment
 
 **Technical Implementation:**
+
 ```typescript
 // Create sale
 const sale = {
@@ -401,12 +434,14 @@ await salesService.createSale(sale);
 ### 5.2 Shift Management
 
 **Features:**
+
 - Open shift (declare starting cash)
 - Process sales during shift
 - Close shift (count ending cash)
 - Shift report (total sales, cash, card)
 
 **Shift Workflow:**
+
 ```
 1. Cashier logs in
 2. Opens shift → Enters starting cash (e.g., 500 SAR)
@@ -421,6 +456,7 @@ await salesService.createSale(sale);
 ### 5.3 Real-time Inventory Sync
 
 **Features:**
+
 - Stock decreases on sale
 - Prevent overselling
 - Multi-user POS support
@@ -433,6 +469,7 @@ await salesService.createSale(sale);
 ### 6.1 Customer Management
 
 **Features:**
+
 - Customer database
 - Contact information
 - Purchase history
@@ -442,6 +479,7 @@ await salesService.createSale(sale);
 ### 6.2 Sales Pipeline (Planned)
 
 **Features:**
+
 - Lead tracking
 - Opportunity management
 - Deal stages (Lead → Qualified → Proposal → Won/Lost)
@@ -450,6 +488,7 @@ await salesService.createSale(sale);
 ### 6.3 Quotations (Planned)
 
 **Features:**
+
 - Create quotations
 - Convert to invoices
 - Quotation templates
@@ -462,6 +501,7 @@ await salesService.createSale(sale);
 ### 7.1 Supplier Management
 
 **Features:**
+
 - Supplier database
 - Contact details
 - Payment terms
@@ -470,12 +510,14 @@ await salesService.createSale(sale);
 ### 7.2 Purchase Orders
 
 **Features:**
+
 - Create purchase orders
 - Send to suppliers
 - Receive goods
 - Three-way matching (PO → Receipt → Invoice)
 
 **Workflow:**
+
 1. Create PO
 2. Send to supplier
 3. Receive goods (update inventory)
@@ -490,6 +532,7 @@ await salesService.createSale(sale);
 ### 8.1 Customer Invoices
 
 **Features:**
+
 - Create invoices
 - Line items (products/services)
 - Tax calculation
@@ -499,6 +542,7 @@ await salesService.createSale(sale);
 ### 8.2 Recurring Invoices (Planned)
 
 **Features:**
+
 - Monthly/annual invoices
 - Automatic generation
 - Subscription billing
@@ -539,6 +583,7 @@ await salesService.createSale(sale);
 ### 9.5 Custom Reports (Planned)
 
 **Features:**
+
 - Report builder
 - Drag-and-drop fields
 - Custom filters
@@ -551,6 +596,7 @@ await salesService.createSale(sale);
 ### 10.1 Company Settings
 
 **Features:**
+
 - Company name, logo
 - Tax ID, registration
 - Currency, timezone
@@ -559,6 +605,7 @@ await salesService.createSale(sale);
 ### 10.2 User Management
 
 **Features:**
+
 - Create users
 - Assign roles
 - Deactivate users
@@ -567,6 +614,7 @@ await salesService.createSale(sale);
 ### 10.3 Role & Permissions
 
 **Features:**
+
 - Create custom roles
 - Assign permissions
 - Permission groups
@@ -574,6 +622,7 @@ await salesService.createSale(sale);
 ### 10.4 Preferences
 
 **Features:**
+
 - Date/time format
 - Number format
 - Language (Arabic/English)
@@ -640,36 +689,39 @@ await salesService.createSale(sale);
 
 ## Module Maturity Assessment
 
-| Module | Features Complete | Data Model | UI/UX | Business Logic | Production Ready |
-|--------|-------------------|------------|-------|----------------|------------------|
-| Dashboard | 80% | ✅ | ✅ | ✅ | ✅ |
-| Finance | 70% | ✅ | ✅ | ✅ | ✅ |
-| HR | 60% | ✅ | ✅ | ⏳ | ✅ |
-| Inventory | 75% | ✅ | ✅ | ✅ | ✅ |
-| POS | 90% | ✅ | ✅ | ✅ | ✅ |
-| Sales/CRM | 50% | ⏳ | ⏳ | ⏳ | ⏳ |
-| Purchases | 60% | ✅ | ✅ | ⏳ | ✅ |
-| Invoicing | 70% | ✅ | ✅ | ✅ | ✅ |
-| Reporting | 40% | ⏳ | ⏳ | ⏳ | ⏳ |
-| Settings | 90% | ✅ | ✅ | ✅ | ✅ |
+| Module    | Features Complete | Data Model | UI/UX | Business Logic | Production Ready |
+| --------- | ----------------- | ---------- | ----- | -------------- | ---------------- |
+| Dashboard | 80%               | ✅         | ✅    | ✅             | ✅               |
+| Finance   | 70%               | ✅         | ✅    | ✅             | ✅               |
+| HR        | 60%               | ✅         | ✅    | ⏳             | ✅               |
+| Inventory | 75%               | ✅         | ✅    | ✅             | ✅               |
+| POS       | 90%               | ✅         | ✅    | ✅             | ✅               |
+| Sales/CRM | 50%               | ⏳         | ⏳    | ⏳             | ⏳               |
+| Purchases | 60%               | ✅         | ✅    | ⏳             | ✅               |
+| Invoicing | 70%               | ✅         | ✅    | ✅             | ✅               |
+| Reporting | 40%               | ⏳         | ⏳    | ⏳             | ⏳               |
+| Settings  | 90%               | ✅         | ✅    | ✅             | ✅               |
 
 ---
 
 ## Competitive Advantages
 
 **vs SAP Business One:**
+
 - ✅ Modern UI (React vs desktop app)
 - ✅ 100x cheaper ($50/mo vs $5,000/mo)
 - ✅ Faster implementation (hours vs months)
 - ✅ Cloud-native (vs on-premise)
 
 **vs Odoo:**
+
 - ✅ Better UI/UX (designed like Figma/Notion)
 - ✅ Real-time sync (Odoo requires manual refresh)
 - ✅ Better performance
 - ✅ Arabic-first design
 
 **vs Zoho ERP:**
+
 - ✅ Cleaner interface
 - ✅ Better reporting
 - ✅ Stronger real-time capabilities
@@ -677,4 +729,4 @@ await salesService.createSale(sale);
 
 ---
 
-*Next: UI/UX Design System, AI Features & Performance Analysis*
+_Next: UI/UX Design System, AI Features & Performance Analysis_

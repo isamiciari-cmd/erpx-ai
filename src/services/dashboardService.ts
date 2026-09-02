@@ -13,17 +13,19 @@ export async function getDashboardAnalytics(companyId: string): Promise<Dashboar
     return {
       invoices: [],
       salesOrders: [],
-      inventory: []
+      inventory: [],
     };
   }
 
   // Fetch invoices
   const { data: invoices, error: invoicesError } = await supabase
     .from('invoices')
-    .select(`
+    .select(
+      `
       *,
       customer:customers(company_name)
-    `)
+    `,
+    )
     .eq('company_id', companyId)
     .order('issue_date', { ascending: false })
     .limit(100);
@@ -49,10 +51,12 @@ export async function getDashboardAnalytics(companyId: string): Promise<Dashboar
   // Fetch inventory
   const { data: inventory, error: inventoryError } = await supabase
     .from('inventory')
-    .select(`
+    .select(
+      `
       *,
       product:products(product_name, unit_price)
-    `)
+    `,
+    )
     .limit(100);
 
   if (inventoryError) {
@@ -63,6 +67,6 @@ export async function getDashboardAnalytics(companyId: string): Promise<Dashboar
   return {
     invoices: invoices || [],
     salesOrders: salesOrders || [],
-    inventory: inventory || []
+    inventory: inventory || [],
   };
 }

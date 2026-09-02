@@ -1,125 +1,125 @@
-import { useState } from "react";
-import { motion } from "motion/react";
-import { Shield, Users, Save, RotateCcw, Check, X } from "lucide-react";
+import { useState } from 'react';
+import { motion } from 'motion/react';
+import { Shield, Users, Save, RotateCcw, Check, X } from 'lucide-react';
 
 // Roles
 const roles = [
-  { id: "super_admin", name: "Super Admin", color: "from-red-500 to-pink-500" },
-  { id: "admin", name: "Admin", color: "from-blue-500 to-cyan-500" },
-  { id: "manager", name: "Manager", color: "from-purple-500 to-pink-500" },
-  { id: "user", name: "User", color: "from-green-500 to-emerald-500" },
-  { id: "viewer", name: "Viewer", color: "from-gray-500 to-gray-600" },
+  { id: 'super_admin', name: 'Super Admin', color: 'from-red-500 to-pink-500' },
+  { id: 'admin', name: 'Admin', color: 'from-blue-500 to-cyan-500' },
+  { id: 'manager', name: 'Manager', color: 'from-purple-500 to-pink-500' },
+  { id: 'user', name: 'User', color: 'from-green-500 to-emerald-500' },
+  { id: 'viewer', name: 'Viewer', color: 'from-gray-500 to-gray-600' },
 ];
 
 // Modules with permissions
 const modules = [
-  { id: "dashboard", name: "Dashboard" },
-  { id: "inventory", name: "Inventory" },
-  { id: "sales", name: "Sales" },
-  { id: "purchases", name: "Purchases" },
-  { id: "finance", name: "Finance" },
-  { id: "hr", name: "HR" },
-  { id: "users", name: "Users" },
-  { id: "settings", name: "Settings" },
-  { id: "reports", name: "Reports" },
-  { id: "ai_center", name: "AI Center" },
+  { id: 'dashboard', name: 'Dashboard' },
+  { id: 'inventory', name: 'Inventory' },
+  { id: 'sales', name: 'Sales' },
+  { id: 'purchases', name: 'Purchases' },
+  { id: 'finance', name: 'Finance' },
+  { id: 'hr', name: 'HR' },
+  { id: 'users', name: 'Users' },
+  { id: 'settings', name: 'Settings' },
+  { id: 'reports', name: 'Reports' },
+  { id: 'ai_center', name: 'AI Center' },
 ];
 
 // Permission types
 const permissionTypes = [
-  { id: "create", name: "Create", color: "text-green-400" },
-  { id: "read", name: "Read", color: "text-blue-400" },
-  { id: "update", name: "Update", color: "text-yellow-400" },
-  { id: "delete", name: "Delete", color: "text-red-400" },
+  { id: 'create', name: 'Create', color: 'text-green-400' },
+  { id: 'read', name: 'Read', color: 'text-blue-400' },
+  { id: 'update', name: 'Update', color: 'text-yellow-400' },
+  { id: 'delete', name: 'Delete', color: 'text-red-400' },
 ];
 
 // Initial permissions (example data)
 const initialPermissions: Record<string, Record<string, boolean>> = {
   super_admin: {
-    "dashboard-create": true,
-    "dashboard-read": true,
-    "dashboard-update": true,
-    "dashboard-delete": true,
-    "inventory-create": true,
-    "inventory-read": true,
-    "inventory-update": true,
-    "inventory-delete": true,
-    "sales-create": true,
-    "sales-read": true,
-    "sales-update": true,
-    "sales-delete": true,
-    "purchases-create": true,
-    "purchases-read": true,
-    "purchases-update": true,
-    "purchases-delete": true,
-    "finance-create": true,
-    "finance-read": true,
-    "finance-update": true,
-    "finance-delete": true,
-    "hr-create": true,
-    "hr-read": true,
-    "hr-update": true,
-    "hr-delete": true,
-    "users-create": true,
-    "users-read": true,
-    "users-update": true,
-    "users-delete": true,
-    "settings-create": true,
-    "settings-read": true,
-    "settings-update": true,
-    "settings-delete": true,
-    "reports-create": true,
-    "reports-read": true,
-    "reports-update": true,
-    "reports-delete": true,
-    "ai_center-create": true,
-    "ai_center-read": true,
-    "ai_center-update": true,
-    "ai_center-delete": true,
+    'dashboard-create': true,
+    'dashboard-read': true,
+    'dashboard-update': true,
+    'dashboard-delete': true,
+    'inventory-create': true,
+    'inventory-read': true,
+    'inventory-update': true,
+    'inventory-delete': true,
+    'sales-create': true,
+    'sales-read': true,
+    'sales-update': true,
+    'sales-delete': true,
+    'purchases-create': true,
+    'purchases-read': true,
+    'purchases-update': true,
+    'purchases-delete': true,
+    'finance-create': true,
+    'finance-read': true,
+    'finance-update': true,
+    'finance-delete': true,
+    'hr-create': true,
+    'hr-read': true,
+    'hr-update': true,
+    'hr-delete': true,
+    'users-create': true,
+    'users-read': true,
+    'users-update': true,
+    'users-delete': true,
+    'settings-create': true,
+    'settings-read': true,
+    'settings-update': true,
+    'settings-delete': true,
+    'reports-create': true,
+    'reports-read': true,
+    'reports-update': true,
+    'reports-delete': true,
+    'ai_center-create': true,
+    'ai_center-read': true,
+    'ai_center-update': true,
+    'ai_center-delete': true,
   },
   admin: {
-    "dashboard-read": true,
-    "inventory-create": true,
-    "inventory-read": true,
-    "inventory-update": true,
-    "sales-create": true,
-    "sales-read": true,
-    "sales-update": true,
-    "purchases-read": true,
-    "finance-read": true,
-    "hr-read": true,
-    "users-read": true,
-    "settings-read": true,
-    "reports-read": true,
-    "ai_center-read": true,
+    'dashboard-read': true,
+    'inventory-create': true,
+    'inventory-read': true,
+    'inventory-update': true,
+    'sales-create': true,
+    'sales-read': true,
+    'sales-update': true,
+    'purchases-read': true,
+    'finance-read': true,
+    'hr-read': true,
+    'users-read': true,
+    'settings-read': true,
+    'reports-read': true,
+    'ai_center-read': true,
   },
   manager: {
-    "dashboard-read": true,
-    "inventory-read": true,
-    "inventory-update": true,
-    "sales-create": true,
-    "sales-read": true,
-    "sales-update": true,
-    "purchases-read": true,
-    "finance-read": true,
-    "reports-read": true,
+    'dashboard-read': true,
+    'inventory-read': true,
+    'inventory-update': true,
+    'sales-create': true,
+    'sales-read': true,
+    'sales-update': true,
+    'purchases-read': true,
+    'finance-read': true,
+    'reports-read': true,
   },
   user: {
-    "dashboard-read": true,
-    "inventory-read": true,
-    "sales-read": true,
-    "purchases-read": true,
+    'dashboard-read': true,
+    'inventory-read': true,
+    'sales-read': true,
+    'purchases-read': true,
   },
   viewer: {
-    "dashboard-read": true,
-    "inventory-read": true,
-    "sales-read": true,
-    "reports-read": true,
+    'dashboard-read': true,
+    'inventory-read': true,
+    'sales-read': true,
+    'reports-read': true,
   },
 };
 
 export default function PermissionsPage() {
-  const [selectedRole, setSelectedRole] = useState("super_admin");
+  const [selectedRole, setSelectedRole] = useState('super_admin');
   const [permissions, setPermissions] = useState(initialPermissions);
   const [hasChanges, setHasChanges] = useState(false);
 
@@ -144,7 +144,7 @@ export default function PermissionsPage() {
     // Simulate save
     setTimeout(() => {
       setHasChanges(false);
-      alert("Permissions saved successfully!");
+      alert('Permissions saved successfully!');
     }, 500);
   };
 
@@ -230,7 +230,7 @@ export default function PermissionsPage() {
               className={`px-6 py-3 rounded-xl font-semibold transition-all ${
                 selectedRole === role.id
                   ? `bg-gradient-to-r ${role.color} text-white shadow-lg`
-                  : "bg-gray-800 text-gray-300 hover:bg-gray-700"
+                  : 'bg-gray-800 text-gray-300 hover:bg-gray-700'
               }`}
             >
               {role.name}
@@ -243,10 +243,8 @@ export default function PermissionsPage() {
       <div className="bg-[#111827] border border-gray-800 rounded-2xl overflow-hidden">
         <div className="p-6 border-b border-gray-800">
           <h3 className="text-lg font-semibold text-white">
-            Permission Matrix -{" "}
-            <span className="text-blue-400">
-              {roles.find((r) => r.id === selectedRole)?.name}
-            </span>
+            Permission Matrix -{' '}
+            <span className="text-blue-400">{roles.find((r) => r.id === selectedRole)?.name}</span>
           </h3>
         </div>
 
@@ -283,18 +281,15 @@ export default function PermissionsPage() {
                     {module.name}
                   </td>
                   {permissionTypes.map((perm) => (
-                    <td
-                      key={perm.id}
-                      className="px-6 py-4 text-center border-r border-gray-800"
-                    >
+                    <td key={perm.id} className="px-6 py-4 text-center border-r border-gray-800">
                       <motion.button
                         whileHover={{ scale: 1.1 }}
                         whileTap={{ scale: 0.9 }}
                         onClick={() => togglePermission(module.id, perm.id)}
                         className={`w-8 h-8 rounded-lg flex items-center justify-center mx-auto transition-all ${
                           hasPermission(module.id, perm.id)
-                            ? "bg-blue-500 text-white shadow-lg shadow-blue-500/30"
-                            : "bg-gray-700 text-gray-500 hover:bg-gray-600"
+                            ? 'bg-blue-500 text-white shadow-lg shadow-blue-500/30'
+                            : 'bg-gray-700 text-gray-500 hover:bg-gray-600'
                         }`}
                       >
                         {hasPermission(module.id, perm.id) ? (
@@ -331,9 +326,7 @@ export default function PermissionsPage() {
       {/* Permission Summary */}
       <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
         {permissionTypes.map((perm) => {
-          const count = modules.filter((module) =>
-            hasPermission(module.id, perm.id)
-          ).length;
+          const count = modules.filter((module) => hasPermission(module.id, perm.id)).length;
           const percentage = (count / modules.length) * 100;
 
           return (
@@ -349,13 +342,13 @@ export default function PermissionsPage() {
               <div className="w-full bg-gray-700 rounded-full h-2">
                 <div
                   className={`h-2 rounded-full bg-gradient-to-r ${
-                    perm.id === "create"
-                      ? "from-green-500 to-emerald-500"
-                      : perm.id === "read"
-                      ? "from-blue-500 to-cyan-500"
-                      : perm.id === "update"
-                      ? "from-yellow-500 to-orange-500"
-                      : "from-red-500 to-pink-500"
+                    perm.id === 'create'
+                      ? 'from-green-500 to-emerald-500'
+                      : perm.id === 'read'
+                        ? 'from-blue-500 to-cyan-500'
+                        : perm.id === 'update'
+                          ? 'from-yellow-500 to-orange-500'
+                          : 'from-red-500 to-pink-500'
                   }`}
                   style={{ width: `${percentage}%` }}
                 />

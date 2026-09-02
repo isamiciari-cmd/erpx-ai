@@ -2,17 +2,91 @@ import { useState } from 'react';
 import { Plus, Calendar, CheckCircle, XCircle, Clock } from 'lucide-react';
 
 const leaveRequests = [
-  { id: 1, employee: 'Ahmed Ali', code: 'EMP001', leaveType: 'Annual', startDate: '2026-05-10', endDate: '2026-05-14', days: 5, reason: 'Family vacation', status: 'Pending' },
-  { id: 2, employee: 'Sara Mohamed', code: 'EMP002', leaveType: 'Sick', startDate: '2026-04-28', endDate: '2026-04-29', days: 2, reason: 'Medical appointment', status: 'Approved' },
-  { id: 3, employee: 'Omar Abdullah', code: 'EMP003', leaveType: 'Annual', startDate: '2026-06-01', endDate: '2026-06-10', days: 10, reason: 'Umrah trip', status: 'Pending' },
-  { id: 4, employee: 'Fatima Hassan', code: 'EMP004', leaveType: 'Emergency', startDate: '2026-04-25', endDate: '2026-04-25', days: 1, reason: 'Family emergency', status: 'Approved' },
-  { id: 5, employee: 'Khalid Ahmed', code: 'EMP005', leaveType: 'Unpaid', startDate: '2026-05-20', endDate: '2026-05-22', days: 3, reason: 'Personal matters', status: 'Rejected' },
+  {
+    id: 1,
+    employee: 'Ahmed Ali',
+    code: 'EMP001',
+    leaveType: 'Annual',
+    startDate: '2026-05-10',
+    endDate: '2026-05-14',
+    days: 5,
+    reason: 'Family vacation',
+    status: 'Pending',
+  },
+  {
+    id: 2,
+    employee: 'Sara Mohamed',
+    code: 'EMP002',
+    leaveType: 'Sick',
+    startDate: '2026-04-28',
+    endDate: '2026-04-29',
+    days: 2,
+    reason: 'Medical appointment',
+    status: 'Approved',
+  },
+  {
+    id: 3,
+    employee: 'Omar Abdullah',
+    code: 'EMP003',
+    leaveType: 'Annual',
+    startDate: '2026-06-01',
+    endDate: '2026-06-10',
+    days: 10,
+    reason: 'Umrah trip',
+    status: 'Pending',
+  },
+  {
+    id: 4,
+    employee: 'Fatima Hassan',
+    code: 'EMP004',
+    leaveType: 'Emergency',
+    startDate: '2026-04-25',
+    endDate: '2026-04-25',
+    days: 1,
+    reason: 'Family emergency',
+    status: 'Approved',
+  },
+  {
+    id: 5,
+    employee: 'Khalid Ahmed',
+    code: 'EMP005',
+    leaveType: 'Unpaid',
+    startDate: '2026-05-20',
+    endDate: '2026-05-22',
+    days: 3,
+    reason: 'Personal matters',
+    status: 'Rejected',
+  },
 ];
 
 const leaveBalances = [
-  { employee: 'Ahmed Ali', code: 'EMP001', annual: 15, sick: 10, emergency: 3, used: 8, remaining: 20 },
-  { employee: 'Sara Mohamed', code: 'EMP002', annual: 18, sick: 8, emergency: 3, used: 5, remaining: 24 },
-  { employee: 'Omar Abdullah', code: 'EMP003', annual: 21, sick: 10, emergency: 3, used: 12, remaining: 22 },
+  {
+    employee: 'Ahmed Ali',
+    code: 'EMP001',
+    annual: 15,
+    sick: 10,
+    emergency: 3,
+    used: 8,
+    remaining: 20,
+  },
+  {
+    employee: 'Sara Mohamed',
+    code: 'EMP002',
+    annual: 18,
+    sick: 8,
+    emergency: 3,
+    used: 5,
+    remaining: 24,
+  },
+  {
+    employee: 'Omar Abdullah',
+    code: 'EMP003',
+    annual: 21,
+    sick: 10,
+    emergency: 3,
+    used: 12,
+    remaining: 22,
+  },
 ];
 
 const leaveTypes = [
@@ -25,8 +99,8 @@ const leaveTypes = [
 export default function LeaveManagementPage() {
   const [selectedTab, setSelectedTab] = useState('requests');
 
-  const pendingCount = leaveRequests.filter(r => r.status === 'Pending').length;
-  const approvedCount = leaveRequests.filter(r => r.status === 'Approved').length;
+  const pendingCount = leaveRequests.filter((r) => r.status === 'Pending').length;
+  const approvedCount = leaveRequests.filter((r) => r.status === 'Approved').length;
 
   return (
     <div className="space-y-6">
@@ -92,7 +166,9 @@ export default function LeaveManagementPage() {
             <div key={type.id} className="border rounded-lg p-4">
               <h3 className="font-semibold mb-2">{type.name}</h3>
               <div className="space-y-1 text-sm">
-                <p className="text-gray-600">Max: {type.maxDays > 0 ? `${type.maxDays} days` : 'Unlimited'}</p>
+                <p className="text-gray-600">
+                  Max: {type.maxDays > 0 ? `${type.maxDays} days` : 'Unlimited'}
+                </p>
                 <p className="text-gray-600">Carry Forward: {type.carryForward ? 'Yes' : 'No'}</p>
                 <p className="text-gray-600">Paid: {type.paid ? 'Yes' : 'No'}</p>
               </div>
@@ -108,7 +184,9 @@ export default function LeaveManagementPage() {
             <button
               onClick={() => setSelectedTab('requests')}
               className={`py-4 px-2 border-b-2 font-medium ${
-                selectedTab === 'requests' ? 'border-blue-600 text-blue-600' : 'border-transparent text-gray-600'
+                selectedTab === 'requests'
+                  ? 'border-blue-600 text-blue-600'
+                  : 'border-transparent text-gray-600'
               }`}
             >
               Leave Requests
@@ -116,7 +194,9 @@ export default function LeaveManagementPage() {
             <button
               onClick={() => setSelectedTab('balances')}
               className={`py-4 px-2 border-b-2 font-medium ${
-                selectedTab === 'balances' ? 'border-blue-600 text-blue-600' : 'border-transparent text-gray-600'
+                selectedTab === 'balances'
+                  ? 'border-blue-600 text-blue-600'
+                  : 'border-transparent text-gray-600'
               }`}
             >
               Leave Balances
@@ -124,7 +204,9 @@ export default function LeaveManagementPage() {
             <button
               onClick={() => setSelectedTab('calendar')}
               className={`py-4 px-2 border-b-2 font-medium ${
-                selectedTab === 'calendar' ? 'border-blue-600 text-blue-600' : 'border-transparent text-gray-600'
+                selectedTab === 'calendar'
+                  ? 'border-blue-600 text-blue-600'
+                  : 'border-transparent text-gray-600'
               }`}
             >
               Leave Calendar
@@ -138,14 +220,30 @@ export default function LeaveManagementPage() {
               <table className="w-full">
                 <thead className="bg-gray-50">
                   <tr>
-                    <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase">Employee</th>
-                    <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase">Leave Type</th>
-                    <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase">Start Date</th>
-                    <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase">End Date</th>
-                    <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase">Days</th>
-                    <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase">Reason</th>
-                    <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase">Status</th>
-                    <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase">Actions</th>
+                    <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase">
+                      Employee
+                    </th>
+                    <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase">
+                      Leave Type
+                    </th>
+                    <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase">
+                      Start Date
+                    </th>
+                    <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase">
+                      End Date
+                    </th>
+                    <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase">
+                      Days
+                    </th>
+                    <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase">
+                      Reason
+                    </th>
+                    <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase">
+                      Status
+                    </th>
+                    <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase">
+                      Actions
+                    </th>
                   </tr>
                 </thead>
                 <tbody className="divide-y">
@@ -193,12 +291,24 @@ export default function LeaveManagementPage() {
               <table className="w-full">
                 <thead className="bg-gray-50">
                   <tr>
-                    <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase">Employee</th>
-                    <th className="px-4 py-3 text-right text-xs font-medium text-gray-500 uppercase">Annual</th>
-                    <th className="px-4 py-3 text-right text-xs font-medium text-gray-500 uppercase">Sick</th>
-                    <th className="px-4 py-3 text-right text-xs font-medium text-gray-500 uppercase">Emergency</th>
-                    <th className="px-4 py-3 text-right text-xs font-medium text-gray-500 uppercase">Used</th>
-                    <th className="px-4 py-3 text-right text-xs font-medium text-gray-500 uppercase">Remaining</th>
+                    <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase">
+                      Employee
+                    </th>
+                    <th className="px-4 py-3 text-right text-xs font-medium text-gray-500 uppercase">
+                      Annual
+                    </th>
+                    <th className="px-4 py-3 text-right text-xs font-medium text-gray-500 uppercase">
+                      Sick
+                    </th>
+                    <th className="px-4 py-3 text-right text-xs font-medium text-gray-500 uppercase">
+                      Emergency
+                    </th>
+                    <th className="px-4 py-3 text-right text-xs font-medium text-gray-500 uppercase">
+                      Used
+                    </th>
+                    <th className="px-4 py-3 text-right text-xs font-medium text-gray-500 uppercase">
+                      Remaining
+                    </th>
                   </tr>
                 </thead>
                 <tbody className="divide-y">
@@ -213,8 +323,12 @@ export default function LeaveManagementPage() {
                       <td className="px-4 py-3 text-right">{balance.annual}</td>
                       <td className="px-4 py-3 text-right">{balance.sick}</td>
                       <td className="px-4 py-3 text-right">{balance.emergency}</td>
-                      <td className="px-4 py-3 text-right text-red-600 font-medium">{balance.used}</td>
-                      <td className="px-4 py-3 text-right text-green-600 font-bold">{balance.remaining}</td>
+                      <td className="px-4 py-3 text-right text-red-600 font-medium">
+                        {balance.used}
+                      </td>
+                      <td className="px-4 py-3 text-right text-green-600 font-bold">
+                        {balance.remaining}
+                      </td>
                     </tr>
                   ))}
                 </tbody>
@@ -243,7 +357,9 @@ function LeaveStatusBadge({ status }: { status: string }) {
   };
 
   return (
-    <span className={`px-2 py-1 text-xs rounded-full font-medium ${styles[status as keyof typeof styles]}`}>
+    <span
+      className={`px-2 py-1 text-xs rounded-full font-medium ${styles[status as keyof typeof styles]}`}
+    >
       {status}
     </span>
   );

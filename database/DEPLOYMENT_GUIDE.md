@@ -18,6 +18,7 @@
 5. Wait for completion (you'll see success messages)
 
 **What this creates:**
+
 - ✅ 25+ database tables
 - ✅ 30+ performance indexes
 - ✅ Row Level Security on all tables
@@ -26,6 +27,7 @@
 - ✅ Helper functions
 
 **Expected Output:**
+
 ```
 ========================================
 Database schema created successfully!
@@ -50,6 +52,7 @@ Next steps:
 4. Click **Run**
 
 **What this creates:**
+
 - ✅ Demo company
 - ✅ 5 sample products
 - ✅ 3 customers
@@ -58,6 +61,7 @@ Next steps:
 - ✅ 5 departments
 
 **Expected Output:**
+
 ```
 ========================================
 Sample data inserted successfully!
@@ -134,11 +138,13 @@ After deployment, verify:
 ### 1. Test Supabase Connection
 
 Visit your app diagnostic page:
+
 ```
 http://localhost:5173/admin/supabase-diagnostic
 ```
 
 Click **Run All Tests** and verify:
+
 - ✅ Connection Test passes
 - ✅ Read Test passes (should read customers)
 - ✅ Create Test passes (creates test product)
@@ -207,18 +213,21 @@ INSERT INTO users (
 ### Error: "relation already exists"
 
 **Solution:** Tables already exist. Either:
+
 - Drop them first (dangerous!): `DROP SCHEMA public CASCADE; CREATE SCHEMA public;`
 - Or modify SQL to use `CREATE TABLE IF NOT EXISTS`
 
 ### Error: "permission denied"
 
-**Solution:** You're not using the service_role key. 
+**Solution:** You're not using the service_role key.
+
 - Use SQL Editor in Supabase Dashboard (has full permissions)
 - Don't run SQL from frontend (anon key has limited access)
 
 ### Error: "null value in column violates not-null constraint"
 
 **Solution:** Missing required data
+
 - Check company_id is set
 - Ensure foreign key references exist
 - Verify role_id exists in roles table
@@ -226,11 +235,13 @@ INSERT INTO users (
 ### RLS Blocks All Queries
 
 **Solution:** RLS requires authenticated user
+
 - Create user first (see Step 2 above)
 - Make sure user has company_id set
 - Verify get_user_company_id() returns correct value
 
 Test RLS functions:
+
 ```sql
 -- Test as your user (replace with your auth.uid())
 SELECT get_user_company_id();
@@ -243,19 +254,21 @@ SELECT user_has_permission('admin');
 ### No Data Shows in App
 
 **Possible causes:**
+
 1. RLS blocking queries → Check policies
 2. User not authenticated → Check AuthContext
 3. company_id mismatch → Verify user.company_id = data.company_id
 4. No sample data → Run SEED_DATA.sql
 
 **Debug query:**
+
 ```sql
 -- Check what your user can see
 SELECT * FROM products
 WHERE company_id = get_user_company_id();
 
 -- If empty, check user setup:
-SELECT 
+SELECT
   u.id,
   u.email,
   u.company_id,
@@ -272,6 +285,7 @@ WHERE u.id = auth.uid();
 ## 🔐 Create Additional Users
 
 ### Admin User
+
 ```sql
 INSERT INTO users (
   id,  -- From auth.users
@@ -299,6 +313,7 @@ INSERT INTO users (
 ```
 
 ### Manager User
+
 ```sql
 INSERT INTO users (
   id,
@@ -326,6 +341,7 @@ INSERT INTO users (
 ```
 
 ### Employee User
+
 ```sql
 INSERT INTO users (
   id,
@@ -357,6 +373,7 @@ INSERT INTO users (
 ## 📊 Test CRUD Operations
 
 ### Create Product
+
 ```sql
 INSERT INTO products (
   company_id,
@@ -378,12 +395,14 @@ INSERT INTO products (
 ```
 
 ### Read Products
+
 ```sql
 SELECT * FROM products
 WHERE company_id = '00000000-0000-0000-0000-000000000001';
 ```
 
 ### Update Product
+
 ```sql
 UPDATE products
 SET unit_price = 109.99
@@ -392,6 +411,7 @@ AND company_id = '00000000-0000-0000-0000-000000000001';
 ```
 
 ### Delete Product
+
 ```sql
 DELETE FROM products
 WHERE sku = 'TEST-001'
@@ -443,14 +463,16 @@ If you encounter issues:
    - Look for error messages
 
 2. Test RLS Policies:
+
    ```sql
    SELECT * FROM pg_policies
    WHERE tablename = 'products';
    ```
 
 3. Verify User Setup:
+
    ```sql
-   SELECT 
+   SELECT
      u.*,
      r.name as role_name,
      r.permissions,
@@ -470,4 +492,3 @@ If you encounter issues:
 **Database Deployment Complete! 🎉**
 
 You're now ready to use ERPX-AI with a fully configured Supabase database.
-

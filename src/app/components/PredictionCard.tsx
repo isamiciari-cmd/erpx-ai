@@ -1,5 +1,5 @@
-import { motion } from "motion/react";
-import { TrendingUp, Brain, Sparkles } from "lucide-react";
+import { motion } from 'motion/react';
+import { TrendingUp, Brain, Sparkles } from 'lucide-react';
 
 interface PredictionCardProps {
   data: Array<{ value: number }>;
@@ -12,17 +12,19 @@ export default function PredictionCard({ data, title }: PredictionCardProps) {
     if (data.length < 2) return 0;
 
     const recent = data.slice(-5);
-    const trend = recent.reduce((sum, item, i, arr) => {
-      if (i === 0) return 0;
-      return sum + (item.value - arr[i - 1].value);
-    }, 0) / (recent.length - 1);
+    const trend =
+      recent.reduce((sum, item, i, arr) => {
+        if (i === 0) return 0;
+        return sum + (item.value - arr[i - 1].value);
+      }, 0) /
+      (recent.length - 1);
 
     return Math.round(data[data.length - 1].value + trend * 3);
   };
 
   const prediction = calculatePrediction();
   const currentValue = data[data.length - 1]?.value || 0;
-  const growthRate = ((prediction - currentValue) / currentValue * 100).toFixed(1);
+  const growthRate = (((prediction - currentValue) / currentValue) * 100).toFixed(1);
 
   return (
     <motion.div
@@ -54,7 +56,9 @@ export default function PredictionCard({ data, title }: PredictionCardProps) {
         <p className="text-xs text-gray-500 mt-1">Next 3 periods forecast</p>
       </div>
 
-      <div className={`flex items-center gap-2 text-sm ${Number(growthRate) >= 0 ? 'text-green-400' : 'text-red-400'}`}>
+      <div
+        className={`flex items-center gap-2 text-sm ${Number(growthRate) >= 0 ? 'text-green-400' : 'text-red-400'}`}
+      >
         <TrendingUp className="w-4 h-4" />
         <span className="font-medium">{growthRate}% growth expected</span>
       </div>
@@ -67,7 +71,7 @@ export default function PredictionCard({ data, title }: PredictionCardProps) {
         <div className="mt-2 h-1.5 bg-white/10 rounded-full overflow-hidden">
           <motion.div
             initial={{ width: 0 }}
-            animate={{ width: "78%" }}
+            animate={{ width: '78%' }}
             transition={{ duration: 1, delay: 0.5 }}
             className="h-full bg-gradient-to-r from-purple-500 to-pink-500"
           />

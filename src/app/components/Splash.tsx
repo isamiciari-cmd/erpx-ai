@@ -1,5 +1,5 @@
-import { useEffect } from "react";
-import { motion } from "motion/react";
+import { useEffect } from 'react';
+import { motion } from 'motion/react';
 
 interface SplashProps {
   onFinish: () => void;
@@ -24,7 +24,7 @@ export default function Splash({ onFinish }: SplashProps) {
       <motion.div
         initial={{ opacity: 0, scale: 0.8 }}
         animate={{ opacity: 1, scale: 1 }}
-        transition={{ duration: 0.8, ease: "easeOut" }}
+        transition={{ duration: 0.8, ease: 'easeOut' }}
         className="relative z-10 flex flex-col items-center"
       >
         {/* Logo */}

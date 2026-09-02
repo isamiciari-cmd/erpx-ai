@@ -87,11 +87,7 @@ export function ResponsiveCard({
     >
       {image && (
         <div className={`w-full ${aspectRatios[imageAspect]} overflow-hidden`}>
-          <img
-            src={image}
-            alt=""
-            className="w-full h-full object-cover"
-          />
+          <img src={image} alt="" className="w-full h-full object-cover" />
         </div>
       )}
 
@@ -101,9 +97,7 @@ export function ResponsiveCard({
         </div>
       )}
 
-      <div className={paddingStyles[padding]}>
-        {children}
-      </div>
+      <div className={paddingStyles[padding]}>{children}</div>
 
       {footer && (
         <div className="px-4 sm:px-6 py-4 border-t border-gray-200 dark:border-gray-700">
@@ -174,9 +168,7 @@ export function FoodCard({
         <h3 className="text-lg sm:text-xl font-bold text-gray-900 dark:text-white mb-2 line-clamp-1">
           {name}
         </h3>
-        <p className="text-sm text-gray-600 dark:text-gray-400 mb-4 line-clamp-2">
-          {description}
-        </p>
+        <p className="text-sm text-gray-600 dark:text-gray-400 mb-4 line-clamp-2">{description}</p>
 
         <div className="flex items-center justify-between">
           <div>
@@ -187,7 +179,12 @@ export function FoodCard({
           {deliveryTime && (
             <div className="flex items-center gap-1 text-sm text-gray-600 dark:text-gray-400">
               <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
+                <path
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  strokeWidth={2}
+                  d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"
+                />
               </svg>
               <span>{deliveryTime}</span>
             </div>

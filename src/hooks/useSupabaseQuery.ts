@@ -14,7 +14,7 @@ const MOCK_DASHBOARD_DATA = {
       due_date: new Date(Date.now() - 5 * 24 * 60 * 60 * 1000).toISOString(),
       invoice_number: 'INV-2024-001',
       customer: { company_name: 'Acme Corp' },
-      qr_code: 'QR123'
+      qr_code: 'QR123',
     },
     {
       total_amount: 8500,
@@ -25,7 +25,7 @@ const MOCK_DASHBOARD_DATA = {
       due_date: new Date(Date.now() + 10 * 24 * 60 * 60 * 1000).toISOString(),
       invoice_number: 'INV-2024-002',
       customer: { company_name: 'TechStart Inc' },
-      qr_code: 'QR124'
+      qr_code: 'QR124',
     },
     {
       total_amount: 22000,
@@ -36,20 +36,20 @@ const MOCK_DASHBOARD_DATA = {
       due_date: new Date(Date.now() - 10 * 24 * 60 * 60 * 1000).toISOString(),
       invoice_number: 'INV-2024-003',
       customer: { company_name: 'Global Trade' },
-      qr_code: 'QR125'
-    }
+      qr_code: 'QR125',
+    },
   ],
   salesOrders: [
     {
       total_amount: 18000,
       status: 'COMPLETED',
-      order_date: new Date(Date.now() - 8 * 24 * 60 * 60 * 1000).toISOString()
+      order_date: new Date(Date.now() - 8 * 24 * 60 * 60 * 1000).toISOString(),
     },
     {
       total_amount: 12500,
       status: 'PENDING',
-      order_date: new Date(Date.now() - 3 * 24 * 60 * 60 * 1000).toISOString()
-    }
+      order_date: new Date(Date.now() - 3 * 24 * 60 * 60 * 1000).toISOString(),
+    },
   ],
   inventory: [
     {
@@ -57,26 +57,26 @@ const MOCK_DASHBOARD_DATA = {
       quantity_reserved: 20,
       product: {
         product_name: 'Product A',
-        unit_price: 120
-      }
+        unit_price: 120,
+      },
     },
     {
       quantity_available: 80,
       quantity_reserved: 10,
       product: {
         product_name: 'Product B',
-        unit_price: 250
-      }
+        unit_price: 250,
+      },
     },
     {
       quantity_available: 200,
       quantity_reserved: 35,
       product: {
         product_name: 'Product C',
-        unit_price: 85
-      }
-    }
-  ]
+        unit_price: 85,
+      },
+    },
+  ],
 };
 
 interface UseSupabaseQueryOptions {
@@ -96,7 +96,7 @@ interface UseSupabaseQueryResult<T> {
  */
 export function useSupabaseQuery<T>(
   queryFn: () => Promise<T>,
-  options: UseSupabaseQueryOptions = {}
+  options: UseSupabaseQueryOptions = {},
 ): UseSupabaseQueryResult<T> {
   const { refreshInterval = 0, enabled = true } = options;
   const [data, setData] = useState<T | null>(null);
@@ -152,7 +152,7 @@ export function useSupabaseQuery<T>(
  * Hook for executing mutations with loading and error states
  */
 export function useSupabaseMutation<TInput, TOutput>(
-  mutationFn: (input: TInput) => Promise<TOutput>
+  mutationFn: (input: TInput) => Promise<TOutput>,
 ): {
   mutate: (input: TInput) => Promise<TOutput | null>;
   loading: boolean;
@@ -177,7 +177,7 @@ export function useSupabaseMutation<TInput, TOutput>(
         return null;
       }
     },
-    [mutationFn]
+    [mutationFn],
   );
 
   return { mutate, loading, error };
@@ -202,14 +202,14 @@ export function useDashboardAnalytics() {
       data: MOCK_DASHBOARD_DATA,
       loading: false,
       error: null,
-      refetch: async () => {}
+      refetch: async () => {},
     };
   }
 
-  return useSupabaseQuery(
-    () => dashboardService.getDashboardAnalytics(companyId!),
-    { refreshInterval: 5000, enabled: !!companyId }
-  );
+  return useSupabaseQuery(() => dashboardService.getDashboardAnalytics(companyId!), {
+    refreshInterval: 5000,
+    enabled: !!companyId,
+  });
 }
 
 export function useCustomers() {
@@ -222,14 +222,14 @@ export function useCustomers() {
       data: [],
       loading: false,
       error: null,
-      refetch: async () => {}
+      refetch: async () => {},
     };
   }
 
-  return useSupabaseQuery(
-    () => customersService.listCustomers(companyId!),
-    { refreshInterval: 30000, enabled: !!companyId }
-  );
+  return useSupabaseQuery(() => customersService.listCustomers(companyId!), {
+    refreshInterval: 30000,
+    enabled: !!companyId,
+  });
 }
 
 export function useProducts() {
@@ -242,14 +242,14 @@ export function useProducts() {
       data: MOCK_DASHBOARD_DATA.inventory,
       loading: false,
       error: null,
-      refetch: async () => {}
+      refetch: async () => {},
     };
   }
 
-  return useSupabaseQuery(
-    () => productsService.listProducts(companyId!),
-    { refreshInterval: 30000, enabled: !!companyId }
-  );
+  return useSupabaseQuery(() => productsService.listProducts(companyId!), {
+    refreshInterval: 30000,
+    enabled: !!companyId,
+  });
 }
 
 export function useInventory(warehouseId?: string) {
@@ -261,14 +261,14 @@ export function useInventory(warehouseId?: string) {
       data: MOCK_DASHBOARD_DATA.inventory,
       loading: false,
       error: null,
-      refetch: async () => {}
+      refetch: async () => {},
     };
   }
 
-  return useSupabaseQuery(
-    () => inventoryService.listInventory(warehouseId),
-    { refreshInterval: 10000, enabled: !!user }
-  );
+  return useSupabaseQuery(() => inventoryService.listInventory(warehouseId), {
+    refreshInterval: 10000,
+    enabled: !!user,
+  });
 }
 
 export function useInvoices(status?: string) {
@@ -281,12 +281,12 @@ export function useInvoices(status?: string) {
       data: MOCK_DASHBOARD_DATA.invoices,
       loading: false,
       error: null,
-      refetch: async () => {}
+      refetch: async () => {},
     };
   }
 
-  return useSupabaseQuery(
-    () => invoicesService.listInvoices(companyId!, status),
-    { refreshInterval: 30000, enabled: !!companyId }
-  );
+  return useSupabaseQuery(() => invoicesService.listInvoices(companyId!, status), {
+    refreshInterval: 30000,
+    enabled: !!companyId,
+  });
 }

@@ -1,11 +1,11 @@
-import { useState, useEffect } from "react";
-import { motion } from "motion/react";
-import { Plus, Trash2, ChevronRight, ChevronDown } from "lucide-react";
+import { useState, useEffect } from 'react';
+import { motion } from 'motion/react';
+import { Plus, Trash2, ChevronRight, ChevronDown } from 'lucide-react';
 
 interface Account {
   id: number;
   name: string;
-  type: "asset" | "liability" | "revenue" | "expense" | "equity";
+  type: 'asset' | 'liability' | 'revenue' | 'expense' | 'equity';
   parentId: number | null;
   balance: number;
   children?: Account[];
@@ -14,16 +14,16 @@ interface Account {
 // Mock API
 const accountsAPI = {
   accounts: [
-    { id: 1, name: "Assets", type: "asset" as const, parentId: null, balance: 150000 },
-    { id: 2, name: "Cash", type: "asset" as const, parentId: 1, balance: 50000 },
-    { id: 3, name: "Bank - AlRajhi", type: "asset" as const, parentId: 1, balance: 100000 },
-    { id: 4, name: "Liabilities", type: "liability" as const, parentId: null, balance: 50000 },
-    { id: 5, name: "Loans", type: "liability" as const, parentId: 4, balance: 50000 },
-    { id: 6, name: "Revenue", type: "revenue" as const, parentId: null, balance: 200000 },
-    { id: 7, name: "Sales", type: "revenue" as const, parentId: 6, balance: 200000 },
-    { id: 8, name: "Expenses", type: "expense" as const, parentId: null, balance: 80000 },
-    { id: 9, name: "Salaries", type: "expense" as const, parentId: 8, balance: 60000 },
-    { id: 10, name: "Rent", type: "expense" as const, parentId: 8, balance: 20000 },
+    { id: 1, name: 'Assets', type: 'asset' as const, parentId: null, balance: 150000 },
+    { id: 2, name: 'Cash', type: 'asset' as const, parentId: 1, balance: 50000 },
+    { id: 3, name: 'Bank - AlRajhi', type: 'asset' as const, parentId: 1, balance: 100000 },
+    { id: 4, name: 'Liabilities', type: 'liability' as const, parentId: null, balance: 50000 },
+    { id: 5, name: 'Loans', type: 'liability' as const, parentId: 4, balance: 50000 },
+    { id: 6, name: 'Revenue', type: 'revenue' as const, parentId: null, balance: 200000 },
+    { id: 7, name: 'Sales', type: 'revenue' as const, parentId: 6, balance: 200000 },
+    { id: 8, name: 'Expenses', type: 'expense' as const, parentId: null, balance: 80000 },
+    { id: 9, name: 'Salaries', type: 'expense' as const, parentId: 8, balance: 60000 },
+    { id: 10, name: 'Rent', type: 'expense' as const, parentId: 8, balance: 20000 },
   ] as Account[],
   nextId: 11,
 
@@ -31,7 +31,7 @@ const accountsAPI = {
     return new Promise((resolve) => setTimeout(() => resolve([...this.accounts]), 300));
   },
 
-  async create(data: Omit<Account, "id" | "balance">): Promise<Account> {
+  async create(data: Omit<Account, 'id' | 'balance'>): Promise<Account> {
     const account = { ...data, id: this.nextId++, balance: 0 };
     this.accounts.push(account);
     return new Promise((resolve) => setTimeout(() => resolve(account), 300));
@@ -44,11 +44,11 @@ const accountsAPI = {
 };
 
 const AccountTypeColors = {
-  asset: "from-blue-500 to-cyan-500",
-  liability: "from-red-500 to-rose-500",
-  revenue: "from-green-500 to-emerald-500",
-  expense: "from-orange-500 to-yellow-500",
-  equity: "from-purple-500 to-pink-500",
+  asset: 'from-blue-500 to-cyan-500',
+  liability: 'from-red-500 to-rose-500',
+  revenue: 'from-green-500 to-emerald-500',
+  expense: 'from-orange-500 to-yellow-500',
+  equity: 'from-purple-500 to-pink-500',
 };
 
 interface AccountTreeProps {
@@ -83,7 +83,7 @@ function AccountTree({ accounts, parentId, level, onDelete }: AccountTreeProps) 
               initial={{ opacity: 0, x: -20 }}
               animate={{ opacity: 1, x: 0 }}
               className={`flex items-center justify-between px-6 py-4 border-b border-white/5 hover:bg-white/5 ${
-                level > 0 ? "ml-" + level * 8 : ""
+                level > 0 ? 'ml-' + level * 8 : ''
               }`}
               style={{ paddingLeft: `${24 + level * 32}px` }}
             >
@@ -152,8 +152,8 @@ export default function ChartOfAccountsPage() {
   const [accounts, setAccounts] = useState<Account[]>([]);
   const [showForm, setShowForm] = useState(false);
 
-  const [name, setName] = useState("");
-  const [type, setType] = useState<Account["type"]>("asset");
+  const [name, setName] = useState('');
+  const [type, setType] = useState<Account['type']>('asset');
   const [parentId, setParentId] = useState<number | null>(null);
 
   const fetchAccounts = async () => {
@@ -165,8 +165,8 @@ export default function ChartOfAccountsPage() {
     if (!name) return;
 
     await accountsAPI.create({ name, type, parentId });
-    setName("");
-    setType("asset");
+    setName('');
+    setType('asset');
     setParentId(null);
     setShowForm(false);
     fetchAccounts();
@@ -230,7 +230,7 @@ export default function ChartOfAccountsPage() {
               <label className="block text-sm text-gray-400 mb-2">Account Type</label>
               <select
                 value={type}
-                onChange={(e) => setType(e.target.value as Account["type"])}
+                onChange={(e) => setType(e.target.value as Account['type'])}
                 className="w-full px-4 py-3 bg-white/5 border border-white/10 rounded-xl text-white focus:outline-none focus:ring-2 focus:ring-blue-500"
               >
                 <option value="asset">Asset</option>
@@ -244,7 +244,7 @@ export default function ChartOfAccountsPage() {
             <div>
               <label className="block text-sm text-gray-400 mb-2">Parent Account</label>
               <select
-                value={parentId || ""}
+                value={parentId || ''}
                 onChange={(e) => setParentId(e.target.value ? Number(e.target.value) : null)}
                 className="w-full px-4 py-3 bg-white/5 border border-white/10 rounded-xl text-white focus:outline-none focus:ring-2 focus:ring-blue-500"
               >

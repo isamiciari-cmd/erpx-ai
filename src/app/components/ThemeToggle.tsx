@@ -21,10 +21,7 @@ export default function ThemeToggle() {
         transition={{ type: 'spring', damping: 20, stiffness: 300 }}
         className="absolute w-6 h-6 bg-gradient-to-br from-blue-500 to-purple-500 dark:from-yellow-400 dark:to-orange-500 rounded-full shadow-lg flex items-center justify-center"
       >
-        <motion.div
-          animate={{ rotate: theme === 'dark' ? 0 : 180 }}
-          transition={{ duration: 0.3 }}
-        >
+        <motion.div animate={{ rotate: theme === 'dark' ? 0 : 180 }} transition={{ duration: 0.3 }}>
           {theme === 'dark' ? (
             <Moon className="w-4 h-4 text-white" />
           ) : (
@@ -35,8 +32,12 @@ export default function ThemeToggle() {
 
       {/* Background Icons */}
       <div className="flex items-center justify-between w-full px-1">
-        <Moon className={`w-4 h-4 transition-opacity duration-300 ${theme === 'dark' ? 'opacity-0' : 'opacity-40 text-gray-400'}`} />
-        <Sun className={`w-4 h-4 transition-opacity duration-300 ${theme === 'light' ? 'opacity-0' : 'opacity-40 text-gray-400'}`} />
+        <Moon
+          className={`w-4 h-4 transition-opacity duration-300 ${theme === 'dark' ? 'opacity-0' : 'opacity-40 text-gray-400'}`}
+        />
+        <Sun
+          className={`w-4 h-4 transition-opacity duration-300 ${theme === 'light' ? 'opacity-0' : 'opacity-40 text-gray-400'}`}
+        />
       </div>
     </motion.button>
   );

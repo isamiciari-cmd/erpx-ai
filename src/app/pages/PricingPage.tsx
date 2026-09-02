@@ -1,6 +1,6 @@
-import { useState } from "react";
-import { motion } from "motion/react";
-import { Check, Zap, Building2, Rocket, Crown } from "lucide-react";
+import { useState } from 'react';
+import { motion } from 'motion/react';
+import { Check, Zap, Building2, Rocket, Crown } from 'lucide-react';
 
 interface Plan {
   id: string;
@@ -17,77 +17,77 @@ interface Plan {
 
 const plans: Plan[] = [
   {
-    id: "basic",
-    name: "Basic",
+    id: 'basic',
+    name: 'Basic',
     price: 299,
-    currency: "SAR",
-    interval: "month",
-    stripePriceId: "price_basic_monthly",
+    currency: 'SAR',
+    interval: 'month',
+    stripePriceId: 'price_basic_monthly',
     icon: Zap,
-    color: "from-blue-500 to-cyan-500",
+    color: 'from-blue-500 to-cyan-500',
     features: [
-      "Up to 10 users",
-      "Finance & Invoicing",
-      "Basic CRM",
-      "10GB storage",
-      "Email support",
-      "Monthly reports",
+      'Up to 10 users',
+      'Finance & Invoicing',
+      'Basic CRM',
+      '10GB storage',
+      'Email support',
+      'Monthly reports',
     ],
   },
   {
-    id: "pro",
-    name: "Pro",
+    id: 'pro',
+    name: 'Pro',
     price: 999,
-    currency: "SAR",
-    interval: "month",
-    stripePriceId: "price_pro_monthly",
+    currency: 'SAR',
+    interval: 'month',
+    stripePriceId: 'price_pro_monthly',
     icon: Rocket,
-    color: "from-purple-500 to-pink-500",
+    color: 'from-purple-500 to-pink-500',
     recommended: true,
     features: [
-      "Up to 50 users",
-      "All Basic features",
-      "Advanced Analytics",
-      "HR & Payroll",
-      "Inventory Management",
-      "100GB storage",
-      "Priority support",
-      "Custom workflows",
-      "API access",
+      'Up to 50 users',
+      'All Basic features',
+      'Advanced Analytics',
+      'HR & Payroll',
+      'Inventory Management',
+      '100GB storage',
+      'Priority support',
+      'Custom workflows',
+      'API access',
     ],
   },
   {
-    id: "enterprise",
-    name: "Enterprise",
+    id: 'enterprise',
+    name: 'Enterprise',
     price: 0,
-    currency: "SAR",
-    interval: "custom",
-    stripePriceId: "price_enterprise_custom",
+    currency: 'SAR',
+    interval: 'custom',
+    stripePriceId: 'price_enterprise_custom',
     icon: Crown,
-    color: "from-orange-500 to-yellow-500",
+    color: 'from-orange-500 to-yellow-500',
     features: [
-      "Unlimited users",
-      "All Pro features",
-      "White-label solution",
-      "Unlimited storage",
-      "24/7 dedicated support",
-      "Custom integrations",
-      "SLA guarantee",
-      "On-premise deployment",
-      "Training & onboarding",
+      'Unlimited users',
+      'All Pro features',
+      'White-label solution',
+      'Unlimited storage',
+      '24/7 dedicated support',
+      'Custom integrations',
+      'SLA guarantee',
+      'On-premise deployment',
+      'Training & onboarding',
     ],
   },
 ];
 
 export default function PricingPage() {
-  const [billingInterval, setBillingInterval] = useState<"month" | "year">("month");
+  const [billingInterval, setBillingInterval] = useState<'month' | 'year'>('month');
   const [selectedPlan, setSelectedPlan] = useState<string | null>(null);
   const [showCheckout, setShowCheckout] = useState(false);
 
-  const [companyName, setCompanyName] = useState("");
-  const [email, setEmail] = useState("");
-  const [phone, setPhone] = useState("");
-  const [domain, setDomain] = useState("");
+  const [companyName, setCompanyName] = useState('');
+  const [email, setEmail] = useState('');
+  const [phone, setPhone] = useState('');
+  const [domain, setDomain] = useState('');
 
   const handleSubscribe = (planId: string) => {
     setSelectedPlan(planId);
@@ -96,7 +96,7 @@ export default function PricingPage() {
 
   const processSubscription = async () => {
     if (!companyName || !email || !selectedPlan) {
-      alert("Please fill all required fields");
+      alert('Please fill all required fields');
       return;
     }
 
@@ -104,7 +104,7 @@ export default function PricingPage() {
     const stripeCustomerId = `cus_${Math.random().toString(36).substring(7)}`;
     const stripeSubscriptionId = `sub_${Math.random().toString(36).substring(7)}`;
 
-    console.log("Creating subscription:", {
+    console.log('Creating subscription:', {
       plan: plans.find((p) => p.id === selectedPlan),
       customer: { companyName, email, phone, domain },
       stripeCustomerId,
@@ -115,14 +115,14 @@ export default function PricingPage() {
     await new Promise((resolve) => setTimeout(resolve, 1500));
 
     alert(
-      `🎉 Subscription successful!\n\nTenant: ${companyName}\nDomain: ${domain}.erpx.sa\nCustomer ID: ${stripeCustomerId}\n\nYou will receive an email with login credentials.`
+      `🎉 Subscription successful!\n\nTenant: ${companyName}\nDomain: ${domain}.erpx.sa\nCustomer ID: ${stripeCustomerId}\n\nYou will receive an email with login credentials.`,
     );
 
     setShowCheckout(false);
-    setCompanyName("");
-    setEmail("");
-    setPhone("");
-    setDomain("");
+    setCompanyName('');
+    setEmail('');
+    setPhone('');
+    setDomain('');
     setSelectedPlan(null);
   };
 
@@ -146,9 +146,7 @@ export default function PricingPage() {
       {/* Hero */}
       <div className="max-w-7xl mx-auto px-6 py-16 text-center">
         <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }}>
-          <h1 className="text-5xl font-bold text-white mb-6">
-            Choose Your Perfect Plan
-          </h1>
+          <h1 className="text-5xl font-bold text-white mb-6">Choose Your Perfect Plan</h1>
           <p className="text-xl text-gray-400 mb-8">
             Start your 14-day free trial. No credit card required.
           </p>
@@ -156,21 +154,21 @@ export default function PricingPage() {
           {/* Billing Toggle */}
           <div className="inline-flex items-center gap-4 bg-white/5 border border-white/10 rounded-xl p-2">
             <button
-              onClick={() => setBillingInterval("month")}
+              onClick={() => setBillingInterval('month')}
               className={`px-6 py-2 rounded-lg transition-all ${
-                billingInterval === "month"
-                  ? "bg-gradient-to-r from-blue-600 to-cyan-600 text-white"
-                  : "text-gray-400 hover:text-white"
+                billingInterval === 'month'
+                  ? 'bg-gradient-to-r from-blue-600 to-cyan-600 text-white'
+                  : 'text-gray-400 hover:text-white'
               }`}
             >
               Monthly
             </button>
             <button
-              onClick={() => setBillingInterval("year")}
+              onClick={() => setBillingInterval('year')}
               className={`px-6 py-2 rounded-lg transition-all ${
-                billingInterval === "year"
-                  ? "bg-gradient-to-r from-blue-600 to-cyan-600 text-white"
-                  : "text-gray-400 hover:text-white"
+                billingInterval === 'year'
+                  ? 'bg-gradient-to-r from-blue-600 to-cyan-600 text-white'
+                  : 'text-gray-400 hover:text-white'
               }`}
             >
               Yearly
@@ -192,8 +190,8 @@ export default function PricingPage() {
               whileHover={{ scale: 1.02, y: -8 }}
               className={`relative bg-gradient-to-br from-gray-900/80 to-gray-950/80 backdrop-blur-xl border ${
                 plan.recommended
-                  ? "border-purple-500/50 shadow-2xl shadow-purple-500/20"
-                  : "border-white/10"
+                  ? 'border-purple-500/50 shadow-2xl shadow-purple-500/20'
+                  : 'border-white/10'
               } rounded-2xl p-8 transition-all`}
             >
               {plan.recommended && (
@@ -214,12 +212,10 @@ export default function PricingPage() {
                 {plan.price > 0 ? (
                   <div className="flex items-baseline gap-2">
                     <span className="text-4xl font-bold text-white">
-                      {billingInterval === "year"
-                        ? Math.floor(plan.price * 0.8)
-                        : plan.price}
+                      {billingInterval === 'year' ? Math.floor(plan.price * 0.8) : plan.price}
                     </span>
                     <span className="text-gray-400">
-                      {plan.currency}/{billingInterval === "year" ? "year" : "month"}
+                      {plan.currency}/{billingInterval === 'year' ? 'year' : 'month'}
                     </span>
                   </div>
                 ) : (
@@ -242,11 +238,11 @@ export default function PricingPage() {
                 onClick={() => handleSubscribe(plan.id)}
                 className={`w-full py-3 rounded-xl font-medium transition-all ${
                   plan.recommended
-                    ? "bg-gradient-to-r from-purple-600 to-pink-600 text-white shadow-lg shadow-purple-500/30"
-                    : "bg-white/5 border border-white/10 text-white hover:bg-white/10"
+                    ? 'bg-gradient-to-r from-purple-600 to-pink-600 text-white shadow-lg shadow-purple-500/30'
+                    : 'bg-white/5 border border-white/10 text-white hover:bg-white/10'
                 }`}
               >
-                {plan.price > 0 ? "Start Free Trial" : "Contact Sales"}
+                {plan.price > 0 ? 'Start Free Trial' : 'Contact Sales'}
               </motion.button>
             </motion.div>
           ))}
@@ -290,7 +286,7 @@ export default function PricingPage() {
                   <p className="text-2xl font-bold text-white">
                     {plans.find((p) => p.id === selectedPlan)?.price > 0
                       ? `${plans.find((p) => p.id === selectedPlan)?.price} SAR`
-                      : "Custom"}
+                      : 'Custom'}
                   </p>
                 </div>
               </div>
@@ -342,14 +338,16 @@ export default function PricingPage() {
                   <input
                     type="text"
                     value={domain}
-                    onChange={(e) => setDomain(e.target.value.toLowerCase().replace(/[^a-z0-9-]/g, ""))}
+                    onChange={(e) =>
+                      setDomain(e.target.value.toLowerCase().replace(/[^a-z0-9-]/g, ''))
+                    }
                     placeholder="company"
                     className="flex-1 px-4 py-3 bg-white/5 border border-white/10 rounded-xl text-white placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-blue-500"
                   />
                   <span className="text-gray-400">.erpx.sa</span>
                 </div>
                 <p className="text-xs text-gray-500 mt-1">
-                  Your workspace URL: {domain || "company"}.erpx.sa
+                  Your workspace URL: {domain || 'company'}.erpx.sa
                 </p>
               </div>
             </div>
@@ -384,27 +382,25 @@ export default function PricingPage() {
       <div className="max-w-7xl mx-auto px-6 py-20 border-t border-white/10">
         <div className="text-center mb-12">
           <h2 className="text-3xl font-bold text-white mb-4">Everything You Need</h2>
-          <p className="text-gray-400">
-            Powerful features to run your business efficiently
-          </p>
+          <p className="text-gray-400">Powerful features to run your business efficiently</p>
         </div>
 
         <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
           {[
             {
               icon: Building2,
-              title: "Multi-Tenant Architecture",
-              desc: "Isolated workspaces with custom domains",
+              title: 'Multi-Tenant Architecture',
+              desc: 'Isolated workspaces with custom domains',
             },
             {
               icon: Zap,
-              title: "Real-time Updates",
-              desc: "Live data synchronization across all devices",
+              title: 'Real-time Updates',
+              desc: 'Live data synchronization across all devices',
             },
             {
               icon: Check,
-              title: "ZATCA Compliant",
-              desc: "Saudi e-invoicing ready",
+              title: 'ZATCA Compliant',
+              desc: 'Saudi e-invoicing ready',
             },
           ].map((feature, i) => (
             <motion.div

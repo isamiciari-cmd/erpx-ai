@@ -55,12 +55,12 @@ export function DeveloperMode() {
         { count: usersCount },
         { count: rolesCount },
         { count: permissionsCount },
-        { count: auditLogsCount }
+        { count: auditLogsCount },
       ] = await Promise.all([
         supabase.from('profiles').select('*', { count: 'exact', head: true }),
         supabase.from('roles').select('*', { count: 'exact', head: true }),
         supabase.from('permissions').select('*', { count: 'exact', head: true }),
-        supabase.from('audit_logs').select('*', { count: 'exact', head: true })
+        supabase.from('audit_logs').select('*', { count: 'exact', head: true }),
       ]);
 
       setStats({
@@ -68,7 +68,7 @@ export function DeveloperMode() {
         totalUsers: usersCount || 0,
         totalRoles: rolesCount || 0,
         totalPermissions: permissionsCount || 0,
-        totalAuditLogs: auditLogsCount || 0
+        totalAuditLogs: auditLogsCount || 0,
       });
     } catch (err) {
       console.error('Error loading developer data:', err);
@@ -89,7 +89,7 @@ export function DeveloperMode() {
 
       const { error } = await supabase.rpc('log_developer_access', {
         p_action: actionType,
-        p_details: details
+        p_details: details,
       });
 
       if (error) throw error;
@@ -112,7 +112,7 @@ export function DeveloperMode() {
       }
 
       const { data, error } = await supabase.rpc('get_user_permissions', {
-        p_user_id: currentUser.id
+        p_user_id: currentUser.id,
       });
 
       if (error) throw error;
@@ -133,7 +133,7 @@ export function DeveloperMode() {
       }
 
       const { data, error } = await supabase.rpc('get_user_roles', {
-        p_user_id: currentUser.id
+        p_user_id: currentUser.id,
       });
 
       if (error) throw error;
@@ -212,7 +212,7 @@ export function DeveloperMode() {
                 Test get_user_roles()
               </button>
               <button
-                onClick={() => window.location.href = '/admin/audit-logs'}
+                onClick={() => (window.location.href = '/admin/audit-logs')}
                 className="w-full px-4 py-2 bg-purple-600 text-white rounded-lg hover:bg-purple-700 transition"
               >
                 View Audit Logs
@@ -234,7 +234,9 @@ export function DeveloperMode() {
                 />
               </div>
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1">Details (JSON)</label>
+                <label className="block text-sm font-medium text-gray-700 mb-1">
+                  Details (JSON)
+                </label>
                 <textarea
                   value={actionDetails}
                   onChange={(e) => setActionDetails(e.target.value)}

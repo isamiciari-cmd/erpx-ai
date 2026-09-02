@@ -16,7 +16,8 @@ export default function DevModeIndicator() {
         <div>
           <p className="font-bold text-sm">Developer Mode Active</p>
           <p className="text-xs opacity-80">
-            Auth Bypass Enabled · {environment.charAt(0).toUpperCase() + environment.slice(1)} Environment
+            Auth Bypass Enabled · {environment.charAt(0).toUpperCase() + environment.slice(1)}{' '}
+            Environment
           </p>
         </div>
       </div>

@@ -33,11 +33,14 @@ i18n.on('languageChanged', (lng) => {
 
   // Apply font family based on language
   if (lng === 'ar') {
-    document.documentElement.style.fontFamily = "'IBM Plex Sans Arabic', 'Cairo', 'Tajawal', sans-serif";
+    document.documentElement.style.fontFamily =
+      "'IBM Plex Sans Arabic', 'Cairo', 'Tajawal', sans-serif";
     document.body.style.fontFamily = "'IBM Plex Sans Arabic', 'Cairo', 'Tajawal', sans-serif";
   } else {
-    document.documentElement.style.fontFamily = "-apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen', 'Ubuntu', 'Cantarell', 'Fira Sans', 'Droid Sans', 'Helvetica Neue', sans-serif";
-    document.body.style.fontFamily = "-apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen', 'Ubuntu', 'Cantarell', 'Fira Sans', 'Droid Sans', 'Helvetica Neue', sans-serif";
+    document.documentElement.style.fontFamily =
+      "-apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen', 'Ubuntu', 'Cantarell', 'Fira Sans', 'Droid Sans', 'Helvetica Neue', sans-serif";
+    document.body.style.fontFamily =
+      "-apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen', 'Ubuntu', 'Cantarell', 'Fira Sans', 'Droid Sans', 'Helvetica Neue', sans-serif";
   }
 
   // Force page reload to apply all RTL changes properly
@@ -53,9 +56,11 @@ document.body.dir = currentLang === 'ar' ? 'rtl' : 'ltr';
 
 // Apply font family based on language
 if (currentLang === 'ar') {
-  document.documentElement.style.fontFamily = "'IBM Plex Sans Arabic', 'Cairo', 'Tajawal', sans-serif";
+  document.documentElement.style.fontFamily =
+    "'IBM Plex Sans Arabic', 'Cairo', 'Tajawal', sans-serif";
 } else {
-  document.documentElement.style.fontFamily = "-apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen', 'Ubuntu', 'Cantarell', 'Fira Sans', 'Droid Sans', 'Helvetica Neue', sans-serif";
+  document.documentElement.style.fontFamily =
+    "-apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen', 'Ubuntu', 'Cantarell', 'Fira Sans', 'Droid Sans', 'Helvetica Neue', sans-serif";
 }
 
 export default i18n;

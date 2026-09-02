@@ -21,11 +21,9 @@ class RealtimeManager {
   subscribeToTable<T = any>(
     table: string,
     callback: SubscriptionCallback<T>,
-    filter?: { column: string; value: any }
+    filter?: { column: string; value: any },
   ): () => void {
-    const channelName = filter
-      ? `${table}:${filter.column}=eq.${filter.value}`
-      : table;
+    const channelName = filter ? `${table}:${filter.column}=eq.${filter.value}` : table;
 
     // Remove existing channel if it exists
     if (this.channels.has(channelName)) {
@@ -51,7 +49,7 @@ class RealtimeManager {
             new: payload.new as T,
             old: payload.old as T,
           });
-        }
+        },
       );
     } else {
       channel = channel.on(
@@ -67,7 +65,7 @@ class RealtimeManager {
             new: payload.new as T,
             old: payload.old as T,
           });
-        }
+        },
       );
     }
 
@@ -91,10 +89,7 @@ class RealtimeManager {
   /**
    * Subscribe to inventory changes for a specific company
    */
-  subscribeToInventory(
-    companyId: string,
-    callback: SubscriptionCallback<any>
-  ): () => void {
+  subscribeToInventory(companyId: string, callback: SubscriptionCallback<any>): () => void {
     return this.subscribeToTable('inventory', callback, {
       column: 'company_id',
       value: companyId,
@@ -104,10 +99,7 @@ class RealtimeManager {
   /**
    * Subscribe to customer changes
    */
-  subscribeToCustomers(
-    companyId: string,
-    callback: SubscriptionCallback<any>
-  ): () => void {
+  subscribeToCustomers(companyId: string, callback: SubscriptionCallback<any>): () => void {
     return this.subscribeToTable('customers', callback, {
       column: 'company_id',
       value: companyId,
@@ -117,10 +109,7 @@ class RealtimeManager {
   /**
    * Subscribe to invoice changes
    */
-  subscribeToInvoices(
-    companyId: string,
-    callback: SubscriptionCallback<any>
-  ): () => void {
+  subscribeToInvoices(companyId: string, callback: SubscriptionCallback<any>): () => void {
     return this.subscribeToTable('invoices', callback, {
       column: 'company_id',
       value: companyId,
@@ -130,10 +119,7 @@ class RealtimeManager {
   /**
    * Subscribe to sales order changes
    */
-  subscribeToSalesOrders(
-    companyId: string,
-    callback: SubscriptionCallback<any>
-  ): () => void {
+  subscribeToSalesOrders(companyId: string, callback: SubscriptionCallback<any>): () => void {
     return this.subscribeToTable('sales_orders', callback, {
       column: 'company_id',
       value: companyId,
@@ -143,10 +129,7 @@ class RealtimeManager {
   /**
    * Subscribe to notifications for a specific user
    */
-  subscribeToNotifications(
-    userId: string,
-    callback: SubscriptionCallback<any>
-  ): () => void {
+  subscribeToNotifications(userId: string, callback: SubscriptionCallback<any>): () => void {
     return this.subscribeToTable('notifications', callback, {
       column: 'user_id',
       value: userId,
@@ -159,7 +142,7 @@ class RealtimeManager {
   subscribeToPresence(
     roomId: string,
     onJoin: (user: any) => void,
-    onLeave: (user: any) => void
+    onLeave: (user: any) => void,
   ): () => void {
     const channelName = `presence:${roomId}`;
 
@@ -199,7 +182,7 @@ class RealtimeManager {
    */
   async trackPresence(
     roomId: string,
-    userData: { userId: string; userName: string }
+    userData: { userId: string; userName: string },
   ): Promise<void> {
     const channelName = `presence:${roomId}`;
     const channel = this.channels.get(channelName);
@@ -269,14 +252,10 @@ import { useEffect } from 'react';
 export function useRealtimeSubscription<T = any>(
   table: string,
   callback: SubscriptionCallback<T>,
-  filter?: { column: string; value: any }
+  filter?: { column: string; value: any },
 ) {
   useEffect(() => {
-    const unsubscribe = realtimeManager.subscribeToTable(
-      table,
-      callback,
-      filter
-    );
+    const unsubscribe = realtimeManager.subscribeToTable(table, callback, filter);
 
     return () => {
       unsubscribe();
@@ -287,20 +266,14 @@ export function useRealtimeSubscription<T = any>(
 /**
  * Hook for inventory realtime updates
  */
-export function useInventoryRealtime(
-  companyId: string,
-  onUpdate: () => void
-) {
+export function useInventoryRealtime(companyId: string, onUpdate: () => void) {
   useEffect(() => {
     if (!companyId) return;
 
-    const unsubscribe = realtimeManager.subscribeToInventory(
-      companyId,
-      (payload) => {
-        console.log('[Inventory] Realtime update:', payload.eventType);
-        onUpdate();
-      }
-    );
+    const unsubscribe = realtimeManager.subscribeToInventory(companyId, (payload) => {
+      console.log('[Inventory] Realtime update:', payload.eventType);
+      onUpdate();
+    });
 
     return unsubscribe;
   }, [companyId, onUpdate]);
@@ -311,20 +284,17 @@ export function useInventoryRealtime(
  */
 export function useNotificationsRealtime(
   userId: string,
-  onNewNotification: (notification: any) => void
+  onNewNotification: (notification: any) => void,
 ) {
   useEffect(() => {
     if (!userId) return;
 
-    const unsubscribe = realtimeManager.subscribeToNotifications(
-      userId,
-      (payload) => {
-        if (payload.eventType === 'INSERT') {
-          console.log('[Notifications] New notification received');
-          onNewNotification(payload.new);
-        }
+    const unsubscribe = realtimeManager.subscribeToNotifications(userId, (payload) => {
+      if (payload.eventType === 'INSERT') {
+        console.log('[Notifications] New notification received');
+        onNewNotification(payload.new);
       }
-    );
+    });
 
     return unsubscribe;
   }, [userId, onNewNotification]);

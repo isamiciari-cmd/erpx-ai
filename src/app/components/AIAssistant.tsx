@@ -1,9 +1,9 @@
-import { useState, useRef, useEffect } from "react";
-import { motion, AnimatePresence } from "motion/react";
-import { Bot, Send, User, Sparkles, X, MessageCircle, Minimize2, Maximize2 } from "lucide-react";
+import { useState, useRef, useEffect } from 'react';
+import { motion, AnimatePresence } from 'motion/react';
+import { Bot, Send, User, Sparkles, X, Minimize2, Maximize2 } from 'lucide-react';
 
 interface Message {
-  role: "user" | "assistant";
+  role: 'user' | 'assistant';
   content: string;
   timestamp: Date;
 }
@@ -11,19 +11,20 @@ interface Message {
 export default function AIAssistant() {
   const [messages, setMessages] = useState<Message[]>([
     {
-      role: "assistant",
-      content: "Hello! I'm your AI assistant. I can help you with analytics, predictions, and business insights. Try asking me about your sales trends or revenue forecast!",
+      role: 'assistant',
+      content:
+        "Hello! I'm your AI assistant. I can help you with analytics, predictions, and business insights. Try asking me about your sales trends or revenue forecast!",
       timestamp: new Date(),
     },
   ]);
-  const [input, setInput] = useState("");
+  const [input, setInput] = useState('');
   const [isLoading, setIsLoading] = useState(false);
   const [isOpen, setIsOpen] = useState(false);
   const [isMinimized, setIsMinimized] = useState(false);
   const messagesEndRef = useRef<HTMLDivElement>(null);
 
   const scrollToBottom = () => {
-    messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
+    messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
   };
 
   useEffect(() => {
@@ -37,18 +38,18 @@ export default function AIAssistant() {
     const lowerMsg = userMessage.toLowerCase();
 
     // Smart responses based on keywords
-    if (lowerMsg.includes("sales") || lowerMsg.includes("revenue")) {
-      return "Based on your current sales data, I see a positive trend with 12.5% growth. Your revenue is projected to reach SAR 145,000 next month. The strongest performing category is Finance module with 45% of total sales.";
-    } else if (lowerMsg.includes("predict") || lowerMsg.includes("forecast")) {
-      return "My predictive model shows:\n• Next week revenue: SAR 132,500 (+6.4%)\n• Customer growth: +85 new customers\n• Order volume: 1,450 orders expected\n• Best day: Thursday (historically 23% above average)";
-    } else if (lowerMsg.includes("help") || lowerMsg.includes("what can you do")) {
-      return "I can help you with:\n✓ Sales & revenue analysis\n✓ Predictive forecasting\n✓ Customer insights\n✓ Inventory optimization\n✓ Financial reports\n✓ Performance recommendations\n\nJust ask me anything about your business data!";
-    } else if (lowerMsg.includes("customer")) {
-      return "Customer analysis shows:\n• Total active customers: 892 (+15.3%)\n• Average order value: SAR 140\n• Top customer segment: Small businesses (42%)\n• Retention rate: 87%\n• Recommendation: Focus on customer segment targeting";
-    } else if (lowerMsg.includes("inventory")) {
-      return "Inventory insights:\n• Low stock alerts: 12 items\n• Overstock items: 8 items\n• Optimal reorder point reached for 23 items\n• Predicted shortage next week: Office supplies category\n• Recommendation: Restock high-demand items";
-    } else if (lowerMsg.includes("recommendation") || lowerMsg.includes("suggest")) {
-      return "Based on your current performance:\n\n🎯 Top Recommendations:\n1. Increase marketing budget by 15% - high ROI potential\n2. Launch loyalty program - 67% customer interest\n3. Optimize pricing for top 5 products\n4. Expand to 2 new market segments\n5. Automate invoice follow-ups (save 8hrs/week)";
+    if (lowerMsg.includes('sales') || lowerMsg.includes('revenue')) {
+      return 'Based on your current sales data, I see a positive trend with 12.5% growth. Your revenue is projected to reach SAR 145,000 next month. The strongest performing category is Finance module with 45% of total sales.';
+    } else if (lowerMsg.includes('predict') || lowerMsg.includes('forecast')) {
+      return 'My predictive model shows:\n• Next week revenue: SAR 132,500 (+6.4%)\n• Customer growth: +85 new customers\n• Order volume: 1,450 orders expected\n• Best day: Thursday (historically 23% above average)';
+    } else if (lowerMsg.includes('help') || lowerMsg.includes('what can you do')) {
+      return 'I can help you with:\n✓ Sales & revenue analysis\n✓ Predictive forecasting\n✓ Customer insights\n✓ Inventory optimization\n✓ Financial reports\n✓ Performance recommendations\n\nJust ask me anything about your business data!';
+    } else if (lowerMsg.includes('customer')) {
+      return 'Customer analysis shows:\n• Total active customers: 892 (+15.3%)\n• Average order value: SAR 140\n• Top customer segment: Small businesses (42%)\n• Retention rate: 87%\n• Recommendation: Focus on customer segment targeting';
+    } else if (lowerMsg.includes('inventory')) {
+      return 'Inventory insights:\n• Low stock alerts: 12 items\n• Overstock items: 8 items\n• Optimal reorder point reached for 23 items\n• Predicted shortage next week: Office supplies category\n• Recommendation: Restock high-demand items';
+    } else if (lowerMsg.includes('recommendation') || lowerMsg.includes('suggest')) {
+      return 'Based on your current performance:\n\n🎯 Top Recommendations:\n1. Increase marketing budget by 15% - high ROI potential\n2. Launch loyalty program - 67% customer interest\n3. Optimize pricing for top 5 products\n4. Expand to 2 new market segments\n5. Automate invoice follow-ups (save 8hrs/week)';
     } else {
       return `I understand you're asking about "${userMessage}". While I can provide general insights, I specialize in analyzing your business data. Try asking me about sales trends, revenue forecasts, customer analytics, or business recommendations!`;
     }
@@ -58,20 +59,20 @@ export default function AIAssistant() {
     if (!input.trim()) return;
 
     const userMessage: Message = {
-      role: "user",
+      role: 'user',
       content: input,
       timestamp: new Date(),
     };
 
     setMessages((prev) => [...prev, userMessage]);
-    setInput("");
+    setInput('');
     setIsLoading(true);
 
     try {
       const aiResponse = await generateAIResponse(input);
 
       const assistantMessage: Message = {
-        role: "assistant",
+        role: 'assistant',
         content: aiResponse,
         timestamp: new Date(),
       };
@@ -79,7 +80,7 @@ export default function AIAssistant() {
       setMessages((prev) => [...prev, assistantMessage]);
     } catch (error) {
       const errorMessage: Message = {
-        role: "assistant",
+        role: 'assistant',
         content: "I apologize, but I'm having trouble processing your request. Please try again.",
         timestamp: new Date(),
       };
@@ -90,7 +91,7 @@ export default function AIAssistant() {
   };
 
   const handleKeyPress = (e: React.KeyboardEvent) => {
-    if (e.key === "Enter" && !e.shiftKey) {
+    if (e.key === 'Enter' && !e.shiftKey) {
       e.preventDefault();
       sendMessage();
     }
@@ -118,7 +119,7 @@ export default function AIAssistant() {
       animate={{ opacity: 1, scale: 1, y: 0 }}
       exit={{ opacity: 0, scale: 0.9, y: 20 }}
       className={`fixed ${
-        isMinimized ? "bottom-8 left-8 w-80" : "bottom-8 left-8 w-[450px]"
+        isMinimized ? 'bottom-8 left-8 w-80' : 'bottom-8 left-8 w-[450px]'
       } bg-gradient-to-br from-gray-900 to-gray-950 border border-purple-500/30 rounded-2xl shadow-2xl z-50 overflow-hidden transition-all`}
     >
       {/* Header */}
@@ -171,10 +172,10 @@ export default function AIAssistant() {
                   initial={{ opacity: 0, y: 10 }}
                   animate={{ opacity: 1, y: 0 }}
                   className={`flex gap-3 ${
-                    message.role === "user" ? "justify-end" : "justify-start"
+                    message.role === 'user' ? 'justify-end' : 'justify-start'
                   }`}
                 >
-                  {message.role === "assistant" && (
+                  {message.role === 'assistant' && (
                     <div className="w-8 h-8 bg-gradient-to-br from-purple-500 to-pink-500 rounded-full flex items-center justify-center flex-shrink-0">
                       <Bot className="w-5 h-5 text-white" />
                     </div>
@@ -182,21 +183,21 @@ export default function AIAssistant() {
 
                   <div
                     className={`max-w-[75%] rounded-2xl px-4 py-3 ${
-                      message.role === "user"
-                        ? "bg-gradient-to-r from-blue-600 to-cyan-600 text-white"
-                        : "bg-white/5 backdrop-blur-xl border border-white/10 text-white"
+                      message.role === 'user'
+                        ? 'bg-gradient-to-r from-blue-600 to-cyan-600 text-white'
+                        : 'bg-white/5 backdrop-blur-xl border border-white/10 text-white'
                     }`}
                   >
                     <p className="text-sm whitespace-pre-line">{message.content}</p>
                     <p className="text-xs opacity-50 mt-1">
                       {message.timestamp.toLocaleTimeString([], {
-                        hour: "2-digit",
-                        minute: "2-digit",
+                        hour: '2-digit',
+                        minute: '2-digit',
                       })}
                     </p>
                   </div>
 
-                  {message.role === "user" && (
+                  {message.role === 'user' && (
                     <div className="w-8 h-8 bg-gradient-to-br from-blue-500 to-cyan-500 rounded-full flex items-center justify-center flex-shrink-0">
                       <User className="w-5 h-5 text-white" />
                     </div>
@@ -206,11 +207,7 @@ export default function AIAssistant() {
             </AnimatePresence>
 
             {isLoading && (
-              <motion.div
-                initial={{ opacity: 0 }}
-                animate={{ opacity: 1 }}
-                className="flex gap-3"
-              >
+              <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="flex gap-3">
                 <div className="w-8 h-8 bg-gradient-to-br from-purple-500 to-pink-500 rounded-full flex items-center justify-center">
                   <Bot className="w-5 h-5 text-white" />
                 </div>
@@ -219,11 +216,11 @@ export default function AIAssistant() {
                     <span className="w-2 h-2 bg-purple-400 rounded-full animate-bounce" />
                     <span
                       className="w-2 h-2 bg-purple-400 rounded-full animate-bounce"
-                      style={{ animationDelay: "0.1s" }}
+                      style={{ animationDelay: '0.1s' }}
                     />
                     <span
                       className="w-2 h-2 bg-purple-400 rounded-full animate-bounce"
-                      style={{ animationDelay: "0.2s" }}
+                      style={{ animationDelay: '0.2s' }}
                     />
                   </div>
                 </div>

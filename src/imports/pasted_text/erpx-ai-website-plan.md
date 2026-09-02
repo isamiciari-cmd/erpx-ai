@@ -6,6 +6,7 @@ Create a modern corporate SaaS website that presents ERPX-AI as an advanced AI-p
 Website Pages:
 
 1. Home Page
+
 - Hero section with ERPX-AI logo
 - Main headline:
   “ERPX-AI — Intelligent ERP Platform for Modern Enterprises”
@@ -20,6 +21,7 @@ Website Pages:
 - Modern SaaS visual effects
 
 2. About ERPX-AI
+
 - Company/system overview
 - Vision and mission
 - Why ERPX-AI
@@ -28,7 +30,8 @@ Website Pages:
 - Enterprise-grade security
 
 3. Services / Modules Page
-Create professional sections for:
+   Create professional sections for:
+
 - Inventory Management
 - Sales Management
 - Purchases Management
@@ -41,6 +44,7 @@ Create professional sections for:
 - API Integrations
 
 Each service section must include:
+
 - Icon
 - Short description
 - Key benefits
@@ -48,7 +52,8 @@ Each service section must include:
 - CTA button
 
 4. Inventory Page
-Show:
+   Show:
+
 - Real-time stock tracking
 - Warehouse management
 - Stock transfers
@@ -57,7 +62,8 @@ Show:
 - AI demand forecasting
 
 5. Sales Page
-Show:
+   Show:
+
 - Customers
 - Quotations
 - Sales orders
@@ -67,7 +73,8 @@ Show:
 - AI sales forecasting
 
 6. Purchases Page
-Show:
+   Show:
+
 - Suppliers
 - Purchase requests
 - RFQ
@@ -77,7 +84,8 @@ Show:
 - Supplier evaluation
 
 7. Finance Page
-Show:
+   Show:
+
 - Chart of accounts
 - General ledger
 - Accounts receivable
@@ -87,7 +95,8 @@ Show:
 - VAT and ZATCA-ready finance
 
 8. HR Page
-Show:
+   Show:
+
 - Employees
 - Attendance
 - Leaves
@@ -98,7 +107,8 @@ Show:
 - Employee self-service
 
 9. AI Assistant Page
-Show:
+   Show:
+
 - AI chatbot
 - Sales forecasting
 - Cash flow prediction
@@ -108,13 +118,15 @@ Show:
 - Smart decision recommendations
 
 10. Pricing Page
-Create pricing cards:
+    Create pricing cards:
+
 - Starter
 - Business
 - Enterprise
 - Custom Enterprise
 
 Each plan includes:
+
 - Number of users
 - Modules included
 - Support level
@@ -123,7 +135,8 @@ Each plan includes:
 - Request quotation button
 
 11. Contact Page
-Create professional contact form:
+    Create professional contact form:
+
 - Full name
 - Company name
 - Email
@@ -134,13 +147,15 @@ Create professional contact form:
 - Submit button
 
 When form is submitted:
+
 - Send a copy to platform email:
   i.sami.ciari@erpx-ai.com
 - Show success message:
   “Thank you. Our ERPX-AI team will contact you shortly.”
 
 12. Request Demo Page
-Create demo request form:
+    Create demo request form:
+
 - Name
 - Email
 - Phone
@@ -154,7 +169,8 @@ Send submitted request to:
 i.sami.ciari@erpx-ai.com
 
 13. Blog / Insights Page
-Create sections for:
+    Create sections for:
+
 - ERP articles
 - AI automation articles
 - Finance management articles
@@ -162,7 +178,8 @@ Create sections for:
 - HR digital transformation articles
 
 14. FAQ Page
-Add frequently asked questions:
+    Add frequently asked questions:
+
 - What is ERPX-AI?
 - Is ERPX-AI cloud-based?
 - Does ERPX-AI support Arabic and English?
@@ -173,9 +190,10 @@ Add frequently asked questions:
 - Is ERPX-AI suitable for SMEs and enterprises?
 
 15. Chatbot Feature
-Add an AI chatbot widget on all website pages.
+    Add an AI chatbot widget on all website pages.
 
 Chatbot Requirements:
+
 - Floating chatbot button bottom-right
 - Branded as “ERPX-AI Assistant”
 - Supports Arabic and English
@@ -201,7 +219,8 @@ Chatbot Requirements:
 - Escalates to human support when needed
 
 16. Visual Identity
-Use a premium ERPX-AI visual style:
+    Use a premium ERPX-AI visual style:
+
 - Dark navy
 - Electric blue
 - White
@@ -215,7 +234,8 @@ Use a premium ERPX-AI visual style:
 - 3D dashboard mockups
 
 17. Images and Visuals
-Add:
+    Add:
+
 - ERP dashboard mockup images
 - Finance analytics visuals
 - Inventory warehouse visuals
@@ -228,7 +248,8 @@ Add:
 Use professional enterprise SaaS imagery, not generic low-quality stock images.
 
 18. Animations and Effects
-Add advanced effects:
+    Add advanced effects:
+
 - Smooth scroll animations
 - Hero section motion effects
 - Animated KPI cards
@@ -241,7 +262,8 @@ Add advanced effects:
 - Loading animation
 
 19. Performance Requirements
-The website must be fast and optimized:
+    The website must be fast and optimized:
+
 - Lightweight assets
 - Image compression
 - Lazy loading
@@ -253,7 +275,8 @@ The website must be fast and optimized:
 - Accessibility support
 
 20. SEO Requirements
-Add SEO structure:
+    Add SEO structure:
+
 - Meta title
 - Meta description
 - Open Graph image
@@ -270,7 +293,8 @@ Add SEO structure:
   - ERPX-AI
 
 21. Technical Stack Recommendation
-Use high-end modern technologies:
+    Use high-end modern technologies:
+
 - Next.js for website frontend
 - TypeScript
 - Tailwind CSS
@@ -283,7 +307,8 @@ Use high-end modern technologies:
 - SEO-ready architecture
 
 22. Website Navigation
-Header menu:
+    Header menu:
+
 - Home
 - Platform
 - Modules
@@ -294,10 +319,12 @@ Header menu:
 - Request Demo
 
 Header buttons:
+
 - Login
 - Request Demo
 
 Footer:
+
 - ERPX-AI logo
 - Short description
 - Modules links
@@ -307,13 +334,15 @@ Footer:
 - Copyright
 
 23. Login Integration
-Add “Login” button in website header.
-When clicked:
+    Add “Login” button in website header.
+    When clicked:
+
 - Redirect to ERPX-AI login page:
   /login
 
 24. Required Output
-Generate:
+    Generate:
+
 - Complete website UI design
 - Desktop version
 - Tablet version

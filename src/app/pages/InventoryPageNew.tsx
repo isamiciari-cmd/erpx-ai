@@ -1,5 +1,5 @@
-import { useState } from "react";
-import { motion } from "motion/react";
+import { useState } from 'react';
+import { motion } from 'motion/react';
 import {
   Package,
   TrendingUp,
@@ -14,40 +14,35 @@ import {
   Edit,
   Trash2,
   RefreshCw,
-} from "lucide-react";
-import {
-  BarChart,
-  Bar,
-  LineChart,
-  Line,
-  PieChart,
-  Pie,
-  Cell,
-  XAxis,
-  YAxis,
-  CartesianGrid,
-  Tooltip,
-  ResponsiveContainer,
-  AreaChart,
-  Area,
-} from "recharts";
-import { useInventory, useProducts } from "../../hooks/useSupabaseQuery";
-import { useSupabaseMutation } from "../../hooks/useSupabaseQuery";
-import { createProduct, updateProduct, deleteProduct } from "../../services/productsService";
-import { updateInventoryQuantity } from "../../services/inventoryService";
-import { LoadingState } from "../../components/LoadingState";
-import { EmptyState } from "../../components/EmptyState";
-import { ErrorState } from "../../components/ErrorState";
-import { useAuth } from "../../contexts/AuthContext";
+} from 'lucide-react';
+
+import { useInventory, useProducts } from '../../hooks/useSupabaseQuery';
+import { useSupabaseMutation } from '../../hooks/useSupabaseQuery';
+import { createProduct, updateProduct, deleteProduct } from '../../services/productsService';
+import { updateInventoryQuantity } from '../../services/inventoryService';
+import { LoadingState } from '../../components/LoadingState';
+import { EmptyState } from '../../components/EmptyState';
+import { ErrorState } from '../../components/ErrorState';
+import { useAuth } from '../../contexts/AuthContext';
 
 export default function InventoryPageNew() {
   const { user } = useAuth();
-  const [searchTerm, setSearchTerm] = useState("");
+  const [searchTerm, setSearchTerm] = useState('');
   const [showAddModal, setShowAddModal] = useState(false);
 
   // Fetch data with real-time updates
-  const { data: inventory, loading: inventoryLoading, error: inventoryError, refetch: refetchInventory } = useInventory();
-  const { data: products, loading: productsLoading, error: productsError, refetch: refetchProducts } = useProducts();
+  const {
+    data: inventory,
+    loading: inventoryLoading,
+    error: inventoryError,
+    refetch: refetchInventory,
+  } = useInventory();
+  const {
+    data: products,
+    loading: productsLoading,
+    error: productsError,
+    refetch: refetchProducts,
+  } = useProducts();
 
   // Mutations
   const { mutate: addProduct, loading: addingProduct } = useSupabaseMutation(createProduct);
@@ -55,23 +50,17 @@ export default function InventoryPageNew() {
   const { mutate: removeProduct } = useSupabaseMutation(deleteProduct);
 
   // Calculate low stock items from inventory
-  const lowStockItems = inventory?.filter(item =>
-    item.quantityAvailable <= (item.product.minStockLevel || 0)
-  ) || [];
+  const lowStockItems =
+    inventory?.filter((item) => item.quantityAvailable <= (item.product.minStockLevel || 0)) || [];
   const lowStockCount = lowStockItems.length;
 
   // Calculate KPIs from real data
-  const totalStockValue = inventory?.reduce((sum, item) =>
-    sum + (item.quantityAvailable * item.product.unitPrice), 0
-  ) || 0;
+  const totalStockValue =
+    inventory?.reduce((sum, item) => sum + item.quantityAvailable * item.product.unitPrice, 0) || 0;
 
-  const availableStock = inventory?.reduce((sum, item) =>
-    sum + item.quantityAvailable, 0
-  ) || 0;
+  const availableStock = inventory?.reduce((sum, item) => sum + item.quantityAvailable, 0) || 0;
 
-  const reservedStock = inventory?.reduce((sum, item) =>
-    sum + item.quantityReserved, 0
-  ) || 0;
+  const reservedStock = inventory?.reduce((sum, item) => sum + item.quantityReserved, 0) || 0;
 
   // Loading state
   if (inventoryLoading || productsLoading) {
@@ -91,25 +80,27 @@ export default function InventoryPageNew() {
         title="No Inventory Data"
         description="Start by adding products to your inventory"
         action={{
-          label: "Add First Product",
-          onClick: () => setShowAddModal(true)
+          label: 'Add First Product',
+          onClick: () => setShowAddModal(true),
         }}
       />
     );
   }
 
   // Filter products based on search
-  const filteredProducts = products?.filter(p =>
-    p.productName.toLowerCase().includes(searchTerm.toLowerCase()) ||
-    p.SKU.toLowerCase().includes(searchTerm.toLowerCase())
-  ) || [];
+  const filteredProducts =
+    products?.filter(
+      (p) =>
+        p.productName.toLowerCase().includes(searchTerm.toLowerCase()) ||
+        p.SKU.toLowerCase().includes(searchTerm.toLowerCase()),
+    ) || [];
 
   const handleAddProduct = async (productData: any) => {
     if (!user?.company?.id) return;
 
     const result = await addProduct({
       ...productData,
-      companyId: user.company.id
+      companyId: user.company.id,
     });
 
     if (result) {
@@ -119,7 +110,7 @@ export default function InventoryPageNew() {
   };
 
   const handleDeleteProduct = async (productId: string) => {
-    if (confirm("Are you sure you want to delete this product?")) {
+    if (confirm('Are you sure you want to delete this product?')) {
       await removeProduct(productId);
       refetchProducts();
     }
@@ -166,7 +157,7 @@ export default function InventoryPageNew() {
             disabled={addingProduct}
           >
             <Plus className="w-4 h-4" />
-            {addingProduct ? "Adding..." : "Add Product"}
+            {addingProduct ? 'Adding...' : 'Add Product'}
           </motion.button>
         </div>
       </div>
@@ -243,10 +234,7 @@ export default function InventoryPageNew() {
           </div>
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
             {lowStockItems?.slice(0, 4).map((item) => (
-              <div
-                key={item.id}
-                className="p-4 bg-gray-900/50 rounded-xl border border-gray-800"
-              >
+              <div key={item.id} className="p-4 bg-gray-900/50 rounded-xl border border-gray-800">
                 <div className="flex justify-between items-start mb-2">
                   <div>
                     <p className="text-white font-medium">{item.product.productName}</p>
@@ -280,16 +268,22 @@ export default function InventoryPageNew() {
             <thead className="bg-gray-800/50">
               <tr>
                 <th className="px-6 py-3 text-left text-xs font-semibold text-gray-400">SKU</th>
-                <th className="px-6 py-3 text-left text-xs font-semibold text-gray-400">Product Name</th>
-                <th className="px-6 py-3 text-left text-xs font-semibold text-gray-400">Category</th>
+                <th className="px-6 py-3 text-left text-xs font-semibold text-gray-400">
+                  Product Name
+                </th>
+                <th className="px-6 py-3 text-left text-xs font-semibold text-gray-400">
+                  Category
+                </th>
                 <th className="px-6 py-3 text-right text-xs font-semibold text-gray-400">Stock</th>
                 <th className="px-6 py-3 text-right text-xs font-semibold text-gray-400">Price</th>
-                <th className="px-6 py-3 text-right text-xs font-semibold text-gray-400">Actions</th>
+                <th className="px-6 py-3 text-right text-xs font-semibold text-gray-400">
+                  Actions
+                </th>
               </tr>
             </thead>
             <tbody>
               {filteredProducts.map((product) => {
-                const inventoryItem = inventory?.find(i => i.product.id === product.id);
+                const inventoryItem = inventory?.find((i) => i.product.id === product.id);
                 return (
                   <tr key={product.id} className="border-t border-gray-800 hover:bg-gray-800/30">
                     <td className="px-6 py-4 text-sm text-gray-400">{product.SKU}</td>
@@ -353,10 +347,14 @@ function KPICard({ title, value, icon: Icon, trend, color, trendDown }: KPICardP
       className="bg-[#111827] border border-gray-800 rounded-2xl p-6 hover:border-blue-500/50 hover:shadow-lg hover:shadow-blue-500/10 transition-all cursor-pointer"
     >
       <div className="flex items-start justify-between mb-4">
-        <div className={`w-12 h-12 bg-gradient-to-br ${color} rounded-xl flex items-center justify-center shadow-lg`}>
+        <div
+          className={`w-12 h-12 bg-gradient-to-br ${color} rounded-xl flex items-center justify-center shadow-lg`}
+        >
           <Icon className="w-6 h-6 text-white" />
         </div>
-        <span className={`text-sm font-semibold flex items-center gap-1 ${trendDown ? 'text-red-400' : 'text-green-400'}`}>
+        <span
+          className={`text-sm font-semibold flex items-center gap-1 ${trendDown ? 'text-red-400' : 'text-green-400'}`}
+        >
           {trendDown ? <TrendingDown className="w-4 h-4" /> : <TrendingUp className="w-4 h-4" />}
           {trend}
         </span>

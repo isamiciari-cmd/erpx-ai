@@ -56,7 +56,7 @@ export async function signIn(credentials: LoginCredentials): Promise<AuthRespons
     return {
       user: null,
       session: null,
-      error: error as AuthError
+      error: error as AuthError,
     };
   }
 }
@@ -88,7 +88,7 @@ export async function signUp(userData: SignUpData): Promise<AuthResponse> {
     return {
       user: null,
       session: null,
-      error: error as AuthError
+      error: error as AuthError,
     };
   }
 }
@@ -113,7 +113,10 @@ export async function signOut(): Promise<{ error: AuthError | null }> {
 /**
  * Get current session
  */
-export async function getCurrentSession(): Promise<{ session: Session | null; error: AuthError | null }> {
+export async function getCurrentSession(): Promise<{
+  session: Session | null;
+  error: AuthError | null;
+}> {
   try {
     const { data, error } = await supabase.auth.getSession();
     return { session: data.session, error };
@@ -126,9 +129,15 @@ export async function getCurrentSession(): Promise<{ session: Session | null; er
 /**
  * Get current user
  */
-export async function getCurrentUser(): Promise<{ user: SupabaseUser | null; error: AuthError | null }> {
+export async function getCurrentUser(): Promise<{
+  user: SupabaseUser | null;
+  error: AuthError | null;
+}> {
   try {
-    const { data: { user }, error } = await supabase.auth.getUser();
+    const {
+      data: { user },
+      error,
+    } = await supabase.auth.getUser();
     return { user, error };
   } catch (error) {
     console.error('Get user error:', error);
@@ -139,7 +148,9 @@ export async function getCurrentUser(): Promise<{ user: SupabaseUser | null; err
 /**
  * Request password reset email
  */
-export async function requestPasswordReset(request: PasswordResetRequest): Promise<{ error: AuthError | null }> {
+export async function requestPasswordReset(
+  request: PasswordResetRequest,
+): Promise<{ error: AuthError | null }> {
   try {
     const { error } = await supabase.auth.resetPasswordForEmail(request.email, {
       redirectTo: `${window.location.origin}/reset-password`,
@@ -154,7 +165,9 @@ export async function requestPasswordReset(request: PasswordResetRequest): Promi
 /**
  * Update user password
  */
-export async function updatePassword(request: PasswordUpdateRequest): Promise<{ error: AuthError | null }> {
+export async function updatePassword(
+  request: PasswordUpdateRequest,
+): Promise<{ error: AuthError | null }> {
   try {
     const { error } = await supabase.auth.updateUser({
       password: request.newPassword,
@@ -169,7 +182,10 @@ export async function updatePassword(request: PasswordUpdateRequest): Promise<{ 
 /**
  * Refresh session
  */
-export async function refreshSession(): Promise<{ session: Session | null; error: AuthError | null }> {
+export async function refreshSession(): Promise<{
+  session: Session | null;
+  error: AuthError | null;
+}> {
   try {
     const { data, error } = await supabase.auth.refreshSession();
     return { session: data.session, error };

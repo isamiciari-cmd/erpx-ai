@@ -7,11 +7,13 @@ Quick solutions to frequently encountered problems.
 ### Failed to Fetch
 
 **Symptoms:**
+
 - "TypeError: Failed to fetch" in console
 - Login page doesn't work
 - Data doesn't load
 
 **Causes:**
+
 1. Missing or invalid Supabase anon key
 2. Supabase project paused/deleted
 3. Wrong Supabase URL
@@ -42,6 +44,7 @@ pnpm dev
 ### Supabase Project Paused
 
 **Symptoms:**
+
 - 404 error from Supabase URL
 - "Project is not active" message
 
@@ -56,12 +59,14 @@ pnpm dev
 ### Wrong Anon Key
 
 **Symptoms:**
+
 - 401 Unauthorized errors
 - "Invalid API key" messages
 
 **Solution:**
 
 Get the correct key:
+
 1. Supabase Dashboard → Settings → API
 2. Look for "Project API keys" section
 3. Copy the **anon public** key (NOT service_role!)
@@ -74,6 +79,7 @@ Get the correct key:
 ### Vercel Build Fails
 
 **Symptoms:**
+
 - Build fails with TypeScript errors
 - Module not found errors
 - Out of memory errors
@@ -104,6 +110,7 @@ pnpm build
 ### Module Not Found
 
 **Symptoms:**
+
 - `Cannot find module '@/...'` errors
 - Import path errors
 
@@ -133,6 +140,7 @@ pnpm install
 ### Environment Variables Not Working
 
 **Symptoms:**
+
 - `undefined` values for env variables
 - Different behavior local vs production
 
@@ -156,6 +164,7 @@ pnpm install
 ### RLS Policies Blocking Queries
 
 **Symptoms:**
+
 - Empty data despite records existing
 - "permission denied for table" errors
 - Works for admin but not other roles
@@ -164,8 +173,8 @@ pnpm install
 
 ```sql
 -- Check if RLS is enabled
-SELECT tablename, rowsecurity 
-FROM pg_tables 
+SELECT tablename, rowsecurity
+FROM pg_tables
 WHERE schemaname = 'public';
 
 -- View existing policies
@@ -183,6 +192,7 @@ CREATE POLICY "Users can view own company data"
 ### Migration Fails
 
 **Symptoms:**
+
 - "relation already exists" errors
 - Foreign key violations
 - Constraint violations
@@ -191,7 +201,7 @@ CREATE POLICY "Users can view own company data"
 
 ```sql
 -- Check what exists
-SELECT table_name FROM information_schema.tables 
+SELECT table_name FROM information_schema.tables
 WHERE table_schema = 'public';
 
 -- Drop and recreate (CAUTION: loses data)
@@ -204,6 +214,7 @@ CREATE TABLE IF NOT EXISTS problem_table (...);
 ### Realtime Not Working
 
 **Symptoms:**
+
 - UI doesn't update when database changes
 - No Realtime subscription errors
 - Data requires page refresh
@@ -216,12 +227,12 @@ CREATE TABLE IF NOT EXISTS problem_table (...);
    - Click "Save"
 
 2. Check subscription code:
+
 ```typescript
 const subscription = supabase
   .channel('table_changes')
-  .on('postgres_changes', 
-    { event: '*', schema: 'public', table: 'products' },
-    (payload) => console.log('Change:', payload)
+  .on('postgres_changes', { event: '*', schema: 'public', table: 'products' }, (payload) =>
+    console.log('Change:', payload),
   )
   .subscribe();
 
@@ -234,6 +245,7 @@ return () => subscription.unsubscribe();
 ### Can't Login - Invalid Credentials
 
 **Symptoms:**
+
 - "Invalid email or password" for known credentials
 - Test accounts don't work
 
@@ -241,8 +253,8 @@ return () => subscription.unsubscribe();
 
 ```sql
 -- 1. Check if user exists in auth.users
-SELECT id, email, email_confirmed_at 
-FROM auth.users 
+SELECT id, email, email_confirmed_at
+FROM auth.users
 WHERE email = 'admin-1@erpx-ai.com';
 
 -- 2. Check if user profile exists
@@ -255,6 +267,7 @@ SELECT * FROM users WHERE email = 'admin-1@erpx-ai.com';
 ### Session Expires Immediately
 
 **Symptoms:**
+
 - Logged out right after login
 - "Session expired" messages constantly
 
@@ -272,6 +285,7 @@ SELECT * FROM users WHERE email = 'admin-1@erpx-ai.com';
 ### Wrong Dashboard After Login
 
 **Symptoms:**
+
 - Cashier sees admin dashboard
 - Role-based routing not working
 
@@ -285,10 +299,10 @@ const roleName = userProfile?.role?.name;
 
 switch (roleName) {
   case 'cashier':
-    navigate("/cashier/pos");
+    navigate('/cashier/pos');
     break;
   case 'admin':
-    navigate("/");
+    navigate('/');
     break;
   // ...
 }
@@ -318,6 +332,7 @@ const FinanceModule = lazy(() => import('./modules/finance'));
 ### Memory Leaks
 
 **Symptoms:**
+
 - Browser tab uses increasing memory
 - App slows down over time
 - Eventually crashes
@@ -405,6 +420,7 @@ pnpm install
 ### Tests Fail Locally but Pass in CI
 
 **Causes:**
+
 - Environment differences
 - Timezone issues
 - Async timing issues
@@ -424,7 +440,7 @@ await waitFor(() => {
 // Mock window.matchMedia for responsive tests
 Object.defineProperty(window, 'matchMedia', {
   writable: true,
-  value: vi.fn().mockImplementation(query => ({
+  value: vi.fn().mockImplementation((query) => ({
     matches: false,
     media: query,
     onchange: null,
@@ -449,9 +465,7 @@ Create/update `vercel.json`:
 
 ```json
 {
-  "rewrites": [
-    { "source": "/(.*)", "destination": "/" }
-  ]
+  "rewrites": [{ "source": "/(.*)", "destination": "/" }]
 }
 ```
 
@@ -461,6 +475,7 @@ Create/update `vercel.json`:
 
 1. Supabase Dashboard → Authentication → URL Configuration
 2. Add production URL:
+
    ```
    https://erpx-ai.com/**
    https://*.vercel.app/**
@@ -471,6 +486,7 @@ Create/update `vercel.json`:
 ### Images Not Loading
 
 **Causes:**
+
 - Incorrect import paths
 - Images not in `public/` folder
 - Build not including images
@@ -510,6 +526,7 @@ if (import.meta.env.DEV) {
 ---
 
 **Still stuck? Create an issue with:**
+
 - Error message (full text)
 - Browser console logs
 - Steps to reproduce

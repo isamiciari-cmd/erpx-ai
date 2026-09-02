@@ -1,5 +1,5 @@
-import { motion } from "motion/react";
-import { useEffect, useState } from "react";
+import { motion } from 'motion/react';
+import { useEffect, useState } from 'react';
 
 export function HeroAnimatedBackground() {
   const [mousePosition, setMousePosition] = useState({ x: 0, y: 0 });
@@ -10,8 +10,8 @@ export function HeroAnimatedBackground() {
       setIsMobile(window.innerWidth < 768);
     };
     checkMobile();
-    window.addEventListener("resize", checkMobile);
-    return () => window.removeEventListener("resize", checkMobile);
+    window.addEventListener('resize', checkMobile);
+    return () => window.removeEventListener('resize', checkMobile);
   }, []);
 
   useEffect(() => {
@@ -24,8 +24,8 @@ export function HeroAnimatedBackground() {
       });
     };
 
-    window.addEventListener("mousemove", handleMouseMove);
-    return () => window.removeEventListener("mousemove", handleMouseMove);
+    window.addEventListener('mousemove', handleMouseMove);
+    return () => window.removeEventListener('mousemove', handleMouseMove);
   }, [isMobile]);
 
   return (
@@ -40,7 +40,7 @@ export function HeroAnimatedBackground() {
         transition={{
           duration: 20,
           repeat: Infinity,
-          ease: "easeInOut",
+          ease: 'easeInOut',
         }}
         style={{
           x: mousePosition.x,
@@ -58,7 +58,7 @@ export function HeroAnimatedBackground() {
         transition={{
           duration: 25,
           repeat: Infinity,
-          ease: "easeInOut",
+          ease: 'easeInOut',
           delay: 2,
         }}
         style={{
@@ -77,7 +77,7 @@ export function HeroAnimatedBackground() {
         transition={{
           duration: 18,
           repeat: Infinity,
-          ease: "easeInOut",
+          ease: 'easeInOut',
           delay: 4,
         }}
         className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[600px] h-[600px] bg-purple-500/10 rounded-full blur-[150px]"
@@ -111,7 +111,7 @@ export function HeroAnimatedBackground() {
               transition={{
                 duration: 3,
                 repeat: Infinity,
-                ease: "linear",
+                ease: 'linear',
               }}
             />
 
@@ -127,7 +127,7 @@ export function HeroAnimatedBackground() {
               transition={{
                 duration: 4,
                 repeat: Infinity,
-                ease: "linear",
+                ease: 'linear',
                 delay: 1,
               }}
             />
@@ -154,7 +154,7 @@ export function HeroAnimatedBackground() {
                 duration: 3 + Math.random() * 4,
                 repeat: Infinity,
                 delay: Math.random() * 5,
-                ease: "easeInOut",
+                ease: 'easeInOut',
               }}
             />
           ))}
@@ -172,12 +172,12 @@ export function HeroAnimatedBackground() {
           rotate: {
             duration: 20,
             repeat: Infinity,
-            ease: "linear",
+            ease: 'linear',
           },
           scale: {
             duration: 4,
             repeat: Infinity,
-            ease: "easeInOut",
+            ease: 'easeInOut',
           },
         }}
       >
@@ -195,12 +195,12 @@ export function HeroAnimatedBackground() {
           rotate: {
             duration: 25,
             repeat: Infinity,
-            ease: "linear",
+            ease: 'linear',
           },
           scale: {
             duration: 5,
             repeat: Infinity,
-            ease: "easeInOut",
+            ease: 'easeInOut',
             delay: 1,
           },
         }}
@@ -215,12 +215,12 @@ export function HeroAnimatedBackground() {
           <g>
             {/* Nodes */}
             {[
-              { cx: "20%", cy: "30%" },
-              { cx: "40%", cy: "20%" },
-              { cx: "60%", cy: "40%" },
-              { cx: "80%", cy: "25%" },
-              { cx: "30%", cy: "70%" },
-              { cx: "70%", cy: "80%" },
+              { cx: '20%', cy: '30%' },
+              { cx: '40%', cy: '20%' },
+              { cx: '60%', cy: '40%' },
+              { cx: '80%', cy: '25%' },
+              { cx: '30%', cy: '70%' },
+              { cx: '70%', cy: '80%' },
             ].map((node, i) => (
               <motion.circle
                 key={i}
@@ -236,7 +236,7 @@ export function HeroAnimatedBackground() {
                 transition={{
                   duration: 2 + i * 0.3,
                   repeat: Infinity,
-                  ease: "easeInOut",
+                  ease: 'easeInOut',
                 }}
               />
             ))}
@@ -255,7 +255,7 @@ export function HeroAnimatedBackground() {
               transition={{
                 duration: 3,
                 repeat: Infinity,
-                ease: "easeInOut",
+                ease: 'easeInOut',
               }}
             />
 
@@ -272,7 +272,7 @@ export function HeroAnimatedBackground() {
               transition={{
                 duration: 3,
                 repeat: Infinity,
-                ease: "easeInOut",
+                ease: 'easeInOut',
                 delay: 0.5,
               }}
             />
@@ -290,7 +290,7 @@ export function HeroAnimatedBackground() {
               transition={{
                 duration: 3,
                 repeat: Infinity,
-                ease: "easeInOut",
+                ease: 'easeInOut',
                 delay: 1,
               }}
             />
@@ -308,7 +308,7 @@ export function HeroAnimatedBackground() {
               transition={{
                 duration: 3,
                 repeat: Infinity,
-                ease: "easeInOut",
+                ease: 'easeInOut',
                 delay: 1.5,
               }}
             />
@@ -326,7 +326,7 @@ export function HeroAnimatedBackground() {
               transition={{
                 duration: 3,
                 repeat: Infinity,
-                ease: "easeInOut",
+                ease: 'easeInOut',
                 delay: 2,
               }}
             />
@@ -346,7 +346,7 @@ export function HeroAnimatedBackground() {
             transition={{
               duration: 6,
               repeat: Infinity,
-              ease: "easeInOut",
+              ease: 'easeInOut',
             }}
             style={{
               x: mousePosition.x * 0.5,
@@ -363,7 +363,7 @@ export function HeroAnimatedBackground() {
             transition={{
               duration: 7,
               repeat: Infinity,
-              ease: "easeInOut",
+              ease: 'easeInOut',
               delay: 1,
             }}
             style={{
@@ -380,36 +380,36 @@ export function HeroAnimatedBackground() {
           <motion.path
             d="M0,200 Q300,100 600,200 T1200,200 L1200,400 L0,400 Z"
             fill="url(#waveGradient1)"
-            initial={{ d: "M0,200 Q300,100 600,200 T1200,200 L1200,400 L0,400 Z" }}
+            initial={{ d: 'M0,200 Q300,100 600,200 T1200,200 L1200,400 L0,400 Z' }}
             animate={{
               d: [
-                "M0,200 Q300,100 600,200 T1200,200 L1200,400 L0,400 Z",
-                "M0,200 Q300,250 600,200 T1200,200 L1200,400 L0,400 Z",
-                "M0,200 Q300,100 600,200 T1200,200 L1200,400 L0,400 Z",
+                'M0,200 Q300,100 600,200 T1200,200 L1200,400 L0,400 Z',
+                'M0,200 Q300,250 600,200 T1200,200 L1200,400 L0,400 Z',
+                'M0,200 Q300,100 600,200 T1200,200 L1200,400 L0,400 Z',
               ],
             }}
             transition={{
               duration: 10,
               repeat: Infinity,
-              ease: "easeInOut",
+              ease: 'easeInOut',
             }}
           />
 
           <motion.path
             d="M0,250 Q300,150 600,250 T1200,250 L1200,400 L0,400 Z"
             fill="url(#waveGradient2)"
-            initial={{ d: "M0,250 Q300,150 600,250 T1200,250 L1200,400 L0,400 Z" }}
+            initial={{ d: 'M0,250 Q300,150 600,250 T1200,250 L1200,400 L0,400 Z' }}
             animate={{
               d: [
-                "M0,250 Q300,150 600,250 T1200,250 L1200,400 L0,400 Z",
-                "M0,250 Q300,300 600,250 T1200,250 L1200,400 L0,400 Z",
-                "M0,250 Q300,150 600,250 T1200,250 L1200,400 L0,400 Z",
+                'M0,250 Q300,150 600,250 T1200,250 L1200,400 L0,400 Z',
+                'M0,250 Q300,300 600,250 T1200,250 L1200,400 L0,400 Z',
+                'M0,250 Q300,150 600,250 T1200,250 L1200,400 L0,400 Z',
               ],
             }}
             transition={{
               duration: 12,
               repeat: Infinity,
-              ease: "easeInOut",
+              ease: 'easeInOut',
               delay: 1,
             }}
           />
@@ -451,7 +451,7 @@ export function HeroAnimatedBackground() {
             transition={{
               duration: 4,
               repeat: Infinity,
-              ease: "linear",
+              ease: 'linear',
             }}
           />
 
@@ -468,7 +468,7 @@ export function HeroAnimatedBackground() {
             transition={{
               duration: 5,
               repeat: Infinity,
-              ease: "linear",
+              ease: 'linear',
               delay: 2,
             }}
           />

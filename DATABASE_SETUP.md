@@ -89,6 +89,7 @@ firebase init
 ### 3.2 Link Cloud SQL to Firebase
 
 In Firebase Console:
+
 1. Go to **Build** → **SQL Connect**
 2. Click **Get Started**
 3. Select your Cloud SQL instance: `erpx-ai-db`
@@ -174,7 +175,7 @@ firebase auth:import users.json
 ```sql
 -- Run in psql
 INSERT INTO users (firebase_uid, company_id, email, display_name, role_id) VALUES
-('firebase_uid_from_auth', '550e8400-e29b-41d4-a716-446655440001', 'admin@erpxai.com', 'Admin User', 
+('firebase_uid_from_auth', '550e8400-e29b-41d4-a716-446655440001', 'admin@erpxai.com', 'Admin User',
   (SELECT id FROM roles WHERE name = 'admin')
 );
 ```
@@ -218,8 +219,8 @@ service firebase.storage {
 
 ```sql
 -- Check existing indexes
-SELECT indexname, indexdef 
-FROM pg_indexes 
+SELECT indexname, indexdef
+FROM pg_indexes
 WHERE schemaname = 'public'
 ORDER BY tablename, indexname;
 ```
@@ -228,10 +229,10 @@ ORDER BY tablename, indexname;
 
 ```sql
 -- For faster dashboard queries
-CREATE INDEX CONCURRENTLY idx_invoices_company_date 
+CREATE INDEX CONCURRENTLY idx_invoices_company_date
 ON invoices(company_id, invoice_date DESC);
 
-CREATE INDEX CONCURRENTLY idx_sales_orders_company_date 
+CREATE INDEX CONCURRENTLY idx_sales_orders_company_date
 ON sales_orders(company_id, order_date DESC);
 ```
 
@@ -258,8 +259,8 @@ npm run dev
 
 ```sql
 -- Update inventory in database
-UPDATE inventory 
-SET quantity_available = 5 
+UPDATE inventory
+SET quantity_available = 5
 WHERE product_id = '550e8400-e29b-41d4-a716-446655440041';
 
 -- Check if dashboard updates automatically
@@ -368,14 +369,14 @@ firebase deploy --only functions
 
 ## Role-Based Access Control
 
-| Role      | Permissions                                    |
-|-----------|------------------------------------------------|
-| Admin     | Full access to all modules                     |
-| Manager   | Department access, read/write, no delete       |
-| Accountant| Finance, invoices, payments                    |
-| Sales     | Sales orders, customers, quotations            |
-| Warehouse | Inventory, products, stock movements           |
-| Employee  | Read-only access to assigned tasks             |
+| Role       | Permissions                              |
+| ---------- | ---------------------------------------- |
+| Admin      | Full access to all modules               |
+| Manager    | Department access, read/write, no delete |
+| Accountant | Finance, invoices, payments              |
+| Sales      | Sales orders, customers, quotations      |
+| Warehouse  | Inventory, products, stock movements     |
+| Employee   | Read-only access to assigned tasks       |
 
 ---
 

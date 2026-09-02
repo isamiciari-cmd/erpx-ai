@@ -64,11 +64,7 @@ export async function createCustomer(customerData: Partial<Customer>): Promise<C
     throw new Error('Demo mode: Cannot create customers');
   }
 
-  const { data, error } = await supabase
-    .from('customers')
-    .insert(customerData)
-    .select()
-    .single();
+  const { data, error } = await supabase.from('customers').insert(customerData).select().single();
 
   if (error) {
     console.error('[Supabase] createCustomer error:', error);
@@ -79,7 +75,10 @@ export async function createCustomer(customerData: Partial<Customer>): Promise<C
 }
 
 // Update customer
-export async function updateCustomer(customerId: string, updates: Partial<Customer>): Promise<Customer> {
+export async function updateCustomer(
+  customerId: string,
+  updates: Partial<Customer>,
+): Promise<Customer> {
   if (isDemoMode) {
     throw new Error('Demo mode: Cannot update customers');
   }
@@ -105,10 +104,7 @@ export async function deleteCustomer(customerId: string): Promise<void> {
     throw new Error('Demo mode: Cannot delete customers');
   }
 
-  const { error } = await supabase
-    .from('customers')
-    .delete()
-    .eq('id', customerId);
+  const { error } = await supabase.from('customers').delete().eq('id', customerId);
 
   if (error) {
     console.error('[Supabase] deleteCustomer error:', error);

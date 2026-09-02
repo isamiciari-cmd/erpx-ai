@@ -17,6 +17,7 @@ pnpm install
 This archive contains the complete source code for ERPX, including:
 
 ### Core Application
+
 - ✅ React 18.3.1 + TypeScript
 - ✅ React Router 7.13.0 for navigation
 - ✅ Motion (Framer Motion) for animations
@@ -27,12 +28,14 @@ This archive contains the complete source code for ERPX, including:
 ### Features Implemented
 
 #### 🔐 Authentication & Access Control
+
 - Splash screen with animated logo
 - Login page with glassmorphism design
 - Role-based access control (RBAC)
 - 5 user roles: super_admin, admin, tenant_admin, user, viewer
 
 #### 💰 Finance Module
+
 - Chart of Accounts (hierarchical tree)
 - Multi-currency invoicing (SAR, USD, EUR, GBP)
 - Expense tracking and categorization
@@ -43,6 +46,7 @@ This archive contains the complete source code for ERPX, including:
   - QR code generation (TLV format)
 
 #### 👥 HR Module
+
 - Employee management (CRUD)
 - Contract tracking (start/end dates)
 - Department management
@@ -50,12 +54,13 @@ This archive contains the complete source code for ERPX, including:
 - Total payroll calculation
 
 #### 📦 Operations
+
 - **Inventory Management**
   - SKU tracking
   - Stock movements (IN/OUT/TRANSFER)
   - Min quantity alerts
   - Location tracking
-  
+
 - **POS Terminal**
   - Full-screen restaurant POS
   - Menu grid with categories
@@ -66,18 +71,21 @@ This archive contains the complete source code for ERPX, including:
 #### 🏢 Multi-Tenant SaaS Admin
 
 **Control Tower** - Central command center:
+
 - Real-time system health monitoring
 - MRR tracking and revenue analytics
 - Active tenants overview
 - AI-powered insights and alerts
 
 **Tenant Management**:
+
 - Multi-tenant CRUD operations
 - Subscription plans (Basic, Pro, Enterprise)
 - Domain-based routing (tenant.erpx.sa)
 - Status management (active, suspended, expired)
 
 **ERPX Studio** - Low-Code Builder:
+
 - AI-powered module generation
 - Dynamic field designer (7 field types)
 - Workflow rules engine
@@ -85,12 +93,14 @@ This archive contains the complete source code for ERPX, including:
 - Live form preview
 
 **Billing & Subscriptions**:
+
 - Self-service pricing page
 - Stripe integration (simulated)
 - Webhook event handling
 - Usage tracking with plan-based limits
 
 **Automation Engine**:
+
 - 4 pre-configured automation rules
 - Auto-suspend after payment failure
 - Upgrade suggestions based on usage
@@ -98,12 +108,14 @@ This archive contains the complete source code for ERPX, including:
 - Revenue drop alerts
 
 **Analytics & Monitoring**:
+
 - SaaS metrics dashboard (MRR, churn, growth)
 - Usage tracking per tenant
 - Module marketplace
 - System health monitor (6 services)
 
 #### 🤖 AI Features
+
 - **AI Prediction Card** - Revenue forecasting with 78% confidence
 - **Smart Alerts** - Anomaly detection (drops, spikes, below average)
 - **AI Assistant** - Interactive chatbot with smart responses
@@ -111,6 +123,7 @@ This archive contains the complete source code for ERPX, including:
 - **Voice Control** - Navigate using voice commands (Web Speech API)
 
 #### 📊 Dashboard
+
 - Real-time KPIs with live updates
 - Revenue and orders charts
 - Live/Pause toggle for data updates
@@ -171,6 +184,7 @@ src/app/
 ## 🔧 Technology Stack
 
 ### Frontend
+
 - React 18.3.1
 - TypeScript
 - React Router 7.13.0
@@ -180,6 +194,7 @@ src/app/
 - Lucide React 0.487.0
 
 ### Backend Architecture (Entities)
+
 - TypeORM entities
 - Multi-tenant database with schema isolation
 - Stripe integration
@@ -188,9 +203,11 @@ src/app/
 ## 🌐 Routes
 
 ### Public
+
 - `/pricing` - Self-service signup
 
 ### Authenticated
+
 - `/` - Dashboard
 - `/finance/accounting` - Chart of Accounts
 - `/finance/invoicing` - Invoices
@@ -208,6 +225,7 @@ src/app/
 - `/projects` - Projects (placeholder)
 
 ### Admin (Super Admin Only)
+
 - `/admin/control-tower` - Command center
 - `/admin/tenants` - Tenant management
 - `/admin/studio` - Low-code builder
@@ -220,6 +238,7 @@ src/app/
 ## 🔐 Security & Permissions
 
 ### Roles
+
 1. **super_admin** - Full platform control
 2. **admin** - Platform management (no shutdown)
 3. **tenant_admin** - Manages own tenant
@@ -227,6 +246,7 @@ src/app/
 5. **viewer** - Read-only monitoring
 
 ### Permissions
+
 - tenants.manage / tenants.view
 - billing.manage / billing.view
 - modules.manage / modules.view
@@ -238,30 +258,33 @@ src/app/
 ## 💾 Data Models
 
 ### Multi-Tenant
+
 ```typescript
 interface Tenant {
   id: number;
   name: string;
   domain: string; // company.erpx.sa
-  plan: "Basic" | "Pro" | "Enterprise";
-  status: "active" | "suspended" | "expired";
+  plan: 'Basic' | 'Pro' | 'Enterprise';
+  status: 'active' | 'suspended' | 'expired';
   stripeCustomerId: string;
 }
 ```
 
 ### Subscription
+
 ```typescript
 interface Subscription {
   id: number;
   tenantId: number;
   planId: number;
-  status: "active" | "canceled" | "past_due";
+  status: 'active' | 'canceled' | 'past_due';
   stripeCustomerId: string;
   stripeSubscriptionId: string;
 }
 ```
 
 ### Usage Tracking
+
 ```typescript
 interface UsageLog {
   id: number;
@@ -305,6 +328,7 @@ HR (Track Activity + Commission)
 ## 🎯 Subscription Plans
 
 ### Basic - SAR 299/month
+
 - 10 users
 - Finance & Invoicing
 - Basic CRM
@@ -312,6 +336,7 @@ HR (Track Activity + Commission)
 - Email support
 
 ### Pro - SAR 999/month
+
 - 50 users
 - All Basic features
 - HR & Payroll
@@ -321,6 +346,7 @@ HR (Track Activity + Commission)
 - API access
 
 ### Enterprise - Custom Pricing
+
 - Unlimited users
 - All Pro features
 - White-label solution
@@ -334,6 +360,7 @@ HR (Track Activity + Commission)
 This is a Figma Make project. The Vite dev server is already running.
 
 **Important Notes**:
+
 - Do NOT run `vite build` manually
 - Do NOT create `index.html`
 - Preview updates automatically

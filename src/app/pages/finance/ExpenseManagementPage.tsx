@@ -1,12 +1,57 @@
 import { useState } from 'react';
-import { Plus, Clock, CheckCircle, XCircle, Paperclip } from 'lucide-react';
+import { Plus, Clock, CheckCircle, XCircle } from 'lucide-react';
 
 const expenses = [
-  { id: 1, number: 'EXP-223', category: 'Travel', employee: 'Ahmed Ali', amount: 3500, date: '2026-04-28', status: 'approved', description: 'Business trip to Jeddah' },
-  { id: 2, number: 'EXP-224', category: 'Office Supplies', employee: 'Sara Mohamed', amount: 850, date: '2026-04-29', status: 'pending', description: 'Printer cartridges and paper' },
-  { id: 3, number: 'EXP-225', category: 'Marketing', employee: 'Omar Ibrahim', amount: 12000, date: '2026-04-30', status: 'approved', description: 'Social media advertising campaign' },
-  { id: 4, number: 'EXP-226', category: 'Utilities', employee: 'Fatima Hassan', amount: 4200, date: '2026-04-30', status: 'rejected', description: 'Monthly electricity bill' },
-  { id: 5, number: 'EXP-227', category: 'Training', employee: 'Khalid Ahmed', amount: 8500, date: '2026-04-30', status: 'pending', description: 'Professional certification course' },
+  {
+    id: 1,
+    number: 'EXP-223',
+    category: 'Travel',
+    employee: 'Ahmed Ali',
+    amount: 3500,
+    date: '2026-04-28',
+    status: 'approved',
+    description: 'Business trip to Jeddah',
+  },
+  {
+    id: 2,
+    number: 'EXP-224',
+    category: 'Office Supplies',
+    employee: 'Sara Mohamed',
+    amount: 850,
+    date: '2026-04-29',
+    status: 'pending',
+    description: 'Printer cartridges and paper',
+  },
+  {
+    id: 3,
+    number: 'EXP-225',
+    category: 'Marketing',
+    employee: 'Omar Ibrahim',
+    amount: 12000,
+    date: '2026-04-30',
+    status: 'approved',
+    description: 'Social media advertising campaign',
+  },
+  {
+    id: 4,
+    number: 'EXP-226',
+    category: 'Utilities',
+    employee: 'Fatima Hassan',
+    amount: 4200,
+    date: '2026-04-30',
+    status: 'rejected',
+    description: 'Monthly electricity bill',
+  },
+  {
+    id: 5,
+    number: 'EXP-227',
+    category: 'Training',
+    employee: 'Khalid Ahmed',
+    amount: 8500,
+    date: '2026-04-30',
+    status: 'pending',
+    description: 'Professional certification course',
+  },
 ];
 
 const categories = [
@@ -20,9 +65,8 @@ const categories = [
 export default function ExpenseManagementPage() {
   const [selectedStatus, setSelectedStatus] = useState('all');
 
-  const filteredExpenses = selectedStatus === 'all'
-    ? expenses
-    : expenses.filter(e => e.status === selectedStatus);
+  const filteredExpenses =
+    selectedStatus === 'all' ? expenses : expenses.filter((e) => e.status === selectedStatus);
 
   return (
     <div className="space-y-6">
@@ -44,7 +88,9 @@ export default function ExpenseManagementPage() {
           return (
             <div key={cat.id} className="bg-white rounded-lg shadow p-4">
               <h3 className="font-semibold mb-2">{cat.name}</h3>
-              <p className="text-2xl font-bold text-purple-600 mb-1">${cat.spent.toLocaleString()}</p>
+              <p className="text-2xl font-bold text-purple-600 mb-1">
+                ${cat.spent.toLocaleString()}
+              </p>
               <p className="text-xs text-gray-600 mb-2">of ${cat.budget.toLocaleString()}</p>
               <div className="w-full bg-gray-200 rounded-full h-1.5">
                 <div
@@ -94,20 +140,38 @@ export default function ExpenseManagementPage() {
           <table className="w-full">
             <thead className="bg-gray-50">
               <tr>
-                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Expense #</th>
-                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Date</th>
-                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Employee</th>
-                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Category</th>
-                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Description</th>
-                <th className="px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase">Amount</th>
-                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Status</th>
-                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Actions</th>
+                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">
+                  Expense #
+                </th>
+                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">
+                  Date
+                </th>
+                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">
+                  Employee
+                </th>
+                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">
+                  Category
+                </th>
+                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">
+                  Description
+                </th>
+                <th className="px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase">
+                  Amount
+                </th>
+                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">
+                  Status
+                </th>
+                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">
+                  Actions
+                </th>
               </tr>
             </thead>
             <tbody className="divide-y">
               {filteredExpenses.map((expense) => (
                 <tr key={expense.id} className="hover:bg-gray-50">
-                  <td className="px-6 py-4 whitespace-nowrap font-medium text-blue-600">{expense.number}</td>
+                  <td className="px-6 py-4 whitespace-nowrap font-medium text-blue-600">
+                    {expense.number}
+                  </td>
                   <td className="px-6 py-4 whitespace-nowrap text-sm">{expense.date}</td>
                   <td className="px-6 py-4 whitespace-nowrap text-sm">{expense.employee}</td>
                   <td className="px-6 py-4 whitespace-nowrap">
@@ -116,7 +180,9 @@ export default function ExpenseManagementPage() {
                     </span>
                   </td>
                   <td className="px-6 py-4 text-sm">{expense.description}</td>
-                  <td className="px-6 py-4 whitespace-nowrap text-sm text-right font-bold">${expense.amount.toLocaleString()}</td>
+                  <td className="px-6 py-4 whitespace-nowrap text-sm text-right font-bold">
+                    ${expense.amount.toLocaleString()}
+                  </td>
                   <td className="px-6 py-4 whitespace-nowrap">
                     <StatusBadge status={expense.status} />
                   </td>
@@ -156,7 +222,9 @@ function StatusBadge({ status }: { status: string }) {
   };
 
   return (
-    <span className={`inline-flex items-center gap-1 px-2 py-1 rounded-full text-xs font-medium ${styles[status as keyof typeof styles]}`}>
+    <span
+      className={`inline-flex items-center gap-1 px-2 py-1 rounded-full text-xs font-medium ${styles[status as keyof typeof styles]}`}
+    >
       {icons[status as keyof typeof icons]}
       {status.charAt(0).toUpperCase() + status.slice(1)}
     </span>

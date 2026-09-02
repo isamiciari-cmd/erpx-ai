@@ -1,14 +1,17 @@
 # ERPX-AI UI Interactions Guide
 
 ## Overview
+
 This guide explains how to use the interactive UI components system implemented in ERPX-AI.
 
 ## Components Available
 
 ### 1. Toast Notifications
+
 Display success, error, warning, and info messages to users.
 
 #### Usage:
+
 ```tsx
 import { useToast } from '../components/ui/Toast';
 
@@ -25,9 +28,11 @@ function MyComponent() {
 ```
 
 ### 2. Modal
+
 Reusable modal dialog component.
 
 #### Usage:
+
 ```tsx
 import Modal from '../components/ui/Modal';
 
@@ -41,18 +46,18 @@ function MyComponent() {
       title="Modal Title"
       size="md" // sm, md, lg, xl
     >
-      <div className="p-6">
-        Your content here
-      </div>
+      <div className="p-6">Your content here</div>
     </Modal>
   );
 }
 ```
 
 ### 3. ConfirmDialog
+
 Confirmation dialog for destructive actions.
 
 #### Usage:
+
 ```tsx
 import ConfirmDialog from '../components/ui/ConfirmDialog';
 
@@ -79,9 +84,11 @@ function MyComponent() {
 ```
 
 ### 4. Button
+
 Feature-rich button component with variants and states.
 
 #### Usage:
+
 ```tsx
 import Button from '../components/ui/Button';
 import { Plus } from 'lucide-react';
@@ -93,10 +100,7 @@ function MyComponent() {
       <Button variant="primary">Save</Button>
 
       {/* With Icon */}
-      <Button 
-        variant="primary"
-        leftIcon={<Plus className="w-5 h-5" />}
-      >
+      <Button variant="primary" leftIcon={<Plus className="w-5 h-5" />}>
         Add Item
       </Button>
 
@@ -125,9 +129,11 @@ function MyComponent() {
 ```
 
 ### 5. EmptyState
+
 Display when no data is available.
 
 #### Usage:
+
 ```tsx
 import EmptyState from '../components/ui/EmptyState';
 import { Package } from 'lucide-react';
@@ -146,9 +152,11 @@ function MyComponent() {
 ```
 
 ### 6. LoadingSpinner
+
 Display loading state.
 
 #### Usage:
+
 ```tsx
 import LoadingSpinner from '../components/ui/LoadingSpinner';
 
@@ -191,6 +199,7 @@ See `/src/app/pages/inventory/InventoryManagementPage.tsx` for a complete workin
 ## Best Practices
 
 ### 1. Always Show Feedback
+
 ```tsx
 // Good ✅
 const handleSave = async () => {
@@ -212,6 +221,7 @@ const handleSave = async () => {
 ```
 
 ### 2. Confirm Destructive Actions
+
 ```tsx
 // Good ✅
 <button onClick={() => setIsDeleteDialogOpen(true)}>
@@ -225,6 +235,7 @@ const handleSave = async () => {
 ```
 
 ### 3. Disable Buttons During Loading
+
 ```tsx
 // Good ✅
 <Button isLoading={isSubmitting} disabled={isSubmitting}>
@@ -238,25 +249,31 @@ const handleSave = async () => {
 ```
 
 ### 4. Show Empty States
+
 ```tsx
 // Good ✅
-{items.length === 0 ? (
-  <EmptyState
-    icon={Package}
-    title="No Items"
-    description="Add your first item"
-    actionLabel="Add Item"
-    onAction={() => setIsAddModalOpen(true)}
-  />
-) : (
-  <ItemsList items={items} />
-)}
+{
+  items.length === 0 ? (
+    <EmptyState
+      icon={Package}
+      title="No Items"
+      description="Add your first item"
+      actionLabel="Add Item"
+      onAction={() => setIsAddModalOpen(true)}
+    />
+  ) : (
+    <ItemsList items={items} />
+  );
+}
 
 // Bad ❌
-{items.length === 0 && <div>No items</div>}
+{
+  items.length === 0 && <div>No items</div>;
+}
 ```
 
 ### 5. Handle Errors Gracefully
+
 ```tsx
 // Good ✅
 try {
@@ -273,23 +290,23 @@ await performAction(); // No error handling
 
 ## Button States Reference
 
-| State | Description | Visual Feedback |
-|-------|-------------|-----------------|
-| Default | Normal resting state | Base colors |
-| Hover | Mouse over button | Scale 1.02, color change |
-| Active | Button pressed | Scale 0.98 |
-| Loading | Async operation in progress | Spinner animation |
-| Disabled | Button cannot be clicked | Opacity 50%, cursor not-allowed |
+| State    | Description                 | Visual Feedback                 |
+| -------- | --------------------------- | ------------------------------- |
+| Default  | Normal resting state        | Base colors                     |
+| Hover    | Mouse over button           | Scale 1.02, color change        |
+| Active   | Button pressed              | Scale 0.98                      |
+| Loading  | Async operation in progress | Spinner animation               |
+| Disabled | Button cannot be clicked    | Opacity 50%, cursor not-allowed |
 
 ## Color Variants
 
-| Variant | Use Case | Colors |
-|---------|----------|--------|
-| Primary | Main actions (Save, Add, Submit) | Blue gradient |
+| Variant   | Use Case                          | Colors             |
+| --------- | --------------------------------- | ------------------ |
+| Primary   | Main actions (Save, Add, Submit)  | Blue gradient      |
 | Secondary | Secondary actions (Cancel, Close) | White/5 background |
-| Danger | Destructive actions (Delete) | Red gradient |
-| Success | Positive actions (Approve) | Green gradient |
-| Ghost | Tertiary actions (Cancel) | Transparent |
+| Danger    | Destructive actions (Delete)      | Red gradient       |
+| Success   | Positive actions (Approve)        | Green gradient     |
+| Ghost     | Tertiary actions (Cancel)         | Transparent        |
 
 ## Implementation Checklist
 
@@ -321,6 +338,7 @@ To apply these patterns to other modules:
 ## Support
 
 For questions or issues with UI components, refer to:
+
 - Component source code in `/src/app/components/ui/`
 - Example implementation in `/src/app/pages/inventory/InventoryManagementPage.tsx`
 - This guide

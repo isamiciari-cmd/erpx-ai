@@ -5,6 +5,7 @@
 This guide explains how to set up and use the developer test account with authentication bypass for ERPX-AI.
 
 **Developer Account:**
+
 - Email: `i.1122@erpx-ai.com`
 - Password: `@12345`
 - Role: Developer (full system access)
@@ -22,6 +23,7 @@ VITE_DEV_AUTH_BYPASS=true
 ```
 
 **Security Features:**
+
 - ✅ Only works on `localhost` or `staging` domains
 - ✅ Automatically disabled on production domain (`erpx-ai.com`)
 - ✅ Shows visible warning badge when active
@@ -118,27 +120,32 @@ pnpm dev
 The developer role has **full access** to everything:
 
 ### Finance Module
+
 - ✅ View, create, edit, delete all finance data
 - ✅ Manage budgets and reports
 - ✅ Access all accounting features
 
 ### HR Module
+
 - ✅ Manage employees
 - ✅ Process payroll
 - ✅ View HR reports
 
 ### Inventory & POS
+
 - ✅ Manage products and inventory
 - ✅ Process sales and refunds
 - ✅ Open/close cashier shifts
 
 ### Admin Access
+
 - ✅ User management
 - ✅ Role management
 - ✅ Company settings
 - ✅ Branch management
 
 ### Developer-Specific
+
 - ✅ Database access
 - ✅ API testing
 - ✅ View error logs
@@ -154,12 +161,9 @@ The developer role has **full access** to everything:
 The developer bypass has **multiple layers of security:**
 
 1. **Domain Check:**
+
    ```typescript
-   const PRODUCTION_DOMAINS = [
-     'erpx-ai.com',
-     'www.erpx-ai.com',
-     'app.erpx-ai.com'
-   ];
+   const PRODUCTION_DOMAINS = ['erpx-ai.com', 'www.erpx-ai.com', 'app.erpx-ai.com'];
    ```
    - If running on any production domain, bypass is **automatically disabled**
    - Even if `VITE_DEV_AUTH_BYPASS=true`, it won't work on production
@@ -205,6 +209,7 @@ http://localhost:5173/login
 ### Staging Environment
 
 Same as local, but:
+
 - Domain must include "staging" or "dev"
 - Example: `https://staging.erpx-ai.com`
 - Dev bypass will work
@@ -232,6 +237,7 @@ Same as local, but:
 **Cause:** Running on production domain or `VITE_DEV_AUTH_BYPASS` not set to `true`
 
 **Fix:**
+
 1. Check `.env` file: `VITE_DEV_AUTH_BYPASS=true`
 2. Check domain: Must be `localhost` or include `staging`/`dev`
 3. Restart dev server: `pnpm dev`
@@ -243,6 +249,7 @@ Same as local, but:
 **Cause:** Developer user not created in Supabase
 
 **Fix:**
+
 1. Create auth user in Supabase Dashboard (Step 2)
 2. Run `CREATE_DEVELOPER_USER.sql` with correct User ID (Step 3)
 3. Verify user exists: Check the verification query at the end of the SQL script
@@ -254,6 +261,7 @@ Same as local, but:
 **Cause:** Dev bypass not enabled or wrong environment
 
 **Fix:**
+
 1. Check `.env`: `VITE_DEV_AUTH_BYPASS=true`
 2. Make sure you're on `localhost` (not production)
 3. Restart dev server
@@ -266,6 +274,7 @@ Same as local, but:
 **Cause:** Dev mode not active
 
 **Fix:**
+
 1. Verify `.env` has `VITE_DEV_AUTH_BYPASS=true`
 2. Check browser console for dev mode messages
 3. Make sure you're on localhost
@@ -311,11 +320,11 @@ VITE_DEV_AUTH_BYPASS=false
 
 ## 🚀 Quick Reference
 
-| Environment | Domain | Dev Bypass | Yellow Badge | Quick Login Button |
-|-------------|--------|------------|--------------|-------------------|
-| **Local** | localhost | ✅ Enabled | ✅ Shows | ✅ Visible |
-| **Staging** | staging.erpx-ai.com | ✅ Enabled | ✅ Shows | ✅ Visible |
-| **Production** | erpx-ai.com | ❌ Disabled | ❌ Hidden | ❌ Hidden |
+| Environment    | Domain              | Dev Bypass  | Yellow Badge | Quick Login Button |
+| -------------- | ------------------- | ----------- | ------------ | ------------------ |
+| **Local**      | localhost           | ✅ Enabled  | ✅ Shows     | ✅ Visible         |
+| **Staging**    | staging.erpx-ai.com | ✅ Enabled  | ✅ Shows     | ✅ Visible         |
+| **Production** | erpx-ai.com         | ❌ Disabled | ❌ Hidden    | ❌ Hidden          |
 
 ---
 
@@ -331,6 +340,7 @@ VITE_DEV_AUTH_BYPASS=false
 6. Restart dev server after any `.env` changes
 
 **Remember:**
+
 - Developer bypass is a **testing feature** only
 - It's **completely disabled** in production
 - It's **safe to use** in development

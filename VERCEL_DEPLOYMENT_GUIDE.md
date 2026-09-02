@@ -16,21 +16,25 @@
 **Method A: Deploy via CLI (Recommended)**
 
 1. Install Vercel CLI:
+
    ```bash
    npm install -g vercel
    ```
 
 2. Navigate to your project folder:
+
    ```bash
    cd /workspaces/default/code
    ```
 
 3. Login to Vercel:
+
    ```bash
    vercel login
    ```
 
 4. Deploy:
+
    ```bash
    vercel --prod
    ```
@@ -87,12 +91,14 @@
 **Add these records (Vercel will give you the exact values):**
 
 **For root domain (yourdomain.com):**
+
 - **Type:** A
 - **Name:** @
 - **Value:** `76.76.21.21` (Vercel's IP)
 - **TTL:** 600
 
 **For www subdomain (www.yourdomain.com):**
+
 - **Type:** CNAME
 - **Name:** www
 - **Value:** `cname.vercel-dns.com`
@@ -133,19 +139,23 @@ Your Supabase credentials are already configured in `vercel.json`. If you need t
 ### **Custom Domain Configurations**
 
 **Option 1: Root domain only (yourdomain.com)**
+
 - Add A record pointing to Vercel
 
 **Option 2: WWW only (www.yourdomain.com)**
+
 - Add CNAME record for www
 - Add redirect from root to www
 
 **Option 3: Both (recommended)**
+
 - Add both A and CNAME records
 - Set one as primary, redirect the other
 
 ### **Automatic Deployments**
 
 Every time you update your code:
+
 ```bash
 vercel --prod
 ```
@@ -157,20 +167,25 @@ Or connect to GitHub for automatic deployments on every push.
 ## 🆘 Troubleshooting
 
 **Problem: "Domain is not verified"**
+
 - Solution: Wait 10-30 minutes for DNS to propagate
 
 **Problem: "Build failed"**
+
 - Solution: Check build logs in Vercel dashboard
 - Ensure all dependencies are in package.json
 
 **Problem: "Environment variables not working"**
+
 - Solution: Add them in Vercel Dashboard → Settings → Environment Variables
 - Redeploy after adding variables
 
 **Problem: "404 on page refresh"**
+
 - Solution: Already configured in vercel.json (rewrites setting)
 
 **Problem: "Supabase connection failed"**
+
 - Solution: Verify environment variables are set correctly in Vercel
 
 ---
@@ -178,6 +193,7 @@ Or connect to GitHub for automatic deployments on every push.
 ## 📊 Vercel Free Tier Limits
 
 ✅ **Included in Free Tier:**
+
 - Unlimited deployments
 - 100 GB bandwidth/month
 - SSL certificates
@@ -185,6 +201,7 @@ Or connect to GitHub for automatic deployments on every push.
 - Automatic HTTPS
 
 ❌ **Not Included (Requires Pro):**
+
 - More than 100 GB bandwidth
 - Team collaboration
 - Advanced analytics
@@ -214,6 +231,7 @@ Or connect to GitHub for automatic deployments on every push.
 
 ---
 
-**Need help?** 
+**Need help?**
+
 - Vercel Support: https://vercel.com/support
 - Check deployment logs in Vercel dashboard

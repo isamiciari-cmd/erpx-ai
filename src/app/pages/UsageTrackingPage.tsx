@@ -1,13 +1,6 @@
-import { useState, useEffect } from "react";
-import { motion } from "motion/react";
-import {
-  Activity,
-  Users,
-  FileText,
-  Package,
-  ShoppingCart,
-  Database,
-} from "lucide-react";
+import { useState, useEffect } from 'react';
+import { motion } from 'motion/react';
+import { Activity, Users, FileText, Package, ShoppingCart, Database } from 'lucide-react';
 import {
   BarChart,
   Bar,
@@ -18,7 +11,7 @@ import {
   ResponsiveContainer,
   LineChart,
   Line,
-} from "recharts";
+} from 'recharts';
 
 interface UsageRecord {
   tenantId: number;
@@ -39,43 +32,43 @@ const usageAPI = {
   records: [
     {
       tenantId: 1,
-      tenantName: "Acme Corp",
-      module: "Finance",
+      tenantName: 'Acme Corp',
+      module: 'Finance',
       count: 1250,
       lastUsed: new Date().toISOString(),
     },
     {
       tenantId: 1,
-      tenantName: "Acme Corp",
-      module: "Inventory",
+      tenantName: 'Acme Corp',
+      module: 'Inventory',
       count: 850,
       lastUsed: new Date().toISOString(),
     },
     {
       tenantId: 2,
-      tenantName: "TechStart Ltd",
-      module: "Finance",
+      tenantName: 'TechStart Ltd',
+      module: 'Finance',
       count: 320,
       lastUsed: new Date().toISOString(),
     },
     {
       tenantId: 2,
-      tenantName: "TechStart Ltd",
-      module: "HR",
+      tenantName: 'TechStart Ltd',
+      module: 'HR',
       count: 45,
       lastUsed: new Date().toISOString(),
     },
     {
       tenantId: 3,
-      tenantName: "Global Enterprises",
-      module: "Finance",
+      tenantName: 'Global Enterprises',
+      module: 'Finance',
       count: 5200,
       lastUsed: new Date().toISOString(),
     },
     {
       tenantId: 3,
-      tenantName: "Global Enterprises",
-      module: "Inventory",
+      tenantName: 'Global Enterprises',
+      module: 'Inventory',
       count: 3400,
       lastUsed: new Date().toISOString(),
     },
@@ -134,7 +127,7 @@ const usageAPI = {
 export default function UsageTrackingPage() {
   const [records, setRecords] = useState<UsageRecord[]>([]);
   const [selectedTenant, setSelectedTenant] = useState<number>(1);
-  const [selectedPlan] = useState<string>("Pro");
+  const [selectedPlan] = useState<string>('Pro');
 
   const fetchRecords = async () => {
     const data = await usageAPI.findAll();
@@ -147,17 +140,17 @@ export default function UsageTrackingPage() {
 
   const tenants = Array.from(new Set(records.map((r) => r.tenantId))).map((id) => ({
     id,
-    name: records.find((r) => r.tenantId === id)?.tenantName || "",
+    name: records.find((r) => r.tenantId === id)?.tenantName || '',
   }));
 
   const tenantUsage = records.filter((r) => r.tenantId === selectedTenant);
   const limits = usageAPI.checkLimits(selectedTenant, selectedPlan);
 
   const usageTrend = [
-    { id: "week1", week: "Week 1", usage: 2800 },
-    { id: "week2", week: "Week 2", usage: 3200 },
-    { id: "week3", week: "Week 3", usage: 3600 },
-    { id: "week4", week: "Week 4", usage: 4100 },
+    { id: 'week1', week: 'Week 1', usage: 2800 },
+    { id: 'week2', week: 'Week 2', usage: 3200 },
+    { id: 'week3', week: 'Week 3', usage: 3600 },
+    { id: 'week4', week: 'Week 4', usage: 4100 },
   ];
 
   const moduleIcons: { [key: string]: any } = {
@@ -206,8 +199,7 @@ export default function UsageTrackingPage() {
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
         {limits.map((limit, i) => {
           const Icon = moduleIcons[limit.module] || Activity;
-          const percentage =
-            limit.limit === -1 ? 0 : (limit.current / limit.limit) * 100;
+          const percentage = limit.limit === -1 ? 0 : (limit.current / limit.limit) * 100;
           const isNearLimit = percentage > 80;
           const isOverLimit = percentage >= 100;
 
@@ -220,19 +212,19 @@ export default function UsageTrackingPage() {
               whileHover={{ scale: 1.02, y: -4 }}
               className={`bg-gradient-to-br from-gray-900/80 to-gray-950/80 backdrop-blur-xl border rounded-2xl p-6 transition-all ${
                 isOverLimit
-                  ? "border-red-500/50"
+                  ? 'border-red-500/50'
                   : isNearLimit
-                  ? "border-yellow-500/50"
-                  : "border-white/10"
+                    ? 'border-yellow-500/50'
+                    : 'border-white/10'
               }`}
             >
               <div
                 className={`w-14 h-14 bg-gradient-to-br ${
                   isOverLimit
-                    ? "from-red-500 to-pink-500"
+                    ? 'from-red-500 to-pink-500'
                     : isNearLimit
-                    ? "from-yellow-500 to-orange-500"
-                    : "from-blue-500 to-cyan-500"
+                      ? 'from-yellow-500 to-orange-500'
+                      : 'from-blue-500 to-cyan-500'
                 } rounded-xl flex items-center justify-center shadow-lg mb-4`}
               >
                 <Icon className="w-7 h-7 text-white" />
@@ -250,18 +242,16 @@ export default function UsageTrackingPage() {
                     transition={{ duration: 1, delay: i * 0.1 }}
                     className={`h-full ${
                       isOverLimit
-                        ? "bg-gradient-to-r from-red-500 to-pink-500"
+                        ? 'bg-gradient-to-r from-red-500 to-pink-500'
                         : isNearLimit
-                        ? "bg-gradient-to-r from-yellow-500 to-orange-500"
-                        : "bg-gradient-to-r from-blue-500 to-cyan-500"
+                          ? 'bg-gradient-to-r from-yellow-500 to-orange-500'
+                          : 'bg-gradient-to-r from-blue-500 to-cyan-500'
                     }`}
                   />
                 </div>
               )}
               {limit.limit === -1 && (
-                <span className="text-xs text-green-400 font-semibold">
-                  Unlimited
-                </span>
+                <span className="text-xs text-green-400 font-semibold">Unlimited</span>
               )}
             </motion.div>
           );
@@ -288,10 +278,10 @@ export default function UsageTrackingPage() {
             <YAxis stroke="#6b7280" style={{ fontSize: 12 }} />
             <Tooltip
               contentStyle={{
-                backgroundColor: "#1f2937",
-                border: "1px solid #374151",
-                borderRadius: "12px",
-                color: "#fff",
+                backgroundColor: '#1f2937',
+                border: '1px solid #374151',
+                borderRadius: '12px',
+                color: '#fff',
               }}
             />
             <Line
@@ -320,10 +310,10 @@ export default function UsageTrackingPage() {
             <YAxis stroke="#6b7280" style={{ fontSize: 12 }} />
             <Tooltip
               contentStyle={{
-                backgroundColor: "#1f2937",
-                border: "1px solid #374151",
-                borderRadius: "12px",
-                color: "#fff",
+                backgroundColor: '#1f2937',
+                border: '1px solid #374151',
+                borderRadius: '12px',
+                color: '#fff',
               }}
             />
             <Bar dataKey="count" fill="#06b6d4" radius={[8, 8, 0, 0]} name="Usage Count" />

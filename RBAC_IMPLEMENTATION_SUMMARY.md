@@ -11,6 +11,7 @@
 ## Files Created
 
 ### Database Migrations (5 files)
+
 1. **`database/migrations/001_rbac_schema.sql`**
    - 11 tables: tenants, profiles, roles, permissions, role_permissions, user_roles, user_tenants, audit_logs, emergency_access_logs, developer_access_logs, owner_override_logs
    - 11 system roles (owner, developer, super_admin, admin, finance_manager, hr_manager, inventory_manager, sales_manager, cashier, employee, viewer)
@@ -43,6 +44,7 @@
    - Security notes
 
 ### Frontend Hooks (2 files)
+
 6. **`src/hooks/usePermissions.ts`**
    - Permission checking hook
    - Calls PostgreSQL functions via Supabase RPC
@@ -55,6 +57,7 @@
    - Sorted by role hierarchy
 
 ### Frontend Components (4 files)
+
 8. **`src/components/auth/PermissionGuard.tsx`**
    - Route/component guard based on permissions or roles
    - Supports single or multiple permissions/roles
@@ -74,6 +77,7 @@
     - Export index for auth components
 
 ### Admin UI Pages (7 files)
+
 12. **`src/pages/admin/UserManagement.tsx`**
     - User list with roles, tenants, and status
     - Create, edit, delete users (permission-gated)
@@ -117,6 +121,7 @@
     - Export index for admin pages
 
 ### Documentation (1 file)
+
 19. **`database/RBAC_IMPLEMENTATION_GUIDE.md`**
     - Complete implementation guide
     - Usage examples for all components
@@ -126,6 +131,7 @@
     - Troubleshooting guide
 
 ### Modified Files (2 files)
+
 20. **`src/app/App.tsx`** (Updated)
     - Added 6 new routes:
       - `/admin/users` → UserManagement
@@ -145,6 +151,7 @@
 ## System Architecture
 
 ### Database Layer
+
 ```
 auth.users (Supabase Auth)
     ↓
@@ -156,6 +163,7 @@ role_permissions ← permissions
 ```
 
 ### Multi-Tenant Isolation
+
 ```
 tenants
     ↓
@@ -165,6 +173,7 @@ RLS policies filter data by tenant_id
 ```
 
 ### Audit Trail
+
 ```
 All actions → audit_logs (immutable)
 Developer actions → developer_access_logs
@@ -176,19 +185,19 @@ Emergency access → emergency_access_logs
 
 ## Role Hierarchy (11 Roles)
 
-| Level | Role | Access |
-|-------|------|--------|
-| 1000 | owner | All tenants, all permissions, owner override |
-| 900 | developer | All permissions, developer mode, audit logs |
-| 800 | super_admin | All business permissions, audit logs |
-| 700 | admin | All business permissions (no audit logs) |
-| 500 | finance_manager | Finance + Dashboard + Reports |
-| 500 | hr_manager | HR + Dashboard + Reports |
-| 500 | inventory_manager | Inventory + Dashboard + Reports |
-| 500 | sales_manager | Sales + Dashboard + Reports |
-| 300 | cashier | POS only |
-| 200 | employee | Dashboard view only |
-| 100 | viewer | Dashboard + Reports (read-only) |
+| Level | Role              | Access                                       |
+| ----- | ----------------- | -------------------------------------------- |
+| 1000  | owner             | All tenants, all permissions, owner override |
+| 900   | developer         | All permissions, developer mode, audit logs  |
+| 800   | super_admin       | All business permissions, audit logs         |
+| 700   | admin             | All business permissions (no audit logs)     |
+| 500   | finance_manager   | Finance + Dashboard + Reports                |
+| 500   | hr_manager        | HR + Dashboard + Reports                     |
+| 500   | inventory_manager | Inventory + Dashboard + Reports              |
+| 500   | sales_manager     | Sales + Dashboard + Reports                  |
+| 300   | cashier           | POS only                                     |
+| 200   | employee          | Dashboard view only                          |
+| 100   | viewer            | Dashboard + Reports (read-only)              |
 
 ---
 
@@ -211,24 +220,29 @@ Emergency access → emergency_access_logs
 ## Setup Instructions (Quick Reference)
 
 ### 1. Create Auth Users in Supabase Dashboard
+
 - i-1@erpx-ai.com (password: Aa12141312@)
 - i.1122@erpx-ai.com (password: @12345)
 - admin-1@erpx-ai.com (password: @12345@)
 - cashier@erpx-ai.com (password: Aa12141312@)
 
 ### 2. Run SQL Migrations (in order)
+
 1. `001_rbac_schema.sql`
 2. `002_rbac_functions.sql`
 3. `003_rbac_policies.sql`
 
 ### 3. Update Initial Users Script
+
 - Copy Auth user IDs from Supabase Dashboard
 - Replace UUIDs in `004_create_initial_users.sql`
 
 ### 4. Run Initial Users Script
+
 - `004_create_initial_users.sql`
 
 ### 5. Verify Setup
+
 - Login with each user
 - Check `/admin/users` page
 - Test permission guards
@@ -238,6 +252,7 @@ Emergency access → emergency_access_logs
 ## Usage Examples
 
 ### Check Permission in Component
+
 ```tsx
 import { usePermissions } from '../hooks/usePermissions';
 
@@ -252,6 +267,7 @@ function MyComponent() {
 ```
 
 ### Guard Route
+
 ```tsx
 <PermissionGuard permission="finance.view">
   <FinanceModule />
@@ -259,6 +275,7 @@ function MyComponent() {
 ```
 
 ### Require Role
+
 ```tsx
 <RequireRole role="admin">
   <AdminPanel />
@@ -276,20 +293,20 @@ function MyComponent() {
 ✅ Owner override tracking  
 ✅ Developer action logging  
 ✅ PostgreSQL SECURITY DEFINER functions  
-✅ Permission-based route guards  
+✅ Permission-based route guards
 
 ---
 
 ## Admin Panel URLs
 
-| URL | Page | Access |
-|-----|------|--------|
-| `/admin/users` | User Management | users.view |
-| `/admin/roles` | Roles & Permissions | owner, developer, super_admin |
-| `/admin/permissions-matrix` | Permission Matrix | owner, developer, super_admin |
-| `/admin/audit-logs` | Audit Logs | owner, developer |
-| `/admin/developer-mode` | Developer Mode | developer |
-| `/admin/emergency-access` | Emergency Access | owner |
+| URL                         | Page                | Access                        |
+| --------------------------- | ------------------- | ----------------------------- |
+| `/admin/users`              | User Management     | users.view                    |
+| `/admin/roles`              | Roles & Permissions | owner, developer, super_admin |
+| `/admin/permissions-matrix` | Permission Matrix   | owner, developer, super_admin |
+| `/admin/audit-logs`         | Audit Logs          | owner, developer              |
+| `/admin/developer-mode`     | Developer Mode      | developer                     |
+| `/admin/emergency-access`   | Emergency Access    | owner                         |
 
 ---
 

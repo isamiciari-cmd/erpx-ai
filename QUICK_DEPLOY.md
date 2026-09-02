@@ -24,14 +24,15 @@ Let's create the project fresh on your computer with all my code:
 1. **Open your terminal**
 
 2. **Run these commands:**
+
    ```bash
    # Go to your projects folder
    cd ~/Documents  # or wherever you keep projects
-   
+
    # Clone the repository
    git clone https://github.com/isamiciari-cmd/erpx-ai.git
    cd erpx-ai
-   
+
    # Check if it has files
    ls -la
    ```
@@ -56,8 +57,9 @@ This will deploy whatever is currently in your GitHub repo. Then we can update i
 ## 🤔 Which Option Do You Prefer?
 
 Reply with:
+
 - **"1"** - Create shareable code links for me to download
-- **"2"** - Help me set up fresh locally  
+- **"2"** - Help me set up fresh locally
 - **"3"** - Deploy existing repo first, update later
 
 I'll guide you through whichever you choose!

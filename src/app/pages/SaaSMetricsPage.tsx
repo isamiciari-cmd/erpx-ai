@@ -1,20 +1,17 @@
-import { useState, useEffect } from "react";
-import { motion } from "motion/react";
+import { useState, useEffect } from 'react';
+import { motion } from 'motion/react';
 import {
   Users,
   DollarSign,
   TrendingUp,
   TrendingDown,
-  CreditCard,
   AlertCircle,
   CheckCircle,
   XCircle,
-} from "lucide-react";
+} from 'lucide-react';
 import {
   LineChart,
   Line,
-  BarChart,
-  Bar,
   PieChart,
   Pie,
   Cell,
@@ -24,13 +21,13 @@ import {
   Tooltip,
   ResponsiveContainer,
   Legend,
-} from "recharts";
+} from 'recharts';
 
 interface Subscription {
   id: number;
   tenantName: string;
   plan: string;
-  status: "active" | "past_due" | "canceled";
+  status: 'active' | 'past_due' | 'canceled';
   mrr: number;
   startDate: string;
   nextBillingDate: string;
@@ -41,53 +38,53 @@ const saasAPI = {
   subscriptions: [
     {
       id: 1,
-      tenantName: "Acme Corp",
-      plan: "Pro",
-      status: "active" as const,
+      tenantName: 'Acme Corp',
+      plan: 'Pro',
+      status: 'active' as const,
       mrr: 999,
-      startDate: "2024-01-15",
-      nextBillingDate: "2025-05-15",
-      stripeCustomerId: "cus_abc123",
+      startDate: '2024-01-15',
+      nextBillingDate: '2025-05-15',
+      stripeCustomerId: 'cus_abc123',
     },
     {
       id: 2,
-      tenantName: "TechStart Ltd",
-      plan: "Basic",
-      status: "active" as const,
+      tenantName: 'TechStart Ltd',
+      plan: 'Basic',
+      status: 'active' as const,
       mrr: 299,
-      startDate: "2024-03-20",
-      nextBillingDate: "2025-05-20",
-      stripeCustomerId: "cus_def456",
+      startDate: '2024-03-20',
+      nextBillingDate: '2025-05-20',
+      stripeCustomerId: 'cus_def456',
     },
     {
       id: 3,
-      tenantName: "Global Enterprises",
-      plan: "Enterprise",
-      status: "active" as const,
+      tenantName: 'Global Enterprises',
+      plan: 'Enterprise',
+      status: 'active' as const,
       mrr: 4500,
-      startDate: "2023-11-10",
-      nextBillingDate: "2025-05-10",
-      stripeCustomerId: "cus_ghi789",
+      startDate: '2023-11-10',
+      nextBillingDate: '2025-05-10',
+      stripeCustomerId: 'cus_ghi789',
     },
     {
       id: 4,
-      tenantName: "SmallBiz Co",
-      plan: "Basic",
-      status: "past_due" as const,
+      tenantName: 'SmallBiz Co',
+      plan: 'Basic',
+      status: 'past_due' as const,
       mrr: 299,
-      startDate: "2024-04-05",
-      nextBillingDate: "2025-05-05",
-      stripeCustomerId: "cus_jkl012",
+      startDate: '2024-04-05',
+      nextBillingDate: '2025-05-05',
+      stripeCustomerId: 'cus_jkl012',
     },
     {
       id: 5,
-      tenantName: "MediumTech Inc",
-      plan: "Pro",
-      status: "canceled" as const,
+      tenantName: 'MediumTech Inc',
+      plan: 'Pro',
+      status: 'canceled' as const,
       mrr: 0,
-      startDate: "2024-02-12",
-      nextBillingDate: "2025-04-12",
-      stripeCustomerId: "cus_mno345",
+      startDate: '2024-02-12',
+      nextBillingDate: '2025-04-12',
+      stripeCustomerId: 'cus_mno345',
     },
   ] as Subscription[],
 
@@ -96,11 +93,11 @@ const saasAPI = {
   },
 
   getMetrics() {
-    const active = this.subscriptions.filter((s) => s.status === "active").length;
-    const pastDue = this.subscriptions.filter((s) => s.status === "past_due").length;
-    const canceled = this.subscriptions.filter((s) => s.status === "canceled").length;
+    const active = this.subscriptions.filter((s) => s.status === 'active').length;
+    const pastDue = this.subscriptions.filter((s) => s.status === 'past_due').length;
+    const canceled = this.subscriptions.filter((s) => s.status === 'canceled').length;
     const mrr = this.subscriptions
-      .filter((s) => s.status === "active")
+      .filter((s) => s.status === 'active')
       .reduce((sum, s) => sum + s.mrr, 0);
     const churnRate = ((canceled / this.subscriptions.length) * 100).toFixed(1);
 
@@ -115,7 +112,7 @@ export default function SaaSMetricsPage() {
     pastDue: 0,
     canceled: 0,
     mrr: 0,
-    churnRate: "0",
+    churnRate: '0',
   });
 
   const fetchData = async () => {
@@ -129,53 +126,53 @@ export default function SaaSMetricsPage() {
   }, []);
 
   const mrrData = [
-    { id: "jan", month: "Jan", mrr: 85000 },
-    { id: "feb", month: "Feb", mrr: 92000 },
-    { id: "mar", month: "Mar", mrr: 105000 },
-    { id: "apr", month: "Apr", mrr: 128000 },
-    { id: "may", month: "May", mrr: metrics.mrr },
+    { id: 'jan', month: 'Jan', mrr: 85000 },
+    { id: 'feb', month: 'Feb', mrr: 92000 },
+    { id: 'mar', month: 'Mar', mrr: 105000 },
+    { id: 'apr', month: 'Apr', mrr: 128000 },
+    { id: 'may', month: 'May', mrr: metrics.mrr },
   ];
 
   const planDistribution = [
-    { name: "Basic", value: subscriptions.filter((s) => s.plan === "Basic").length },
-    { name: "Pro", value: subscriptions.filter((s) => s.plan === "Pro").length },
-    { name: "Enterprise", value: subscriptions.filter((s) => s.plan === "Enterprise").length },
+    { name: 'Basic', value: subscriptions.filter((s) => s.plan === 'Basic').length },
+    { name: 'Pro', value: subscriptions.filter((s) => s.plan === 'Pro').length },
+    { name: 'Enterprise', value: subscriptions.filter((s) => s.plan === 'Enterprise').length },
   ];
 
-  const COLORS = ["#3b82f6", "#8b5cf6", "#f59e0b"];
+  const COLORS = ['#3b82f6', '#8b5cf6', '#f59e0b'];
 
   const stats = [
     {
-      label: "Active Tenants",
+      label: 'Active Tenants',
       value: metrics.active.toString(),
       icon: Users,
-      color: "from-blue-500 to-cyan-500",
-      change: "+12.5%",
-      changeType: "up",
+      color: 'from-blue-500 to-cyan-500',
+      change: '+12.5%',
+      changeType: 'up',
     },
     {
-      label: "Monthly Recurring Revenue",
+      label: 'Monthly Recurring Revenue',
       value: `SAR ${metrics.mrr.toLocaleString()}`,
       icon: DollarSign,
-      color: "from-green-500 to-emerald-500",
-      change: "+22.3%",
-      changeType: "up",
+      color: 'from-green-500 to-emerald-500',
+      change: '+22.3%',
+      changeType: 'up',
     },
     {
-      label: "Churn Rate",
+      label: 'Churn Rate',
       value: `${metrics.churnRate}%`,
       icon: TrendingDown,
-      color: "from-red-500 to-pink-500",
-      change: "-0.8%",
-      changeType: "down",
+      color: 'from-red-500 to-pink-500',
+      change: '-0.8%',
+      changeType: 'down',
     },
     {
-      label: "Past Due",
+      label: 'Past Due',
       value: metrics.pastDue.toString(),
       icon: AlertCircle,
-      color: "from-yellow-500 to-orange-500",
-      change: "+2",
-      changeType: "neutral",
+      color: 'from-yellow-500 to-orange-500',
+      change: '+2',
+      changeType: 'neutral',
     },
   ];
 
@@ -208,15 +205,15 @@ export default function SaaSMetricsPage() {
             <h3 className="text-3xl font-bold text-white mb-1">{stat.value}</h3>
             <p className="text-sm text-gray-400 mb-2">{stat.label}</p>
             <div className="flex items-center gap-2">
-              {stat.changeType === "up" && <TrendingUp className="w-4 h-4 text-green-400" />}
-              {stat.changeType === "down" && <TrendingDown className="w-4 h-4 text-red-400" />}
+              {stat.changeType === 'up' && <TrendingUp className="w-4 h-4 text-green-400" />}
+              {stat.changeType === 'down' && <TrendingDown className="w-4 h-4 text-red-400" />}
               <span
                 className={`text-xs font-semibold ${
-                  stat.changeType === "up"
-                    ? "text-green-400"
-                    : stat.changeType === "down"
-                    ? "text-red-400"
-                    : "text-gray-400"
+                  stat.changeType === 'up'
+                    ? 'text-green-400'
+                    : stat.changeType === 'down'
+                      ? 'text-red-400'
+                      : 'text-gray-400'
                 }`}
               >
                 {stat.change} from last month
@@ -248,10 +245,10 @@ export default function SaaSMetricsPage() {
               <YAxis stroke="#6b7280" style={{ fontSize: 12 }} />
               <Tooltip
                 contentStyle={{
-                  backgroundColor: "#1f2937",
-                  border: "1px solid #374151",
-                  borderRadius: "12px",
-                  color: "#fff",
+                  backgroundColor: '#1f2937',
+                  border: '1px solid #374151',
+                  borderRadius: '12px',
+                  color: '#fff',
                 }}
               />
               <Line
@@ -291,10 +288,10 @@ export default function SaaSMetricsPage() {
               </Pie>
               <Tooltip
                 contentStyle={{
-                  backgroundColor: "#1f2937",
-                  border: "1px solid #374151",
-                  borderRadius: "12px",
-                  color: "#fff",
+                  backgroundColor: '#1f2937',
+                  border: '1px solid #374151',
+                  borderRadius: '12px',
+                  color: '#fff',
                 }}
               />
               <Legend />
@@ -352,11 +349,11 @@ export default function SaaSMetricsPage() {
                   <td className="px-6 py-4">
                     <span
                       className={`inline-flex px-3 py-1 rounded-full text-xs font-semibold ${
-                        sub.plan === "Basic"
-                          ? "bg-blue-500/10 text-blue-400 border border-blue-500/20"
-                          : sub.plan === "Pro"
-                          ? "bg-purple-500/10 text-purple-400 border border-purple-500/20"
-                          : "bg-orange-500/10 text-orange-400 border border-orange-500/20"
+                        sub.plan === 'Basic'
+                          ? 'bg-blue-500/10 text-blue-400 border border-blue-500/20'
+                          : sub.plan === 'Pro'
+                            ? 'bg-purple-500/10 text-purple-400 border border-purple-500/20'
+                            : 'bg-orange-500/10 text-orange-400 border border-orange-500/20'
                       }`}
                     >
                       {sub.plan}
@@ -366,19 +363,19 @@ export default function SaaSMetricsPage() {
                     SAR {sub.mrr.toLocaleString()}
                   </td>
                   <td className="px-6 py-4">
-                    {sub.status === "active" && (
+                    {sub.status === 'active' && (
                       <span className="inline-flex items-center gap-1 px-3 py-1.5 rounded-full text-xs font-semibold bg-green-500/10 text-green-400 border border-green-500/20">
                         <CheckCircle className="w-3 h-3" />
                         Active
                       </span>
                     )}
-                    {sub.status === "past_due" && (
+                    {sub.status === 'past_due' && (
                       <span className="inline-flex items-center gap-1 px-3 py-1.5 rounded-full text-xs font-semibold bg-yellow-500/10 text-yellow-400 border border-yellow-500/20">
                         <AlertCircle className="w-3 h-3" />
                         Past Due
                       </span>
                     )}
-                    {sub.status === "canceled" && (
+                    {sub.status === 'canceled' && (
                       <span className="inline-flex items-center gap-1 px-3 py-1.5 rounded-full text-xs font-semibold bg-red-500/10 text-red-400 border border-red-500/20">
                         <XCircle className="w-3 h-3" />
                         Canceled

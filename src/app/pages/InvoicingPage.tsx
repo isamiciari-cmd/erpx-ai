@@ -1,15 +1,6 @@
-import { useState, useEffect } from "react";
-import { motion } from "motion/react";
-import {
-  FileText,
-  Plus,
-  Download,
-  Eye,
-  Trash2,
-  CheckCircle,
-  XCircle,
-  Clock,
-} from "lucide-react";
+import { useState, useEffect } from 'react';
+import { motion } from 'motion/react';
+import { Plus, Download, Trash2, CheckCircle, XCircle, Clock } from 'lucide-react';
 
 interface InvoiceItem {
   description: string;
@@ -23,7 +14,7 @@ interface Invoice {
   items: InvoiceItem[];
   total: number;
   currency: string;
-  status: "draft" | "paid" | "cancelled";
+  status: 'draft' | 'paid' | 'cancelled';
   createdAt: string;
 }
 
@@ -32,7 +23,7 @@ const invoiceAPI = {
   invoices: [] as Invoice[],
   nextId: 1,
 
-  async create(data: Omit<Invoice, "id" | "createdAt">): Promise<Invoice> {
+  async create(data: Omit<Invoice, 'id' | 'createdAt'>): Promise<Invoice> {
     const invoice = {
       ...data,
       id: this.nextId++,
@@ -46,7 +37,7 @@ const invoiceAPI = {
     return new Promise((resolve) => setTimeout(() => resolve([...this.invoices]), 300));
   },
 
-  async updateStatus(id: number, status: Invoice["status"]): Promise<void> {
+  async updateStatus(id: number, status: Invoice['status']): Promise<void> {
     const invoice = this.invoices.find((i) => i.id === id);
     if (invoice) invoice.status = status;
     return new Promise((resolve) => setTimeout(() => resolve(), 300));
@@ -59,8 +50,10 @@ const invoiceAPI = {
 
   generatePDF(invoice: Invoice): void {
     // Simulate PDF generation
-    console.log("Generating PDF for invoice:", invoice);
-    alert(`PDF generated for Invoice #${invoice.id}\nCustomer: ${invoice.customerName}\nTotal: ${invoice.total} ${invoice.currency}`);
+    console.log('Generating PDF for invoice:', invoice);
+    alert(
+      `PDF generated for Invoice #${invoice.id}\nCustomer: ${invoice.customerName}\nTotal: ${invoice.total} ${invoice.currency}`,
+    );
   },
 };
 
@@ -69,11 +62,9 @@ export default function InvoicingPage() {
   const [showForm, setShowForm] = useState(false);
 
   // Form state
-  const [customerName, setCustomerName] = useState("");
-  const [currency, setCurrency] = useState("SAR");
-  const [items, setItems] = useState<InvoiceItem[]>([
-    { description: "", quantity: 1, price: 0 },
-  ]);
+  const [customerName, setCustomerName] = useState('');
+  const [currency, setCurrency] = useState('SAR');
+  const [items, setItems] = useState<InvoiceItem[]>([{ description: '', quantity: 1, price: 0 }]);
 
   const fetchInvoices = async () => {
     const data = await invoiceAPI.findAll();
@@ -81,7 +72,7 @@ export default function InvoicingPage() {
   };
 
   const addItem = () => {
-    setItems([...items, { description: "", quantity: 1, price: 0 }]);
+    setItems([...items, { description: '', quantity: 1, price: 0 }]);
   };
 
   const updateItem = (index: number, field: keyof InvoiceItem, value: string | number) => {
@@ -106,16 +97,16 @@ export default function InvoicingPage() {
       items,
       total: calculateTotal(),
       currency,
-      status: "draft",
+      status: 'draft',
     });
 
-    setCustomerName("");
-    setItems([{ description: "", quantity: 1, price: 0 }]);
+    setCustomerName('');
+    setItems([{ description: '', quantity: 1, price: 0 }]);
     setShowForm(false);
     fetchInvoices();
   };
 
-  const updateStatus = async (id: number, status: Invoice["status"]) => {
+  const updateStatus = async (id: number, status: Invoice['status']) => {
     await invoiceAPI.updateStatus(id, status);
     fetchInvoices();
   };
@@ -129,22 +120,22 @@ export default function InvoicingPage() {
     fetchInvoices();
   }, []);
 
-  const getStatusColor = (status: Invoice["status"]) => {
+  const getStatusColor = (status: Invoice['status']) => {
     switch (status) {
-      case "paid":
-        return "bg-green-500/10 text-green-400 border-green-500/20";
-      case "cancelled":
-        return "bg-red-500/10 text-red-400 border-red-500/20";
+      case 'paid':
+        return 'bg-green-500/10 text-green-400 border-green-500/20';
+      case 'cancelled':
+        return 'bg-red-500/10 text-red-400 border-red-500/20';
       default:
-        return "bg-yellow-500/10 text-yellow-400 border-yellow-500/20";
+        return 'bg-yellow-500/10 text-yellow-400 border-yellow-500/20';
     }
   };
 
-  const getStatusIcon = (status: Invoice["status"]) => {
+  const getStatusIcon = (status: Invoice['status']) => {
     switch (status) {
-      case "paid":
+      case 'paid':
         return <CheckCircle className="w-4 h-4" />;
-      case "cancelled":
+      case 'cancelled':
         return <XCircle className="w-4 h-4" />;
       default:
         return <Clock className="w-4 h-4" />;
@@ -219,21 +210,21 @@ export default function InvoicingPage() {
                 <input
                   type="text"
                   value={item.description}
-                  onChange={(e) => updateItem(index, "description", e.target.value)}
+                  onChange={(e) => updateItem(index, 'description', e.target.value)}
                   placeholder="Description"
                   className="col-span-6 px-4 py-3 bg-white/5 border border-white/10 rounded-xl text-white placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-blue-500"
                 />
                 <input
                   type="number"
                   value={item.quantity}
-                  onChange={(e) => updateItem(index, "quantity", Number(e.target.value))}
+                  onChange={(e) => updateItem(index, 'quantity', Number(e.target.value))}
                   placeholder="Qty"
                   className="col-span-2 px-4 py-3 bg-white/5 border border-white/10 rounded-xl text-white placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-blue-500"
                 />
                 <input
                   type="number"
                   value={item.price}
-                  onChange={(e) => updateItem(index, "price", Number(e.target.value))}
+                  onChange={(e) => updateItem(index, 'price', Number(e.target.value))}
                   placeholder="Price"
                   className="col-span-2 px-4 py-3 bg-white/5 border border-white/10 rounded-xl text-white placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-blue-500"
                 />
@@ -339,9 +330,7 @@ export default function InvoicingPage() {
                     transition={{ delay: i * 0.05 }}
                     className="border-b border-white/5 hover:bg-white/5"
                   >
-                    <td className="px-6 py-4 text-sm text-blue-400 font-semibold">
-                      #{invoice.id}
-                    </td>
+                    <td className="px-6 py-4 text-sm text-blue-400 font-semibold">#{invoice.id}</td>
                     <td className="px-6 py-4 text-sm text-white">{invoice.customerName}</td>
                     <td className="px-6 py-4 text-sm font-semibold text-white">
                       {invoice.total.toFixed(2)} {invoice.currency}
@@ -349,7 +338,7 @@ export default function InvoicingPage() {
                     <td className="px-6 py-4">
                       <span
                         className={`inline-flex items-center gap-2 px-3 py-1.5 rounded-full text-xs font-semibold border ${getStatusColor(
-                          invoice.status
+                          invoice.status,
                         )}`}
                       >
                         {getStatusIcon(invoice.status)}
@@ -371,11 +360,11 @@ export default function InvoicingPage() {
                           <Download className="w-4 h-4" />
                         </motion.button>
 
-                        {invoice.status === "draft" && (
+                        {invoice.status === 'draft' && (
                           <motion.button
                             whileHover={{ scale: 1.1 }}
                             whileTap={{ scale: 0.9 }}
-                            onClick={() => updateStatus(invoice.id, "paid")}
+                            onClick={() => updateStatus(invoice.id, 'paid')}
                             className="p-2 hover:bg-green-500/10 rounded-lg text-gray-400 hover:text-green-400"
                             title="Mark as Paid"
                           >

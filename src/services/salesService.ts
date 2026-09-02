@@ -61,7 +61,9 @@ function generateSaleNumber(): string {
 /**
  * Create a new sale
  */
-export async function createSale(sale: Omit<Sale, 'id' | 'created_at' | 'updated_at' | 'sale_number'>): Promise<Sale> {
+export async function createSale(
+  sale: Omit<Sale, 'id' | 'created_at' | 'updated_at' | 'sale_number'>,
+): Promise<Sale> {
   if (isDemoMode) {
     throw new Error('Demo mode: Cannot create sales');
   }
@@ -113,7 +115,7 @@ export async function getSalesByShift(shiftId: string): Promise<Sale[]> {
 export async function getSalesByDateRange(
   companyId: string,
   startDate: string,
-  endDate: string
+  endDate: string,
 ): Promise<Sale[]> {
   if (isDemoMode) {
     return [];
@@ -141,7 +143,7 @@ export async function getSalesByDateRange(
 export async function openShift(
   cashierId: string,
   branchId: string,
-  startingCash: number
+  startingCash: number,
 ): Promise<Shift> {
   if (isDemoMode) {
     throw new Error('Demo mode: Cannot open shift');
@@ -181,7 +183,7 @@ export async function closeShift(
     total_cash: number;
     total_card: number;
     total_transactions: number;
-  }
+  },
 ): Promise<Shift> {
   if (isDemoMode) {
     throw new Error('Demo mode: Cannot close shift');
@@ -286,7 +288,9 @@ export async function getShiftSummary(shiftId: string): Promise<{
 /**
  * Hold a sale (save for later)
  */
-export async function holdSale(sale: Omit<Sale, 'id' | 'created_at' | 'updated_at' | 'sale_number'>): Promise<Sale> {
+export async function holdSale(
+  sale: Omit<Sale, 'id' | 'created_at' | 'updated_at' | 'sale_number'>,
+): Promise<Sale> {
   if (isDemoMode) {
     throw new Error('Demo mode: Cannot hold sales');
   }

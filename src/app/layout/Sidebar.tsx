@@ -1,6 +1,6 @@
-import { useState } from "react";
-import { Link, useLocation } from "react-router";
-import { motion, AnimatePresence } from "motion/react";
+import { useState } from 'react';
+import { Link, useLocation } from 'react-router';
+import { motion, AnimatePresence } from 'motion/react';
 import {
   LayoutDashboard,
   Package,
@@ -17,36 +17,36 @@ import {
   ChevronLeft,
   ChevronRight,
   Sparkles,
-  Zap,
-  Wind,
-  Lock,
-  Wifi,
   Wrench,
   FileText,
-  Building2,
-} from "lucide-react";
+} from 'lucide-react';
 
 const menu = [
-  { name: "Dashboard", path: "/", icon: LayoutDashboard, category: null },
+  { name: 'Dashboard', path: '/', icon: LayoutDashboard, category: null },
 
   // Core Modules
-  { name: "Inventory", path: "/inventory", icon: Package, category: "Core Modules" },
-  { name: "Sales", path: "/sales", icon: ShoppingCart, category: "Core Modules" },
-  { name: "Purchases", path: "/purchase", icon: ShoppingBag, category: "Core Modules" },
-  { name: "Finance", path: "/finance/accounting", icon: DollarSign, category: "Core Modules" },
-  { name: "HR", path: "/hr/employees", icon: Users, category: "Core Modules" },
+  { name: 'Inventory', path: '/inventory', icon: Package, category: 'Core Modules' },
+  { name: 'Sales', path: '/sales', icon: ShoppingCart, category: 'Core Modules' },
+  { name: 'Purchases', path: '/purchase', icon: ShoppingBag, category: 'Core Modules' },
+  { name: 'Finance', path: '/finance/accounting', icon: DollarSign, category: 'Core Modules' },
+  { name: 'HR', path: '/hr/employees', icon: Users, category: 'Core Modules' },
 
   // AI Center
-  { name: "Predictions", path: "/ai/predictions", icon: Brain, category: "AI Center" },
-  { name: "Recommendations", path: "/ai/recommendations", icon: TrendingUp, category: "AI Center" },
-  { name: "Alerts", path: "/ai/alerts", icon: Bell, category: "AI Center" },
+  { name: 'Predictions', path: '/ai/predictions', icon: Brain, category: 'AI Center' },
+  { name: 'Recommendations', path: '/ai/recommendations', icon: TrendingUp, category: 'AI Center' },
+  { name: 'Alerts', path: '/ai/alerts', icon: Bell, category: 'AI Center' },
 
   // System
-  { name: "Reports", path: "/reports", icon: FileText, category: "System" },
-  { name: "Users", path: "/system/users", icon: UserCog, category: "System" },
-  { name: "Roles & Permissions", path: "/system/permissions", icon: Shield, category: "System" },
-  { name: "Supabase Diagnostic", path: "/admin/supabase-diagnostic", icon: Wrench, category: "System" },
-  { name: "Settings", path: "/settings", icon: Settings, category: "System" },
+  { name: 'Reports', path: '/reports', icon: FileText, category: 'System' },
+  { name: 'Users', path: '/system/users', icon: UserCog, category: 'System' },
+  { name: 'Roles & Permissions', path: '/system/permissions', icon: Shield, category: 'System' },
+  {
+    name: 'Supabase Diagnostic',
+    path: '/admin/supabase-diagnostic',
+    icon: Wrench,
+    category: 'System',
+  },
+  { name: 'Settings', path: '/settings', icon: Settings, category: 'System' },
 ];
 
 interface SidebarProps {
@@ -57,24 +57,24 @@ interface SidebarProps {
 export default function Sidebar({ collapsed, onToggle }: SidebarProps) {
   const location = useLocation();
   const [expandedCategories, setExpandedCategories] = useState<string[]>([
-    "Core Modules",
-    "AI Center",
+    'Core Modules',
+    'AI Center',
   ]);
 
-  const categories = Array.from(new Set(menu.filter(m => m.category).map(m => m.category))) as string[];
+  const categories = Array.from(
+    new Set(menu.filter((m) => m.category).map((m) => m.category)),
+  ) as string[];
 
   const toggleCategory = (category: string) => {
-    setExpandedCategories(prev =>
-      prev.includes(category)
-        ? prev.filter(c => c !== category)
-        : [...prev, category]
+    setExpandedCategories((prev) =>
+      prev.includes(category) ? prev.filter((c) => c !== category) : [...prev, category],
     );
   };
 
   return (
     <motion.div
       animate={{ width: collapsed ? 80 : 280 }}
-      transition={{ duration: 0.3, ease: "easeInOut" }}
+      transition={{ duration: 0.3, ease: 'easeInOut' }}
       className="bg-gray-900/50 backdrop-blur-xl border-r border-gray-800/50 flex flex-col relative"
     >
       {/* Toggle Button */}
@@ -117,8 +117,8 @@ export default function Sidebar({ collapsed, onToggle }: SidebarProps) {
       <nav className="flex-1 p-4 overflow-y-auto">
         {/* Dashboard */}
         {menu
-          .filter(item => !item.category)
-          .map(item => {
+          .filter((item) => !item.category)
+          .map((item) => {
             const Icon = item.icon;
             const isActive = location.pathname === item.path;
 
@@ -129,17 +129,17 @@ export default function Sidebar({ collapsed, onToggle }: SidebarProps) {
                   whileTap={{ scale: 0.98 }}
                   className={`flex items-center gap-3 p-4 rounded-2xl cursor-pointer mb-2 transition-all ${
                     isActive
-                      ? "bg-gradient-to-r from-blue-500/20 to-purple-500/20 text-white border border-blue-500/30 shadow-lg shadow-blue-500/10"
-                      : "hover:bg-gray-800/50 text-gray-300 hover:text-white border border-transparent"
+                      ? 'bg-gradient-to-r from-blue-500/20 to-purple-500/20 text-white border border-blue-500/30 shadow-lg shadow-blue-500/10'
+                      : 'hover:bg-gray-800/50 text-gray-300 hover:text-white border border-transparent'
                   }`}
-                  title={collapsed ? item.name : ""}
+                  title={collapsed ? item.name : ''}
                 >
                   <Icon size={20} className="flex-shrink-0" />
                   <AnimatePresence>
                     {!collapsed && (
                       <motion.span
                         initial={{ opacity: 0, width: 0 }}
-                        animate={{ opacity: 1, width: "auto" }}
+                        animate={{ opacity: 1, width: 'auto' }}
                         exit={{ opacity: 0, width: 0 }}
                         className="text-sm font-semibold whitespace-nowrap"
                       >
@@ -153,7 +153,7 @@ export default function Sidebar({ collapsed, onToggle }: SidebarProps) {
           })}
 
         {/* Categories */}
-        {categories.map(category => (
+        {categories.map((category) => (
           <div key={category} className="mt-4">
             {!collapsed && (
               <motion.button
@@ -173,7 +173,7 @@ export default function Sidebar({ collapsed, onToggle }: SidebarProps) {
             <AnimatePresence>
               {(collapsed || expandedCategories.includes(category)) &&
                 menu
-                  .filter(item => item.category === category)
+                  .filter((item) => item.category === category)
                   .map((item, index) => {
                     const Icon = item.icon;
                     const isActive = location.pathname === item.path;
@@ -189,17 +189,17 @@ export default function Sidebar({ collapsed, onToggle }: SidebarProps) {
                           whileTap={{ scale: 0.98 }}
                           className={`flex items-center gap-3 p-3.5 rounded-2xl cursor-pointer mb-2 transition-all ${
                             isActive
-                              ? "bg-gradient-to-r from-blue-500/20 to-purple-500/20 text-white border border-blue-500/30 shadow-lg shadow-blue-500/10"
-                              : "hover:bg-gray-800/50 text-gray-400 hover:text-white border border-transparent"
+                              ? 'bg-gradient-to-r from-blue-500/20 to-purple-500/20 text-white border border-blue-500/30 shadow-lg shadow-blue-500/10'
+                              : 'hover:bg-gray-800/50 text-gray-400 hover:text-white border border-transparent'
                           }`}
-                          title={collapsed ? item.name : ""}
+                          title={collapsed ? item.name : ''}
                         >
                           <Icon size={18} className="flex-shrink-0" />
                           <AnimatePresence>
                             {!collapsed && (
                               <motion.span
                                 initial={{ opacity: 0, width: 0 }}
-                                animate={{ opacity: 1, width: "auto" }}
+                                animate={{ opacity: 1, width: 'auto' }}
                                 exit={{ opacity: 0, width: 0 }}
                                 className="text-sm font-medium whitespace-nowrap"
                               >

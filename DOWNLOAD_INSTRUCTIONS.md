@@ -1,6 +1,7 @@
 # 📦 How to Download ERPX-AI Project
 
 ## Project Location
+
 **Full Path:** `/workspaces/default/code`  
 **Total Files:** 258 (excluding node_modules)  
 **Size:** ~50-100 MB (without dependencies)
@@ -39,6 +40,7 @@ tar -czf erpx-ai-project.tar.gz \
 This creates: `erpx-ai-project.tar.gz` (~10-20 MB)
 
 **To extract it later:**
+
 ```bash
 tar -xzf erpx-ai-project.tar.gz
 ```
@@ -67,9 +69,10 @@ scp -r /workspaces/default/code your-computer:/local/path/erpx-ai/
 Copy these files/folders **in this order**:
 
 **1. Root Configuration (12 files)**
+
 ```
 ✅ package.json
-✅ pnpm-lock.yaml  
+✅ pnpm-lock.yaml
 ✅ tsconfig.json
 ✅ vite.config.ts
 ✅ index.html
@@ -83,6 +86,7 @@ Copy these files/folders **in this order**:
 ```
 
 **2. Source Code Directory**
+
 ```
 ✅ src/ (entire folder - ~150 files)
    ├── main.tsx
@@ -95,6 +99,7 @@ Copy these files/folders **in this order**:
 ```
 
 **3. Database Scripts**
+
 ```
 ✅ database/ (entire folder - ~10 files)
    ├── DEPLOY_TO_SUPABASE.sql
@@ -105,6 +110,7 @@ Copy these files/folders **in this order**:
 ```
 
 **4. Public Assets (if exists)**
+
 ```
 ✅ public/ (entire folder if it exists)
 ```
@@ -132,6 +138,7 @@ This creates: `erpx-ai-project.zip` (~10-20 MB)
 ## After Downloading
 
 ### 1. Extract Files
+
 ```bash
 # If you got .tar.gz:
 tar -xzf erpx-ai-project.tar.gz -C ~/Desktop/erpx-ai
@@ -141,18 +148,21 @@ unzip erpx-ai-project.zip -d ~/Desktop/erpx-ai
 ```
 
 ### 2. Install Dependencies
+
 ```bash
 cd ~/Desktop/erpx-ai
 pnpm install
 ```
 
 ### 3. Create .env File
+
 ```bash
 cp .env.example .env
 # Then edit .env and add your Supabase anon key
 ```
 
 ### 4. Test Locally
+
 ```bash
 pnpm dev
 ```
@@ -160,6 +170,7 @@ pnpm dev
 Open: http://localhost:5173
 
 ### 5. Push to GitHub
+
 ```bash
 git init
 git add .
@@ -176,6 +187,7 @@ git push -u origin main
 If you want to deploy with **minimal files**:
 
 **Must Have:**
+
 1. `package.json` - Dependencies
 2. `tsconfig.json` - TypeScript config
 3. `vite.config.ts` - Build config
@@ -185,6 +197,7 @@ If you want to deploy with **minimal files**:
 7. `.env` - Environment variables
 
 **After these, run:**
+
 ```bash
 pnpm install  # Downloads dependencies
 pnpm build    # Creates dist/ folder
@@ -235,15 +248,19 @@ erpx-ai/
 ## Troubleshooting
 
 ### "No such file or directory"
+
 → You might be in the wrong directory. Navigate to `/workspaces/default/code` first.
 
 ### "Permission denied"
+
 → You don't have access to Claude Code's filesystem directly. Use the interface download option.
 
 ### "Archive too large"
+
 → Exclude node_modules (it's regenerated with `pnpm install` anyway).
 
 ### "Can't find download button"
+
 → Ask your Claude Code interface support how to export/download the workspace.
 
 ---
@@ -251,17 +268,20 @@ erpx-ai/
 ## Quick Commands Reference
 
 **Create Archive:**
+
 ```bash
 cd /workspaces/default/code
 tar -czf ~/erpx-ai.tar.gz --exclude=node_modules --exclude=.git .
 ```
 
 **Check Archive Contents:**
+
 ```bash
 tar -tzf ~/erpx-ai.tar.gz | head -20
 ```
 
 **Extract Archive:**
+
 ```bash
 tar -xzf ~/erpx-ai.tar.gz -C ~/Desktop/erpx-ai
 ```
@@ -281,12 +301,14 @@ tar -xzf ~/erpx-ai.tar.gz -C ~/Desktop/erpx-ai
 ## Need Help?
 
 **Tell me which method you want to use:**
+
 1. "I found the download button" → Great! Just download and extract
 2. "I need the archive command" → I'll give you exact commands
 3. "I want to copy manually" → I'll list every single file path
 4. "Something else" → Describe your setup and I'll help
 
 **What's your setup?**
+
 - Are you using Claude Code Web or Desktop?
 - Do you have terminal access?
 - What operating system (Windows/Mac/Linux)?

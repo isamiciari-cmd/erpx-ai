@@ -1,24 +1,114 @@
 import { FileText, Download, Calendar } from 'lucide-react';
 
 const reports = [
-  { id: 1, name: 'Profit & Loss Statement', description: 'Income statement showing revenue and expenses', category: 'Financial Statements', icon: '📊' },
-  { id: 2, name: 'Balance Sheet', description: 'Assets, liabilities, and equity snapshot', category: 'Financial Statements', icon: '⚖️' },
-  { id: 3, name: 'Cash Flow Statement', description: 'Operating, investing, and financing activities', category: 'Financial Statements', icon: '💰' },
-  { id: 4, name: 'Trial Balance', description: 'Verify debit and credit balances', category: 'General Ledger', icon: '🔍' },
-  { id: 5, name: 'General Ledger Report', description: 'Detailed transaction history by account', category: 'General Ledger', icon: '📖' },
-  { id: 6, name: 'Account Statement', description: 'Transaction history for specific account', category: 'General Ledger', icon: '📄' },
-  { id: 7, name: 'Aged Receivables', description: 'Customer outstanding invoices by aging period', category: 'AR/AP', icon: '👥' },
-  { id: 8, name: 'Aged Payables', description: 'Supplier outstanding bills by aging period', category: 'AR/AP', icon: '🏢' },
-  { id: 9, name: 'Budget Variance Analysis', description: 'Compare budget vs actual spending', category: 'Budget', icon: '📈' },
-  { id: 10, name: 'Branch Profitability', description: 'P&L by branch location', category: 'Multi-Branch', icon: '🏪' },
-  { id: 11, name: 'Department P&L', description: 'Profit and loss by department', category: 'Cost Centers', icon: '🎯' },
-  { id: 12, name: 'VAT Return Summary', description: 'Input and output VAT summary', category: 'Tax', icon: '🧾' },
-  { id: 13, name: 'Fixed Assets Register', description: 'Asset list with depreciation', category: 'Assets', icon: '🏗️' },
-  { id: 14, name: 'Expense Analysis', description: 'Expense breakdown by category', category: 'Expenses', icon: '💳' },
-  { id: 15, name: 'Revenue Analysis', description: 'Revenue by product/service/module', category: 'Revenue', icon: '💵' },
+  {
+    id: 1,
+    name: 'Profit & Loss Statement',
+    description: 'Income statement showing revenue and expenses',
+    category: 'Financial Statements',
+    icon: '📊',
+  },
+  {
+    id: 2,
+    name: 'Balance Sheet',
+    description: 'Assets, liabilities, and equity snapshot',
+    category: 'Financial Statements',
+    icon: '⚖️',
+  },
+  {
+    id: 3,
+    name: 'Cash Flow Statement',
+    description: 'Operating, investing, and financing activities',
+    category: 'Financial Statements',
+    icon: '💰',
+  },
+  {
+    id: 4,
+    name: 'Trial Balance',
+    description: 'Verify debit and credit balances',
+    category: 'General Ledger',
+    icon: '🔍',
+  },
+  {
+    id: 5,
+    name: 'General Ledger Report',
+    description: 'Detailed transaction history by account',
+    category: 'General Ledger',
+    icon: '📖',
+  },
+  {
+    id: 6,
+    name: 'Account Statement',
+    description: 'Transaction history for specific account',
+    category: 'General Ledger',
+    icon: '📄',
+  },
+  {
+    id: 7,
+    name: 'Aged Receivables',
+    description: 'Customer outstanding invoices by aging period',
+    category: 'AR/AP',
+    icon: '👥',
+  },
+  {
+    id: 8,
+    name: 'Aged Payables',
+    description: 'Supplier outstanding bills by aging period',
+    category: 'AR/AP',
+    icon: '🏢',
+  },
+  {
+    id: 9,
+    name: 'Budget Variance Analysis',
+    description: 'Compare budget vs actual spending',
+    category: 'Budget',
+    icon: '📈',
+  },
+  {
+    id: 10,
+    name: 'Branch Profitability',
+    description: 'P&L by branch location',
+    category: 'Multi-Branch',
+    icon: '🏪',
+  },
+  {
+    id: 11,
+    name: 'Department P&L',
+    description: 'Profit and loss by department',
+    category: 'Cost Centers',
+    icon: '🎯',
+  },
+  {
+    id: 12,
+    name: 'VAT Return Summary',
+    description: 'Input and output VAT summary',
+    category: 'Tax',
+    icon: '🧾',
+  },
+  {
+    id: 13,
+    name: 'Fixed Assets Register',
+    description: 'Asset list with depreciation',
+    category: 'Assets',
+    icon: '🏗️',
+  },
+  {
+    id: 14,
+    name: 'Expense Analysis',
+    description: 'Expense breakdown by category',
+    category: 'Expenses',
+    icon: '💳',
+  },
+  {
+    id: 15,
+    name: 'Revenue Analysis',
+    description: 'Revenue by product/service/module',
+    category: 'Revenue',
+    icon: '💵',
+  },
 ];
 
-const categories = [...new Set(reports.map(r => r.category))];
+const categories = [...new Set(reports.map((r) => r.category))];
 
 export default function FinancialReportsPage() {
   return (
@@ -78,7 +168,7 @@ export default function FinancialReportsPage() {
           <div className="p-6">
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
               {reports
-                .filter(r => r.category === category)
+                .filter((r) => r.category === category)
                 .map((report) => (
                   <div
                     key={report.id}

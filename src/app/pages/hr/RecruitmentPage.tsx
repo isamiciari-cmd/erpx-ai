@@ -1,18 +1,87 @@
 import { useState } from 'react';
-import { Plus, UserPlus, Calendar, FileText } from 'lucide-react';
+import { Plus, UserPlus } from 'lucide-react';
 
 const candidates = [
-  { id: 1, name: 'Nora Ahmed', position: 'Senior Developer', email: 'nora@email.com', phone: '+966501234567', appliedDate: '2026-04-15', status: 'Interview Scheduled', stage: 'Technical Interview' },
-  { id: 2, name: 'Youssef Hassan', position: 'Marketing Manager', email: 'youssef@email.com', phone: '+966507654321', appliedDate: '2026-04-18', status: 'Under Review', stage: 'CV Screening' },
-  { id: 3, name: 'Maha Ibrahim', position: 'Accountant', email: 'maha@email.com', phone: '+966509876543', appliedDate: '2026-04-20', status: 'Offer Sent', stage: 'Offer' },
-  { id: 4, name: 'Tariq Ali', position: 'Sales Executive', email: 'tariq@email.com', phone: '+966503456789', appliedDate: '2026-04-22', status: 'Interview Scheduled', stage: 'HR Interview' },
-  { id: 5, name: 'Rana Mohamed', position: 'UX Designer', email: 'rana@email.com', phone: '+966508765432', appliedDate: '2026-04-25', status: 'Rejected', stage: 'Rejected' },
+  {
+    id: 1,
+    name: 'Nora Ahmed',
+    position: 'Senior Developer',
+    email: 'nora@email.com',
+    phone: '+966501234567',
+    appliedDate: '2026-04-15',
+    status: 'Interview Scheduled',
+    stage: 'Technical Interview',
+  },
+  {
+    id: 2,
+    name: 'Youssef Hassan',
+    position: 'Marketing Manager',
+    email: 'youssef@email.com',
+    phone: '+966507654321',
+    appliedDate: '2026-04-18',
+    status: 'Under Review',
+    stage: 'CV Screening',
+  },
+  {
+    id: 3,
+    name: 'Maha Ibrahim',
+    position: 'Accountant',
+    email: 'maha@email.com',
+    phone: '+966509876543',
+    appliedDate: '2026-04-20',
+    status: 'Offer Sent',
+    stage: 'Offer',
+  },
+  {
+    id: 4,
+    name: 'Tariq Ali',
+    position: 'Sales Executive',
+    email: 'tariq@email.com',
+    phone: '+966503456789',
+    appliedDate: '2026-04-22',
+    status: 'Interview Scheduled',
+    stage: 'HR Interview',
+  },
+  {
+    id: 5,
+    name: 'Rana Mohamed',
+    position: 'UX Designer',
+    email: 'rana@email.com',
+    phone: '+966508765432',
+    appliedDate: '2026-04-25',
+    status: 'Rejected',
+    stage: 'Rejected',
+  },
 ];
 
 const jobPostings = [
-  { id: 1, title: 'Senior Developer', department: 'IT', location: 'Riyadh', type: 'Full-time', applications: 24, status: 'Active' },
-  { id: 2, title: 'Marketing Manager', department: 'Marketing', location: 'Jeddah', type: 'Full-time', applications: 18, status: 'Active' },
-  { id: 3, title: 'Sales Executive', department: 'Sales', location: 'Dammam', type: 'Full-time', applications: 32, status: 'Active' },
+  {
+    id: 1,
+    title: 'Senior Developer',
+    department: 'IT',
+    location: 'Riyadh',
+    type: 'Full-time',
+    applications: 24,
+    status: 'Active',
+  },
+  {
+    id: 2,
+    title: 'Marketing Manager',
+    department: 'Marketing',
+    location: 'Jeddah',
+    type: 'Full-time',
+    applications: 18,
+    status: 'Active',
+  },
+  {
+    id: 3,
+    title: 'Sales Executive',
+    department: 'Sales',
+    location: 'Dammam',
+    type: 'Full-time',
+    applications: 32,
+    status: 'Active',
+  },
 ];
 
 const hiringPipeline = [
@@ -88,7 +157,9 @@ export default function RecruitmentPage() {
             <button
               onClick={() => setSelectedTab('candidates')}
               className={`py-4 px-2 border-b-2 font-medium ${
-                selectedTab === 'candidates' ? 'border-blue-600 text-blue-600' : 'border-transparent text-gray-600'
+                selectedTab === 'candidates'
+                  ? 'border-blue-600 text-blue-600'
+                  : 'border-transparent text-gray-600'
               }`}
             >
               Candidates
@@ -96,7 +167,9 @@ export default function RecruitmentPage() {
             <button
               onClick={() => setSelectedTab('jobs')}
               className={`py-4 px-2 border-b-2 font-medium ${
-                selectedTab === 'jobs' ? 'border-blue-600 text-blue-600' : 'border-transparent text-gray-600'
+                selectedTab === 'jobs'
+                  ? 'border-blue-600 text-blue-600'
+                  : 'border-transparent text-gray-600'
               }`}
             >
               Job Postings
@@ -110,13 +183,27 @@ export default function RecruitmentPage() {
               <table className="w-full">
                 <thead className="bg-gray-50">
                   <tr>
-                    <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase">Candidate</th>
-                    <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase">Position Applied</th>
-                    <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase">Contact</th>
-                    <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase">Applied Date</th>
-                    <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase">Stage</th>
-                    <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase">Status</th>
-                    <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase">Actions</th>
+                    <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase">
+                      Candidate
+                    </th>
+                    <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase">
+                      Position Applied
+                    </th>
+                    <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase">
+                      Contact
+                    </th>
+                    <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase">
+                      Applied Date
+                    </th>
+                    <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase">
+                      Stage
+                    </th>
+                    <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase">
+                      Status
+                    </th>
+                    <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase">
+                      Actions
+                    </th>
                   </tr>
                 </thead>
                 <tbody className="divide-y">
@@ -161,13 +248,27 @@ export default function RecruitmentPage() {
               <table className="w-full">
                 <thead className="bg-gray-50">
                   <tr>
-                    <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase">Job Title</th>
-                    <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase">Department</th>
-                    <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase">Location</th>
-                    <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase">Type</th>
-                    <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase">Applications</th>
-                    <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase">Status</th>
-                    <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase">Actions</th>
+                    <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase">
+                      Job Title
+                    </th>
+                    <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase">
+                      Department
+                    </th>
+                    <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase">
+                      Location
+                    </th>
+                    <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase">
+                      Type
+                    </th>
+                    <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase">
+                      Applications
+                    </th>
+                    <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase">
+                      Status
+                    </th>
+                    <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase">
+                      Actions
+                    </th>
                   </tr>
                 </thead>
                 <tbody className="divide-y">
@@ -209,11 +310,13 @@ function CandidateStatusBadge({ status }: { status: string }) {
     'Under Review': 'bg-yellow-100 text-yellow-800',
     'Interview Scheduled': 'bg-blue-100 text-blue-800',
     'Offer Sent': 'bg-green-100 text-green-800',
-    'Rejected': 'bg-red-100 text-red-800',
+    Rejected: 'bg-red-100 text-red-800',
   };
 
   return (
-    <span className={`px-2 py-1 text-xs rounded-full font-medium ${styles[status as keyof typeof styles]}`}>
+    <span
+      className={`px-2 py-1 text-xs rounded-full font-medium ${styles[status as keyof typeof styles]}`}
+    >
       {status}
     </span>
   );

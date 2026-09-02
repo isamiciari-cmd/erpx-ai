@@ -1,11 +1,66 @@
 import { Package, TrendingDown, Plus } from 'lucide-react';
 
 const assets = [
-  { id: 1, code: 'FA-001', name: 'Office Building - HQ', category: 'Buildings', purchaseDate: '2020-01-15', cost: 2500000, usefulLife: 300, accDepreciation: 250000, bookValue: 2250000, status: 'Active' },
-  { id: 2, code: 'FA-012', name: 'Delivery Van - Mercedes', category: 'Vehicles', purchaseDate: '2023-06-20', cost: 180000, usefulLife: 60, accDepreciation: 60000, bookValue: 120000, status: 'Active' },
-  { id: 3, code: 'FA-035', name: 'Production Machinery', category: 'Equipment', purchaseDate: '2022-03-10', cost: 450000, usefulLife: 120, accDepreciation: 112500, bookValue: 337500, status: 'Active' },
-  { id: 4, code: 'FA-048', name: 'Computer Servers', category: 'IT Equipment', purchaseDate: '2024-01-05', cost: 85000, usefulLife: 36, accDepreciation: 9444, bookValue: 75556, status: 'Active' },
-  { id: 5, code: 'FA-052', name: 'Office Furniture Set', category: 'Furniture', purchaseDate: '2023-09-15', cost: 42000, usefulLife: 84, accDepreciation: 7000, bookValue: 35000, status: 'Active' },
+  {
+    id: 1,
+    code: 'FA-001',
+    name: 'Office Building - HQ',
+    category: 'Buildings',
+    purchaseDate: '2020-01-15',
+    cost: 2500000,
+    usefulLife: 300,
+    accDepreciation: 250000,
+    bookValue: 2250000,
+    status: 'Active',
+  },
+  {
+    id: 2,
+    code: 'FA-012',
+    name: 'Delivery Van - Mercedes',
+    category: 'Vehicles',
+    purchaseDate: '2023-06-20',
+    cost: 180000,
+    usefulLife: 60,
+    accDepreciation: 60000,
+    bookValue: 120000,
+    status: 'Active',
+  },
+  {
+    id: 3,
+    code: 'FA-035',
+    name: 'Production Machinery',
+    category: 'Equipment',
+    purchaseDate: '2022-03-10',
+    cost: 450000,
+    usefulLife: 120,
+    accDepreciation: 112500,
+    bookValue: 337500,
+    status: 'Active',
+  },
+  {
+    id: 4,
+    code: 'FA-048',
+    name: 'Computer Servers',
+    category: 'IT Equipment',
+    purchaseDate: '2024-01-05',
+    cost: 85000,
+    usefulLife: 36,
+    accDepreciation: 9444,
+    bookValue: 75556,
+    status: 'Active',
+  },
+  {
+    id: 5,
+    code: 'FA-052',
+    name: 'Office Furniture Set',
+    category: 'Furniture',
+    purchaseDate: '2023-09-15',
+    cost: 42000,
+    usefulLife: 84,
+    accDepreciation: 7000,
+    bookValue: 35000,
+    status: 'Active',
+  },
 ];
 
 const categories = [
@@ -77,7 +132,9 @@ export default function FixedAssetsPage() {
             <div key={index} className="border rounded-lg p-4">
               <h3 className="font-semibold text-lg mb-2">{cat.name}</h3>
               <p className="text-sm text-gray-600 mb-1">{cat.count} assets</p>
-              <p className="text-lg font-bold text-purple-600">${cat.totalValue.toLocaleString()}</p>
+              <p className="text-lg font-bold text-purple-600">
+                ${cat.totalValue.toLocaleString()}
+              </p>
             </div>
           ))}
         </div>
@@ -92,20 +149,38 @@ export default function FixedAssetsPage() {
           <table className="w-full">
             <thead className="bg-gray-50">
               <tr>
-                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Asset Code</th>
-                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Asset Name</th>
-                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Category</th>
-                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Purchase Date</th>
-                <th className="px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase">Purchase Cost</th>
-                <th className="px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase">Acc. Depreciation</th>
-                <th className="px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase">Book Value</th>
-                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Status</th>
+                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">
+                  Asset Code
+                </th>
+                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">
+                  Asset Name
+                </th>
+                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">
+                  Category
+                </th>
+                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">
+                  Purchase Date
+                </th>
+                <th className="px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase">
+                  Purchase Cost
+                </th>
+                <th className="px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase">
+                  Acc. Depreciation
+                </th>
+                <th className="px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase">
+                  Book Value
+                </th>
+                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">
+                  Status
+                </th>
               </tr>
             </thead>
             <tbody className="divide-y">
               {assets.map((asset) => (
                 <tr key={asset.id} className="hover:bg-gray-50">
-                  <td className="px-6 py-4 whitespace-nowrap font-medium text-blue-600">{asset.code}</td>
+                  <td className="px-6 py-4 whitespace-nowrap font-medium text-blue-600">
+                    {asset.code}
+                  </td>
                   <td className="px-6 py-4">{asset.name}</td>
                   <td className="px-6 py-4 whitespace-nowrap">
                     <span className="px-2 py-1 text-xs rounded-full bg-purple-100 text-purple-800">
@@ -113,7 +188,9 @@ export default function FixedAssetsPage() {
                     </span>
                   </td>
                   <td className="px-6 py-4 whitespace-nowrap text-sm">{asset.purchaseDate}</td>
-                  <td className="px-6 py-4 whitespace-nowrap text-sm text-right">${asset.cost.toLocaleString()}</td>
+                  <td className="px-6 py-4 whitespace-nowrap text-sm text-right">
+                    ${asset.cost.toLocaleString()}
+                  </td>
                   <td className="px-6 py-4 whitespace-nowrap text-sm text-right text-red-600">
                     ${asset.accDepreciation.toLocaleString()}
                   </td>

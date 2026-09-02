@@ -1,10 +1,25 @@
-import { useState, useEffect } from "react";
-import { Search, Barcode, Plus, Minus, Trash2, CreditCard, Banknote, Smartphone, Building2, Calculator, Printer, PauseCircle, XCircle, Loader2 } from "lucide-react";
-import { motion } from "motion/react";
-import { useAuth } from "../../../contexts/AuthContext";
-import { useRealtimeTable } from "../../../hooks/useRealtimeTable";
-import { Product, searchProducts, getProductByBarcode } from "../../../services/productsService";
-import { createSale, Sale, SaleItem } from "../../../services/salesService";
+import { useState } from 'react';
+import {
+  Search,
+  Barcode,
+  Plus,
+  Minus,
+  Trash2,
+  CreditCard,
+  Banknote,
+  Smartphone,
+  Building2,
+  Calculator,
+  Printer,
+  PauseCircle,
+  XCircle,
+  Loader2,
+} from 'lucide-react';
+import { motion } from 'motion/react';
+import { useAuth } from '../../../contexts/AuthContext';
+import { useRealtimeTable } from '../../../hooks/useRealtimeTable';
+import { Product } from '../../../services/productsService';
+import { createSale, Sale, SaleItem } from '../../../services/salesService';
 
 interface CartItem {
   id: string;
@@ -17,9 +32,9 @@ interface CartItem {
 export default function CashierPOSPage() {
   const { user } = useAuth();
   const [cart, setCart] = useState<CartItem[]>([]);
-  const [searchQuery, setSearchQuery] = useState("");
-  const [barcodeInput, setBarcodeInput] = useState("");
-  const [selectedPayment, setSelectedPayment] = useState<string>("cash");
+  const [searchQuery, setSearchQuery] = useState('');
+  const [barcodeInput, setBarcodeInput] = useState('');
+  const [selectedPayment, setSelectedPayment] = useState<string>('cash');
   const [isProcessing, setIsProcessing] = useState(false);
 
   // Fetch products from Supabase with Realtime updates
@@ -35,12 +50,12 @@ export default function CashierPOSPage() {
   });
 
   const paymentMethods = [
-    { id: "cash", label: "Cash", icon: Banknote },
-    { id: "card", label: "Card", icon: CreditCard },
-    { id: "mada", label: "Mada", icon: CreditCard },
-    { id: "apple_pay", label: "Apple Pay", icon: Smartphone },
-    { id: "bank_transfer", label: "Bank Transfer", icon: Building2 },
-    { id: "split", label: "Split Payment", icon: Calculator },
+    { id: 'cash', label: 'Cash', icon: Banknote },
+    { id: 'card', label: 'Card', icon: CreditCard },
+    { id: 'mada', label: 'Mada', icon: CreditCard },
+    { id: 'apple_pay', label: 'Apple Pay', icon: Smartphone },
+    { id: 'bank_transfer', label: 'Bank Transfer', icon: Building2 },
+    { id: 'split', label: 'Split Payment', icon: Calculator },
   ];
 
   const addToCart = (product: Product) => {
@@ -48,8 +63,8 @@ export default function CashierPOSPage() {
     if (existingItem) {
       setCart(
         cart.map((item) =>
-          item.id === product.id ? { ...item, quantity: item.quantity + 1 } : item
-        )
+          item.id === product.id ? { ...item, quantity: item.quantity + 1 } : item,
+        ),
       );
     } else {
       setCart([
@@ -69,11 +84,9 @@ export default function CashierPOSPage() {
     setCart(
       cart
         .map((item) =>
-          item.id === id
-            ? { ...item, quantity: Math.max(1, item.quantity + delta) }
-            : item
+          item.id === id ? { ...item, quantity: Math.max(1, item.quantity + delta) } : item,
         )
-        .filter((item) => item.quantity > 0)
+        .filter((item) => item.quantity > 0),
     );
   };
 
@@ -83,41 +96,35 @@ export default function CashierPOSPage() {
 
   const applyDiscount = (id: string, discount: number) => {
     setCart(
-      cart.map((item) =>
-        item.id === id ? { ...item, discount: Math.min(discount, 20) } : item
-      )
+      cart.map((item) => (item.id === id ? { ...item, discount: Math.min(discount, 20) } : item)),
     );
   };
 
-  const subtotal = cart.reduce(
-    (sum, item) => sum + item.price * item.quantity,
-    0
-  );
+  const subtotal = cart.reduce((sum, item) => sum + item.price * item.quantity, 0);
   const totalDiscount = cart.reduce(
-    (sum, item) =>
-      sum + (item.price * item.quantity * item.discount) / 100,
-    0
+    (sum, item) => sum + (item.price * item.quantity * item.discount) / 100,
+    0,
   );
   const total = subtotal - totalDiscount;
 
   const handleHoldOrder = () => {
-    alert("Order held successfully");
+    alert('Order held successfully');
   };
 
   const handleCancelOrder = () => {
-    if (confirm("Are you sure you want to cancel this order?")) {
+    if (confirm('Are you sure you want to cancel this order?')) {
       setCart([]);
     }
   };
 
   const handleCheckout = async () => {
     if (cart.length === 0) {
-      alert("Cart is empty");
+      alert('Cart is empty');
       return;
     }
 
     if (!user?.id || !user?.company_id || !user?.branch_id) {
-      alert("User information not available");
+      alert('User information not available');
       return;
     }
 
@@ -156,10 +163,10 @@ export default function CashierPOSPage() {
 
       alert(`Payment successful! Total: ${total.toFixed(2)} SAR`);
       setCart([]);
-      setSelectedPayment("cash");
+      setSelectedPayment('cash');
     } catch (error) {
-      console.error("Error processing payment:", error);
-      alert("Failed to process payment. Please try again.");
+      console.error('Error processing payment:', error);
+      alert('Failed to process payment. Please try again.');
     } finally {
       setIsProcessing(false);
     }
@@ -168,7 +175,7 @@ export default function CashierPOSPage() {
   const filteredProducts = products.filter(
     (p) =>
       p.product_name.toLowerCase().includes(searchQuery.toLowerCase()) ||
-      p.sku.toLowerCase().includes(searchQuery.toLowerCase())
+      p.sku.toLowerCase().includes(searchQuery.toLowerCase()),
   );
 
   return (
@@ -208,10 +215,10 @@ export default function CashierPOSPage() {
             <div className="flex items-center justify-center h-full">
               <div className="text-center">
                 <p className="text-gray-500 text-lg mb-2">
-                  {searchQuery ? "No products found" : "No products available"}
+                  {searchQuery ? 'No products found' : 'No products available'}
                 </p>
                 <p className="text-gray-600 text-sm">
-                  {searchQuery ? "Try a different search term" : "Add products to your inventory"}
+                  {searchQuery ? 'Try a different search term' : 'Add products to your inventory'}
                 </p>
               </div>
             </div>
@@ -232,9 +239,7 @@ export default function CashierPOSPage() {
                   <p className="text-blue-400 font-bold text-lg">
                     {product.unit_price.toFixed(2)} SAR
                   </p>
-                  <p className="text-xs text-gray-500 mt-1">
-                    SKU: {product.sku}
-                  </p>
+                  <p className="text-xs text-gray-500 mt-1">SKU: {product.sku}</p>
                 </motion.button>
               ))}
             </div>
@@ -255,22 +260,15 @@ export default function CashierPOSPage() {
           {cart.length === 0 ? (
             <div className="text-center py-12">
               <p className="text-gray-500">Cart is empty</p>
-              <p className="text-sm text-gray-600 mt-1">
-                Add products to start a sale
-              </p>
+              <p className="text-sm text-gray-600 mt-1">Add products to start a sale</p>
             </div>
           ) : (
             cart.map((item) => (
-              <div
-                key={item.id}
-                className="p-4 bg-white/5 border border-white/10 rounded-lg"
-              >
+              <div key={item.id} className="p-4 bg-white/5 border border-white/10 rounded-lg">
                 <div className="flex items-start justify-between mb-3">
                   <div className="flex-1">
                     <h3 className="font-semibold text-white">{item.name}</h3>
-                    <p className="text-sm text-gray-400">
-                      {item.price.toFixed(2)} SAR
-                    </p>
+                    <p className="text-sm text-gray-400">{item.price.toFixed(2)} SAR</p>
                   </div>
                   <button
                     onClick={() => removeItem(item.id)}
@@ -302,9 +300,7 @@ export default function CashierPOSPage() {
                   <input
                     type="number"
                     value={item.discount}
-                    onChange={(e) =>
-                      applyDiscount(item.id, Number(e.target.value))
-                    }
+                    onChange={(e) => applyDiscount(item.id, Number(e.target.value))}
                     max="20"
                     placeholder="Discount %"
                     className="flex-1 px-3 py-2 bg-white/5 border border-white/10 rounded-lg text-white text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
@@ -333,8 +329,8 @@ export default function CashierPOSPage() {
                   onClick={() => setSelectedPayment(method.id)}
                   className={`p-3 rounded-lg border-2 transition-all ${
                     selectedPayment === method.id
-                      ? "border-blue-500 bg-blue-500/20"
-                      : "border-gray-700 bg-white/5 hover:border-gray-600"
+                      ? 'border-blue-500 bg-blue-500/20'
+                      : 'border-gray-700 bg-white/5 hover:border-gray-600'
                   }`}
                 >
                   <method.icon className="w-5 h-5 mx-auto mb-1 text-white" />
@@ -389,7 +385,7 @@ export default function CashierPOSPage() {
             className="w-full py-4 bg-gradient-to-r from-green-600 to-green-500 hover:from-green-500 hover:to-emerald-500 text-white rounded-xl font-bold text-lg transition-all disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2"
           >
             {isProcessing && <Loader2 className="w-5 h-5 animate-spin" />}
-            {isProcessing ? "Processing..." : "Complete Payment"}
+            {isProcessing ? 'Processing...' : 'Complete Payment'}
           </button>
         </div>
       </div>

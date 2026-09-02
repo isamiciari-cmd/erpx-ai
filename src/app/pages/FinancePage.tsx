@@ -1,10 +1,10 @@
-import { useState, useEffect } from "react";
-import { motion } from "motion/react";
-import { DollarSign, TrendingUp, TrendingDown, Plus, Trash2, Calendar } from "lucide-react";
+import { useState, useEffect } from 'react';
+import { motion } from 'motion/react';
+import { DollarSign, TrendingUp, TrendingDown, Plus, Trash2, Calendar } from 'lucide-react';
 
 interface Transaction {
   id: number;
-  type: "income" | "expense";
+  type: 'income' | 'expense';
   amount: number;
   description: string;
   date: string;
@@ -21,7 +21,7 @@ const financeAPI = {
   transactions: [] as Transaction[],
   nextId: 1,
 
-  async create(data: Omit<Transaction, "id">): Promise<Transaction> {
+  async create(data: Omit<Transaction, 'id'>): Promise<Transaction> {
     const transaction = { ...data, id: this.nextId++ };
     this.transactions.push(transaction);
     return new Promise((resolve) => setTimeout(() => resolve(transaction), 300));
@@ -36,12 +36,12 @@ const financeAPI = {
     let expense = 0;
 
     this.transactions.forEach((t) => {
-      if (t.type === "income") income += t.amount;
+      if (t.type === 'income') income += t.amount;
       else expense += t.amount;
     });
 
     return new Promise((resolve) =>
-      setTimeout(() => resolve({ income, expense, profit: income - expense }), 300)
+      setTimeout(() => resolve({ income, expense, profit: income - expense }), 300),
     );
   },
 
@@ -57,16 +57,13 @@ export default function FinancePage() {
   const [loading, setLoading] = useState(false);
 
   // Form state
-  const [amount, setAmount] = useState("");
-  const [type, setType] = useState<"income" | "expense">("income");
-  const [description, setDescription] = useState("");
+  const [amount, setAmount] = useState('');
+  const [type, setType] = useState<'income' | 'expense'>('income');
+  const [description, setDescription] = useState('');
 
   const fetchData = async () => {
     setLoading(true);
-    const [txData, sumData] = await Promise.all([
-      financeAPI.findAll(),
-      financeAPI.getSummary(),
-    ]);
+    const [txData, sumData] = await Promise.all([financeAPI.findAll(), financeAPI.getSummary()]);
     setTransactions(txData);
     setSummary(sumData);
     setLoading(false);
@@ -82,8 +79,8 @@ export default function FinancePage() {
       date: new Date().toISOString(),
     });
 
-    setAmount("");
-    setDescription("");
+    setAmount('');
+    setDescription('');
     fetchData();
   };
 
@@ -119,7 +116,9 @@ export default function FinancePage() {
               <TrendingUp className="w-6 h-6 text-white" />
             </div>
           </div>
-          <h3 className="text-3xl font-bold text-white mb-1">SAR {summary.income.toLocaleString()}</h3>
+          <h3 className="text-3xl font-bold text-white mb-1">
+            SAR {summary.income.toLocaleString()}
+          </h3>
           <p className="text-sm text-gray-400">Total Income</p>
         </motion.div>
 
@@ -135,7 +134,9 @@ export default function FinancePage() {
               <TrendingDown className="w-6 h-6 text-white" />
             </div>
           </div>
-          <h3 className="text-3xl font-bold text-white mb-1">SAR {summary.expense.toLocaleString()}</h3>
+          <h3 className="text-3xl font-bold text-white mb-1">
+            SAR {summary.expense.toLocaleString()}
+          </h3>
           <p className="text-sm text-gray-400">Total Expenses</p>
         </motion.div>
 
@@ -172,7 +173,7 @@ export default function FinancePage() {
             <label className="block text-sm text-gray-400 mb-2">Type</label>
             <select
               value={type}
-              onChange={(e) => setType(e.target.value as "income" | "expense")}
+              onChange={(e) => setType(e.target.value as 'income' | 'expense')}
               className="w-full px-4 py-3 bg-white/5 border border-white/10 rounded-xl text-white focus:outline-none focus:ring-2 focus:ring-blue-500"
             >
               <option value="income">Income</option>
@@ -263,18 +264,18 @@ export default function FinancePage() {
                     initial={{ opacity: 0, x: -20 }}
                     animate={{ opacity: 1, x: 0 }}
                     transition={{ delay: i * 0.05 }}
-                    whileHover={{ backgroundColor: "rgba(255, 255, 255, 0.03)" }}
+                    whileHover={{ backgroundColor: 'rgba(255, 255, 255, 0.03)' }}
                     className="border-b border-white/5"
                   >
                     <td className="px-6 py-4">
                       <span
                         className={`inline-flex px-3 py-1.5 rounded-full text-xs font-semibold ${
-                          transaction.type === "income"
-                            ? "bg-green-500/10 text-green-400 border border-green-500/20"
-                            : "bg-red-500/10 text-red-400 border border-red-500/20"
+                          transaction.type === 'income'
+                            ? 'bg-green-500/10 text-green-400 border border-green-500/20'
+                            : 'bg-red-500/10 text-red-400 border border-red-500/20'
                         }`}
                       >
-                        {transaction.type === "income" ? "Income" : "Expense"}
+                        {transaction.type === 'income' ? 'Income' : 'Expense'}
                       </span>
                     </td>
                     <td className="px-6 py-4 text-sm text-white">{transaction.description}</td>

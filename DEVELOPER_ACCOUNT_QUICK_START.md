@@ -38,6 +38,7 @@ Follow these 4 steps to enable developer quick login:
 8. Click **"Run"**
 
 **Expected result:**
+
 ```
 ✓ Developer role created successfully
 ✓ Developer user profile created successfully
@@ -116,15 +117,15 @@ See full guide: `DEVELOPER_ACCOUNT_SETUP.md`
 
 ## 📋 Quick Reference
 
-| Action | Command/URL |
-|--------|-------------|
-| **Supabase Dashboard** | https://supabase.com/dashboard |
-| **Create Auth User** | Authentication → Users → Add user |
-| **SQL Editor** | SQL Editor → New query |
-| **Dev Server** | `pnpm dev` |
-| **Login Page** | http://localhost:5173/login |
-| **Developer Email** | i.1122@erpx-ai.com |
-| **Developer Password** | @12345 |
+| Action                 | Command/URL                       |
+| ---------------------- | --------------------------------- |
+| **Supabase Dashboard** | https://supabase.com/dashboard    |
+| **Create Auth User**   | Authentication → Users → Add user |
+| **SQL Editor**         | SQL Editor → New query            |
+| **Dev Server**         | `pnpm dev`                        |
+| **Login Page**         | http://localhost:5173/login       |
+| **Developer Email**    | i.1122@erpx-ai.com                |
+| **Developer Password** | @12345                            |
 
 ---
 

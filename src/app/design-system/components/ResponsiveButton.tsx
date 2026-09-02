@@ -107,8 +107,20 @@ export function ResponsiveButton({
       {...props}
     >
       {isLoading && (
-        <svg className="animate-spin h-5 w-5" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
-          <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
+        <svg
+          className="animate-spin h-5 w-5"
+          xmlns="http://www.w3.org/2000/svg"
+          fill="none"
+          viewBox="0 0 24 24"
+        >
+          <circle
+            className="opacity-25"
+            cx="12"
+            cy="12"
+            r="10"
+            stroke="currentColor"
+            strokeWidth="4"
+          ></circle>
           <path
             className="opacity-75"
             fill="currentColor"
@@ -147,7 +159,8 @@ export function IconButton({
     xl: 'w-14 h-14 sm:w-16 sm:h-16',
   };
 
-  const baseVariant = variant === 'primary' ? 'primary' : variant === 'secondary' ? 'secondary' : 'ghost';
+  const baseVariant =
+    variant === 'primary' ? 'primary' : variant === 'secondary' ? 'secondary' : 'ghost';
 
   return (
     <ResponsiveButton
@@ -169,7 +182,11 @@ interface ButtonGroupProps {
   className?: string;
 }
 
-export function ButtonGroup({ children, orientation = 'horizontal', className = '' }: ButtonGroupProps) {
+export function ButtonGroup({
+  children,
+  orientation = 'horizontal',
+  className = '',
+}: ButtonGroupProps) {
   return (
     <div
       className={`

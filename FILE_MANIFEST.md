@@ -5,11 +5,12 @@
 **File**: `erpx-complete-source.tar.gz`  
 **Size**: 97 KB compressed  
 **Total Files**: 99  
-**Created**: April 26, 2026  
+**Created**: April 26, 2026
 
 ## 📋 Contents
 
 ### 📄 Root Files
+
 ```
 ├── package.json                    # Dependencies and scripts
 ├── README.md                       # Complete documentation
@@ -18,6 +19,7 @@
 ```
 
 ### 🎨 Styles (src/styles/)
+
 ```
 src/styles/
 ├── tailwind.css                   # Tailwind v4 configuration
@@ -27,6 +29,7 @@ src/styles/
 ```
 
 ### 🧩 UI Components (src/app/components/ui/)
+
 ```
 src/app/components/ui/
 ├── accordion.tsx                  # Collapsible sections
@@ -62,6 +65,7 @@ src/app/components/ui/
 ```
 
 ### 🎯 Core Components (src/app/components/)
+
 ```
 src/app/components/
 ├── Splash.tsx                    # Animated splash screen (3s timer)
@@ -78,6 +82,7 @@ src/app/components/
 ```
 
 ### 🏗️ Layout Components (src/app/layout/)
+
 ```
 src/app/layout/
 ├── MainLayout.tsx                # Main layout wrapper (Sidebar + Topbar + Content)
@@ -86,6 +91,7 @@ src/app/layout/
 ```
 
 ### 📄 Pages - Finance Module (src/app/pages/)
+
 ```
 Finance Pages:
 ├── FinancePage.tsx               # Expense tracking (Income/Expense transactions)
@@ -96,12 +102,14 @@ Finance Pages:
 ```
 
 ### 📄 Pages - HR Module
+
 ```
 HR Pages:
 └── EmployeesPage.tsx             # Employee CRUD, contracts, departments, salaries
 ```
 
 ### 📄 Pages - Operations Module
+
 ```
 Operations Pages:
 ├── POSPage.tsx                   # Full-screen POS terminal (Restaurant/Retail)
@@ -109,6 +117,7 @@ Operations Pages:
 ```
 
 ### 📄 Pages - Admin & SaaS Module
+
 ```
 Admin Pages:
 ├── TenantManagementPage.tsx      # Multi-tenant CRUD, plans, domains
@@ -122,6 +131,7 @@ Admin Pages:
 ```
 
 ### 📄 Pages - Dashboard & Generic
+
 ```
 Dashboard & Other:
 ├── DashboardPage.tsx             # Main dashboard with real-time KPIs
@@ -129,6 +139,7 @@ Dashboard & Other:
 ```
 
 ### 🛠️ Services (src/app/services/)
+
 ```
 src/app/services/
 ├── AutomationEngine.ts           # 4 automation rules + utilities
@@ -143,6 +154,7 @@ src/app/services/
 ```
 
 ### 📱 Main Application
+
 ```
 src/app/
 └── App.tsx                       # Main router with authentication flow
@@ -151,6 +163,7 @@ src/app/
 ## 📊 File Statistics
 
 ### By Category
+
 - **Pages**: 18 files (~15,000 lines)
 - **Components**: 13 core + 30 UI (~8,000 lines)
 - **Layout**: 3 files (~400 lines)
@@ -160,6 +173,7 @@ src/app/
 - **Docs**: 3 files (README, ARCHITECTURE, MANIFEST)
 
 ### Technology Breakdown
+
 - **React Components**: 64 files
 - **TypeScript**: 100% type-safe
 - **Mock APIs**: 15+ simulated backends
@@ -168,11 +182,13 @@ src/app/
 ## 🎯 Key Features by File
 
 ### Authentication & Security
+
 - `Login.tsx` - Mock authentication with localStorage
 - `Splash.tsx` - 3-second animated loading screen
 - `PermissionsManager.ts` - Role-based access control
 
 ### Finance Features
+
 - `ZATCAPage.tsx` - Saudi e-invoicing compliance
   - UBL XML generation
   - ECDSA digital signatures
@@ -182,6 +198,7 @@ src/app/
 - `CurrencyPage.tsx` - Real-time exchange rates
 
 ### SaaS Admin Features
+
 - `ControlTowerPage.tsx` - Command center
   - System health monitoring
   - AI insights
@@ -192,6 +209,7 @@ src/app/
 - `StudioPage.tsx` - Low-code builder
 
 ### AI Features
+
 - `AIAssistant.tsx` - Chatbot with smart responses
 - `AIDecisionEngine.tsx` - Strategic recommendations
 - `PredictionCard.tsx` - Revenue forecasting
@@ -199,6 +217,7 @@ src/app/
 - `VoiceControl.tsx` - Voice navigation
 
 ### Data Visualization
+
 - `DashboardPage.tsx` - Real-time charts (Recharts)
 - `SaaSMetricsPage.tsx` - SaaS analytics
 - `UsageTrackingPage.tsx` - Usage monitoring
@@ -221,6 +240,7 @@ pnpm install
 ## 🔍 Finding Specific Features
 
 ### Need to find...
+
 - **Authentication logic**: `src/app/components/Login.tsx`
 - **Routing setup**: `src/app/App.tsx`
 - **Navigation menu**: `src/app/layout/Sidebar.tsx`

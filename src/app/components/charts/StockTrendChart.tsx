@@ -1,5 +1,13 @@
 import React from 'react';
-import { AreaChart, Area, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer } from 'recharts';
+import {
+  AreaChart,
+  Area,
+  XAxis,
+  YAxis,
+  CartesianGrid,
+  Tooltip,
+  ResponsiveContainer,
+} from 'recharts';
 
 interface StockTrendChartProps {
   data: Array<{ id: string; month: string; value: number }>;
@@ -20,9 +28,9 @@ const StockTrendChart = React.memo(({ data }: StockTrendChartProps) => {
         <YAxis stroke="#9CA3AF" />
         <Tooltip
           contentStyle={{
-            backgroundColor: "#1F2937",
-            border: "1px solid #374151",
-            borderRadius: "8px",
+            backgroundColor: '#1F2937',
+            border: '1px solid #374151',
+            borderRadius: '8px',
           }}
         />
         <Area

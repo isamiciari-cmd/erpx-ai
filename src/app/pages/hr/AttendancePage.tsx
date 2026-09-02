@@ -1,14 +1,83 @@
 import { useState } from 'react';
 import { Clock, CheckCircle, XCircle, AlertTriangle, Download } from 'lucide-react';
-import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer } from 'recharts';
+import {
+  BarChart,
+  Bar,
+  XAxis,
+  YAxis,
+  CartesianGrid,
+  Tooltip,
+  Legend,
+  ResponsiveContainer,
+} from 'recharts';
 
 const attendanceRecords = [
-  { id: 1, employee: 'Ahmed Ali', code: 'EMP001', date: '2026-04-30', checkIn: '08:55', checkOut: '17:10', late: 0, earlyLeave: 0, status: 'Present' },
-  { id: 2, employee: 'Sara Mohamed', code: 'EMP002', date: '2026-04-30', checkIn: '09:15', checkOut: '17:05', late: 15, earlyLeave: 0, status: 'Late' },
-  { id: 3, employee: 'Omar Abdullah', code: 'EMP003', date: '2026-04-30', checkIn: '-', checkOut: '-', late: 0, earlyLeave: 0, status: 'Absent' },
-  { id: 4, employee: 'Fatima Hassan', code: 'EMP004', date: '2026-04-30', checkIn: '08:50', checkOut: '17:00', late: 0, earlyLeave: 0, status: 'Present' },
-  { id: 5, employee: 'Khalid Ahmed', code: 'EMP005', date: '2026-04-30', checkIn: '09:05', checkOut: '16:45', late: 5, earlyLeave: 15, status: 'Early Leave' },
-  { id: 6, employee: 'Layla Mahmoud', code: 'EMP006', date: '2026-04-30', checkIn: '-', checkOut: '-', late: 0, earlyLeave: 0, status: 'On Leave' },
+  {
+    id: 1,
+    employee: 'Ahmed Ali',
+    code: 'EMP001',
+    date: '2026-04-30',
+    checkIn: '08:55',
+    checkOut: '17:10',
+    late: 0,
+    earlyLeave: 0,
+    status: 'Present',
+  },
+  {
+    id: 2,
+    employee: 'Sara Mohamed',
+    code: 'EMP002',
+    date: '2026-04-30',
+    checkIn: '09:15',
+    checkOut: '17:05',
+    late: 15,
+    earlyLeave: 0,
+    status: 'Late',
+  },
+  {
+    id: 3,
+    employee: 'Omar Abdullah',
+    code: 'EMP003',
+    date: '2026-04-30',
+    checkIn: '-',
+    checkOut: '-',
+    late: 0,
+    earlyLeave: 0,
+    status: 'Absent',
+  },
+  {
+    id: 4,
+    employee: 'Fatima Hassan',
+    code: 'EMP004',
+    date: '2026-04-30',
+    checkIn: '08:50',
+    checkOut: '17:00',
+    late: 0,
+    earlyLeave: 0,
+    status: 'Present',
+  },
+  {
+    id: 5,
+    employee: 'Khalid Ahmed',
+    code: 'EMP005',
+    date: '2026-04-30',
+    checkIn: '09:05',
+    checkOut: '16:45',
+    late: 5,
+    earlyLeave: 15,
+    status: 'Early Leave',
+  },
+  {
+    id: 6,
+    employee: 'Layla Mahmoud',
+    code: 'EMP006',
+    date: '2026-04-30',
+    checkIn: '-',
+    checkOut: '-',
+    late: 0,
+    earlyLeave: 0,
+    status: 'On Leave',
+  },
 ];
 
 const weeklyStats = [
@@ -22,10 +91,10 @@ const weeklyStats = [
 export default function AttendancePage() {
   const [selectedDate, setSelectedDate] = useState('2026-04-30');
 
-  const presentCount = attendanceRecords.filter(r => r.status === 'Present').length;
-  const lateCount = attendanceRecords.filter(r => r.status === 'Late').length;
-  const absentCount = attendanceRecords.filter(r => r.status === 'Absent').length;
-  const onLeaveCount = attendanceRecords.filter(r => r.status === 'On Leave').length;
+  const presentCount = attendanceRecords.filter((r) => r.status === 'Present').length;
+  const lateCount = attendanceRecords.filter((r) => r.status === 'Late').length;
+  const absentCount = attendanceRecords.filter((r) => r.status === 'Absent').length;
+  const onLeaveCount = attendanceRecords.filter((r) => r.status === 'On Leave').length;
 
   return (
     <div className="space-y-6">
@@ -131,14 +200,30 @@ export default function AttendancePage() {
           <table className="w-full">
             <thead className="bg-gray-50">
               <tr>
-                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Employee</th>
-                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Employee ID</th>
-                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Check-In</th>
-                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Check-Out</th>
-                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Late (mins)</th>
-                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Early Leave (mins)</th>
-                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Status</th>
-                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Actions</th>
+                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">
+                  Employee
+                </th>
+                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">
+                  Employee ID
+                </th>
+                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">
+                  Check-In
+                </th>
+                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">
+                  Check-Out
+                </th>
+                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">
+                  Late (mins)
+                </th>
+                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">
+                  Early Leave (mins)
+                </th>
+                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">
+                  Status
+                </th>
+                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">
+                  Actions
+                </th>
               </tr>
             </thead>
             <tbody className="divide-y">
@@ -190,7 +275,9 @@ function AttendanceStatusBadge({ status }: { status: string }) {
   };
 
   return (
-    <span className={`px-2 py-1 text-xs rounded-full font-medium ${styles[status as keyof typeof styles]}`}>
+    <span
+      className={`px-2 py-1 text-xs rounded-full font-medium ${styles[status as keyof typeof styles]}`}
+    >
       {status}
     </span>
   );

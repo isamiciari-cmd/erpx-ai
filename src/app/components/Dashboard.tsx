@@ -1,5 +1,5 @@
-import { useState } from "react";
-import { motion, AnimatePresence } from "motion/react";
+import { useState } from 'react';
+import { motion, AnimatePresence } from 'motion/react';
 import {
   LayoutDashboard,
   Package,
@@ -10,19 +10,14 @@ import {
   Settings,
   LogOut,
   TrendingUp,
-  TrendingDown,
   Bell,
   Search,
-  Menu,
-  X,
   ChevronLeft,
   ChevronRight,
   Wallet,
   Activity,
-} from "lucide-react";
+} from 'lucide-react';
 import {
-  LineChart,
-  Line,
   BarChart,
   Bar,
   XAxis,
@@ -32,122 +27,122 @@ import {
   ResponsiveContainer,
   Area,
   AreaChart,
-} from "recharts";
+} from 'recharts';
 
 interface DashboardProps {
   onLogout: () => void;
 }
 
 export default function Dashboard({ onLogout }: DashboardProps) {
-  const [activeTab, setActiveTab] = useState("dashboard");
+  const [activeTab, setActiveTab] = useState('dashboard');
   const [sidebarCollapsed, setSidebarCollapsed] = useState(false);
   const [notifications, setNotifications] = useState(3);
 
   const stats = [
     {
-      label: "Total Revenue",
-      value: "SAR 124,500",
-      change: "+12.5%",
-      trend: "up",
+      label: 'Total Revenue',
+      value: 'SAR 124,500',
+      change: '+12.5%',
+      trend: 'up',
       icon: DollarSign,
-      color: "from-blue-500 to-cyan-500",
+      color: 'from-blue-500 to-cyan-500',
     },
     {
-      label: "Orders",
-      value: "1,248",
-      change: "+8.2%",
-      trend: "up",
+      label: 'Orders',
+      value: '1,248',
+      change: '+8.2%',
+      trend: 'up',
       icon: ShoppingCart,
-      color: "from-purple-500 to-pink-500",
+      color: 'from-purple-500 to-pink-500',
     },
     {
-      label: "Customers",
-      value: "892",
-      change: "+15.3%",
-      trend: "up",
+      label: 'Customers',
+      value: '892',
+      change: '+15.3%',
+      trend: 'up',
       icon: Users,
-      color: "from-green-500 to-emerald-500",
+      color: 'from-green-500 to-emerald-500',
     },
     {
-      label: "Profit",
-      value: "SAR 42,300",
-      change: "+9.7%",
-      trend: "up",
+      label: 'Profit',
+      value: 'SAR 42,300',
+      change: '+9.7%',
+      trend: 'up',
       icon: Wallet,
-      color: "from-orange-500 to-yellow-500",
+      color: 'from-orange-500 to-yellow-500',
     },
   ];
 
   const salesData = [
-    { id: "jan", month: "Jan", sales: 45000 },
-    { id: "feb", month: "Feb", sales: 52000 },
-    { id: "mar", month: "Mar", sales: 48000 },
-    { id: "apr", month: "Apr", sales: 61000 },
-    { id: "may", month: "May", sales: 55000 },
-    { id: "jun", month: "Jun", sales: 67000 },
-    { id: "jul", month: "Jul", sales: 72000 },
+    { id: 'jan', month: 'Jan', sales: 45000 },
+    { id: 'feb', month: 'Feb', sales: 52000 },
+    { id: 'mar', month: 'Mar', sales: 48000 },
+    { id: 'apr', month: 'Apr', sales: 61000 },
+    { id: 'may', month: 'May', sales: 55000 },
+    { id: 'jun', month: 'Jun', sales: 67000 },
+    { id: 'jul', month: 'Jul', sales: 72000 },
   ];
 
   const ordersData = [
-    { id: "mon", day: "Mon", orders: 245 },
-    { id: "tue", day: "Tue", orders: 312 },
-    { id: "wed", day: "Wed", orders: 278 },
-    { id: "thu", day: "Thu", orders: 398 },
-    { id: "fri", day: "Fri", orders: 445 },
-    { id: "sat", day: "Sat", orders: 523 },
-    { id: "sun", day: "Sun", orders: 412 },
+    { id: 'mon', day: 'Mon', orders: 245 },
+    { id: 'tue', day: 'Tue', orders: 312 },
+    { id: 'wed', day: 'Wed', orders: 278 },
+    { id: 'thu', day: 'Thu', orders: 398 },
+    { id: 'fri', day: 'Fri', orders: 445 },
+    { id: 'sat', day: 'Sat', orders: 523 },
+    { id: 'sun', day: 'Sun', orders: 412 },
   ];
 
   const menuItems = [
-    { id: "dashboard", label: "Dashboard", icon: LayoutDashboard },
-    { id: "orders", label: "Orders", icon: ShoppingCart },
-    { id: "inventory", label: "Inventory", icon: Package },
-    { id: "customers", label: "Customers", icon: Users },
-    { id: "analytics", label: "Analytics", icon: BarChart3 },
-    { id: "finance", label: "Finance", icon: DollarSign },
-    { id: "settings", label: "Settings", icon: Settings },
+    { id: 'dashboard', label: 'Dashboard', icon: LayoutDashboard },
+    { id: 'orders', label: 'Orders', icon: ShoppingCart },
+    { id: 'inventory', label: 'Inventory', icon: Package },
+    { id: 'customers', label: 'Customers', icon: Users },
+    { id: 'analytics', label: 'Analytics', icon: BarChart3 },
+    { id: 'finance', label: 'Finance', icon: DollarSign },
+    { id: 'settings', label: 'Settings', icon: Settings },
   ];
 
   const recentOrders = [
     {
-      id: "#ORD-1247",
-      customer: "Ahmed Al-Mutairi",
-      product: "Office Chair Pro",
-      amount: "SAR 1,450",
-      status: "Completed",
-      date: "2026-04-26",
+      id: '#ORD-1247',
+      customer: 'Ahmed Al-Mutairi',
+      product: 'Office Chair Pro',
+      amount: 'SAR 1,450',
+      status: 'Completed',
+      date: '2026-04-26',
     },
     {
-      id: "#ORD-1246",
-      customer: "Fatima Hassan",
-      product: "Laptop Stand",
-      amount: "SAR 890",
-      status: "Processing",
-      date: "2026-04-26",
+      id: '#ORD-1246',
+      customer: 'Fatima Hassan',
+      product: 'Laptop Stand',
+      amount: 'SAR 890',
+      status: 'Processing',
+      date: '2026-04-26',
     },
     {
-      id: "#ORD-1245",
-      customer: "Mohammed Saeed",
-      product: "Desk Organizer",
-      amount: "SAR 320",
-      status: "Pending",
-      date: "2026-04-25",
+      id: '#ORD-1245',
+      customer: 'Mohammed Saeed',
+      product: 'Desk Organizer',
+      amount: 'SAR 320',
+      status: 'Pending',
+      date: '2026-04-25',
     },
     {
-      id: "#ORD-1244",
-      customer: "Sara Abdullah",
-      product: "Monitor 4K",
-      amount: "SAR 2,670",
-      status: "Completed",
-      date: "2026-04-25",
+      id: '#ORD-1244',
+      customer: 'Sara Abdullah',
+      product: 'Monitor 4K',
+      amount: 'SAR 2,670',
+      status: 'Completed',
+      date: '2026-04-25',
     },
     {
-      id: "#ORD-1243",
-      customer: "Khalid Ibrahim",
-      product: "Wireless Mouse",
-      amount: "SAR 245",
-      status: "Completed",
-      date: "2026-04-24",
+      id: '#ORD-1243',
+      customer: 'Khalid Ibrahim',
+      product: 'Wireless Mouse',
+      amount: 'SAR 245',
+      status: 'Completed',
+      date: '2026-04-24',
     },
   ];
 
@@ -157,7 +152,7 @@ export default function Dashboard({ onLogout }: DashboardProps) {
       <motion.div
         initial={{ x: -300 }}
         animate={{ width: sidebarCollapsed ? 80 : 256 }}
-        transition={{ duration: 0.3, ease: "easeInOut" }}
+        transition={{ duration: 0.3, ease: 'easeInOut' }}
         className="bg-gradient-to-b from-gray-900 to-black border-r border-white/10 flex flex-col relative"
       >
         {/* Toggle Button */}
@@ -216,13 +211,13 @@ export default function Dashboard({ onLogout }: DashboardProps) {
               whileHover={{ scale: 1.02 }}
               whileTap={{ scale: 0.98 }}
               className={`w-full flex items-center ${
-                sidebarCollapsed ? "justify-center" : "gap-3"
+                sidebarCollapsed ? 'justify-center' : 'gap-3'
               } px-4 py-3 rounded-xl transition-all ${
                 activeTab === item.id
-                  ? "bg-gradient-to-r from-blue-600 to-cyan-600 text-white shadow-lg shadow-blue-500/30"
-                  : "text-gray-400 hover:bg-white/5 hover:text-white"
+                  ? 'bg-gradient-to-r from-blue-600 to-cyan-600 text-white shadow-lg shadow-blue-500/30'
+                  : 'text-gray-400 hover:bg-white/5 hover:text-white'
               }`}
-              title={sidebarCollapsed ? item.label : ""}
+              title={sidebarCollapsed ? item.label : ''}
             >
               <item.icon className="w-5 h-5 flex-shrink-0" />
               {!sidebarCollapsed && <span className="font-medium">{item.label}</span>}
@@ -237,9 +232,9 @@ export default function Dashboard({ onLogout }: DashboardProps) {
             whileHover={{ scale: 1.02 }}
             whileTap={{ scale: 0.98 }}
             className={`w-full flex items-center ${
-              sidebarCollapsed ? "justify-center" : "gap-3"
+              sidebarCollapsed ? 'justify-center' : 'gap-3'
             } px-4 py-3 rounded-xl text-gray-400 hover:bg-red-500/10 hover:text-red-400 transition-all`}
-            title={sidebarCollapsed ? "Logout" : ""}
+            title={sidebarCollapsed ? 'Logout' : ''}
           >
             <LogOut className="w-5 h-5 flex-shrink-0" />
             {!sidebarCollapsed && <span className="font-medium">Logout</span>}
@@ -253,7 +248,7 @@ export default function Dashboard({ onLogout }: DashboardProps) {
         <motion.div
           initial={{ y: -100 }}
           animate={{ y: 0 }}
-          transition={{ duration: 0.5, ease: "easeOut" }}
+          transition={{ duration: 0.5, ease: 'easeOut' }}
           className="bg-gray-900/50 backdrop-blur-xl border-b border-white/10 px-8 py-4 flex items-center justify-between"
         >
           <div className="flex items-center gap-4 flex-1">
@@ -313,7 +308,9 @@ export default function Dashboard({ onLogout }: DashboardProps) {
                 className="bg-gradient-to-br from-gray-900/80 to-gray-950/80 backdrop-blur-xl border border-white/10 rounded-2xl p-6 hover:border-blue-500/50 hover:shadow-2xl hover:shadow-blue-500/10 transition-all cursor-pointer"
               >
                 <div className="flex items-start justify-between mb-4">
-                  <div className={`w-14 h-14 bg-gradient-to-br ${stat.color} rounded-xl flex items-center justify-center shadow-lg`}>
+                  <div
+                    className={`w-14 h-14 bg-gradient-to-br ${stat.color} rounded-xl flex items-center justify-center shadow-lg`}
+                  >
                     <stat.icon className="w-7 h-7 text-white" />
                   </div>
                   <div className="flex items-center gap-1 text-sm text-green-400 bg-green-500/10 px-3 py-1 rounded-full">
@@ -356,10 +353,10 @@ export default function Dashboard({ onLogout }: DashboardProps) {
                   <YAxis stroke="#6b7280" style={{ fontSize: 12 }} />
                   <Tooltip
                     contentStyle={{
-                      backgroundColor: "#1f2937",
-                      border: "1px solid #374151",
-                      borderRadius: "12px",
-                      color: "#fff",
+                      backgroundColor: '#1f2937',
+                      border: '1px solid #374151',
+                      borderRadius: '12px',
+                      color: '#fff',
                     }}
                   />
                   <Area
@@ -395,10 +392,10 @@ export default function Dashboard({ onLogout }: DashboardProps) {
                   <YAxis stroke="#6b7280" style={{ fontSize: 12 }} />
                   <Tooltip
                     contentStyle={{
-                      backgroundColor: "#1f2937",
-                      border: "1px solid #374151",
-                      borderRadius: "12px",
-                      color: "#fff",
+                      backgroundColor: '#1f2937',
+                      border: '1px solid #374151',
+                      borderRadius: '12px',
+                      color: '#fff',
                     }}
                   />
                   <Bar
@@ -461,29 +458,21 @@ export default function Dashboard({ onLogout }: DashboardProps) {
                       initial={{ opacity: 0, x: -20 }}
                       animate={{ opacity: 1, x: 0 }}
                       transition={{ delay: 0.7 + i * 0.05, duration: 0.3 }}
-                      whileHover={{ backgroundColor: "rgba(255, 255, 255, 0.03)" }}
+                      whileHover={{ backgroundColor: 'rgba(255, 255, 255, 0.03)' }}
                       className="border-b border-white/5 cursor-pointer"
                     >
-                      <td className="px-6 py-4 text-sm text-blue-400 font-semibold">
-                        {order.id}
-                      </td>
-                      <td className="px-6 py-4 text-sm text-white">
-                        {order.customer}
-                      </td>
-                      <td className="px-6 py-4 text-sm text-gray-400">
-                        {order.product}
-                      </td>
-                      <td className="px-6 py-4 text-sm text-white font-semibold">
-                        {order.amount}
-                      </td>
+                      <td className="px-6 py-4 text-sm text-blue-400 font-semibold">{order.id}</td>
+                      <td className="px-6 py-4 text-sm text-white">{order.customer}</td>
+                      <td className="px-6 py-4 text-sm text-gray-400">{order.product}</td>
+                      <td className="px-6 py-4 text-sm text-white font-semibold">{order.amount}</td>
                       <td className="px-6 py-4">
                         <span
                           className={`inline-flex px-3 py-1.5 rounded-full text-xs font-semibold ${
-                            order.status === "Completed"
-                              ? "bg-green-500/10 text-green-400 border border-green-500/20"
-                              : order.status === "Processing"
-                              ? "bg-blue-500/10 text-blue-400 border border-blue-500/20"
-                              : "bg-yellow-500/10 text-yellow-400 border border-yellow-500/20"
+                            order.status === 'Completed'
+                              ? 'bg-green-500/10 text-green-400 border border-green-500/20'
+                              : order.status === 'Processing'
+                                ? 'bg-blue-500/10 text-blue-400 border border-blue-500/20'
+                                : 'bg-yellow-500/10 text-yellow-400 border border-yellow-500/20'
                           }`}
                         >
                           {order.status}

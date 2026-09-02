@@ -1,16 +1,6 @@
 import { useState } from 'react';
 import { motion } from 'motion/react';
-import {
-  Package,
-  Plus,
-  Search,
-  Filter,
-  Download,
-  Edit,
-  Trash2,
-  Eye,
-  AlertTriangle,
-} from 'lucide-react';
+import { Package, Plus, Search, Filter, Download, Edit, Trash2, Eye } from 'lucide-react';
 import { useToast } from '../../components/ui/Toast';
 import Modal from '../../components/ui/Modal';
 import ConfirmDialog from '../../components/ui/ConfirmDialog';
@@ -79,7 +69,7 @@ export default function InventoryManagementPage() {
     (item) =>
       item.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
       item.sku.toLowerCase().includes(searchQuery.toLowerCase()) ||
-      item.category.toLowerCase().includes(searchQuery.toLowerCase())
+      item.category.toLowerCase().includes(searchQuery.toLowerCase()),
   );
 
   // Handle Delete
@@ -150,10 +140,7 @@ export default function InventoryManagementPage() {
           <p className="text-gray-400 mt-1">Manage your products and stock levels</p>
         </div>
 
-        <Button
-          leftIcon={<Plus className="w-5 h-5" />}
-          onClick={() => setIsAddModalOpen(true)}
-        >
+        <Button leftIcon={<Plus className="w-5 h-5" />} onClick={() => setIsAddModalOpen(true)}>
           Add Product
         </Button>
       </div>
@@ -212,9 +199,7 @@ export default function InventoryManagementPage() {
             <table className="w-full">
               <thead className="bg-gray-800/50">
                 <tr>
-                  <th className="px-6 py-4 text-left text-sm font-semibold text-gray-300">
-                    SKU
-                  </th>
+                  <th className="px-6 py-4 text-left text-sm font-semibold text-gray-300">SKU</th>
                   <th className="px-6 py-4 text-left text-sm font-semibold text-gray-300">
                     Product Name
                   </th>
@@ -224,9 +209,7 @@ export default function InventoryManagementPage() {
                   <th className="px-6 py-4 text-left text-sm font-semibold text-gray-300">
                     Quantity
                   </th>
-                  <th className="px-6 py-4 text-left text-sm font-semibold text-gray-300">
-                    Price
-                  </th>
+                  <th className="px-6 py-4 text-left text-sm font-semibold text-gray-300">Price</th>
                   <th className="px-6 py-4 text-left text-sm font-semibold text-gray-300">
                     Status
                   </th>
@@ -259,8 +242,8 @@ export default function InventoryManagementPage() {
                           item.quantity === 0
                             ? 'text-red-400'
                             : item.quantity <= item.minStock
-                            ? 'text-yellow-400'
-                            : 'text-green-400'
+                              ? 'text-yellow-400'
+                              : 'text-green-400'
                         }`}
                       >
                         {item.quantity}
@@ -275,8 +258,8 @@ export default function InventoryManagementPage() {
                           item.status === 'In Stock'
                             ? 'bg-green-500/20 text-green-400'
                             : item.status === 'Low Stock'
-                            ? 'bg-yellow-500/20 text-yellow-400'
-                            : 'bg-red-500/20 text-red-400'
+                              ? 'bg-yellow-500/20 text-yellow-400'
+                              : 'bg-red-500/20 text-red-400'
                         }`}
                       >
                         {item.status}
@@ -433,8 +416,8 @@ export default function InventoryManagementPage() {
                     selectedItem.status === 'In Stock'
                       ? 'bg-green-500/20 text-green-400'
                       : selectedItem.status === 'Low Stock'
-                      ? 'bg-yellow-500/20 text-yellow-400'
-                      : 'bg-red-500/20 text-red-400'
+                        ? 'bg-yellow-500/20 text-yellow-400'
+                        : 'bg-red-500/20 text-red-400'
                   }`}
                 >
                   {selectedItem.status}
@@ -509,11 +492,7 @@ export default function InventoryManagementPage() {
             </div>
 
             <div className="flex gap-3 pt-4 border-t border-white/10">
-              <Button
-                variant="secondary"
-                fullWidth
-                onClick={() => setIsEditModalOpen(false)}
-              >
+              <Button variant="secondary" fullWidth onClick={() => setIsEditModalOpen(false)}>
                 Cancel
               </Button>
               <Button fullWidth onClick={handleEdit} isLoading={isLoading}>

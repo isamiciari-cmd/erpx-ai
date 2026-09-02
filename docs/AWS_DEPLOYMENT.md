@@ -51,6 +51,7 @@
 **Hosting Options:**
 
 #### Option A: AWS Amplify (Recommended for simplicity)
+
 ```yaml
 Service: AWS Amplify
 Deployment: Automated from Git
@@ -66,6 +67,7 @@ Cost: ~$15-50/month (depending on traffic)
 ```
 
 #### Option B: S3 + CloudFront (Recommended for production)
+
 ```yaml
 S3 Bucket Configuration:
   - Static website hosting
@@ -84,6 +86,7 @@ Cost: ~$5-30/month (depending on traffic)
 ```
 
 #### Option C: ECS Fargate with Nginx
+
 ```yaml
 Container: nginx:alpine
 Configuration:
@@ -104,6 +107,7 @@ Cost: ~$20-60/month
 ### 2. Database Layer (Supabase)
 
 **Supabase Cloud (Recommended)**
+
 ```yaml
 Plan: Pro ($25/month)
 Features:
@@ -124,6 +128,7 @@ Database Specifications:
 ```
 
 **Self-Hosted Option (Advanced)**
+
 ```yaml
 Service: RDS PostgreSQL
 Configuration:
@@ -161,7 +166,7 @@ env:
 jobs:
   deploy:
     runs-on: ubuntu-latest
-    
+
     steps:
       - name: Checkout code
         uses: actions/checkout@v3
@@ -210,6 +215,7 @@ jobs:
 ### 4. Infrastructure as Code (Terraform)
 
 **Directory Structure:**
+
 ```
 infrastructure/
 ├── main.tf
@@ -227,13 +233,14 @@ infrastructure/
 ```
 
 **Example: S3 + CloudFront Setup**
+
 ```hcl
 # infrastructure/modules/frontend/main.tf
 
 # S3 Bucket for static hosting
 resource "aws_s3_bucket" "frontend" {
   bucket = "erpx-ai-${var.environment}"
-  
+
   tags = {
     Name        = "ERPX-AI Frontend"
     Environment = var.environment
@@ -312,6 +319,7 @@ resource "aws_cloudfront_distribution" "frontend" {
 ### 5. Monitoring & Logging
 
 **CloudWatch Setup:**
+
 ```yaml
 Metrics:
   - Frontend Response Time
@@ -338,6 +346,7 @@ Dashboard:
 ```
 
 **Log Aggregation:**
+
 ```javascript
 // src/lib/logger.ts
 export const logger = {
@@ -362,6 +371,7 @@ export const logger = {
 ### 6. Security Configuration
 
 **WAF Rules:**
+
 ```yaml
 AWS WAF Rule Groups:
   - Rate limiting: 2000 requests/5min per IP
@@ -373,6 +383,7 @@ AWS WAF Rule Groups:
 ```
 
 **Secrets Management:**
+
 ```bash
 # Store sensitive values in AWS Secrets Manager
 aws secretsmanager create-secret \
@@ -390,6 +401,7 @@ aws secretsmanager get-secret-value \
 ```
 
 **SSL/TLS Configuration:**
+
 ```yaml
 Certificate: AWS Certificate Manager (ACM)
 Protocol: TLS 1.2+
@@ -400,6 +412,7 @@ HSTS: Enabled (max-age=31536000)
 ### 7. Backup & Disaster Recovery
 
 **Database Backups (Supabase):**
+
 ```yaml
 Automated:
   - Daily snapshots (7-day retention)
@@ -412,6 +425,7 @@ Manual:
 ```
 
 **Static Assets Backup:**
+
 ```yaml
 S3 Versioning: Enabled
 Lifecycle Policy:
@@ -424,12 +438,12 @@ Cross-Region Replication:
 ```
 
 **Disaster Recovery Plan:**
+
 ```yaml
 RTO (Recovery Time Objective): 1 hour
 RPO (Recovery Point Objective): 24 hours
 
-Procedures:
-  1. Database restore from Supabase backup
+Procedures: 1. Database restore from Supabase backup
   2. Frontend redeploy from last known good build
   3. DNS failover to backup region (if applicable)
   4. Verify all services operational
@@ -438,6 +452,7 @@ Procedures:
 ### 8. Cost Estimation
 
 **Small Deployment (< 1000 users):**
+
 ```
 AWS Amplify:              $20/month
 Supabase Pro:             $25/month
@@ -449,6 +464,7 @@ Total:                    ~$52/month
 ```
 
 **Medium Deployment (< 10,000 users):**
+
 ```
 S3 + CloudFront:          $30/month
 ALB:                      $25/month
@@ -462,6 +478,7 @@ Total:                    ~$146/month
 ```
 
 **Large Deployment (< 100,000 users):**
+
 ```
 S3 + CloudFront:          $100/month
 ALB:                      $25/month
@@ -494,12 +511,14 @@ Total:                    ~$875/month
 ### 10. Post-Deployment Tasks
 
 **Week 1:**
+
 - Monitor error rates and performance
 - Review CloudWatch dashboards daily
 - Test all critical user flows
 - Verify backup procedures
 
 **Month 1:**
+
 - Analyze cost reports
 - Optimize caching strategies
 - Review security logs
@@ -507,8 +526,8 @@ Total:                    ~$875/month
 - Gather user feedback
 
 **Ongoing:**
+
 - Monthly security patches
 - Quarterly dependency updates
 - Bi-annual disaster recovery drills
 - Continuous performance optimization
-

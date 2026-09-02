@@ -3,7 +3,7 @@
 **Document Version:** 1.0  
 **Last Updated:** May 16, 2026  
 **Database:** PostgreSQL 15.x  
-**Provider:** Supabase  
+**Provider:** Supabase
 
 ---
 
@@ -32,15 +32,15 @@
 
 ### Database Statistics
 
-| Metric | Value |
-|--------|-------|
-| **Total Tables** | 30+ tables |
-| **Total Indexes** | 60+ indexes |
-| **Total Constraints** | 100+ (FK, unique, check) |
-| **Total Triggers** | 15+ triggers |
-| **Total Functions** | 10+ functions |
-| **Estimated Size (1,000 companies)** | 50-100 GB |
-| **Estimated Size (10,000 companies)** | 500 GB - 1 TB |
+| Metric                                | Value                    |
+| ------------------------------------- | ------------------------ |
+| **Total Tables**                      | 30+ tables               |
+| **Total Indexes**                     | 60+ indexes              |
+| **Total Constraints**                 | 100+ (FK, unique, check) |
+| **Total Triggers**                    | 15+ triggers             |
+| **Total Functions**                   | 10+ functions            |
+| **Estimated Size (1,000 companies)**  | 50-100 GB                |
+| **Estimated Size (10,000 companies)** | 500 GB - 1 TB            |
 
 ### PostgreSQL Extensions
 
@@ -72,12 +72,14 @@ Single PostgreSQL Database
 ```
 
 **Advantages:**
+
 - ✅ Cost-effective (shared infrastructure)
 - ✅ Easy backups and maintenance
 - ✅ Simpler schema migrations
 - ✅ Cross-tenant analytics possible (for platform admins)
 
 **Security:**
+
 - **Database-level isolation** via RLS policies
 - **Application cannot bypass** RLS (enforced by PostgreSQL)
 - **Even service role** respects RLS (unless explicitly bypassed)
@@ -105,6 +107,7 @@ companies (Root tenant entity)
 ### 1. System Tables
 
 #### companies
+
 **Purpose:** Root tenant entity, represents a business using ERPX-AI
 
 ```sql
@@ -123,11 +126,13 @@ CREATE TABLE companies (
 ```
 
 **Key Fields:**
+
 - `settings` - Company preferences (JSONB for flexibility)
 - `tax_id` - Unique business registration number
 - `currency` - Default currency (SAR, USD, EUR, etc.)
 
 **Sample Data:**
+
 ```json
 {
   "id": "a1b2c3...",
@@ -143,6 +148,7 @@ CREATE TABLE companies (
 ```
 
 #### branches
+
 **Purpose:** Physical locations (stores, warehouses, offices)
 
 ```sql
@@ -161,12 +167,14 @@ CREATE TABLE branches (
 ```
 
 **Use Cases:**
+
 - Multi-store retail chains
 - Warehouse management
 - Regional offices
 - Franchises
 
 #### roles
+
 **Purpose:** Permission sets (RBAC)
 
 ```sql
@@ -183,6 +191,7 @@ CREATE TABLE roles (
 ```
 
 **Permissions Structure (JSONB):**
+
 ```json
 {
   "all": false,
@@ -202,6 +211,7 @@ CREATE TABLE roles (
 ```
 
 #### users
+
 **Purpose:** Employee/staff accounts
 
 ```sql
@@ -227,6 +237,7 @@ CREATE TABLE users (
 ```
 
 **Key Design Decisions:**
+
 - `id` references `auth.users(id)` - Links to Supabase Auth
 - `company_id` - Multi-tenant isolation
 - `branch_id` - User's primary branch (can access others)
@@ -237,6 +248,7 @@ CREATE TABLE users (
 ### 2. Finance Module Tables
 
 #### chart_of_accounts
+
 **Purpose:** Accounting chart of accounts
 
 ```sql
@@ -255,6 +267,7 @@ CREATE TABLE chart_of_accounts (
 ```
 
 **Account Types:**
+
 - Assets (1000-1999)
 - Liabilities (2000-2999)
 - Equity (3000-3999)
@@ -262,6 +275,7 @@ CREATE TABLE chart_of_accounts (
 - Expenses (5000-5999)
 
 #### journal_entries
+
 **Purpose:** Accounting journal entries
 
 ```sql
@@ -288,10 +302,12 @@ CREATE TABLE journal_entry_lines (
 ```
 
 **Double-Entry Bookkeeping:**
+
 - Every entry has equal debits and credits
 - Enforced by database constraint or application logic
 
 #### invoices
+
 **Purpose:** Customer invoices
 
 ```sql
@@ -314,6 +330,7 @@ CREATE TABLE invoices (
 ```
 
 **Invoice Statuses:**
+
 - `draft` - Being created
 - `sent` - Sent to customer
 - `paid` - Payment received
@@ -325,6 +342,7 @@ CREATE TABLE invoices (
 ### 3. Inventory Module Tables
 
 #### products
+
 **Purpose:** Products/services sold by company
 
 ```sql
@@ -345,6 +363,7 @@ CREATE TABLE products (
 ```
 
 #### inventory
+
 **Purpose:** Stock levels per branch
 
 ```sql
@@ -361,6 +380,7 @@ CREATE TABLE inventory (
 ```
 
 **Stock Tracking:**
+
 - Per product, per branch
 - `quantity_on_hand` updated on sales/purchases
 - `reorder_level` triggers low-stock alerts
@@ -370,6 +390,7 @@ CREATE TABLE inventory (
 ### 4. Sales Module Tables
 
 #### sales
+
 **Purpose:** POS transactions
 
 ```sql
@@ -381,7 +402,7 @@ CREATE TABLE sales (
   shift_id UUID REFERENCES shifts(id) ON DELETE SET NULL,
   sale_number VARCHAR(50) NOT NULL UNIQUE,
   sale_date TIMESTAMP WITH TIME ZONE NOT NULL DEFAULT NOW(),
-  payment_method VARCHAR(20) NOT NULL CHECK (payment_method IN 
+  payment_method VARCHAR(20) NOT NULL CHECK (payment_method IN
     ('cash', 'card', 'mada', 'apple_pay', 'bank_transfer', 'split')),
   subtotal DECIMAL(15, 2) NOT NULL DEFAULT 0,
   discount_amount DECIMAL(15, 2) NOT NULL DEFAULT 0,
@@ -390,7 +411,7 @@ CREATE TABLE sales (
   amount_paid DECIMAL(15, 2) NOT NULL DEFAULT 0,
   change_amount DECIMAL(15, 2) NOT NULL DEFAULT 0,
   items JSONB NOT NULL DEFAULT '[]'::jsonb,
-  status VARCHAR(20) NOT NULL DEFAULT 'completed' CHECK (status IN 
+  status VARCHAR(20) NOT NULL DEFAULT 'completed' CHECK (status IN
     ('completed', 'cancelled', 'refunded', 'on_hold')),
   notes TEXT,
   created_at TIMESTAMP WITH TIME ZONE DEFAULT NOW(),
@@ -399,21 +420,23 @@ CREATE TABLE sales (
 ```
 
 **Items Structure (JSONB):**
+
 ```json
 [
   {
     "product_id": "uuid",
     "name": "Product Name",
     "quantity": 2,
-    "unit_price": 100.00,
-    "subtotal": 200.00,
+    "unit_price": 100.0,
+    "subtotal": 200.0,
     "discount": 0,
-    "total": 200.00
+    "total": 200.0
   }
 ]
 ```
 
 #### shifts
+
 **Purpose:** Cashier shifts for POS
 
 ```sql
@@ -442,6 +465,7 @@ CREATE TABLE shifts (
 ### 5. HR Module Tables
 
 #### employees
+
 **Purpose:** Employee records (separate from users table)
 
 ```sql
@@ -466,6 +490,7 @@ CREATE TABLE employees (
 ```
 
 #### attendance
+
 **Purpose:** Daily attendance tracking
 
 ```sql
@@ -483,6 +508,7 @@ CREATE TABLE attendance (
 ```
 
 #### payroll
+
 **Purpose:** Salary payments
 
 ```sql
@@ -538,11 +564,13 @@ invoices (M) ─────── (1) customers
 **Normalization Level:** Third Normal Form (3NF)
 
 **Benefits:**
+
 - Minimal data redundancy
 - Data integrity through foreign keys
 - Easier updates (single source of truth)
 
 **Denormalization (Where Applied):**
+
 - `sales.items` - JSONB array (faster queries, less joins)
 - Materialized views for reporting (planned)
 
@@ -615,6 +643,7 @@ CREATE POLICY "products_delete_policy"
 **Problem:** Complex RLS policies can slow queries
 
 **Solutions:**
+
 1. **Indexes on company_id** - Every table has index on company_id
 2. **Function caching** - Frequently called functions (get user's company) are cached
 3. **Connection pooling** - PgBouncer reduces connection overhead
@@ -627,11 +656,13 @@ CREATE POLICY "products_delete_policy"
 ### Index Strategy
 
 **Primary Indexes:**
+
 - All primary keys (automatic unique index)
 - All foreign keys
 - `company_id` on every multi-tenant table
 
 **Secondary Indexes:**
+
 - Frequently queried columns (`status`, `date`, `email`)
 - Full-text search columns
 - Composite indexes for common query patterns
@@ -650,7 +681,7 @@ CREATE INDEX idx_sales_status ON sales(status);
 CREATE INDEX idx_sales_cashier ON sales(cashier_id);
 
 -- Composite indexes
-CREATE INDEX idx_sales_company_branch_date 
+CREATE INDEX idx_sales_company_branch_date
   ON sales(company_id, branch_id, sale_date DESC);
 
 -- Full-text search
@@ -660,12 +691,14 @@ CREATE INDEX idx_products_name_trgm ON products USING gin(name gin_trgm_ops);
 ### Query Performance
 
 **Typical Query Performance:**
+
 - Simple SELECT: 5-15ms
 - JOIN (2-3 tables): 20-50ms
 - Complex aggregation: 50-200ms
 - Full-text search: 30-100ms
 
 **Optimization Techniques:**
+
 - Use EXPLAIN ANALYZE for slow queries
 - Add indexes on WHERE/JOIN columns
 - Use materialized views for reports
@@ -678,14 +711,17 @@ CREATE INDEX idx_products_name_trgm ON products USING gin(name gin_trgm_ops);
 ### Constraints
 
 **Primary Keys:**
+
 - UUID for all tables (globally unique, distributed-friendly)
 
 **Foreign Keys:**
+
 - All relationships enforced
 - ON DELETE CASCADE for dependent data
 - ON DELETE SET NULL for optional references
 
 **Unique Constraints:**
+
 ```sql
 -- Natural unique constraints
 UNIQUE(company_id, email)         -- users
@@ -694,6 +730,7 @@ UNIQUE(company_id, invoice_number) -- invoices
 ```
 
 **Check Constraints:**
+
 ```sql
 CHECK (status IN ('active', 'inactive'))
 CHECK (total_amount >= 0)
@@ -703,6 +740,7 @@ CHECK (vat_rate BETWEEN 0 AND 1)
 ### Triggers
 
 **Auto-update Timestamps:**
+
 ```sql
 CREATE OR REPLACE FUNCTION update_updated_at_column()
 RETURNS TRIGGER AS $$
@@ -719,6 +757,7 @@ CREATE TRIGGER update_users_updated_at
 ```
 
 **Audit Logging (Future):**
+
 - Track all changes to sensitive tables
 - Store old/new values
 - Track who changed what when
@@ -728,18 +767,21 @@ CREATE TRIGGER update_users_updated_at
 ## Scalability Strategy
 
 ### Current (0-1,000 companies)
+
 - Single PostgreSQL instance (8 GB RAM)
 - Shared tables with RLS
 - ~50 GB database size
 - 1,000 concurrent connections (pooled)
 
 ### Growth (1,000-10,000 companies)
+
 - Dedicated instance (32 GB RAM)
 - Read replicas for reporting
 - ~500 GB database size
 - Partitioning by company_id (for largest tables)
 
 ### Enterprise (10,000+ companies)
+
 - Sharding by region or company size
 - Separate databases for enterprise clients
 - Multi-region read replicas
@@ -748,11 +790,13 @@ CREATE TRIGGER update_users_updated_at
 ### Table Partitioning Strategy (Future)
 
 **Large Tables to Partition:**
+
 - `sales` - Partition by date (monthly/yearly)
 - `journal_entries` - Partition by fiscal year
 - `attendance` - Partition by year
 
 **Example:**
+
 ```sql
 CREATE TABLE sales (
   -- columns
@@ -767,12 +811,14 @@ CREATE TABLE sales_2026_01 PARTITION OF sales
 ## Backup & Recovery
 
 ### Automated Backups
+
 - **Frequency:** Daily at 2 AM UTC
 - **Retention:** 7 days (Pro plan)
 - **Type:** Full database snapshot
 - **Storage:** Encrypted S3
 
 ### Point-in-Time Recovery (PITR)
+
 - **Restore to:** Any second within retention
 - **RTO:** 15-30 minutes
 - **RPO:** <1 minute (WAL logs)
@@ -782,6 +828,7 @@ CREATE TABLE sales_2026_01 PARTITION OF sales
 ## Conclusion
 
 **Database Strengths:**
+
 - ✅ Enterprise-grade PostgreSQL foundation
 - ✅ Multi-tenant architecture with database-level isolation
 - ✅ Comprehensive RLS for security
@@ -790,6 +837,7 @@ CREATE TABLE sales_2026_01 PARTITION OF sales
 - ✅ Scalable to millions of records
 
 **Future Enhancements:**
+
 - Table partitioning for large datasets
 - Materialized views for reporting
 - Full-text search optimization
@@ -798,4 +846,4 @@ CREATE TABLE sales_2026_01 PARTITION OF sales
 
 ---
 
-*Next: Section 6 - Hosting & Deployment Architecture*
+_Next: Section 6 - Hosting & Deployment Architecture_

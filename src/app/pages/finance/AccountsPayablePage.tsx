@@ -1,17 +1,71 @@
 import { DollarSign, AlertTriangle, Clock, FileText } from 'lucide-react';
 
 const payables = [
-  { id: 1, supplier: 'Tech Supplies Ltd.', invoiceNumber: 'BILL-445', amount: 32000, paid: 0, remaining: 32000, dueDate: '2026-05-10', status: 'pending', daysUntilDue: 10 },
-  { id: 2, supplier: 'Office Equipment Co.', invoiceNumber: 'BILL-441', amount: 18500, paid: 18500, remaining: 0, dueDate: '2026-04-25', status: 'paid', daysUntilDue: 0 },
-  { id: 3, supplier: 'Maintenance Services', invoiceNumber: 'BILL-438', amount: 12000, paid: 0, remaining: 12000, dueDate: '2026-04-30', status: 'due', daysUntilDue: 0 },
-  { id: 4, supplier: 'Cloud Services Inc.', invoiceNumber: 'BILL-450', amount: 8500, paid: 0, remaining: 8500, dueDate: '2026-05-15', status: 'pending', daysUntilDue: 15 },
-  { id: 5, supplier: 'Marketing Agency', invoiceNumber: 'BILL-430', amount: 45000, paid: 0, remaining: 45000, dueDate: '2026-04-15', status: 'overdue', daysUntilDue: -15 },
+  {
+    id: 1,
+    supplier: 'Tech Supplies Ltd.',
+    invoiceNumber: 'BILL-445',
+    amount: 32000,
+    paid: 0,
+    remaining: 32000,
+    dueDate: '2026-05-10',
+    status: 'pending',
+    daysUntilDue: 10,
+  },
+  {
+    id: 2,
+    supplier: 'Office Equipment Co.',
+    invoiceNumber: 'BILL-441',
+    amount: 18500,
+    paid: 18500,
+    remaining: 0,
+    dueDate: '2026-04-25',
+    status: 'paid',
+    daysUntilDue: 0,
+  },
+  {
+    id: 3,
+    supplier: 'Maintenance Services',
+    invoiceNumber: 'BILL-438',
+    amount: 12000,
+    paid: 0,
+    remaining: 12000,
+    dueDate: '2026-04-30',
+    status: 'due',
+    daysUntilDue: 0,
+  },
+  {
+    id: 4,
+    supplier: 'Cloud Services Inc.',
+    invoiceNumber: 'BILL-450',
+    amount: 8500,
+    paid: 0,
+    remaining: 8500,
+    dueDate: '2026-05-15',
+    status: 'pending',
+    daysUntilDue: 15,
+  },
+  {
+    id: 5,
+    supplier: 'Marketing Agency',
+    invoiceNumber: 'BILL-430',
+    amount: 45000,
+    paid: 0,
+    remaining: 45000,
+    dueDate: '2026-04-15',
+    status: 'overdue',
+    daysUntilDue: -15,
+  },
 ];
 
 export default function AccountsPayablePage() {
   const totalPayable = payables.reduce((sum, p) => sum + p.remaining, 0);
-  const overdueAmount = payables.filter(p => p.status === 'overdue').reduce((sum, p) => sum + p.remaining, 0);
-  const dueThisWeek = payables.filter(p => p.daysUntilDue >= 0 && p.daysUntilDue <= 7).reduce((sum, p) => sum + p.remaining, 0);
+  const overdueAmount = payables
+    .filter((p) => p.status === 'overdue')
+    .reduce((sum, p) => sum + p.remaining, 0);
+  const dueThisWeek = payables
+    .filter((p) => p.daysUntilDue >= 0 && p.daysUntilDue <= 7)
+    .reduce((sum, p) => sum + p.remaining, 0);
 
   return (
     <div className="space-y-6">
@@ -64,13 +118,27 @@ export default function AccountsPayablePage() {
           <table className="w-full">
             <thead className="bg-gray-50">
               <tr>
-                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Invoice #</th>
-                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Supplier</th>
-                <th className="px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase">Amount</th>
-                <th className="px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase">Remaining</th>
-                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Due Date</th>
-                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Status</th>
-                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Actions</th>
+                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">
+                  Invoice #
+                </th>
+                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">
+                  Supplier
+                </th>
+                <th className="px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase">
+                  Amount
+                </th>
+                <th className="px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase">
+                  Remaining
+                </th>
+                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">
+                  Due Date
+                </th>
+                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">
+                  Status
+                </th>
+                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">
+                  Actions
+                </th>
               </tr>
             </thead>
             <tbody className="divide-y">
@@ -80,8 +148,12 @@ export default function AccountsPayablePage() {
                     <span className="font-medium text-blue-600">{item.invoiceNumber}</span>
                   </td>
                   <td className="px-6 py-4 text-sm">{item.supplier}</td>
-                  <td className="px-6 py-4 text-sm text-right font-medium">${item.amount.toLocaleString()}</td>
-                  <td className="px-6 py-4 text-sm text-right font-bold">${item.remaining.toLocaleString()}</td>
+                  <td className="px-6 py-4 text-sm text-right font-medium">
+                    ${item.amount.toLocaleString()}
+                  </td>
+                  <td className="px-6 py-4 text-sm text-right font-bold">
+                    ${item.remaining.toLocaleString()}
+                  </td>
                   <td className="px-6 py-4 text-sm">{item.dueDate}</td>
                   <td className="px-6 py-4">
                     <StatusBadge status={item.status} />
@@ -112,7 +184,9 @@ function StatusBadge({ status }: { status: string }) {
   };
 
   return (
-    <span className={`inline-flex items-center px-2 py-1 rounded-full text-xs font-medium ${styles[status as keyof typeof styles]}`}>
+    <span
+      className={`inline-flex items-center px-2 py-1 rounded-full text-xs font-medium ${styles[status as keyof typeof styles]}`}
+    >
       {status.charAt(0).toUpperCase() + status.slice(1)}
     </span>
   );

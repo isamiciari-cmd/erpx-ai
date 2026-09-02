@@ -1,5 +1,5 @@
-import { useState, useEffect } from "react";
-import { motion } from "motion/react";
+import { useState, useEffect } from 'react';
+import { motion } from 'motion/react';
 import {
   Building2,
   Plus,
@@ -12,15 +12,15 @@ import {
   Edit,
   Trash2,
   Shield,
-} from "lucide-react";
+} from 'lucide-react';
 
 interface Tenant {
   id: number;
   name: string;
   domain: string;
   schema: string;
-  plan: "basic" | "pro" | "enterprise";
-  status: "active" | "suspended" | "expired";
+  plan: 'basic' | 'pro' | 'enterprise';
+  status: 'active' | 'suspended' | 'expired';
   subscriptionExpiry: string;
   userCount: number;
   createdAt: string;
@@ -31,36 +31,36 @@ const tenantAPI = {
   tenants: [
     {
       id: 1,
-      name: "Al-Noor Restaurant",
-      domain: "alnoor.erpx.sa",
-      schema: "tenant_1",
-      plan: "pro" as const,
-      status: "active" as const,
-      subscriptionExpiry: "2026-12-31",
+      name: 'Al-Noor Restaurant',
+      domain: 'alnoor.erpx.sa',
+      schema: 'tenant_1',
+      plan: 'pro' as const,
+      status: 'active' as const,
+      subscriptionExpiry: '2026-12-31',
       userCount: 25,
-      createdAt: "2024-01-15",
+      createdAt: '2024-01-15',
     },
     {
       id: 2,
-      name: "Riyadh Trading Co.",
-      domain: "riyadh-trading.erpx.sa",
-      schema: "tenant_2",
-      plan: "enterprise" as const,
-      status: "active" as const,
-      subscriptionExpiry: "2027-06-30",
+      name: 'Riyadh Trading Co.',
+      domain: 'riyadh-trading.erpx.sa',
+      schema: 'tenant_2',
+      plan: 'enterprise' as const,
+      status: 'active' as const,
+      subscriptionExpiry: '2027-06-30',
       userCount: 150,
-      createdAt: "2024-03-20",
+      createdAt: '2024-03-20',
     },
     {
       id: 3,
-      name: "Jeddah Electronics",
-      domain: "jeddah-electronics.erpx.sa",
-      schema: "tenant_3",
-      plan: "basic" as const,
-      status: "active" as const,
-      subscriptionExpiry: "2026-08-15",
+      name: 'Jeddah Electronics',
+      domain: 'jeddah-electronics.erpx.sa',
+      schema: 'tenant_3',
+      plan: 'basic' as const,
+      status: 'active' as const,
+      subscriptionExpiry: '2026-08-15',
       userCount: 10,
-      createdAt: "2025-02-10",
+      createdAt: '2025-02-10',
     },
   ] as Tenant[],
   nextId: 4,
@@ -69,7 +69,7 @@ const tenantAPI = {
     return new Promise((resolve) => setTimeout(() => resolve([...this.tenants]), 300));
   },
 
-  async create(data: Omit<Tenant, "id" | "createdAt" | "userCount">): Promise<Tenant> {
+  async create(data: Omit<Tenant, 'id' | 'createdAt' | 'userCount'>): Promise<Tenant> {
     const tenant: Tenant = {
       ...data,
       id: this.nextId++,
@@ -95,9 +95,9 @@ const tenantAPI = {
 
   getConnectionConfig(tenant: Tenant) {
     return {
-      host: "localhost",
+      host: 'localhost',
       port: 5432,
-      database: "erpx",
+      database: 'erpx',
       schema: tenant.schema,
     };
   },
@@ -105,35 +105,35 @@ const tenantAPI = {
 
 const planFeatures = {
   basic: {
-    name: "Basic",
-    color: "from-gray-500 to-gray-600",
-    price: "299 SAR/month",
-    features: ["Orders Management", "Basic Reports", "5 Users", "Email Support"],
+    name: 'Basic',
+    color: 'from-gray-500 to-gray-600',
+    price: '299 SAR/month',
+    features: ['Orders Management', 'Basic Reports', '5 Users', 'Email Support'],
   },
   pro: {
-    name: "Pro",
-    color: "from-blue-500 to-cyan-500",
-    price: "999 SAR/month",
+    name: 'Pro',
+    color: 'from-blue-500 to-cyan-500',
+    price: '999 SAR/month',
     features: [
-      "Orders + Finance",
-      "Advanced Reports",
-      "50 Users",
-      "Priority Support",
-      "Multi-Currency",
-      "ZATCA Integration",
+      'Orders + Finance',
+      'Advanced Reports',
+      '50 Users',
+      'Priority Support',
+      'Multi-Currency',
+      'ZATCA Integration',
     ],
   },
   enterprise: {
-    name: "Enterprise",
-    color: "from-purple-500 to-pink-500",
-    price: "Custom",
+    name: 'Enterprise',
+    color: 'from-purple-500 to-pink-500',
+    price: 'Custom',
     features: [
-      "Full ERP Suite",
-      "Unlimited Users",
-      "24/7 Support",
-      "Custom Integrations",
-      "Dedicated Server",
-      "White Label",
+      'Full ERP Suite',
+      'Unlimited Users',
+      '24/7 Support',
+      'Custom Integrations',
+      'Dedicated Server',
+      'White Label',
     ],
   },
 };
@@ -144,10 +144,10 @@ export default function TenantManagementPage() {
   const [selectedTenant, setSelectedTenant] = useState<Tenant | null>(null);
 
   // Form state
-  const [name, setName] = useState("");
-  const [domain, setDomain] = useState("");
-  const [plan, setPlan] = useState<Tenant["plan"]>("basic");
-  const [subscriptionExpiry, setSubscriptionExpiry] = useState("");
+  const [name, setName] = useState('');
+  const [domain, setDomain] = useState('');
+  const [plan, setPlan] = useState<Tenant['plan']>('basic');
+  const [subscriptionExpiry, setSubscriptionExpiry] = useState('');
 
   const fetchTenants = async () => {
     const data = await tenantAPI.findAll();
@@ -164,25 +164,25 @@ export default function TenantManagementPage() {
       domain,
       schema,
       plan,
-      status: "active",
+      status: 'active',
       subscriptionExpiry,
     });
 
-    setName("");
-    setDomain("");
-    setPlan("basic");
-    setSubscriptionExpiry("");
+    setName('');
+    setDomain('');
+    setPlan('basic');
+    setSubscriptionExpiry('');
     setShowForm(false);
     fetchTenants();
   };
 
-  const updateTenantStatus = async (id: number, status: Tenant["status"]) => {
+  const updateTenantStatus = async (id: number, status: Tenant['status']) => {
     await tenantAPI.update(id, { status });
     fetchTenants();
   };
 
   const deleteTenant = async (id: number) => {
-    if (confirm("Are you sure? This will delete all tenant data permanently.")) {
+    if (confirm('Are you sure? This will delete all tenant data permanently.')) {
       await tenantAPI.delete(id);
       fetchTenants();
     }
@@ -192,51 +192,51 @@ export default function TenantManagementPage() {
     fetchTenants();
   }, []);
 
-  const getStatusColor = (status: Tenant["status"]) => {
+  const getStatusColor = (status: Tenant['status']) => {
     switch (status) {
-      case "active":
-        return "bg-green-500/10 text-green-400 border-green-500/20";
-      case "suspended":
-        return "bg-yellow-500/10 text-yellow-400 border-yellow-500/20";
-      case "expired":
-        return "bg-red-500/10 text-red-400 border-red-500/20";
+      case 'active':
+        return 'bg-green-500/10 text-green-400 border-green-500/20';
+      case 'suspended':
+        return 'bg-yellow-500/10 text-yellow-400 border-yellow-500/20';
+      case 'expired':
+        return 'bg-red-500/10 text-red-400 border-red-500/20';
     }
   };
 
-  const getStatusIcon = (status: Tenant["status"]) => {
+  const getStatusIcon = (status: Tenant['status']) => {
     switch (status) {
-      case "active":
+      case 'active':
         return <CheckCircle className="w-4 h-4" />;
-      case "suspended":
-      case "expired":
+      case 'suspended':
+      case 'expired':
         return <XCircle className="w-4 h-4" />;
     }
   };
 
   const stats = [
     {
-      label: "Total Tenants",
+      label: 'Total Tenants',
       value: tenants.length.toString(),
       icon: Building2,
-      color: "from-blue-500 to-cyan-500",
+      color: 'from-blue-500 to-cyan-500',
     },
     {
-      label: "Active Tenants",
-      value: tenants.filter((t) => t.status === "active").length.toString(),
+      label: 'Active Tenants',
+      value: tenants.filter((t) => t.status === 'active').length.toString(),
       icon: CheckCircle,
-      color: "from-green-500 to-emerald-500",
+      color: 'from-green-500 to-emerald-500',
     },
     {
-      label: "Total Users",
+      label: 'Total Users',
       value: tenants.reduce((sum, t) => sum + t.userCount, 0).toString(),
       icon: Users,
-      color: "from-purple-500 to-pink-500",
+      color: 'from-purple-500 to-pink-500',
     },
     {
-      label: "Monthly Revenue",
-      value: "SAR 45,000",
+      label: 'Monthly Revenue',
+      value: 'SAR 45,000',
       icon: Crown,
-      color: "from-orange-500 to-yellow-500",
+      color: 'from-orange-500 to-yellow-500',
     },
   ];
 
@@ -275,7 +275,9 @@ export default function TenantManagementPage() {
             whileHover={{ scale: 1.02, y: -4 }}
             className="bg-gradient-to-br from-gray-900/80 to-gray-950/80 backdrop-blur-xl border border-white/10 rounded-2xl p-6 hover:border-blue-500/50 hover:shadow-2xl hover:shadow-blue-500/10 transition-all cursor-pointer"
           >
-            <div className={`w-14 h-14 bg-gradient-to-br ${stat.color} rounded-xl flex items-center justify-center shadow-lg mb-4`}>
+            <div
+              className={`w-14 h-14 bg-gradient-to-br ${stat.color} rounded-xl flex items-center justify-center shadow-lg mb-4`}
+            >
               <stat.icon className="w-7 h-7 text-white" />
             </div>
             <h3 className="text-3xl font-bold text-white mb-1">{stat.value}</h3>
@@ -296,12 +298,12 @@ export default function TenantManagementPage() {
         </h3>
         <div className="grid grid-cols-2 md:grid-cols-6 gap-4">
           {[
-            { icon: Globe, label: "Domain Routing" },
-            { icon: Shield, label: "Tenant Resolver" },
-            { icon: Database, label: "Schema Isolation" },
-            { icon: Users, label: "User Auth" },
-            { icon: Crown, label: "Subscription" },
-            { icon: CheckCircle, label: "Access Control" },
+            { icon: Globe, label: 'Domain Routing' },
+            { icon: Shield, label: 'Tenant Resolver' },
+            { icon: Database, label: 'Schema Isolation' },
+            { icon: Users, label: 'User Auth' },
+            { icon: Crown, label: 'Subscription' },
+            { icon: CheckCircle, label: 'Access Control' },
           ].map((step, i) => (
             <div key={i} className="flex flex-col items-center text-center">
               <div className="w-12 h-12 bg-gradient-to-br from-blue-500 to-cyan-500 rounded-xl flex items-center justify-center mb-2">
@@ -349,7 +351,7 @@ export default function TenantManagementPage() {
               <label className="block text-sm text-gray-400 mb-2">Subscription Plan</label>
               <select
                 value={plan}
-                onChange={(e) => setPlan(e.target.value as Tenant["plan"])}
+                onChange={(e) => setPlan(e.target.value as Tenant['plan'])}
                 className="w-full px-4 py-3 bg-white/5 border border-white/10 rounded-xl text-white focus:outline-none focus:ring-2 focus:ring-blue-500"
               >
                 <option value="basic">Basic - 299 SAR/month</option>
@@ -375,7 +377,7 @@ export default function TenantManagementPage() {
               <div
                 key={key}
                 className={`p-4 rounded-xl border ${
-                  plan === key ? "border-blue-500 bg-blue-500/10" : "border-white/10 bg-white/5"
+                  plan === key ? 'border-blue-500 bg-blue-500/10' : 'border-white/10 bg-white/5'
                 }`}
               >
                 <h4 className="text-white font-semibold mb-2">{planInfo.name}</h4>
@@ -494,7 +496,7 @@ export default function TenantManagementPage() {
                   <td className="px-6 py-4">
                     <span
                       className={`inline-flex items-center gap-2 px-3 py-1.5 rounded-full text-xs font-semibold border ${getStatusColor(
-                        tenant.status
+                        tenant.status,
                       )}`}
                     >
                       {getStatusIcon(tenant.status)}
@@ -512,11 +514,11 @@ export default function TenantManagementPage() {
                         <Edit className="w-4 h-4" />
                       </motion.button>
 
-                      {tenant.status === "active" && (
+                      {tenant.status === 'active' && (
                         <motion.button
                           whileHover={{ scale: 1.1 }}
                           whileTap={{ scale: 0.9 }}
-                          onClick={() => updateTenantStatus(tenant.id, "suspended")}
+                          onClick={() => updateTenantStatus(tenant.id, 'suspended')}
                           className="p-2 hover:bg-yellow-500/10 rounded-lg text-gray-400 hover:text-yellow-400"
                           title="Suspend"
                         >
@@ -524,11 +526,11 @@ export default function TenantManagementPage() {
                         </motion.button>
                       )}
 
-                      {tenant.status === "suspended" && (
+                      {tenant.status === 'suspended' && (
                         <motion.button
                           whileHover={{ scale: 1.1 }}
                           whileTap={{ scale: 0.9 }}
-                          onClick={() => updateTenantStatus(tenant.id, "active")}
+                          onClick={() => updateTenantStatus(tenant.id, 'active')}
                           className="p-2 hover:bg-green-500/10 rounded-lg text-gray-400 hover:text-green-400"
                           title="Activate"
                         >

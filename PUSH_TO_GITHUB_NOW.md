@@ -23,10 +23,12 @@ I **cannot** push to GitHub from Claude Code because I don't have access to your
 ### Option 1: GitHub Desktop (Easiest) ⭐
 
 **If you haven't installed it yet:**
+
 1. Download: https://desktop.github.com
 2. Install and sign in with your GitHub account
 
 **Steps:**
+
 1. Open GitHub Desktop
 2. File → Add Local Repository
 3. Choose the folder where you have this ERPX-AI project
@@ -64,6 +66,7 @@ git push -u origin main
 ```
 
 When prompted:
+
 - **Username:** `isamiciari-cmd`
 - **Password:** Paste your GitHub token (the `ghp_...` string)
 
@@ -101,6 +104,7 @@ If you already have the erpx-ai repository cloned on your computer:
 ### Vercel Will Auto-Deploy
 
 If Vercel is already connected to your GitHub repository:
+
 - It will **automatically start deploying** within 30 seconds
 - Go to: https://vercel.com/dashboard
 - You'll see a new deployment in progress
@@ -127,28 +131,36 @@ If Vercel is already connected to your GitHub repository:
 ## Troubleshooting
 
 ### "fatal: remote origin already exists"
+
 ✅ That's fine! It means the remote is already configured. Just run:
+
 ```bash
 git push -u origin main
 ```
 
 ### "Authentication failed"
+
 ❌ Your GitHub token is wrong or expired.
+
 - Get a new token: https://github.com/settings/tokens
 - Make sure you copied the full token (starts with `ghp_...`)
 
 ### "rejected - non-fast-forward"
+
 ⚠️ Someone else pushed to the repository.
+
 ```bash
 git pull origin main --rebase
 git push -u origin main
 ```
 
 ### "Could not read Username"
+
 ❌ You're trying to push from Claude Code (won't work).
 ✅ You must push from your local computer.
 
 ### "Everything up-to-date"
+
 ✅ Code is already pushed! Go check GitHub.
 
 ---
@@ -158,6 +170,7 @@ git push -u origin main
 **GitHub receives your code** → **Vercel detects the push** → **Builds your app** → **Deploys to erpx-ai.com**
 
 **Timeline:**
+
 - Push to GitHub: **Instant**
 - Vercel starts build: **~30 seconds**
 - Build completes: **~1-2 minutes**
@@ -180,6 +193,7 @@ See `DEPLOYMENT_FIX_COMPLETE.md` for detailed instructions.
 **The ONLY thing blocking deployment is pushing to GitHub.**
 
 **Easiest way:**
+
 1. Download GitHub Desktop
 2. Add this repository
 3. Click "Push origin"

@@ -1,5 +1,28 @@
-import { BarChart, Bar, LineChart, Line, PieChart, Pie, Cell, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer } from 'recharts';
-import { TrendingUp, TrendingDown, DollarSign, CreditCard, Wallet, AlertTriangle, CheckCircle, Clock } from 'lucide-react';
+import {
+  BarChart,
+  Bar,
+  LineChart,
+  Line,
+  PieChart,
+  Pie,
+  Cell,
+  XAxis,
+  YAxis,
+  CartesianGrid,
+  Tooltip,
+  Legend,
+  ResponsiveContainer,
+} from 'recharts';
+import {
+  TrendingUp,
+  TrendingDown,
+  DollarSign,
+  CreditCard,
+  Wallet,
+  AlertTriangle,
+  CheckCircle,
+  Clock,
+} from 'lucide-react';
 
 const monthlyPL = [
   { month: 'Jan', revenue: 450000, expenses: 320000, profit: 130000 },
@@ -52,20 +75,31 @@ export default function FinanceDashboardPage() {
       <div className="bg-white rounded-lg shadow p-6">
         <h2 className="text-xl font-semibold mb-4">Financial Alerts</h2>
         <div className="space-y-3">
-          {alerts.map(alert => (
-            <div key={alert.id} className={`flex items-start gap-3 p-4 rounded-lg ${
-              alert.type === 'critical' ? 'bg-red-50 border border-red-200' :
-              alert.type === 'warning' ? 'bg-yellow-50 border border-yellow-200' :
-              'bg-blue-50 border border-blue-200'
-            }`}>
-              <AlertTriangle className={`w-5 h-5 mt-0.5 ${
-                alert.type === 'critical' ? 'text-red-600' :
-                alert.type === 'warning' ? 'text-yellow-600' :
-                'text-blue-600'
-              }`} />
+          {alerts.map((alert) => (
+            <div
+              key={alert.id}
+              className={`flex items-start gap-3 p-4 rounded-lg ${
+                alert.type === 'critical'
+                  ? 'bg-red-50 border border-red-200'
+                  : alert.type === 'warning'
+                    ? 'bg-yellow-50 border border-yellow-200'
+                    : 'bg-blue-50 border border-blue-200'
+              }`}
+            >
+              <AlertTriangle
+                className={`w-5 h-5 mt-0.5 ${
+                  alert.type === 'critical'
+                    ? 'text-red-600'
+                    : alert.type === 'warning'
+                      ? 'text-yellow-600'
+                      : 'text-blue-600'
+                }`}
+              />
               <div className="flex-1">
                 <p className="font-medium">{alert.message}</p>
-                <p className="text-sm text-gray-600 mt-1">Amount: ${alert.amount.toLocaleString()}</p>
+                <p className="text-sm text-gray-600 mt-1">
+                  Amount: ${alert.amount.toLocaleString()}
+                </p>
               </div>
             </div>
           ))}
@@ -188,9 +222,27 @@ export default function FinanceDashboardPage() {
               <YAxis />
               <Tooltip formatter={(value) => `$${value.toLocaleString()}`} />
               <Legend />
-              <Line type="monotone" dataKey="revenue" stroke="#3b82f6" strokeWidth={2} name="Revenue" />
-              <Line type="monotone" dataKey="expenses" stroke="#ef4444" strokeWidth={2} name="Expenses" />
-              <Line type="monotone" dataKey="profit" stroke="#10b981" strokeWidth={2} name="Profit" />
+              <Line
+                type="monotone"
+                dataKey="revenue"
+                stroke="#3b82f6"
+                strokeWidth={2}
+                name="Revenue"
+              />
+              <Line
+                type="monotone"
+                dataKey="expenses"
+                stroke="#ef4444"
+                strokeWidth={2}
+                name="Expenses"
+              />
+              <Line
+                type="monotone"
+                dataKey="profit"
+                stroke="#10b981"
+                strokeWidth={2}
+                name="Profit"
+              />
             </LineChart>
           </ResponsiveContainer>
         </div>
@@ -283,14 +335,18 @@ function MetricCard({ title, value, change, trend, subtitle, icon, color }: any)
   return (
     <div className="bg-white rounded-lg shadow p-6">
       <div className="flex items-start justify-between mb-3">
-        <div className={`p-3 rounded-lg ${colorClasses[color]}`}>
-          {icon}
-        </div>
+        <div className={`p-3 rounded-lg ${colorClasses[color]}`}>{icon}</div>
         {change && (
-          <div className={`flex items-center gap-1 text-sm font-medium ${
-            trend === 'up' ? 'text-green-600' : 'text-red-600'
-          }`}>
-            {trend === 'up' ? <TrendingUp className="w-4 h-4" /> : <TrendingDown className="w-4 h-4" />}
+          <div
+            className={`flex items-center gap-1 text-sm font-medium ${
+              trend === 'up' ? 'text-green-600' : 'text-red-600'
+            }`}
+          >
+            {trend === 'up' ? (
+              <TrendingUp className="w-4 h-4" />
+            ) : (
+              <TrendingDown className="w-4 h-4" />
+            )}
             {change}
           </div>
         )}
@@ -309,7 +365,9 @@ function BudgetBar({ department, utilized, budget, spent }: any) {
     <div>
       <div className="flex justify-between text-sm mb-1">
         <span className="font-medium">{department}</span>
-        <span className="text-gray-600">${spent.toLocaleString()} / ${budget.toLocaleString()}</span>
+        <span className="text-gray-600">
+          ${spent.toLocaleString()} / ${budget.toLocaleString()}
+        </span>
       </div>
       <div className="w-full bg-gray-200 rounded-full h-2">
         <div className={`h-2 rounded-full ${color}`} style={{ width: `${utilized}%` }} />

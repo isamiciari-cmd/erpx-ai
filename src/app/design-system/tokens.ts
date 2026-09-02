@@ -34,16 +34,16 @@ export const designTokens = {
   // Spacing (8pt grid system)
   spacing: {
     '0': '0',
-    '1': '8px',    // 8pt
-    '2': '16px',   // 16pt
-    '3': '24px',   // 24pt
-    '4': '32px',   // 32pt
-    '5': '40px',   // 40pt
-    '6': '48px',   // 48pt
-    '7': '56px',   // 56pt
-    '8': '64px',   // 64pt
-    '10': '80px',  // 80pt
-    '12': '96px',  // 96pt
+    '1': '8px', // 8pt
+    '2': '16px', // 16pt
+    '3': '24px', // 24pt
+    '4': '32px', // 32pt
+    '5': '40px', // 40pt
+    '6': '48px', // 48pt
+    '7': '56px', // 56pt
+    '8': '64px', // 64pt
+    '10': '80px', // 80pt
+    '12': '96px', // 96pt
     '16': '128px', // 128pt
   },
 
@@ -91,10 +91,10 @@ export const designTokens = {
   colors: {
     // Brand Colors
     brand: {
-      primary: '#FFC107',      // Yellow
+      primary: '#FFC107', // Yellow
       primaryDark: '#FFA000',
       primaryLight: '#FFECB3',
-      secondary: '#000000',    // Black
+      secondary: '#000000', // Black
       secondaryDark: '#121212',
       secondaryLight: '#1E1E1E',
     },

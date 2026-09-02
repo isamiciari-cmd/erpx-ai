@@ -9,6 +9,7 @@ This document describes the complete Role-Based Access Control (RBAC) system imp
 ### ✅ Completed
 
 #### Database Layer
+
 - `001_rbac_schema.sql` - 11 tables with complete schema
 - `002_rbac_functions.sql` - 16 PostgreSQL helper functions
 - `003_rbac_policies.sql` - 40+ Row-Level Security policies
@@ -16,15 +17,18 @@ This document describes the complete Role-Based Access Control (RBAC) system imp
 - `RBAC_SETUP_GUIDE.md` - Complete setup instructions
 
 #### Frontend Hooks
+
 - `src/hooks/usePermissions.ts` - Permission checking hook
 - `src/hooks/useCurrentUserRole.ts` - User role retrieval hook
 
 #### Frontend Components
+
 - `src/components/auth/PermissionGuard.tsx` - Permission-based route guard
 - `src/components/auth/RequireRole.tsx` - Role requirement wrapper
 - `src/components/auth/RequirePermission.tsx` - Permission requirement wrapper
 
 #### Admin UI Pages
+
 - `src/pages/admin/UserManagement.tsx` - User management interface
 - `src/pages/admin/RolesPermissions.tsx` - Roles & permissions browser
 - `src/pages/admin/PermissionMatrix.tsx` - Visual permission matrix
@@ -33,6 +37,7 @@ This document describes the complete Role-Based Access Control (RBAC) system imp
 - `src/pages/admin/EmergencyAccess.tsx` - Emergency access management
 
 #### Routing
+
 - Routes added to `src/app/App.tsx`:
   - `/admin/users`
   - `/admin/roles`
@@ -42,6 +47,7 @@ This document describes the complete Role-Based Access Control (RBAC) system imp
   - `/admin/emergency-access`
 
 #### Context Integration
+
 - Updated `src/contexts/AuthContext.tsx` to use RBAC functions
 
 ---
@@ -53,6 +59,7 @@ This document describes the complete Role-Based Access Control (RBAC) system imp
 **IMPORTANT**: Follow the setup guide in `database/migrations/RBAC_SETUP_GUIDE.md`
 
 Steps summary:
+
 1. Create auth users in Supabase Dashboard
 2. Run `001_rbac_schema.sql`
 3. Run `002_rbac_functions.sql`
@@ -138,7 +145,7 @@ function UserProfile() {
       <h2>Your Role: {primaryRole?.display_name}</h2>
       <p>Level: {roleLevel}</p>
       {allRoles.length > 1 && (
-        <p>Additional roles: {allRoles.map(r => r.display_name).join(', ')}</p>
+        <p>Additional roles: {allRoles.map((r) => r.display_name).join(', ')}</p>
       )}
     </div>
   );
@@ -149,19 +156,19 @@ function UserProfile() {
 
 ## Role Hierarchy
 
-| Role | Level | Description |
-|------|-------|-------------|
-| **owner** | 1000 | Platform owner, full access to all tenants |
-| **developer** | 900 | Technical developer with debugging tools |
-| **super_admin** | 800 | Full admin access to assigned tenants |
-| **admin** | 700 | Full business access to assigned tenants |
-| **finance_manager** | 500 | Finance module access |
-| **hr_manager** | 500 | HR module access |
-| **inventory_manager** | 500 | Inventory module access |
-| **sales_manager** | 500 | Sales & CRM access |
-| **cashier** | 300 | POS system only |
-| **employee** | 200 | Limited self-service access |
-| **viewer** | 100 | Read-only access |
+| Role                  | Level | Description                                |
+| --------------------- | ----- | ------------------------------------------ |
+| **owner**             | 1000  | Platform owner, full access to all tenants |
+| **developer**         | 900   | Technical developer with debugging tools   |
+| **super_admin**       | 800   | Full admin access to assigned tenants      |
+| **admin**             | 700   | Full business access to assigned tenants   |
+| **finance_manager**   | 500   | Finance module access                      |
+| **hr_manager**        | 500   | HR module access                           |
+| **inventory_manager** | 500   | Inventory module access                    |
+| **sales_manager**     | 500   | Sales & CRM access                         |
+| **cashier**           | 300   | POS system only                            |
+| **employee**          | 200   | Limited self-service access                |
+| **viewer**            | 100   | Read-only access                           |
 
 ---
 
@@ -269,6 +276,7 @@ SELECT has_active_emergency_access('user-uuid');
 ### Row-Level Security (RLS)
 
 All tables have RLS enabled. Data access is automatically filtered based on:
+
 - User's tenant assignments
 - User's role level
 - Specific permissions
@@ -276,6 +284,7 @@ All tables have RLS enabled. Data access is automatically filtered based on:
 ### Audit Trail
 
 All sensitive actions are logged:
+
 - User creation/modification/deletion
 - Role assignments
 - Permission changes
@@ -286,6 +295,7 @@ All sensitive actions are logged:
 ### Developer Mode
 
 Developer mode provides:
+
 - Access to all audit logs
 - Database statistics
 - Function testing tools
@@ -296,6 +306,7 @@ Developer mode provides:
 ### Emergency Access
 
 Emergency access allows:
+
 - Temporary elevated permissions
 - Time-limited access (default: 24 hours)
 - Full audit logging
@@ -306,6 +317,7 @@ Emergency access allows:
 ### Owner Override
 
 Owners can:
+
 - Access all tenants
 - Bypass most permission checks
 - Perform emergency operations
@@ -319,6 +331,7 @@ Owners can:
 ### 1. Test Permission Functions
 
 Login as a user and open Developer Mode:
+
 ```
 /admin/developer-mode
 ```
@@ -328,6 +341,7 @@ Click "Test get_user_permissions()" to verify permissions are loaded correctly.
 ### 2. Test Role Guards
 
 Try accessing different admin pages with different user roles:
+
 - Owner can access all pages
 - Developer can access audit logs and developer mode
 - Admin can access user management and roles
@@ -336,6 +350,7 @@ Try accessing different admin pages with different user roles:
 ### 3. Test Permission Guards
 
 Create a test component:
+
 ```tsx
 <PermissionGuard permission="users.delete">
   <button>Delete User</button>
@@ -353,26 +368,34 @@ Perform actions and check `/admin/audit-logs` to verify events are logged.
 ## Common Issues & Troubleshooting
 
 ### "function has_permission does not exist"
+
 **Solution**: Run `002_rbac_functions.sql`
 
 ### "permission denied for table profiles"
+
 **Solution**: Run `003_rbac_policies.sql`
 
 ### User can't login after RBAC setup
-**Solution**: 
+
+**Solution**:
+
 1. Verify user exists in Supabase Auth
 2. Verify profile exists in `profiles` table
 3. Verify user has a role assigned in `user_roles` table
 4. Check `004_create_initial_users.sql` UUIDs match auth user IDs
 
 ### Permission checks always return false
+
 **Solution**:
+
 1. Verify role_permissions mappings exist
 2. Check user_roles table has correct assignments
 3. Test with `SELECT get_user_permissions('user-uuid')`
 
 ### Frontend routing not working
+
 **Solution**:
+
 1. Verify routes are added to `src/app/App.tsx`
 2. Check ProtectedRoute components
 3. Verify user is authenticated
@@ -393,6 +416,7 @@ Perform actions and check `/admin/audit-logs` to verify events are logged.
 ## Support
 
 For issues or questions:
+
 1. Check this guide
 2. Review `RBAC_SETUP_GUIDE.md`
 3. Examine SQL migration files for database details

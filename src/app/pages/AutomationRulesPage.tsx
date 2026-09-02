@@ -1,7 +1,7 @@
-import { useState, useEffect } from "react";
-import { motion } from "motion/react";
-import { Zap, CheckCircle, XCircle, Play, Pause } from "lucide-react";
-import automationEngine from "../services/AutomationEngine";
+import { useState } from 'react';
+import { motion } from 'motion/react';
+import { Zap, CheckCircle, XCircle, Play, Pause } from 'lucide-react';
+import automationEngine from '../services/AutomationEngine';
 
 export default function AutomationRulesPage() {
   const [rules, setRules] = useState(automationEngine.getRules());
@@ -14,32 +14,32 @@ export default function AutomationRulesPage() {
   };
 
   const runSimulation = async () => {
-    addLog("Starting automation simulation...");
+    addLog('Starting automation simulation...');
 
     const mockTenantData = [
       {
         id: 1,
-        name: "Acme Corp",
-        status: "active",
-        plan: "Pro",
+        name: 'Acme Corp',
+        status: 'active',
+        plan: 'Pro',
         paymentFailed: 3,
         usage: 0.6,
         revenue: 0.1,
       },
       {
         id: 2,
-        name: "TechStart Ltd",
-        status: "active",
-        plan: "Basic",
+        name: 'TechStart Ltd',
+        status: 'active',
+        plan: 'Basic',
         paymentFailed: 0,
         usage: 0.85,
         revenue: 0.15,
       },
       {
         id: 3,
-        name: "SmallBiz Co",
-        status: "active",
-        plan: "Pro",
+        name: 'SmallBiz Co',
+        status: 'active',
+        plan: 'Pro',
         paymentFailed: 0,
         usage: 0.15,
         revenue: -0.25,
@@ -47,7 +47,7 @@ export default function AutomationRulesPage() {
     ];
 
     await automationEngine.executeRules(mockTenantData);
-    addLog("Automation simulation completed. Check console for detailed logs.");
+    addLog('Automation simulation completed. Check console for detailed logs.');
   };
 
   const addLog = (message: string) => {
@@ -113,8 +113,8 @@ export default function AutomationRulesPage() {
                 transition={{ delay: i * 0.05 }}
                 className={`p-4 rounded-xl border ${
                   rule.enabled
-                    ? "bg-green-500/10 border-green-500/30"
-                    : "bg-gray-500/10 border-gray-500/30"
+                    ? 'bg-green-500/10 border-green-500/30'
+                    : 'bg-gray-500/10 border-gray-500/30'
                 }`}
               >
                 <div className="flex items-start justify-between mb-2">
@@ -135,8 +135,8 @@ export default function AutomationRulesPage() {
                     onClick={() => toggleRule(rule.id)}
                     className={`p-2 rounded-lg ${
                       rule.enabled
-                        ? "bg-red-500/20 text-red-400 hover:bg-red-500/30"
-                        : "bg-green-500/20 text-green-400 hover:bg-green-500/30"
+                        ? 'bg-red-500/20 text-red-400 hover:bg-red-500/30'
+                        : 'bg-green-500/20 text-green-400 hover:bg-green-500/30'
                     }`}
                   >
                     {rule.enabled ? <Pause className="w-4 h-4" /> : <Play className="w-4 h-4" />}

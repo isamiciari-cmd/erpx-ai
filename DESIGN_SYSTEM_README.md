@@ -9,18 +9,21 @@ A comprehensive, fully responsive design system built for modern SaaS and Food D
 ### Grid System
 
 #### Desktop (1440px+)
+
 - **12-column grid**
 - Gutter: 32px
 - Margin: 32px
 - Max width: 1440px
 
 #### Tablet (768px - 1024px)
+
 - **8-column grid**
 - Gutter: 24px
 - Margin: 24px
 - Max width: 1024px
 
 #### Mobile (375px - 480px)
+
 - **4-column grid**
 - Gutter: 16px
 - Margin: 16px
@@ -42,6 +45,7 @@ breakpoints: {
 ```
 
 **Tailwind Breakpoint Usage:**
+
 - `sm:` - 640px (Tablet)
 - `md:` - 768px (Tablet)
 - `lg:` - 1024px (Desktop)
@@ -74,8 +78,9 @@ spacing: {
 ### Fluid Typography Scale
 
 #### Headings
+
 | Element | Mobile    | Tablet    | Desktop   | Weight |
-|---------|-----------|-----------|-----------|--------|
+| ------- | --------- | --------- | --------- | ------ |
 | H1      | 36px/44px | 48px/56px | 64px/72px | 700    |
 | H2      | 28px/36px | 36px/44px | 48px/56px | 700    |
 | H3      | 24px/32px | 28px/36px | 36px/44px | 600    |
@@ -84,13 +89,15 @@ spacing: {
 | H6      | 16px/22px | 18px/24px | 20px/28px | 600    |
 
 #### Body Text
-| Type  | All Devices   | Weight |
-|-------|---------------|--------|
-| Body  | 16px/24px     | 400    |
-| Small | 14px/20px     | 400    |
-| Tiny  | 12px/16px     | 400    |
+
+| Type  | All Devices | Weight |
+| ----- | ----------- | ------ |
+| Body  | 16px/24px   | 400    |
+| Small | 14px/20px   | 400    |
+| Tiny  | 12px/16px   | 400    |
 
 **Usage in Tailwind:**
+
 ```html
 <h1 class="text-4xl sm:text-5xl lg:text-6xl">Heading 1</h1>
 <p class="text-base">Body text</p>
@@ -136,12 +143,11 @@ Auto-adjusting container with max-width constraints:
 ```tsx
 import { ResponsiveContainer } from './design-system/components/ResponsiveContainer';
 
-<ResponsiveContainer>
-  {/* Content */}
-</ResponsiveContainer>
+<ResponsiveContainer>{/* Content */}</ResponsiveContainer>;
 ```
 
 **Features:**
+
 - Mobile: max-width 375px, padding 16px
 - Tablet: max-width 768px, padding 24px
 - Desktop: max-width 1440px, padding 32px
@@ -155,12 +161,14 @@ Flexible grid system with breakpoint-specific columns:
 ```tsx
 import { ResponsiveGrid } from './design-system/components/ResponsiveContainer';
 
-<ResponsiveGrid 
+<ResponsiveGrid
   cols={{ mobile: 1, tablet: 2, desktop: 3 }}
   gap={{ mobile: 4, tablet: 6, desktop: 8 }}
 >
-  {items.map(item => <Card {...item} />)}
-</ResponsiveGrid>
+  {items.map((item) => (
+    <Card {...item} />
+  ))}
+</ResponsiveGrid>;
 ```
 
 ---
@@ -168,6 +176,7 @@ import { ResponsiveGrid } from './design-system/components/ResponsiveContainer';
 ### 3. Buttons
 
 #### Variants
+
 - `primary` - Yellow gradient (main actions)
 - `secondary` - Black with border
 - `outline` - Transparent with border
@@ -176,6 +185,7 @@ import { ResponsiveGrid } from './design-system/components/ResponsiveContainer';
 - `success` - Green gradient (positive)
 
 #### Sizes
+
 - `sm` - 36px height (mobile: 32px)
 - `md` - 44px height (mobile: 40px)
 - `lg` - 52px height (mobile: 48px)
@@ -190,8 +200,8 @@ import { ResponsiveButton } from './design-system/components/ResponsiveButton';
 </ResponsiveButton>
 
 // With Icon
-<ResponsiveButton 
-  variant="primary" 
+<ResponsiveButton
+  variant="primary"
   leftIcon={<Plus size={20} />}
 >
   Add Item
@@ -213,12 +223,14 @@ import { ResponsiveButton } from './design-system/components/ResponsiveButton';
 ### 4. Cards
 
 #### Variants
+
 - `elevated` - Shadow elevation
 - `outlined` - Border outline
 - `filled` - Filled background
 - `glass` - Glassmorphism effect
 
 #### Padding
+
 - `none` - No padding
 - `sm` - Small (16px mobile, 20px tablet)
 - `md` - Medium (20px mobile, 24px tablet)
@@ -228,8 +240,8 @@ import { ResponsiveButton } from './design-system/components/ResponsiveButton';
 ```tsx
 import { ResponsiveCard } from './design-system/components/ResponsiveCard';
 
-<ResponsiveCard 
-  variant="glass" 
+<ResponsiveCard
+  variant="glass"
   padding="lg"
   hoverable
   clickable
@@ -237,7 +249,7 @@ import { ResponsiveCard } from './design-system/components/ResponsiveCard';
 >
   <h3>Card Title</h3>
   <p>Card content...</p>
-</ResponsiveCard>
+</ResponsiveCard>;
 ```
 
 ---
@@ -259,7 +271,7 @@ import { FoodCard } from './design-system/components/ResponsiveCard';
   image="https://example.com/pizza.jpg"
   inStock={true}
   onClick={() => handleOrderClick()}
-/>
+/>;
 ```
 
 ---
@@ -271,13 +283,7 @@ KPI / metric display card:
 ```tsx
 import { StatCard } from './design-system/components/ResponsiveCard';
 
-<StatCard
-  label="Total Revenue"
-  value="$24,580"
-  change="+12.5%"
-  trend="up"
-  icon={<DollarSign />}
-/>
+<StatCard label="Total Revenue" value="$24,580" change="+12.5%" trend="up" icon={<DollarSign />} />;
 ```
 
 ---
@@ -285,15 +291,18 @@ import { StatCard } from './design-system/components/ResponsiveCard';
 ### 7. Navigation
 
 #### Desktop Sidebar
+
 - Full width with labels
 - Collapsible to icon-only
 - Active state indicators
 
 #### Tablet Sidebar
+
 - Icon-only sidebar (80px width)
 - Tooltip on hover
 
 #### Mobile
+
 - **Bottom Navigation Bar** (4 main items)
 - **Hamburger Menu** (drawer from left)
 
@@ -312,7 +321,7 @@ const logo = (
   </div>
 );
 
-<ResponsiveNavigation logo={logo} items={navItems} />
+<ResponsiveNavigation logo={logo} items={navItems} />;
 ```
 
 ---
@@ -322,6 +331,7 @@ const logo = (
 ### Layout Adaptation
 
 #### Desktop (1440px+)
+
 ```
 ┌────────────┬──────────────────────────────┐
 │            │                              │
@@ -335,6 +345,7 @@ const logo = (
 ```
 
 #### Tablet (768px - 1024px)
+
 ```
 ┌───┬─────────────────────────────────────┐
 │   │                                     │
@@ -350,6 +361,7 @@ const logo = (
 ```
 
 #### Mobile (375px - 480px)
+
 ```
 ┌─────────────────────────────────────────┐
 │  ☰  Logo                      [Profile] │  ← Hamburger Menu
@@ -376,7 +388,10 @@ const logo = (
 ### Dashboard Page Structure
 
 ```tsx
-import { ResponsiveContainer, ResponsiveGrid } from './design-system/components/ResponsiveContainer';
+import {
+  ResponsiveContainer,
+  ResponsiveGrid,
+} from './design-system/components/ResponsiveContainer';
 import { ResponsiveButton } from './design-system/components/ResponsiveButton';
 import { StatCard } from './design-system/components/ResponsiveCard';
 
@@ -385,19 +400,12 @@ export default function Dashboard() {
     <ResponsiveContainer className="py-8">
       {/* Header */}
       <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between mb-8">
-        <h1 className="text-3xl sm:text-4xl lg:text-5xl font-bold">
-          Dashboard
-        </h1>
-        <ResponsiveButton variant="primary">
-          New Order
-        </ResponsiveButton>
+        <h1 className="text-3xl sm:text-4xl lg:text-5xl font-bold">Dashboard</h1>
+        <ResponsiveButton variant="primary">New Order</ResponsiveButton>
       </div>
 
       {/* Stats Grid */}
-      <ResponsiveGrid 
-        cols={{ mobile: 2, tablet: 2, desktop: 4 }}
-        className="mb-8"
-      >
+      <ResponsiveGrid cols={{ mobile: 2, tablet: 2, desktop: 4 }} className="mb-8">
         <StatCard {...stat1} />
         <StatCard {...stat2} />
         <StatCard {...stat3} />
@@ -421,18 +429,15 @@ All components support dark mode through Tailwind's dark: prefix:
 
 ```html
 <!-- Card that adapts to theme -->
-<div class="bg-white dark:bg-gray-900 text-gray-900 dark:text-white">
-  Content
-</div>
+<div class="bg-white dark:bg-gray-900 text-gray-900 dark:text-white">Content</div>
 ```
 
 **Toggle Implementation:**
+
 ```tsx
 const [darkMode, setDarkMode] = useState(false);
 
-<div className={darkMode ? 'dark' : ''}>
-  {/* App content */}
-</div>
+<div className={darkMode ? 'dark' : ''}>{/* App content */}</div>;
 ```
 
 ---
@@ -440,25 +445,32 @@ const [darkMode, setDarkMode] = useState(false);
 ## ✅ Best Practices
 
 ### 1. Always Use Responsive Components
+
 ❌ Don't: `<div className="w-[600px]">`
 ✅ Do: `<ResponsiveContainer>`
 
 ### 2. Mobile-First Approach
+
 ❌ Don't: `lg:text-xl md:text-lg text-base`
 ✅ Do: `text-base md:text-lg lg:text-xl`
 
 ### 3. Use the 8pt Grid
+
 ❌ Don't: `gap-5` (20px)
 ✅ Do: `gap-4` (32px) or `gap-6` (48px)
 
 ### 4. Proper Breakpoint Testing
+
 Test on actual devices or use browser DevTools:
+
 - iPhone SE (375px)
 - iPad (768px)
 - Desktop (1440px)
 
 ### 5. Touch Targets on Mobile
+
 Minimum 44x44px for all interactive elements:
+
 ```tsx
 <ResponsiveButton size="md"> // 44px height on mobile
 ```
@@ -495,7 +507,7 @@ src/app/pages/
    ```tsx
    import { ResponsiveContainer } from '../design-system/components/ResponsiveContainer';
    import { ResponsiveButton } from '../design-system/components/ResponsiveButton';
-   
+
    export default function MyPage() {
      return (
        <ResponsiveContainer>
@@ -511,6 +523,7 @@ src/app/pages/
 ## 🎨 Figma Integration (Future)
 
 This design system can be exported to Figma with:
+
 - Auto Layout components
 - Variants (Primary/Secondary/etc.)
 - Responsive frames (Mobile/Tablet/Desktop)
@@ -530,6 +543,7 @@ This design system can be exported to Figma with:
 ## 🤝 Contributing
 
 When adding new components:
+
 1. Follow the 8pt grid system
 2. Add responsive breakpoints
 3. Support dark mode

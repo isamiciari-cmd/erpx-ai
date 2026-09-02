@@ -7,15 +7,21 @@ const supabaseUrl = import.meta.env.VITE_SUPABASE_URL || '';
 const supabaseAnonKey = import.meta.env.VITE_SUPABASE_ANON_KEY || '';
 
 console.log('[Supabase] Environment variables:');
-console.log('[Supabase] VITE_SUPABASE_URL:', supabaseUrl ? `✓ ${supabaseUrl.substring(0, 30)}...` : '✗ Missing');
-console.log('[Supabase] VITE_SUPABASE_ANON_KEY:', supabaseAnonKey ? `✓ ${supabaseAnonKey.substring(0, 20)}...` : '✗ Missing');
+console.log(
+  '[Supabase] VITE_SUPABASE_URL:',
+  supabaseUrl ? `✓ ${supabaseUrl.substring(0, 30)}...` : '✗ Missing',
+);
+console.log(
+  '[Supabase] VITE_SUPABASE_ANON_KEY:',
+  supabaseAnonKey ? `✓ ${supabaseAnonKey.substring(0, 20)}...` : '✗ Missing',
+);
 
 // Check if Supabase is configured
 export const hasSupabaseConfig = Boolean(
   supabaseUrl &&
   supabaseAnonKey &&
   supabaseUrl !== 'your_supabase_url_here' &&
-  supabaseAnonKey !== 'your_supabase_anon_key_here'
+  supabaseAnonKey !== 'your_supabase_anon_key_here',
 );
 
 // Flag to indicate if running in demo mode (no Supabase credentials)
@@ -75,7 +81,10 @@ export interface Database {
           created_at: string;
           updated_at: string;
         };
-        Insert: Omit<Database['public']['Tables']['users']['Row'], 'id' | 'created_at' | 'updated_at'>;
+        Insert: Omit<
+          Database['public']['Tables']['users']['Row'],
+          'id' | 'created_at' | 'updated_at'
+        >;
         Update: Partial<Database['public']['Tables']['users']['Insert']>;
       };
       companies: {
@@ -96,7 +105,10 @@ export interface Database {
           created_at: string;
           updated_at: string;
         };
-        Insert: Omit<Database['public']['Tables']['companies']['Row'], 'id' | 'created_at' | 'updated_at'>;
+        Insert: Omit<
+          Database['public']['Tables']['companies']['Row'],
+          'id' | 'created_at' | 'updated_at'
+        >;
         Update: Partial<Database['public']['Tables']['companies']['Insert']>;
       };
       roles: {
@@ -129,7 +141,10 @@ export interface Database {
           created_at: string;
           updated_at: string;
         };
-        Insert: Omit<Database['public']['Tables']['customers']['Row'], 'id' | 'created_at' | 'updated_at'>;
+        Insert: Omit<
+          Database['public']['Tables']['customers']['Row'],
+          'id' | 'created_at' | 'updated_at'
+        >;
         Update: Partial<Database['public']['Tables']['customers']['Insert']>;
       };
       products: {
@@ -149,7 +164,10 @@ export interface Database {
           created_at: string;
           updated_at: string;
         };
-        Insert: Omit<Database['public']['Tables']['products']['Row'], 'id' | 'created_at' | 'updated_at'>;
+        Insert: Omit<
+          Database['public']['Tables']['products']['Row'],
+          'id' | 'created_at' | 'updated_at'
+        >;
         Update: Partial<Database['public']['Tables']['products']['Insert']>;
       };
       inventory: {
@@ -163,7 +181,10 @@ export interface Database {
           created_at: string;
           updated_at: string;
         };
-        Insert: Omit<Database['public']['Tables']['inventory']['Row'], 'id' | 'created_at' | 'updated_at'>;
+        Insert: Omit<
+          Database['public']['Tables']['inventory']['Row'],
+          'id' | 'created_at' | 'updated_at'
+        >;
         Update: Partial<Database['public']['Tables']['inventory']['Insert']>;
       };
       invoices: {
@@ -185,7 +206,10 @@ export interface Database {
           created_at: string;
           updated_at: string;
         };
-        Insert: Omit<Database['public']['Tables']['invoices']['Row'], 'id' | 'created_at' | 'updated_at'>;
+        Insert: Omit<
+          Database['public']['Tables']['invoices']['Row'],
+          'id' | 'created_at' | 'updated_at'
+        >;
         Update: Partial<Database['public']['Tables']['invoices']['Insert']>;
       };
       sales_orders: {
@@ -201,7 +225,10 @@ export interface Database {
           created_at: string;
           updated_at: string;
         };
-        Insert: Omit<Database['public']['Tables']['sales_orders']['Row'], 'id' | 'created_at' | 'updated_at'>;
+        Insert: Omit<
+          Database['public']['Tables']['sales_orders']['Row'],
+          'id' | 'created_at' | 'updated_at'
+        >;
         Update: Partial<Database['public']['Tables']['sales_orders']['Insert']>;
       };
     };

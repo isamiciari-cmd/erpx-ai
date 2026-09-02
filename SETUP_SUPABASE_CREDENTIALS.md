@@ -28,11 +28,13 @@
 4. **Copy these two values:**
 
    **Project URL** (looks like this):
+
    ```
    https://abcdefghijklmnop.supabase.co
    ```
-   
+
    **anon/public key** (looks like this):
+
    ```
    eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImFiY2RlZmdoaWprbG1ub3AiLCJyb2xlIjoiYW5vbiIsImlhdCI6MTYyMzg2MzI4OCwiZXhwIjoxOTM5NDM5Mjg4fQ.abc123def456ghi789
    ```
@@ -46,12 +48,14 @@
 2. **Replace these two lines:**
 
    **BEFORE:**
+
    ```env
    VITE_SUPABASE_URL=https://your-project-id.supabase.co
    VITE_SUPABASE_ANON_KEY=your-anon-key-here
    ```
 
    **AFTER** (with your actual values):
+
    ```env
    VITE_SUPABASE_URL=https://abcdefghijklmnop.supabase.co
    VITE_SUPABASE_ANON_KEY=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImFiY2RlZmdoaWprbG1ub3AiLCJyb2xlIjoiYW5vbiIsImlhdCI6MTYyMzg2MzI4OCwiZXhwIjoxOTM5NDM5Mjg4fQ.abc123def456ghi789
@@ -64,6 +68,7 @@
 ### Step 3: Restart Your Dev Server
 
 **If running locally:**
+
 ```bash
 # Stop the dev server (Ctrl+C)
 # Start it again
@@ -73,6 +78,7 @@ pnpm dev
 ```
 
 **If deployed on Vercel:**
+
 1. Go to Vercel dashboard
 2. Go to your project
 3. Click **"Settings"** → **"Environment Variables"**
@@ -88,12 +94,14 @@ pnpm dev
 Open your browser console and you should now see:
 
 **BEFORE (Error):**
+
 ```
 [Supabase] ⚠️ Running in DEMO MODE - Supabase credentials not configured
 [AuthProvider] ❌ Missing Supabase environment variables
 ```
 
 **AFTER (Success):**
+
 ```
 [Supabase] Initializing Supabase client...
 [Supabase] VITE_SUPABASE_URL: ✓ https://abcdefghijklmnop.supabase.co...
@@ -142,6 +150,7 @@ Open your browser console and you should now see:
 ### Issue: "Still showing DEMO MODE after updating .env"
 
 **Solution:**
+
 1. Make sure you saved the `.env` file
 2. Restart your dev server (Ctrl+C and start again)
 3. Clear browser cache and reload
@@ -150,6 +159,7 @@ Open your browser console and you should now see:
 ### Issue: "VITE_SUPABASE_URL: ✗ Missing"
 
 **Solution:**
+
 1. Open `.env` file
 2. Make sure the line starts with `VITE_SUPABASE_URL=` (no spaces)
 3. Make sure there's no quotes around the URL
@@ -158,6 +168,7 @@ Open your browser console and you should now see:
 ### Issue: "VITE_SUPABASE_ANON_KEY: ✗ Missing"
 
 **Solution:**
+
 1. Open `.env` file
 2. Make sure the line starts with `VITE_SUPABASE_ANON_KEY=` (no spaces)
 3. Make sure there's no quotes around the key
@@ -167,6 +178,7 @@ Open your browser console and you should now see:
 ### Issue: "Environment variables not loading in Vite"
 
 **Solution:**
+
 1. Make sure variables start with `VITE_` prefix
 2. Restart dev server after changing `.env`
 3. Check `.env` is in project root (same folder as `package.json`)
@@ -177,10 +189,12 @@ Open your browser console and you should now see:
 ## Security Notes
 
 ### ✅ Safe to Use
+
 - **anon/public key** - This is safe to expose in frontend code
 - It's designed to be public and has Row-Level Security (RLS) protection
 
 ### ❌ Never Use in Frontend
+
 - **service_role key** - NEVER put this in `.env` or frontend code
 - This bypasses RLS and should only be used in secure backend code
 
@@ -241,19 +255,24 @@ VITE_DEV_AUTH_BYPASS=false
 If you're still seeing the error after following these steps:
 
 1. **Check the `.env` file location:**
+
    ```bash
    ls -la .env
    ```
+
    Should show the file exists
 
 2. **Check the `.env` file content:**
+
    ```bash
    cat .env
    ```
+
    Should show your actual values (not placeholders)
 
 3. **Check environment variables are loaded:**
    Add this temporarily to your code:
+
    ```typescript
    console.log('VITE_SUPABASE_URL:', import.meta.env.VITE_SUPABASE_URL);
    console.log('VITE_SUPABASE_ANON_KEY:', import.meta.env.VITE_SUPABASE_ANON_KEY?.substring(0, 20));

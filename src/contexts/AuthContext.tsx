@@ -1,16 +1,8 @@
-import {
-  createContext,
-  useContext,
-  useEffect,
-  useState,
-} from 'react';
+import { createContext, useContext, useEffect, useState } from 'react';
 
 import type { ReactNode } from 'react';
 
-import {
-  User as SupabaseUser,
-  Session,
-} from '@supabase/supabase-js';
+import { User as SupabaseUser, Session } from '@supabase/supabase-js';
 
 import { supabase, isDemoMode, getDemoUser } from '../lib/supabase';
 import { UserWithDetails as User } from '../services/usersService';
@@ -21,22 +13,13 @@ interface AuthContextType {
   user: User | null;
   loading: boolean;
 
-  signIn: (
-    email: string,
-    password: string
-  ) => Promise<void>;
+  signIn: (email: string, password: string) => Promise<void>;
 
-  signUp: (
-    email: string,
-    password: string,
-    userData: any
-  ) => Promise<void>;
+  signUp: (email: string, password: string, userData: any) => Promise<void>;
 
   signOut: () => Promise<void>;
 
-  hasPermission: (
-    permission: string
-  ) => Promise<boolean>;
+  hasPermission: (permission: string) => Promise<boolean>;
 
   isAdmin: () => Promise<boolean>;
   isManager: () => Promise<boolean>;
@@ -47,7 +30,10 @@ const DEV_ERPX_DASHBOARD_OVERRIDE_USER_ID = 'b54274f7-7550-4200-84c5-33e143f2ee6
 const DEV_ERPX_DASHBOARD_OVERRIDE_USER_EMAIL = 'i.sami.ciari@erpx-ai.net';
 
 const isDevErpxDashboardOverrideUser = (authUser: SupabaseUser | null | undefined) => {
-  const viteEnv = typeof import.meta !== 'undefined' && 'env' in import.meta ? (import.meta as any).env : undefined;
+  const viteEnv =
+    typeof import.meta !== 'undefined' && 'env' in import.meta
+      ? (import.meta as any).env
+      : undefined;
 
   if (!viteEnv?.DEV || !authUser?.id || !authUser?.email) {
     return false;
@@ -86,9 +72,7 @@ export function useAuth() {
   const context = useContext(AuthContext);
 
   if (!context) {
-    throw new Error(
-      'useAuth must be used within an AuthProvider'
-    );
+    throw new Error('useAuth must be used within an AuthProvider');
   }
 
   return context;
@@ -98,20 +82,14 @@ interface AuthProviderProps {
   children: ReactNode;
 }
 
-export function AuthProvider({
-  children,
-}: AuthProviderProps) {
-  const [currentUser, setCurrentUser] =
-    useState<SupabaseUser | null>(null);
+export function AuthProvider({ children }: AuthProviderProps) {
+  const [currentUser, setCurrentUser] = useState<SupabaseUser | null>(null);
 
-  const [session, setSession] =
-    useState<Session | null>(null);
+  const [session, setSession] = useState<Session | null>(null);
 
-  const [user, setUser] =
-    useState<User | null>(null);
+  const [user, setUser] = useState<User | null>(null);
 
-  const [loading, setLoading] =
-    useState(true);
+  const [loading, setLoading] = useState(true);
 
   const setDemoSession = (email: string) => {
     const demoUser = getDemoUser(email);
@@ -153,19 +131,14 @@ export function AuthProvider({
    * IMPORTANT:
    * users.id = auth.users.id
    */
-  const loadUserProfile = async (
-    authUser: SupabaseUser | null
-  ) => {
+  const loadUserProfile = async (authUser: SupabaseUser | null) => {
     if (!authUser) {
       setUser(null);
       return;
     }
 
     try {
-      console.log(
-        '[AuthProvider] Loading ERPX user:',
-        authUser.id
-      );
+      console.log('[AuthProvider] Loading ERPX user:', authUser.id);
 
       /*
        * First load the user record only.
@@ -176,25 +149,19 @@ export function AuthProvider({
        * This avoids PostgREST relationship errors
        * while authentication is initialized.
        */
-      const {
-        data,
-        error,
-      } = await supabase
+      const { data, error } = await supabase
         .from('users')
         .select('*')
         .eq('id', authUser.id)
         .maybeSingle();
 
       if (error) {
-        console.error(
-          '[AuthProvider] Failed to load ERPX user:',
-          error
-        );
+        console.error('[AuthProvider] Failed to load ERPX user:', error);
 
         if (isDevErpxDashboardOverrideUser(authUser)) {
           console.warn(
             '[AuthProvider] DEV ERPX dashboard override used because profile query failed for',
-            authUser.email
+            authUser.email,
           );
 
           const fallbackUser = createDevErpxDashboardOverrideUser(authUser);
@@ -207,15 +174,12 @@ export function AuthProvider({
       }
 
       if (!data) {
-        console.warn(
-          '[AuthProvider] No ERPX user profile found:',
-          authUser.id
-        );
+        console.warn('[AuthProvider] No ERPX user profile found:', authUser.id);
 
         if (isDevErpxDashboardOverrideUser(authUser)) {
           console.warn(
             '[AuthProvider] DEV ERPX dashboard override used because the ERPX profile was missing for',
-            authUser.email
+            authUser.email,
           );
 
           const fallbackUser = createDevErpxDashboardOverrideUser(authUser);
@@ -231,11 +195,7 @@ export function AuthProvider({
       const profileIsMissingTenant = !data.company_id || !data.branch_id;
       const profileIsInactive = data.status && String(data.status).toLowerCase() !== 'active';
 
-      if (
-        profileIsMissingRole ||
-        profileIsMissingTenant ||
-        profileIsInactive
-      ) {
+      if (profileIsMissingRole || profileIsMissingTenant || profileIsInactive) {
         if (isDevErpxDashboardOverrideUser(authUser)) {
           const fallbackUser = createDevErpxDashboardOverrideUser(authUser);
           setUser(fallbackUser);
@@ -246,24 +206,18 @@ export function AuthProvider({
         return;
       }
 
-      console.log(
-        '[AuthProvider] ERPX user loaded:',
-        {
-          id: data.id,
-          email: data.email,
-          company_id: data.company_id,
-          branch_id: data.branch_id,
-          role_id: data.role_id,
-          status: data.status,
-        }
-      );
+      console.log('[AuthProvider] ERPX user loaded:', {
+        id: data.id,
+        email: data.email,
+        company_id: data.company_id,
+        branch_id: data.branch_id,
+        role_id: data.role_id,
+        status: data.status,
+      });
 
       setUser(data as User);
     } catch (error) {
-      console.error(
-        '[AuthProvider] Unexpected profile error:',
-        error
-      );
+      console.error('[AuthProvider] Unexpected profile error:', error);
 
       setUser(null);
     }
@@ -284,10 +238,10 @@ export function AuthProvider({
           setLoading(false);
         }
       }, 6000);
+
+      console.log('[AuthProvider] initializeAuth - checking Supabase session');
       try {
-        console.log(
-          '[AuthProvider] Initializing authentication...'
-        );
+        console.log('[AuthProvider] Initializing authentication...');
 
         if (isDemoMode) {
           const storedEmail = localStorage.getItem('erpx_demo_email');
@@ -303,20 +257,21 @@ export function AuthProvider({
           return;
         }
 
-        const {
-          data,
-          error,
-        } = await supabase.auth.getSession();
+        const { data, error } = await supabase.auth.getSession();
+
+        console.log('[AuthProvider] getSession result', {
+          hasSession: !!data.session,
+          userId: data.session?.user?.id ?? null,
+          email: data.session?.user?.email ?? null,
+          error: error?.message ?? null,
+        });
 
         if (!mounted) {
           return;
         }
 
         if (error) {
-          console.error(
-            '[AuthProvider] getSession error:',
-            error
-          );
+          console.error('[AuthProvider] getSession error:', error);
 
           setSession(null);
           setCurrentUser(null);
@@ -329,14 +284,10 @@ export function AuthProvider({
         const currentSession = data.session;
 
         setSession(currentSession);
-        setCurrentUser(
-          currentSession?.user ?? null
-        );
+        setCurrentUser(currentSession?.user ?? null);
 
         if (currentSession?.user) {
-          await loadUserProfile(
-            currentSession.user
-          );
+          await loadUserProfile(currentSession.user);
         } else {
           setUser(null);
         }
@@ -345,10 +296,7 @@ export function AuthProvider({
           setLoading(false);
         }
       } catch (error) {
-        console.error(
-          '[AuthProvider] Authentication initialization failed:',
-          error
-        );
+        console.error('[AuthProvider] Authentication initialization failed:', error);
 
         if (mounted) {
           setSession(null);
@@ -364,39 +312,31 @@ export function AuthProvider({
     /**
      * Listen for Supabase authentication changes.
      */
-    const {
-      data: authListener,
-    } =
-      supabase.auth.onAuthStateChange(
-        async (_event, newSession) => {
-          if (!mounted) {
-            return;
-          }
+    const { data: authListener } = supabase.auth.onAuthStateChange(async (_event, newSession) => {
+      if (!mounted) {
+        return;
+      }
 
-          console.log(
-            '[AuthProvider] Auth state changed:',
-            _event
-          );
+      console.log('[AuthProvider] Auth state changed:', _event, {
+        hasSession: !!newSession,
+        userId: newSession?.user?.id ?? null,
+        email: newSession?.user?.email ?? null,
+      });
 
-          setSession(newSession);
+      setSession(newSession);
 
-          setCurrentUser(
-            newSession?.user ?? null
-          );
+      setCurrentUser(newSession?.user ?? null);
 
-          if (newSession?.user) {
-            await loadUserProfile(
-              newSession.user
-            );
-          } else {
-            setUser(null);
-          }
+      if (newSession?.user) {
+        await loadUserProfile(newSession.user);
+      } else {
+        setUser(null);
+      }
 
-          if (mounted) {
-            setLoading(false);
-          }
-        }
-      );
+      if (mounted) {
+        setLoading(false);
+      }
+    });
 
     return () => {
       mounted = false;
@@ -408,18 +348,13 @@ export function AuthProvider({
   /**
    * Sign in.
    */
-  const signIn = async (
-    email: string,
-    password: string
-  ) => {
+  const signIn = async (email: string, password: string) => {
     if (isDemoMode) {
       setDemoSession(email.trim() || 'admin@erpx-ai.com');
       return;
     }
 
-    const {
-      error,
-    } = await supabase.auth.signInWithPassword({
+    const { error } = await supabase.auth.signInWithPassword({
       email,
       password,
     });
@@ -432,15 +367,8 @@ export function AuthProvider({
   /**
    * Sign up.
    */
-  const signUp = async (
-    email: string,
-    password: string,
-    userData: any
-  ) => {
-    const {
-      data,
-      error,
-    } = await supabase.auth.signUp({
+  const signUp = async (email: string, password: string, userData: any) => {
+    const { data, error } = await supabase.auth.signUp({
       email,
       password,
     });
@@ -450,15 +378,9 @@ export function AuthProvider({
     }
 
     if (data.user) {
-      console.log(
-        '[AuthProvider] Supabase user created:',
-        data.user.id
-      );
+      console.log('[AuthProvider] Supabase user created:', data.user.id);
 
-      console.log(
-        '[AuthProvider] Registration data:',
-        userData
-      );
+      console.log('[AuthProvider] Registration data:', userData);
     }
   };
 
@@ -474,9 +396,7 @@ export function AuthProvider({
       return;
     }
 
-    const {
-      error,
-    } = await supabase.auth.signOut();
+    const { error } = await supabase.auth.signOut();
 
     if (error) {
       throw error;
@@ -490,9 +410,7 @@ export function AuthProvider({
   /**
    * Permission check.
    */
-  const hasPermission = async (
-    permission: string
-  ): Promise<boolean> => {
+  const hasPermission = async (permission: string): Promise<boolean> => {
     if (!currentUser) {
       return false;
     }
@@ -503,36 +421,29 @@ export function AuthProvider({
 
     if (isDemoMode) {
       const email = currentUser.email || '';
-      return email.includes('admin') || email.includes('developer') || email.includes('manager') || permission === 'view_dashboard';
+      return (
+        email.includes('admin') ||
+        email.includes('developer') ||
+        email.includes('manager') ||
+        permission === 'view_dashboard'
+      );
     }
 
     try {
-      const {
-        data,
-        error,
-      } = await supabase.rpc(
-        'has_permission',
-        {
-          p_user_id: currentUser.id,
-          p_permission_key: permission,
-        }
-      );
+      const { data, error } = await supabase.rpc('has_permission', {
+        p_user_id: currentUser.id,
+        p_permission_key: permission,
+      });
 
       if (error) {
-        console.error(
-          '[AuthProvider] Permission error:',
-          error
-        );
+        console.error('[AuthProvider] Permission error:', error);
 
         return false;
       }
 
       return data === true;
     } catch (error) {
-      console.error(
-        '[AuthProvider] Permission check failed:',
-        error
-      );
+      console.error('[AuthProvider] Permission check failed:', error);
 
       return false;
     }
@@ -556,10 +467,7 @@ export function AuthProvider({
     }
 
     try {
-      const [
-        adminResult,
-        superAdminResult,
-      ] = await Promise.all([
+      const [adminResult, superAdminResult] = await Promise.all([
         supabase.rpc('has_role', {
           p_user_id: currentUser.id,
           p_role_name: 'admin',
@@ -572,28 +480,16 @@ export function AuthProvider({
       ]);
 
       if (adminResult.error) {
-        console.error(
-          '[AuthProvider] Admin role error:',
-          adminResult.error
-        );
+        console.error('[AuthProvider] Admin role error:', adminResult.error);
       }
 
       if (superAdminResult.error) {
-        console.error(
-          '[AuthProvider] Super admin role error:',
-          superAdminResult.error
-        );
+        console.error('[AuthProvider] Super admin role error:', superAdminResult.error);
       }
 
-      return (
-        adminResult.data === true ||
-        superAdminResult.data === true
-      );
+      return adminResult.data === true || superAdminResult.data === true;
     } catch (error) {
-      console.error(
-        '[AuthProvider] Admin check failed:',
-        error
-      );
+      console.error('[AuthProvider] Admin check failed:', error);
 
       return false;
     }
@@ -617,11 +513,7 @@ export function AuthProvider({
     }
 
     try {
-      const [
-        managerResult,
-        adminResult,
-        superAdminResult,
-      ] = await Promise.all([
+      const [managerResult, adminResult, superAdminResult] = await Promise.all([
         supabase.rpc('has_role', {
           p_user_id: currentUser.id,
           p_role_name: 'manager',
@@ -639,15 +531,10 @@ export function AuthProvider({
       ]);
 
       return (
-        managerResult.data === true ||
-        adminResult.data === true ||
-        superAdminResult.data === true
+        managerResult.data === true || adminResult.data === true || superAdminResult.data === true
       );
     } catch (error) {
-      console.error(
-        '[AuthProvider] Manager check failed:',
-        error
-      );
+      console.error('[AuthProvider] Manager check failed:', error);
 
       return false;
     }
@@ -671,29 +558,20 @@ export function AuthProvider({
     }
 
     try {
-      const {
-        data,
-        error,
-      } = await supabase.rpc('has_role', {
+      const { data, error } = await supabase.rpc('has_role', {
         p_user_id: currentUser.id,
         p_role_name: 'cashier',
       });
 
       if (error) {
-        console.error(
-          '[AuthProvider] Cashier role error:',
-          error
-        );
+        console.error('[AuthProvider] Cashier role error:', error);
 
         return false;
       }
 
       return data === true;
     } catch (error) {
-      console.error(
-        '[AuthProvider] Cashier check failed:',
-        error
-      );
+      console.error('[AuthProvider] Cashier check failed:', error);
 
       return false;
     }
@@ -715,10 +593,5 @@ export function AuthProvider({
     isCashier,
   };
 
-  return (
-    <AuthContext.Provider value={value}>
-      {children}
-    </AuthContext.Provider>
-  );
+  return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>;
 }
-

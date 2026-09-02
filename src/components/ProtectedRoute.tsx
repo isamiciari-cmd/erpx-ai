@@ -8,16 +8,8 @@ interface ProtectedRouteProps {
   requiredRole?: string | string[];
 }
 
-const ProtectedRoute = ({
-  children,
-  requiredRole,
-}: ProtectedRouteProps) => {
-  const {
-    currentUser,
-    loading,
-    isCashier,
-    isAdmin,
-  } = useAuth();
+const ProtectedRoute = ({ children, requiredRole }: ProtectedRouteProps) => {
+  const { currentUser, loading, isCashier, isAdmin } = useAuth();
 
   const location = useLocation();
 
@@ -81,10 +73,7 @@ const ProtectedRoute = ({
           }
         }
       } catch (error) {
-        console.error(
-          '[ProtectedRoute] Role check failed:',
-          error
-        );
+        console.error('[ProtectedRoute] Role check failed:', error);
       } finally {
         if (mounted) {
           setRoleChecking(false);
@@ -106,8 +95,15 @@ const ProtectedRoute = ({
           <div className="text-gray-400 max-w-md text-center">
             <p>Still authenticating — something may be blocking the auth check.</p>
             <div className="mt-4">
-              <button onClick={() => window.location.reload()} className="mr-3 px-4 py-2 bg-blue-600 text-white rounded">Retry</button>
-              <a href="/login" className="text-sm text-gray-300">Go to login</a>
+              <button
+                onClick={() => window.location.reload()}
+                className="mr-3 px-4 py-2 bg-blue-600 text-white rounded"
+              >
+                Retry
+              </button>
+              <a href="/login" className="text-sm text-gray-300">
+                Go to login
+              </a>
             </div>
           </div>
         </div>
@@ -146,8 +142,7 @@ const ProtectedRoute = ({
    * redirect them to /cashier/pos.
    */
   if (cashierUser) {
-    const isCashierRoute =
-      location.pathname.startsWith('/cashier');
+    const isCashierRoute = location.pathname.startsWith('/cashier');
 
     if (!isCashierRoute) {
       return <Navigate to="/cashier/pos" replace />;
@@ -161,4 +156,3 @@ const ProtectedRoute = ({
 };
 
 export default ProtectedRoute;
-

@@ -1,10 +1,10 @@
-import { motion, AnimatePresence } from "motion/react";
-import { AlertTriangle, TrendingDown, AlertCircle, X } from "lucide-react";
-import { useState } from "react";
+import { motion, AnimatePresence } from 'motion/react';
+import { AlertTriangle, TrendingDown, AlertCircle, X } from 'lucide-react';
+import { useState } from 'react';
 
 interface Alert {
   id: string;
-  type: "warning" | "error" | "info";
+  type: 'warning' | 'error' | 'info';
   message: string;
   value?: number;
 }
@@ -28,19 +28,19 @@ export default function SmartAlerts({ data }: SmartAlertsProps) {
     // Check for significant drops
     if (latest < previous * 0.8) {
       alerts.push({
-        id: "drop",
-        type: "warning",
-        message: "Significant drop detected in recent activity",
-        value: ((previous - latest) / previous * 100),
+        id: 'drop',
+        type: 'warning',
+        message: 'Significant drop detected in recent activity',
+        value: ((previous - latest) / previous) * 100,
       });
     }
 
     // Check for below average
     if (latest < average * 0.7) {
       alerts.push({
-        id: "below-avg",
-        type: "error",
-        message: "Performance below average threshold",
+        id: 'below-avg',
+        type: 'error',
+        message: 'Performance below average threshold',
         value: latest,
       });
     }
@@ -48,36 +48,36 @@ export default function SmartAlerts({ data }: SmartAlertsProps) {
     // Check for unusual spikes
     if (latest > previous * 1.5) {
       alerts.push({
-        id: "spike",
-        type: "info",
-        message: "Unusual spike in activity detected",
-        value: ((latest - previous) / previous * 100),
+        id: 'spike',
+        type: 'info',
+        message: 'Unusual spike in activity detected',
+        value: ((latest - previous) / previous) * 100,
       });
     }
 
-    return alerts.filter(alert => !dismissedAlerts.includes(alert.id));
+    return alerts.filter((alert) => !dismissedAlerts.includes(alert.id));
   };
 
   const alerts = generateAlerts();
 
-  const getAlertStyles = (type: Alert["type"]) => {
+  const getAlertStyles = (type: Alert['type']) => {
     switch (type) {
-      case "warning":
-        return "from-yellow-900/40 to-orange-900/40 border-yellow-500/30 text-yellow-400";
-      case "error":
-        return "from-red-900/40 to-rose-900/40 border-red-500/30 text-red-400";
-      case "info":
-        return "from-blue-900/40 to-cyan-900/40 border-blue-500/30 text-blue-400";
+      case 'warning':
+        return 'from-yellow-900/40 to-orange-900/40 border-yellow-500/30 text-yellow-400';
+      case 'error':
+        return 'from-red-900/40 to-rose-900/40 border-red-500/30 text-red-400';
+      case 'info':
+        return 'from-blue-900/40 to-cyan-900/40 border-blue-500/30 text-blue-400';
     }
   };
 
-  const getAlertIcon = (type: Alert["type"]) => {
+  const getAlertIcon = (type: Alert['type']) => {
     switch (type) {
-      case "warning":
+      case 'warning':
         return AlertTriangle;
-      case "error":
+      case 'error':
         return TrendingDown;
-      case "info":
+      case 'info':
         return AlertCircle;
     }
   };
@@ -126,7 +126,7 @@ export default function SmartAlerts({ data }: SmartAlertsProps) {
                     {alert.value !== undefined && (
                       <p className="text-xs text-gray-400">
                         Value: {alert.value.toFixed(1)}
-                        {alert.type === "spike" || alert.type === "drop" ? "%" : ""}
+                        {alert.type === 'spike' || alert.type === 'drop' ? '%' : ''}
                       </p>
                     )}
                   </div>

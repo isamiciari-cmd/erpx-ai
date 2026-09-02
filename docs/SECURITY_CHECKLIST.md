@@ -3,6 +3,7 @@
 ## 🔐 Authentication & Authorization
 
 ### Supabase Auth Configuration
+
 - [ ] Email verification enabled
 - [ ] Password requirements enforced (min 8 chars, complexity)
 - [ ] Rate limiting on authentication endpoints (max 5 attempts/min)
@@ -13,6 +14,7 @@
 - [ ] OAuth providers configured securely (Google, Microsoft)
 
 ### Row Level Security (RLS)
+
 - [ ] RLS enabled on ALL tables
 - [ ] Multi-tenant isolation policies tested
 - [ ] Permission-based access policies verified
@@ -22,6 +24,7 @@
 - [ ] Audit trail for policy violations
 
 ### Role-Based Access Control
+
 - [ ] System roles defined (admin, manager, employee)
 - [ ] Custom roles support implemented
 - [ ] Permission matrix documented
@@ -32,6 +35,7 @@
 ## 🛡️ Data Protection
 
 ### Encryption
+
 - [ ] SSL/TLS enforced for all connections
 - [ ] Database connections encrypted (Supabase default)
 - [ ] Sensitive fields encrypted at rest (passwords, tokens)
@@ -40,6 +44,7 @@
 - [ ] No hardcoded credentials in repository
 
 ### Data Privacy
+
 - [ ] PII (Personally Identifiable Information) identified
 - [ ] Data retention policies defined
 - [ ] GDPR compliance measures (if applicable)
@@ -49,6 +54,7 @@
 - [ ] Cookie consent implemented
 
 ### Sensitive Data Handling
+
 - [ ] Credit card data NOT stored (use payment gateway)
 - [ ] Passwords hashed (Supabase Auth handles this)
 - [ ] API keys rotated regularly
@@ -59,6 +65,7 @@
 ## 🌐 Network Security
 
 ### Frontend Security
+
 - [ ] HTTPS enforced (no HTTP)
 - [ ] HSTS header enabled (max-age=31536000)
 - [ ] CSP (Content Security Policy) configured
@@ -68,6 +75,7 @@
 - [ ] Subresource Integrity (SRI) for CDN resources
 
 ### API Security
+
 - [ ] Rate limiting implemented
 - [ ] CORS configured correctly
 - [ ] API versioning in place
@@ -77,6 +85,7 @@
 - [ ] CSRF tokens implemented (Supabase handles this)
 
 ### AWS Security
+
 - [ ] WAF enabled with rules:
   - [ ] SQL injection protection
   - [ ] XSS protection
@@ -90,6 +99,7 @@
 ## 🔍 Monitoring & Logging
 
 ### Audit Logging
+
 - [ ] All data modifications logged
 - [ ] User actions tracked
 - [ ] Login attempts recorded
@@ -98,6 +108,7 @@
 - [ ] Data export/deletion logged
 
 ### Security Monitoring
+
 - [ ] CloudWatch alarms configured:
   - [ ] High error rate (> 5%)
   - [ ] Unusual traffic patterns
@@ -109,6 +120,7 @@
 - [ ] Incident response plan documented
 
 ### Log Management
+
 - [ ] Logs centralized (CloudWatch)
 - [ ] Log retention: 30 days minimum
 - [ ] Logs encrypted at rest
@@ -119,6 +131,7 @@
 ## 🧪 Application Security
 
 ### Input Validation
+
 - [ ] All user inputs validated
 - [ ] Type checking enforced (TypeScript)
 - [ ] Length limits on text fields
@@ -132,6 +145,7 @@
 - [ ] Path traversal prevention
 
 ### Output Encoding
+
 - [ ] HTML encoding for user-generated content
 - [ ] JSON responses properly escaped
 - [ ] Error messages don't leak sensitive info
@@ -139,6 +153,7 @@
 - [ ] API responses sanitized
 
 ### Session Management
+
 - [ ] Secure session storage (httpOnly cookies)
 - [ ] Session fixation prevention
 - [ ] Concurrent session limits
@@ -149,6 +164,7 @@
 ## 💾 Database Security
 
 ### Access Control
+
 - [ ] Database credentials rotated quarterly
 - [ ] Service role key NEVER exposed to frontend
 - [ ] Anon key used for frontend (limited permissions)
@@ -157,6 +173,7 @@
 - [ ] SSL required for all connections
 
 ### Data Integrity
+
 - [ ] Foreign key constraints enforced
 - [ ] Check constraints for data validation
 - [ ] Triggers for automatic updates
@@ -165,6 +182,7 @@
 - [ ] Database backups tested monthly
 
 ### SQL Injection Prevention
+
 - [ ] Parameterized queries ONLY
 - [ ] ORM/query builder used (Supabase client)
 - [ ] No dynamic SQL construction
@@ -174,6 +192,7 @@
 ## 🚨 Incident Response
 
 ### Preparation
+
 - [ ] Incident response plan documented
 - [ ] Security team contacts defined
 - [ ] Escalation procedures clear
@@ -182,6 +201,7 @@
 - [ ] Incident categories defined
 
 ### Detection
+
 - [ ] Real-time alerting configured
 - [ ] Anomaly detection enabled
 - [ ] Security dashboards monitored
@@ -190,6 +210,7 @@
 - [ ] Third-party breach monitoring
 
 ### Response Procedures
+
 - [ ] Incident triage process
 - [ ] Evidence preservation steps
 - [ ] Containment strategies
@@ -200,6 +221,7 @@
 ## 🔄 Business Continuity
 
 ### Backup & Recovery
+
 - [ ] Daily database backups automated
 - [ ] Backup encryption enabled
 - [ ] Backup restoration tested monthly
@@ -209,6 +231,7 @@
 - [ ] RPO: 24 hours
 
 ### Disaster Recovery
+
 - [ ] DR plan documented
 - [ ] DR site configured (multi-region)
 - [ ] Failover procedures tested
@@ -219,6 +242,7 @@
 ## 📋 Compliance & Governance
 
 ### Regulatory Compliance
+
 - [ ] ZATCA e-invoicing compliance (Saudi Arabia)
 - [ ] GDPR compliance (if EU users)
 - [ ] Data residency requirements met
@@ -227,6 +251,7 @@
 - [ ] Legal review completed
 
 ### Security Policies
+
 - [ ] Information security policy published
 - [ ] Acceptable use policy defined
 - [ ] Password policy enforced
@@ -235,6 +260,7 @@
 - [ ] Employee security training
 
 ### Vendor Management
+
 - [ ] Supabase security reviewed
 - [ ] AWS security posture verified
 - [ ] Third-party service contracts reviewed
@@ -245,6 +271,7 @@
 ## 🧑‍💻 Development Security
 
 ### Secure Coding
+
 - [ ] Code review process enforced
 - [ ] Security testing in CI/CD
 - [ ] Static code analysis (ESLint)
@@ -253,6 +280,7 @@
 - [ ] No commented-out secrets in code
 
 ### Dependency Management
+
 - [ ] Dependencies updated monthly
 - [ ] Automated vulnerability alerts (Dependabot)
 - [ ] License compliance checked
@@ -261,6 +289,7 @@
 - [ ] Lock files committed (pnpm-lock.yaml)
 
 ### Version Control
+
 - [ ] Sensitive files in .gitignore
 - [ ] Commit signing enabled
 - [ ] Branch protection rules:
@@ -274,6 +303,7 @@
 ## 🧰 Security Tools
 
 ### Scanning & Testing
+
 - [ ] Penetration testing scheduled (annually)
 - [ ] Vulnerability scanning automated
 - [ ] Security headers tested (securityheaders.com)
@@ -282,6 +312,7 @@
 - [ ] Bug bounty program considered
 
 ### Security Services
+
 - [ ] WAF configured (AWS WAF)
 - [ ] DDoS protection enabled (CloudFront)
 - [ ] Security Information and Event Management (SIEM)
@@ -292,6 +323,7 @@
 ## ✅ Pre-Production Checklist
 
 ### Final Security Review
+
 - [ ] All items above completed
 - [ ] Security assessment performed
 - [ ] Penetration test results reviewed
@@ -304,6 +336,7 @@
 - [ ] Performance under load tested
 
 ### Launch Day
+
 - [ ] Security team on standby
 - [ ] Monitoring actively watched
 - [ ] Rollback plan ready
@@ -312,6 +345,7 @@
 - [ ] Logs actively analyzed
 
 ### Post-Launch (First 30 Days)
+
 - [ ] Daily security log reviews
 - [ ] Weekly vulnerability scans
 - [ ] User feedback analyzed
@@ -322,6 +356,7 @@
 ## 📊 Security Metrics
 
 Track and report monthly:
+
 - [ ] Number of security incidents
 - [ ] Mean time to detect (MTTD)
 - [ ] Mean time to respond (MTTR)
@@ -338,4 +373,3 @@ Track and report monthly:
 - AWS Security Best Practices: https://aws.amazon.com/security/best-practices/
 - NIST Cybersecurity Framework: https://www.nist.gov/cyberframework
 - CIS Controls: https://www.cisecurity.org/controls/
-

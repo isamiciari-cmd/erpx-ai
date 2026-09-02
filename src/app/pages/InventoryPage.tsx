@@ -1,104 +1,172 @@
-import { useState, useEffect, useMemo } from "react";
-import { motion } from "motion/react";
+import { useState, useEffect, useMemo } from 'react';
+import { motion } from 'motion/react';
 import {
   Package,
   TrendingUp,
   TrendingDown,
   AlertTriangle,
-  Warehouse,
   DollarSign,
-  BarChart3,
   Clock,
   ArrowRight,
   Plus,
-  Search,
-  Filter,
   Download,
   RefreshCw,
   Brain,
-} from "lucide-react";
-import StockTrendChart from "../components/charts/StockTrendChart";
-import CategoryPieChart from "../components/charts/CategoryPieChart";
-import MovementBarChart from "../components/charts/MovementBarChart";
+} from 'lucide-react';
+import StockTrendChart from '../components/charts/StockTrendChart';
+import CategoryPieChart from '../components/charts/CategoryPieChart';
+import MovementBarChart from '../components/charts/MovementBarChart';
 
 // Stock trend data
 const stockTrendData = [
-  { id: "month-0", month: "Jan", value: 245000 },
-  { id: "month-1", month: "Feb", value: 268000 },
-  { id: "month-2", month: "Mar", value: 252000 },
-  { id: "month-3", month: "Apr", value: 285000 },
-  { id: "month-4", month: "May", value: 271000 },
-  { id: "month-5", month: "Jun", value: 298000 },
+  { id: 'month-0', month: 'Jan', value: 245000 },
+  { id: 'month-1', month: 'Feb', value: 268000 },
+  { id: 'month-2', month: 'Mar', value: 252000 },
+  { id: 'month-3', month: 'Apr', value: 285000 },
+  { id: 'month-4', month: 'May', value: 271000 },
+  { id: 'month-5', month: 'Jun', value: 298000 },
 ];
 
 // Category distribution
 const categoryData = [
-  { id: "cat-0", name: "Electronics", value: 35, count: 450 },
-  { id: "cat-1", name: "Clothing", value: 25, count: 320 },
-  { id: "cat-2", name: "Food", value: 20, count: 280 },
-  { id: "cat-3", name: "Home", value: 12, count: 150 },
-  { id: "cat-4", name: "Sports", value: 8, count: 100 },
+  { id: 'cat-0', name: 'Electronics', value: 35, count: 450 },
+  { id: 'cat-1', name: 'Clothing', value: 25, count: 320 },
+  { id: 'cat-2', name: 'Food', value: 20, count: 280 },
+  { id: 'cat-3', name: 'Home', value: 12, count: 150 },
+  { id: 'cat-4', name: 'Sports', value: 8, count: 100 },
 ];
 
-const COLORS = ["#3B82F6", "#8B5CF6", "#EC4899", "#F59E0B", "#10B981"];
+const COLORS = ['#3B82F6', '#8B5CF6', '#EC4899', '#F59E0B', '#10B981'];
 
 // Stock movement data
 const movementData = [
-  { id: "day-0", day: "Mon", in: 120, out: 85 },
-  { id: "day-1", day: "Tue", in: 98, out: 110 },
-  { id: "day-2", day: "Wed", in: 145, out: 95 },
-  { id: "day-3", day: "Thu", in: 132, out: 118 },
-  { id: "day-4", day: "Fri", in: 156, out: 102 },
-  { id: "day-5", day: "Sat", in: 89, out: 78 },
+  { id: 'day-0', day: 'Mon', in: 120, out: 85 },
+  { id: 'day-1', day: 'Tue', in: 98, out: 110 },
+  { id: 'day-2', day: 'Wed', in: 145, out: 95 },
+  { id: 'day-3', day: 'Thu', in: 132, out: 118 },
+  { id: 'day-4', day: 'Fri', in: 156, out: 102 },
+  { id: 'day-5', day: 'Sat', in: 89, out: 78 },
 ];
 
 // Low stock items
 const lowStockItems = [
-  { id: 1, sku: "ELC-001", name: "Wireless Mouse", current: 8, min: 30, warehouse: "Main", status: "critical" },
-  { id: 2, sku: "CLT-045", name: "T-Shirt Blue", current: 15, min: 50, warehouse: "Branch 1", status: "warning" },
-  { id: 3, sku: "FD-123", name: "Coffee Beans 1kg", current: 22, min: 100, warehouse: "Main", status: "critical" },
-  { id: 4, sku: "HM-089", name: "Desk Lamp", current: 12, min: 25, warehouse: "Branch 2", status: "warning" },
-  { id: 5, sku: "SPT-056", name: "Yoga Mat", current: 18, min: 40, warehouse: "Main", status: "warning" },
+  {
+    id: 1,
+    sku: 'ELC-001',
+    name: 'Wireless Mouse',
+    current: 8,
+    min: 30,
+    warehouse: 'Main',
+    status: 'critical',
+  },
+  {
+    id: 2,
+    sku: 'CLT-045',
+    name: 'T-Shirt Blue',
+    current: 15,
+    min: 50,
+    warehouse: 'Branch 1',
+    status: 'warning',
+  },
+  {
+    id: 3,
+    sku: 'FD-123',
+    name: 'Coffee Beans 1kg',
+    current: 22,
+    min: 100,
+    warehouse: 'Main',
+    status: 'critical',
+  },
+  {
+    id: 4,
+    sku: 'HM-089',
+    name: 'Desk Lamp',
+    current: 12,
+    min: 25,
+    warehouse: 'Branch 2',
+    status: 'warning',
+  },
+  {
+    id: 5,
+    sku: 'SPT-056',
+    name: 'Yoga Mat',
+    current: 18,
+    min: 40,
+    warehouse: 'Main',
+    status: 'warning',
+  },
 ];
 
 // Fast moving items
 const fastMovingItems = [
-  { id: 1, name: "USB-C Cable", sales: 245, revenue: 2450, trend: "+15%" },
-  { id: 2, name: "Phone Case", sales: 198, revenue: 3960, trend: "+12%" },
-  { id: 3, name: "Water Bottle", sales: 167, revenue: 2505, trend: "+8%" },
-  { id: 4, name: "Notebook", sales: 142, revenue: 1420, trend: "+5%" },
+  { id: 1, name: 'USB-C Cable', sales: 245, revenue: 2450, trend: '+15%' },
+  { id: 2, name: 'Phone Case', sales: 198, revenue: 3960, trend: '+12%' },
+  { id: 3, name: 'Water Bottle', sales: 167, revenue: 2505, trend: '+8%' },
+  { id: 4, name: 'Notebook', sales: 142, revenue: 1420, trend: '+5%' },
 ];
 
 // Recent movements
 const recentMovements = [
-  { id: "MOV-1234", type: "IN", item: "Laptop Stand", qty: 50, warehouse: "Main", date: "2h ago", user: "John Doe" },
-  { id: "MOV-1235", type: "OUT", item: "Headphones", qty: 25, warehouse: "Branch 1", date: "3h ago", user: "Sarah" },
-  { id: "MOV-1236", type: "TRANSFER", item: "Mouse Pad", qty: 100, warehouse: "Main → Branch 2", date: "5h ago", user: "Admin" },
-  { id: "MOV-1237", type: "ADJUST", item: "Keyboard", qty: -5, warehouse: "Branch 1", date: "6h ago", user: "Manager" },
+  {
+    id: 'MOV-1234',
+    type: 'IN',
+    item: 'Laptop Stand',
+    qty: 50,
+    warehouse: 'Main',
+    date: '2h ago',
+    user: 'John Doe',
+  },
+  {
+    id: 'MOV-1235',
+    type: 'OUT',
+    item: 'Headphones',
+    qty: 25,
+    warehouse: 'Branch 1',
+    date: '3h ago',
+    user: 'Sarah',
+  },
+  {
+    id: 'MOV-1236',
+    type: 'TRANSFER',
+    item: 'Mouse Pad',
+    qty: 100,
+    warehouse: 'Main → Branch 2',
+    date: '5h ago',
+    user: 'Admin',
+  },
+  {
+    id: 'MOV-1237',
+    type: 'ADJUST',
+    item: 'Keyboard',
+    qty: -5,
+    warehouse: 'Branch 1',
+    date: '6h ago',
+    user: 'Manager',
+  },
 ];
 
 // AI Insights
 const aiInsights = [
   {
     id: 1,
-    type: "warning",
-    title: "Stockout Risk Detected",
-    message: "5 items predicted to stock out within 7 days. Recommend immediate reorder.",
-    confidence: "94%",
+    type: 'warning',
+    title: 'Stockout Risk Detected',
+    message: '5 items predicted to stock out within 7 days. Recommend immediate reorder.',
+    confidence: '94%',
   },
   {
     id: 2,
-    type: "success",
-    title: "Optimal Reorder Point",
+    type: 'success',
+    title: 'Optimal Reorder Point',
     message: "Increase reorder point for 'Wireless Mouse' from 30 to 45 units based on demand.",
-    confidence: "89%",
+    confidence: '89%',
   },
   {
     id: 3,
-    type: "info",
-    title: "Dead Stock Alert",
+    type: 'info',
+    title: 'Dead Stock Alert',
     message: "12 items haven't moved in 90+ days. Total value: $8,450. Consider clearance sale.",
-    confidence: "96%",
+    confidence: '96%',
   },
 ];
 
@@ -223,7 +291,12 @@ export default function InventoryPage() {
           <h3 className="text-lg font-semibold text-white mb-4">Stock by Category</h3>
           <div className="flex items-center gap-6">
             <div style={{ width: '50%', height: 200 }}>
-              <CategoryPieChart data={memoizedCategoryData} colors={COLORS} width="100%" height={200} />
+              <CategoryPieChart
+                data={memoizedCategoryData}
+                colors={COLORS}
+                width="100%"
+                height={200}
+              />
             </div>
             <div className="flex-1 space-y-2">
               {memoizedCategoryData.map((cat, index) => (
@@ -280,11 +353,11 @@ export default function InventoryPage() {
                 key={insight.id}
                 whileHover={{ scale: 1.02 }}
                 className={`p-4 rounded-xl border ${
-                  insight.type === "warning"
-                    ? "bg-yellow-500/5 border-yellow-500/30"
-                    : insight.type === "success"
-                    ? "bg-green-500/5 border-green-500/30"
-                    : "bg-blue-500/5 border-blue-500/30"
+                  insight.type === 'warning'
+                    ? 'bg-yellow-500/5 border-yellow-500/30'
+                    : insight.type === 'success'
+                      ? 'bg-green-500/5 border-green-500/30'
+                      : 'bg-blue-500/5 border-blue-500/30'
                 } cursor-pointer`}
               >
                 <h4 className="text-white font-semibold text-sm mb-1">{insight.title}</h4>
@@ -326,7 +399,9 @@ export default function InventoryPage() {
                   <th className="px-4 py-3 text-left text-xs font-semibold text-gray-400">SKU</th>
                   <th className="px-4 py-3 text-left text-xs font-semibold text-gray-400">Item</th>
                   <th className="px-4 py-3 text-left text-xs font-semibold text-gray-400">Stock</th>
-                  <th className="px-4 py-3 text-left text-xs font-semibold text-gray-400">Status</th>
+                  <th className="px-4 py-3 text-left text-xs font-semibold text-gray-400">
+                    Status
+                  </th>
                 </tr>
               </thead>
               <tbody>
@@ -342,7 +417,7 @@ export default function InventoryPage() {
                         <div className="flex-1 bg-gray-700 rounded-full h-1.5 max-w-[60px]">
                           <div
                             className={`h-1.5 rounded-full ${
-                              item.status === "critical" ? "bg-red-500" : "bg-yellow-500"
+                              item.status === 'critical' ? 'bg-red-500' : 'bg-yellow-500'
                             }`}
                             style={{ width: `${(item.current / item.min) * 100}%` }}
                           />
@@ -355,9 +430,9 @@ export default function InventoryPage() {
                     <td className="px-4 py-3">
                       <span
                         className={`px-2 py-1 rounded text-xs font-medium ${
-                          item.status === "critical"
-                            ? "bg-red-500/20 text-red-400"
-                            : "bg-yellow-500/20 text-yellow-400"
+                          item.status === 'critical'
+                            ? 'bg-red-500/20 text-red-400'
+                            : 'bg-yellow-500/20 text-yellow-400'
                         }`}
                       >
                         {item.status}
@@ -390,13 +465,13 @@ export default function InventoryPage() {
                   </div>
                   <span
                     className={`px-2 py-1 rounded text-xs font-semibold ${
-                      movement.type === "IN"
-                        ? "bg-green-500/20 text-green-400"
-                        : movement.type === "OUT"
-                        ? "bg-red-500/20 text-red-400"
-                        : movement.type === "TRANSFER"
-                        ? "bg-blue-500/20 text-blue-400"
-                        : "bg-yellow-500/20 text-yellow-400"
+                      movement.type === 'IN'
+                        ? 'bg-green-500/20 text-green-400'
+                        : movement.type === 'OUT'
+                          ? 'bg-red-500/20 text-red-400'
+                          : movement.type === 'TRANSFER'
+                            ? 'bg-blue-500/20 text-blue-400'
+                            : 'bg-yellow-500/20 text-yellow-400'
                     }`}
                   >
                     {movement.type}
@@ -465,10 +540,14 @@ function KPICard({ title, value, icon: Icon, trend, color, trendDown }: KPICardP
       className="bg-[#111827] border border-gray-800 rounded-2xl p-6 hover:border-blue-500/50 hover:shadow-lg hover:shadow-blue-500/10 transition-all cursor-pointer"
     >
       <div className="flex items-start justify-between mb-4">
-        <div className={`w-12 h-12 bg-gradient-to-br ${color} rounded-xl flex items-center justify-center shadow-lg`}>
+        <div
+          className={`w-12 h-12 bg-gradient-to-br ${color} rounded-xl flex items-center justify-center shadow-lg`}
+        >
           <Icon className="w-6 h-6 text-white" />
         </div>
-        <span className={`text-sm font-semibold flex items-center gap-1 ${trendDown ? 'text-red-400' : 'text-green-400'}`}>
+        <span
+          className={`text-sm font-semibold flex items-center gap-1 ${trendDown ? 'text-red-400' : 'text-green-400'}`}
+        >
           {trendDown ? <TrendingDown className="w-4 h-4" /> : <TrendingUp className="w-4 h-4" />}
           {trend}
         </span>

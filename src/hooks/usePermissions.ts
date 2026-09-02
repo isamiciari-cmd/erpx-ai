@@ -75,7 +75,7 @@ export function usePermissions(): UsePermissionsReturn {
       // Call PostgreSQL functions to get user permissions and roles
       const [permissionsResult, rolesResult] = await Promise.all([
         supabase.rpc('get_user_permissions', { p_user_id: currentUser.id }),
-        supabase.rpc('get_user_roles', { p_user_id: currentUser.id })
+        supabase.rpc('get_user_roles', { p_user_id: currentUser.id }),
       ]);
 
       if (permissionsResult.error) {
@@ -121,12 +121,12 @@ export function usePermissions(): UsePermissionsReturn {
 
   const hasPermission = (permissionKey: string): boolean => {
     if (!currentUser) return false;
-    return permissions.some(p => p.permission_key === permissionKey);
+    return permissions.some((p) => p.permission_key === permissionKey);
   };
 
   const hasRole = (roleName: string): boolean => {
     if (!currentUser) return false;
-    return roles.some(r => r.role_name === roleName);
+    return roles.some((r) => r.role_name === roleName);
   };
 
   const isOwner = hasRole('owner');
@@ -138,7 +138,7 @@ export function usePermissions(): UsePermissionsReturn {
     try {
       const { data, error } = await supabase.rpc('can_access_tenant', {
         p_user_id: currentUser.id,
-        p_tenant_id: tenantId
+        p_tenant_id: tenantId,
       });
 
       if (error) {
@@ -163,6 +163,6 @@ export function usePermissions(): UsePermissionsReturn {
     canAccessTenant,
     loading,
     error,
-    refresh: loadPermissionsAndRoles
+    refresh: loadPermissionsAndRoles,
   };
 }

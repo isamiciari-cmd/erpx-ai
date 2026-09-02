@@ -39,7 +39,7 @@ export function RequireRole({
   requireAll = false,
   fallback = null,
   redirectTo = '/unauthorized',
-  showLoading = true
+  showLoading = true,
 }: RequireRoleProps) {
   const { hasRole, loading } = usePermissions();
 
@@ -52,9 +52,7 @@ export function RequireRole({
   }
 
   const roles = Array.isArray(role) ? role : [role];
-  const hasAccess = requireAll
-    ? roles.every(r => hasRole(r))
-    : roles.some(r => hasRole(r));
+  const hasAccess = requireAll ? roles.every((r) => hasRole(r)) : roles.some((r) => hasRole(r));
 
   if (!hasAccess) {
     return redirectTo ? <Navigate to={redirectTo} replace /> : <>{fallback}</>;

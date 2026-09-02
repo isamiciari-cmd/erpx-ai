@@ -1,7 +1,7 @@
-import { motion } from "motion/react";
-import { useLocation, useNavigate } from "react-router";
-import { CheckCircle, Mail, ArrowRight } from "lucide-react";
-import { useEffect } from "react";
+import { motion } from 'motion/react';
+import { useLocation, useNavigate } from 'react-router';
+import { CheckCircle, Mail, ArrowRight } from 'lucide-react';
+import { useEffect } from 'react';
 
 export default function RegistrationSuccessPage() {
   const location = useLocation();
@@ -11,7 +11,7 @@ export default function RegistrationSuccessPage() {
   useEffect(() => {
     // If no state data, redirect to login
     if (!email || !companyName) {
-      navigate("/login");
+      navigate('/login');
     }
   }, [email, companyName, navigate]);
 
@@ -26,7 +26,7 @@ export default function RegistrationSuccessPage() {
         <motion.div
           initial={{ scale: 0 }}
           animate={{ scale: 1 }}
-          transition={{ delay: 0.2, type: "spring", stiffness: 200 }}
+          transition={{ delay: 0.2, type: 'spring', stiffness: 200 }}
           className="w-24 h-24 bg-green-500/20 rounded-full flex items-center justify-center mx-auto mb-8"
         >
           <CheckCircle className="w-16 h-16 text-green-400" />
@@ -63,18 +63,14 @@ export default function RegistrationSuccessPage() {
               <Mail className="w-6 h-6 text-blue-400" />
             </div>
             <div className="text-left flex-1">
-              <h3 className="font-semibold text-white mb-2">
-                Verify Your Email
-              </h3>
-              <p className="text-sm text-gray-300 mb-3">
-                We've sent a verification email to:
-              </p>
+              <h3 className="font-semibold text-white mb-2">Verify Your Email</h3>
+              <p className="text-sm text-gray-300 mb-3">We've sent a verification email to:</p>
               <p className="text-blue-400 font-mono text-sm bg-blue-500/10 px-3 py-2 rounded">
                 {email}
               </p>
               <p className="text-sm text-gray-400 mt-3">
-                Please click the verification link in the email to activate your
-                account. If you don't see it, check your spam folder.
+                Please click the verification link in the email to activate your account. If you
+                don't see it, check your spam folder.
               </p>
             </div>
           </div>
@@ -132,7 +128,7 @@ export default function RegistrationSuccessPage() {
           transition={{ delay: 0.7 }}
         >
           <button
-            onClick={() => navigate("/login")}
+            onClick={() => navigate('/login')}
             className="w-full md:w-auto px-8 py-4 bg-gradient-to-r from-blue-600 to-blue-500 text-white rounded-lg font-semibold hover:from-blue-500 hover:to-cyan-500 transition-all flex items-center justify-center gap-2 mx-auto"
           >
             Go to Login
@@ -147,11 +143,8 @@ export default function RegistrationSuccessPage() {
           transition={{ delay: 0.8 }}
           className="text-sm text-gray-500 mt-6"
         >
-          Need help? Contact our support team at{" "}
-          <a
-            href="mailto:support@erpx-ai.com"
-            className="text-blue-400 hover:text-blue-300"
-          >
+          Need help? Contact our support team at{' '}
+          <a href="mailto:support@erpx-ai.com" className="text-blue-400 hover:text-blue-300">
             support@erpx-ai.com
           </a>
         </motion.p>

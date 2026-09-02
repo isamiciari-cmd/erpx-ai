@@ -1,5 +1,3 @@
-
-
 # ERPX-AI: Enterprise RBAC Setup Guide
 
 **Complete Multi-Tenant Role-Based Access Control System**
@@ -15,7 +13,7 @@ This guide will help you set up a complete enterprise-grade RBAC system with:
 ✅ Owner override capabilities  
 ✅ Developer mode with audit logging  
 ✅ Emergency access tracking  
-✅ Complete audit trail  
+✅ Complete audit trail
 
 ---
 
@@ -38,6 +36,7 @@ This guide will help you set up a complete enterprise-grade RBAC system with:
 3. Create each user with these credentials:
 
 #### User 1: Platform Owner
+
 ```
 Email: i-1@erpx-ai.com
 Password: Aa12141312@
@@ -45,6 +44,7 @@ Auto Confirm User: ✅ (check this!)
 ```
 
 #### User 2: Developer Admin
+
 ```
 Email: i.1122@erpx-ai.com
 Password: @12345
@@ -52,6 +52,7 @@ Auto Confirm User: ✅
 ```
 
 #### User 3: Administrator
+
 ```
 Email: admin-1@erpx-ai.com
 Password: @12345@
@@ -59,6 +60,7 @@ Auto Confirm User: ✅
 ```
 
 #### User 4: Cashier
+
 ```
 Email: cashier@erpx-ai.com
 Password: Aa12141312@
@@ -79,6 +81,7 @@ Auto Confirm User: ✅
 6. Click **"Run"**
 
 **Expected Result:**
+
 ```
 Success - Created 11 tables:
 - tenants
@@ -105,6 +108,7 @@ Success - Created 11 tables:
 5. Click **"Run"**
 
 **Expected Result:**
+
 ```
 Success - Created 16 SQL functions:
 - has_role()
@@ -126,6 +130,7 @@ Success - Created 16 SQL functions:
 5. Click **"Run"**
 
 **Expected Result:**
+
 ```
 Success - Created 40+ RLS policies
 - Enabled RLS on all tables
@@ -183,6 +188,7 @@ v_cashier_id := 'd4e5f6a7-b8c9-0123-4567-890abcdef123'::UUID; -- YOUR ACTUAL ID
 4. Click **"Run"**
 
 **Expected Result:**
+
 ```
 Success - 4 rows returned
 
@@ -201,6 +207,7 @@ cashier@erpx-ai.com   | cashier   | 300   | ERPX Platform  | true
 ### 1. Check Tables Created
 
 Run this query:
+
 ```sql
 SELECT table_name
 FROM information_schema.tables
@@ -225,6 +232,7 @@ ORDER BY level DESC;
 ```
 
 Should return 11 roles:
+
 - owner (1000)
 - developer (900)
 - super_admin (800)
@@ -289,6 +297,7 @@ First should return `true`, second should return `false`.
 2. Try logging in with each user:
 
 ### Owner Login
+
 ```
 Email: i-1@erpx-ai.com
 Password: Aa12141312@
@@ -296,6 +305,7 @@ Expected: Full access to all modules, all tenants
 ```
 
 ### Developer Login
+
 ```
 Email: i.1122@erpx-ai.com
 Password: @12345
@@ -303,6 +313,7 @@ Expected: Technical access, audit logs, debugging tools
 ```
 
 ### Admin Login
+
 ```
 Email: admin-1@erpx-ai.com
 Password: @12345@
@@ -310,6 +321,7 @@ Expected: Full business access, no developer tools
 ```
 
 ### Cashier Login
+
 ```
 Email: cashier@erpx-ai.com
 Password: Aa12141312@
@@ -320,41 +332,48 @@ Expected: POS system only
 
 ## Role Permissions Matrix
 
-| Role | Dashboard | Users | Finance | HR | Inventory | Sales | POS | Settings | Audit | Dev Tools |
-|------|-----------|-------|---------|----|-----------| ------|-----|----------|-------|-----------|
-| **owner** | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ |
-| **developer** | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ |
-| **super_admin** | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ❌ |
-| **admin** | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ❌ | ❌ |
-| **finance_manager** | ✅ | ❌ | ✅ | ❌ | ❌ | ❌ | ❌ | ❌ | ❌ | ❌ |
-| **hr_manager** | ✅ | ❌ | ❌ | ✅ | ❌ | ❌ | ❌ | ❌ | ❌ | ❌ |
-| **inventory_manager** | ✅ | ❌ | ❌ | ❌ | ✅ | ❌ | ❌ | ❌ | ❌ | ❌ |
-| **sales_manager** | ✅ | ❌ | ❌ | ❌ | ❌ | ✅ | ❌ | ❌ | ❌ | ❌ |
-| **cashier** | ❌ | ❌ | ❌ | ❌ | ❌ | ❌ | ✅ | ❌ | ❌ | ❌ |
-| **employee** | ✅ (view) | ❌ | ❌ | ❌ | ❌ | ❌ | ❌ | ❌ | ❌ | ❌ |
-| **viewer** | ✅ (view) | ❌ | ❌ | ❌ | ❌ | ❌ | ❌ | ❌ | ❌ | ❌ |
+| Role                  | Dashboard | Users | Finance | HR  | Inventory | Sales | POS | Settings | Audit | Dev Tools |
+| --------------------- | --------- | ----- | ------- | --- | --------- | ----- | --- | -------- | ----- | --------- |
+| **owner**             | ✅        | ✅    | ✅      | ✅  | ✅        | ✅    | ✅  | ✅       | ✅    | ✅        |
+| **developer**         | ✅        | ✅    | ✅      | ✅  | ✅        | ✅    | ✅  | ✅       | ✅    | ✅        |
+| **super_admin**       | ✅        | ✅    | ✅      | ✅  | ✅        | ✅    | ✅  | ✅       | ✅    | ❌        |
+| **admin**             | ✅        | ✅    | ✅      | ✅  | ✅        | ✅    | ✅  | ✅       | ❌    | ❌        |
+| **finance_manager**   | ✅        | ❌    | ✅      | ❌  | ❌        | ❌    | ❌  | ❌       | ❌    | ❌        |
+| **hr_manager**        | ✅        | ❌    | ❌      | ✅  | ❌        | ❌    | ❌  | ❌       | ❌    | ❌        |
+| **inventory_manager** | ✅        | ❌    | ❌      | ❌  | ✅        | ❌    | ❌  | ❌       | ❌    | ❌        |
+| **sales_manager**     | ✅        | ❌    | ❌      | ❌  | ❌        | ✅    | ❌  | ❌       | ❌    | ❌        |
+| **cashier**           | ❌        | ❌    | ❌      | ❌  | ❌        | ❌    | ✅  | ❌       | ❌    | ❌        |
+| **employee**          | ✅ (view) | ❌    | ❌      | ❌  | ❌        | ❌    | ❌  | ❌       | ❌    | ❌        |
+| **viewer**            | ✅ (view) | ❌    | ❌      | ❌  | ❌        | ❌    | ❌  | ❌       | ❌    | ❌        |
 
 ---
 
 ## Troubleshooting
 
 ### Error: "relation profiles does not exist"
+
 **Solution:** Run `001_rbac_schema.sql` first
 
 ### Error: "function has_role does not exist"
+
 **Solution:** Run `002_rbac_functions.sql`
 
 ### Error: "permission denied for table profiles"
+
 **Solution:** Run `003_rbac_policies.sql`
 
 ### Users created but can't login
+
 **Solution:**
+
 1. Check auth users exist in Supabase Dashboard
 2. Verify UUIDs match in `004_create_initial_users.sql`
 3. Re-run step 6 with correct UUIDs
 
 ### Login works but no permissions
+
 **Solution:**
+
 1. Check user_roles table has entries
 2. Verify role_permissions has mappings
 3. Test `has_permission()` function manually
@@ -404,6 +423,7 @@ If you encounter issues:
 **Setup Complete! 🎉**
 
 Your ERPX-AI platform now has enterprise-grade RBAC with:
+
 - ✅ Multi-tenant support
 - ✅ 11 roles with granular permissions
 - ✅ Complete audit logging
@@ -413,4 +433,4 @@ Your ERPX-AI platform now has enterprise-grade RBAC with:
 
 ---
 
-*For questions or issues, review the SQL migration files or contact support.*
+_For questions or issues, review the SQL migration files or contact support._

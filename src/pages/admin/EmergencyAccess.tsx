@@ -80,9 +80,9 @@ export function EmergencyAccess() {
           return {
             ...log,
             user_email: userProfile?.email || 'Unknown',
-            revoked_by_email
+            revoked_by_email,
           };
-        })
+        }),
       );
 
       setLogs(enrichedLogs);
@@ -108,7 +108,7 @@ export function EmergencyAccess() {
       const { error } = await supabase.rpc('grant_emergency_access', {
         p_user_id: selectedUser,
         p_reason: reason,
-        p_duration_hours: durationHours
+        p_duration_hours: durationHours,
       });
 
       if (error) throw error;
@@ -133,7 +133,7 @@ export function EmergencyAccess() {
 
     try {
       const { error } = await supabase.rpc('revoke_emergency_access', {
-        p_access_id: accessId
+        p_access_id: accessId,
       });
 
       if (error) throw error;
@@ -147,7 +147,8 @@ export function EmergencyAccess() {
   };
 
   const isExpired = (expiresAt: string) => new Date(expiresAt) < new Date();
-  const isActive = (log: EmergencyAccessLog) => log.is_active && !isExpired(log.expires_at) && !log.revoked_at;
+  const isActive = (log: EmergencyAccessLog) =>
+    log.is_active && !isExpired(log.expires_at) && !log.revoked_at;
 
   if (loading) {
     return (
@@ -162,7 +163,9 @@ export function EmergencyAccess() {
       <div className="p-6">
         <div className="mb-6">
           <h1 className="text-3xl font-bold text-gray-900">Emergency Access</h1>
-          <p className="text-gray-600 mt-1">Grant temporary elevated access with full audit trail</p>
+          <p className="text-gray-600 mt-1">
+            Grant temporary elevated access with full audit trail
+          </p>
         </div>
 
         {error && (
@@ -191,7 +194,9 @@ export function EmergencyAccess() {
               </select>
             </div>
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-1">Duration (hours)</label>
+              <label className="block text-sm font-medium text-gray-700 mb-1">
+                Duration (hours)
+              </label>
               <input
                 type="number"
                 value={durationHours}
@@ -202,7 +207,9 @@ export function EmergencyAccess() {
               />
             </div>
             <div className="md:col-span-2">
-              <label className="block text-sm font-medium text-gray-700 mb-1">Reason (Required)</label>
+              <label className="block text-sm font-medium text-gray-700 mb-1">
+                Reason (Required)
+              </label>
               <textarea
                 value={reason}
                 onChange={(e) => setReason(e.target.value)}
@@ -258,9 +265,7 @@ export function EmergencyAccess() {
                     <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">
                       {log.user_email}
                     </td>
-                    <td className="px-6 py-4 text-sm text-gray-900">
-                      {log.reason}
-                    </td>
+                    <td className="px-6 py-4 text-sm text-gray-900">{log.reason}</td>
                     <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
                       {new Date(log.granted_at).toLocaleString()}
                     </td>
@@ -295,9 +300,7 @@ export function EmergencyAccess() {
                           Revoke
                         </button>
                       ) : log.revoked_at ? (
-                        <span className="text-gray-400">
-                          Revoked by {log.revoked_by_email}
-                        </span>
+                        <span className="text-gray-400">Revoked by {log.revoked_by_email}</span>
                       ) : (
                         <span className="text-gray-400">-</span>
                       )}

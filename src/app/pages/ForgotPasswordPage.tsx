@@ -1,26 +1,26 @@
-import { useState } from "react";
-import { motion } from "motion/react";
-import { AlertCircle, Loader2, ArrowLeft, CheckCircle } from "lucide-react";
-import { requestPasswordReset } from "../../services/authService";
-import { useNavigate } from "react-router";
+import { useState } from 'react';
+import { motion } from 'motion/react';
+import { AlertCircle, Loader2, ArrowLeft, CheckCircle } from 'lucide-react';
+import { requestPasswordReset } from '../../services/authService';
+import { useNavigate } from 'react-router';
 
 export default function ForgotPasswordPage() {
-  const [email, setEmail] = useState("");
+  const [email, setEmail] = useState('');
   const [loading, setLoading] = useState(false);
-  const [error, setError] = useState("");
+  const [error, setError] = useState('');
   const [success, setSuccess] = useState(false);
   const navigate = useNavigate();
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    setError("");
+    setError('');
     setLoading(true);
 
     try {
       const result = await requestPasswordReset({ email });
 
       if (result.error) {
-        setError(result.error.message || "Failed to send reset email");
+        setError(result.error.message || 'Failed to send reset email');
         setLoading(false);
         return;
       }
@@ -30,10 +30,10 @@ export default function ForgotPasswordPage() {
 
       // Redirect to login after 5 seconds
       setTimeout(() => {
-        navigate("/login");
+        navigate('/login');
       }, 5000);
     } catch (err: any) {
-      setError(err.message || "An unexpected error occurred");
+      setError(err.message || 'An unexpected error occurred');
       setLoading(false);
     }
   };
@@ -59,7 +59,7 @@ export default function ForgotPasswordPage() {
               Click the link in the email to reset your password. The link will expire in 1 hour.
             </p>
             <button
-              onClick={() => navigate("/login")}
+              onClick={() => navigate('/login')}
               className="w-full px-4 py-3 bg-blue-500 hover:bg-blue-600 text-white rounded-xl font-semibold transition-colors"
             >
               Back to Sign In
@@ -79,7 +79,7 @@ export default function ForgotPasswordPage() {
         className="w-full max-w-md"
       >
         <button
-          onClick={() => navigate("/login")}
+          onClick={() => navigate('/login')}
           className="flex items-center gap-2 text-gray-400 hover:text-white mb-8 transition-colors"
         >
           <ArrowLeft className="w-4 h-4" />
@@ -130,7 +130,7 @@ export default function ForgotPasswordPage() {
               <div className="absolute inset-0 bg-gradient-to-r from-blue-500 to-cyan-500 opacity-0 group-hover:opacity-100 transition-opacity" />
               <span className="relative flex items-center justify-center gap-2">
                 {loading && <Loader2 className="w-4 h-4 animate-spin" />}
-                {loading ? "Sending..." : "Send Reset Link"}
+                {loading ? 'Sending...' : 'Send Reset Link'}
               </span>
             </button>
           </form>

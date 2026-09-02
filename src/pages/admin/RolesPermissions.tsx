@@ -53,7 +53,8 @@ export function RolesPermissions() {
           // Get permissions for this role
           const { data: rolePerms } = await supabase
             .from('role_permissions')
-            .select(`
+            .select(
+              `
               permission_id,
               permissions (
                 id,
@@ -62,7 +63,8 @@ export function RolesPermissions() {
                 description,
                 category
               )
-            `)
+            `,
+            )
             .eq('role_id', role.id);
 
           const permissions = rolePerms?.map((rp: any) => rp.permissions).filter(Boolean) || [];
@@ -76,9 +78,9 @@ export function RolesPermissions() {
           return {
             ...role,
             permissions,
-            userCount: userCount || 0
+            userCount: userCount || 0,
           };
-        })
+        }),
       );
 
       setRoles(rolesWithDetails);
@@ -101,7 +103,7 @@ export function RolesPermissions() {
 
   const groupPermissionsByCategory = (permissions: Permission[]) => {
     const grouped: Record<string, Permission[]> = {};
-    permissions.forEach(perm => {
+    permissions.forEach((perm) => {
       if (!grouped[perm.category]) {
         grouped[perm.category] = [];
       }
@@ -202,7 +204,10 @@ export function RolesPermissions() {
                     <div className="space-y-4">
                       {Object.entries(groupPermissionsByCategory(selectedRole.permissions)).map(
                         ([category, perms]) => (
-                          <div key={category} className="border border-gray-200 rounded-lg overflow-hidden">
+                          <div
+                            key={category}
+                            className="border border-gray-200 rounded-lg overflow-hidden"
+                          >
                             <div className="bg-gray-50 px-4 py-2 border-b border-gray-200">
                               <h4 className="font-semibold text-gray-900 capitalize">{category}</h4>
                             </div>
@@ -223,15 +228,23 @@ export function RolesPermissions() {
                                         </div>
                                       )}
                                     </div>
-                                    <svg className="h-5 w-5 text-green-500" fill="currentColor" viewBox="0 0 20 20">
-                                      <path fillRule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clipRule="evenodd" />
+                                    <svg
+                                      className="h-5 w-5 text-green-500"
+                                      fill="currentColor"
+                                      viewBox="0 0 20 20"
+                                    >
+                                      <path
+                                        fillRule="evenodd"
+                                        d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z"
+                                        clipRule="evenodd"
+                                      />
                                     </svg>
                                   </div>
                                 </div>
                               ))}
                             </div>
                           </div>
-                        )
+                        ),
                       )}
                     </div>
                   ) : (
@@ -244,8 +257,18 @@ export function RolesPermissions() {
             ) : (
               <div className="bg-white rounded-lg shadow flex items-center justify-center h-full min-h-[400px]">
                 <div className="text-center text-gray-500">
-                  <svg className="mx-auto h-12 w-12 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 6V4m0 2a2 2 0 100 4m0-4a2 2 0 110 4m-6 8a2 2 0 100-4m0 4a2 2 0 110-4m0 4v2m0-6V4m6 6v10m6-2a2 2 0 100-4m0 4a2 2 0 110-4m0 4v2m0-6V4" />
+                  <svg
+                    className="mx-auto h-12 w-12 text-gray-400"
+                    fill="none"
+                    stroke="currentColor"
+                    viewBox="0 0 24 24"
+                  >
+                    <path
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                      strokeWidth={2}
+                      d="M12 6V4m0 2a2 2 0 100 4m0-4a2 2 0 110 4m-6 8a2 2 0 100-4m0 4a2 2 0 110-4m0 4v2m0-6V4m6 6v10m6-2a2 2 0 100-4m0 4a2 2 0 110-4m0 4v2m0-6V4"
+                    />
                   </svg>
                   <p className="mt-2">Select a role to view details</p>
                 </div>

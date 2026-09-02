@@ -1,6 +1,6 @@
-import { useState } from "react";
-import { motion } from "motion/react";
-import { CreditCard, AlertCircle, CheckCircle, XCircle, Zap } from "lucide-react";
+import { useState } from 'react';
+import { motion } from 'motion/react';
+import { CreditCard, AlertCircle, CheckCircle, XCircle, Zap } from 'lucide-react';
 
 interface SubscriptionManagerProps {
   tenantId: number;
@@ -22,17 +22,17 @@ export default function SubscriptionManager({
   const [processing, setProcessing] = useState(false);
 
   const plans = [
-    { id: "basic", name: "Basic", price: 299 },
-    { id: "pro", name: "Pro", price: 999 },
-    { id: "enterprise", name: "Enterprise", price: 4500 },
+    { id: 'basic', name: 'Basic', price: 299 },
+    { id: 'pro', name: 'Pro', price: 999 },
+    { id: 'enterprise', name: 'Enterprise', price: 4500 },
   ];
 
   const handleUpgrade = async () => {
     setProcessing(true);
     await new Promise((resolve) => setTimeout(resolve, 1500));
 
-    console.log("Stripe API Call:", {
-      action: "update_subscription",
+    console.log('Stripe API Call:', {
+      action: 'update_subscription',
       tenantId,
       tenantName,
       oldPlan: currentPlan,
@@ -46,39 +46,39 @@ export default function SubscriptionManager({
   };
 
   const handleCancel = async () => {
-    if (!confirm("Are you sure you want to cancel this subscription?")) return;
+    if (!confirm('Are you sure you want to cancel this subscription?')) return;
 
     setProcessing(true);
     await new Promise((resolve) => setTimeout(resolve, 1500));
 
-    console.log("Stripe API Call:", {
-      action: "cancel_subscription",
+    console.log('Stripe API Call:', {
+      action: 'cancel_subscription',
       tenantId,
       tenantName,
     });
 
-    alert("❌ Subscription canceled!");
+    alert('❌ Subscription canceled!');
     setProcessing(false);
     onUpdate();
   };
 
   const getStatusBadge = () => {
     switch (status) {
-      case "active":
+      case 'active':
         return (
           <span className="inline-flex items-center gap-1 px-3 py-1 rounded-full text-xs font-semibold bg-green-500/10 text-green-400 border border-green-500/20">
             <CheckCircle className="w-3 h-3" />
             Active
           </span>
         );
-      case "past_due":
+      case 'past_due':
         return (
           <span className="inline-flex items-center gap-1 px-3 py-1 rounded-full text-xs font-semibold bg-yellow-500/10 text-yellow-400 border border-yellow-500/20">
             <AlertCircle className="w-3 h-3" />
             Past Due
           </span>
         );
-      case "canceled":
+      case 'canceled':
         return (
           <span className="inline-flex items-center gap-1 px-3 py-1 rounded-full text-xs font-semibold bg-red-500/10 text-red-400 border border-red-500/20">
             <XCircle className="w-3 h-3" />
@@ -129,7 +129,7 @@ export default function SubscriptionManager({
             <Zap className="w-4 h-4 inline-block mr-2" />
             Change Plan
           </motion.button>
-          {status === "active" && (
+          {status === 'active' && (
             <motion.button
               whileHover={{ scale: 1.02 }}
               whileTap={{ scale: 0.98 }}
@@ -165,7 +165,7 @@ export default function SubscriptionManager({
               disabled={processing || selectedPlan === currentPlan}
               className="flex-1 px-4 py-2 bg-gradient-to-r from-purple-600 to-pink-600 text-white rounded-xl text-sm font-medium disabled:opacity-50"
             >
-              {processing ? "Processing..." : "Confirm Change"}
+              {processing ? 'Processing...' : 'Confirm Change'}
             </motion.button>
             <motion.button
               whileHover={{ scale: 1.02 }}

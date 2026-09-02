@@ -1,27 +1,20 @@
-import { useState } from "react";
-import { motion } from "motion/react";
+import { useState } from 'react';
+import { motion } from 'motion/react';
 import {
   Zap,
   TrendingUp,
   TrendingDown,
   DollarSign,
-  AlertTriangle,
-  CheckCircle,
   Lightbulb,
   Wind,
-  Droplet,
-  Flame,
   Battery,
   Download,
-  Calendar,
   Building2,
-} from "lucide-react";
+} from 'lucide-react';
 import {
-  LineChart,
   Line,
   BarChart,
   Bar,
-  AreaChart,
   Area,
   PieChart,
   Pie,
@@ -32,42 +25,42 @@ import {
   Tooltip,
   ResponsiveContainer,
   ComposedChart,
-} from "recharts";
+} from 'recharts';
 
 // Sample Data
 const energyTrendData = [
-  { time: "00:00", current: 145, predicted: 150, cost: 52 },
-  { time: "04:00", current: 98, predicted: 95, cost: 35 },
-  { time: "08:00", current: 210, predicted: 205, cost: 75 },
-  { time: "12:00", current: 285, predicted: 290, cost: 102 },
-  { time: "16:00", current: 245, predicted: 240, cost: 88 },
-  { time: "20:00", current: 195, predicted: 200, cost: 70 },
-  { time: "23:00", current: 160, predicted: 165, cost: 57 },
+  { time: '00:00', current: 145, predicted: 150, cost: 52 },
+  { time: '04:00', current: 98, predicted: 95, cost: 35 },
+  { time: '08:00', current: 210, predicted: 205, cost: 75 },
+  { time: '12:00', current: 285, predicted: 290, cost: 102 },
+  { time: '16:00', current: 245, predicted: 240, cost: 88 },
+  { time: '20:00', current: 195, predicted: 200, cost: 70 },
+  { time: '23:00', current: 160, predicted: 165, cost: 57 },
 ];
 
 const buildingConsumption = [
-  { building: "Building A", consumption: 2450, cost: 882, status: "normal" },
-  { building: "Building B", consumption: 3120, cost: 1123, status: "high" },
-  { building: "Building C", consumption: 1890, cost: 680, status: "normal" },
-  { building: "Warehouse", consumption: 1560, cost: 561, status: "low" },
+  { building: 'Building A', consumption: 2450, cost: 882, status: 'normal' },
+  { building: 'Building B', consumption: 3120, cost: 1123, status: 'high' },
+  { building: 'Building C', consumption: 1890, cost: 680, status: 'normal' },
+  { building: 'Warehouse', consumption: 1560, cost: 561, status: 'low' },
 ];
 
 const energyBreakdown = [
-  { name: "HVAC", value: 42, color: "#3B82F6" },
-  { name: "Lighting", value: 28, color: "#F59E0B" },
-  { name: "Equipment", value: 18, color: "#8B5CF6" },
-  { name: "Other", value: 12, color: "#10B981" },
+  { name: 'HVAC', value: 42, color: '#3B82F6' },
+  { name: 'Lighting', value: 28, color: '#F59E0B' },
+  { name: 'Equipment', value: 18, color: '#8B5CF6' },
+  { name: 'Other', value: 12, color: '#10B981' },
 ];
 
 const zones = [
-  { id: 1, name: "Floor 1 - Office", usage: 125, limit: 200, efficiency: 94, status: "optimal" },
-  { id: 2, name: "Floor 2 - Conference", usage: 185, limit: 200, efficiency: 78, status: "high" },
-  { id: 3, name: "Floor 3 - IT Lab", usage: 95, limit: 200, efficiency: 98, status: "optimal" },
-  { id: 4, name: "Parking", usage: 45, limit: 100, efficiency: 99, status: "optimal" },
+  { id: 1, name: 'Floor 1 - Office', usage: 125, limit: 200, efficiency: 94, status: 'optimal' },
+  { id: 2, name: 'Floor 2 - Conference', usage: 185, limit: 200, efficiency: 78, status: 'high' },
+  { id: 3, name: 'Floor 3 - IT Lab', usage: 95, limit: 200, efficiency: 98, status: 'optimal' },
+  { id: 4, name: 'Parking', usage: 45, limit: 100, efficiency: 99, status: 'optimal' },
 ];
 
 export default function EnergyPage() {
-  const [selectedPeriod, setSelectedPeriod] = useState("today");
+  const [selectedPeriod, setSelectedPeriod] = useState('today');
 
   const CustomTooltip = ({ active, payload, label }: any) => {
     if (active && payload && payload.length) {
@@ -95,7 +88,9 @@ export default function EnergyPage() {
             <Zap className="w-10 h-10 text-yellow-400" />
             Energy Management
           </h1>
-          <p className="text-gray-400 text-sm font-medium mt-2">Real-time energy monitoring and optimization</p>
+          <p className="text-gray-400 text-sm font-medium mt-2">
+            Real-time energy monitoring and optimization
+          </p>
         </div>
 
         {/* Period Selector */}
@@ -163,17 +158,32 @@ export default function EnergyPage() {
         {/* Left Column - Charts */}
         <div className="xl:col-span-2 space-y-8">
           {/* Energy Trend */}
-          <PremiumCard title="Energy Consumption & Cost" subtitle="Real-time with AI predictions" icon={Zap}>
+          <PremiumCard
+            title="Energy Consumption & Cost"
+            subtitle="Real-time with AI predictions"
+            icon={Zap}
+          >
             <ResponsiveContainer width="100%" height={320}>
               <ComposedChart data={energyTrendData}>
                 <defs>
                   <linearGradient id="energyArea" x1="0" y1="0" x2="0" y2="1">
                     <stop key="energy-area-1" offset="0%" stopColor="#F59E0B" stopOpacity={0.4} />
-                    <stop key="energy-area-2" offset="100%" stopColor="#F59E0B" stopOpacity={0.05} />
+                    <stop
+                      key="energy-area-2"
+                      offset="100%"
+                      stopColor="#F59E0B"
+                      stopOpacity={0.05}
+                    />
                   </linearGradient>
                 </defs>
                 <CartesianGrid strokeDasharray="3 3" stroke="#374151" opacity={0.3} />
-                <XAxis dataKey="time" stroke="#6B7280" fontSize={12} tickLine={false} axisLine={false} />
+                <XAxis
+                  dataKey="time"
+                  stroke="#6B7280"
+                  fontSize={12}
+                  tickLine={false}
+                  axisLine={false}
+                />
                 <YAxis stroke="#6B7280" fontSize={12} tickLine={false} axisLine={false} />
                 <Tooltip content={<CustomTooltip />} />
                 <Area
@@ -214,7 +224,11 @@ export default function EnergyPage() {
           </PremiumCard>
 
           {/* Building Consumption */}
-          <PremiumCard title="Building-wise Consumption" subtitle="Energy usage by location" icon={Building2}>
+          <PremiumCard
+            title="Building-wise Consumption"
+            subtitle="Energy usage by location"
+            icon={Building2}
+          >
             <ResponsiveContainer width="100%" height={280}>
               <BarChart data={buildingConsumption}>
                 <defs>
@@ -224,10 +238,21 @@ export default function EnergyPage() {
                   </linearGradient>
                 </defs>
                 <CartesianGrid strokeDasharray="3 3" stroke="#374151" opacity={0.3} />
-                <XAxis dataKey="building" stroke="#6B7280" fontSize={12} tickLine={false} axisLine={false} />
+                <XAxis
+                  dataKey="building"
+                  stroke="#6B7280"
+                  fontSize={12}
+                  tickLine={false}
+                  axisLine={false}
+                />
                 <YAxis stroke="#6B7280" fontSize={12} tickLine={false} axisLine={false} />
                 <Tooltip content={<CustomTooltip />} />
-                <Bar dataKey="consumption" fill="url(#buildingBar)" radius={[8, 8, 0, 0]} name="Consumption" />
+                <Bar
+                  dataKey="consumption"
+                  fill="url(#buildingBar)"
+                  radius={[8, 8, 0, 0]}
+                  name="Consumption"
+                />
               </BarChart>
             </ResponsiveContainer>
           </PremiumCard>
@@ -245,11 +270,11 @@ export default function EnergyPage() {
                     <div className="flex items-center gap-3">
                       <div
                         className={`w-3 h-3 rounded-full ${
-                          zone.status === "optimal"
-                            ? "bg-green-400"
-                            : zone.status === "high"
-                            ? "bg-yellow-400"
-                            : "bg-red-400"
+                          zone.status === 'optimal'
+                            ? 'bg-green-400'
+                            : zone.status === 'high'
+                              ? 'bg-yellow-400'
+                              : 'bg-red-400'
                         }`}
                       />
                       <div>
@@ -270,13 +295,13 @@ export default function EnergyPage() {
                     <motion.div
                       initial={{ width: 0 }}
                       animate={{ width: `${(zone.usage / zone.limit) * 100}%` }}
-                      transition={{ duration: 1, ease: "easeOut" }}
+                      transition={{ duration: 1, ease: 'easeOut' }}
                       className={`absolute inset-y-0 left-0 rounded-full ${
-                        zone.status === "optimal"
-                          ? "bg-gradient-to-r from-green-500 to-emerald-500"
-                          : zone.status === "high"
-                          ? "bg-gradient-to-r from-yellow-500 to-orange-500"
-                          : "bg-gradient-to-r from-red-500 to-pink-500"
+                        zone.status === 'optimal'
+                          ? 'bg-gradient-to-r from-green-500 to-emerald-500'
+                          : zone.status === 'high'
+                            ? 'bg-gradient-to-r from-yellow-500 to-orange-500'
+                            : 'bg-gradient-to-r from-red-500 to-pink-500'
                       }`}
                     />
                   </div>
@@ -323,7 +348,12 @@ export default function EnergyPage() {
           </PremiumCard>
 
           {/* AI Recommendations */}
-          <PremiumCard title="AI Recommendations" subtitle="Smart optimization tips" icon={Lightbulb} highlight>
+          <PremiumCard
+            title="AI Recommendations"
+            subtitle="Smart optimization tips"
+            icon={Lightbulb}
+            highlight
+          >
             <div className="space-y-4">
               <RecommendationCard
                 title="Off-Peak Shift"
@@ -367,7 +397,7 @@ interface KPICardProps {
   label: string;
   value: string;
   change: string;
-  trend: "up" | "down";
+  trend: 'up' | 'down';
   gradient: string;
 }
 
@@ -380,11 +410,13 @@ function KPICard({ icon: Icon, label, value, change, trend, gradient }: KPICardP
       className="bg-gradient-to-br from-gray-800/40 to-gray-900/40 backdrop-blur-xl border border-gray-700/50 rounded-3xl p-6 hover:border-gray-600/50 transition-all"
     >
       <div className="flex items-start justify-between mb-4">
-        <div className={`w-12 h-12 bg-gradient-to-br ${gradient} rounded-2xl flex items-center justify-center shadow-lg`}>
+        <div
+          className={`w-12 h-12 bg-gradient-to-br ${gradient} rounded-2xl flex items-center justify-center shadow-lg`}
+        >
           <Icon className="w-6 h-6 text-white" />
         </div>
         <div className="flex items-center gap-1">
-          {trend === "up" ? (
+          {trend === 'up' ? (
             <TrendingUp className="w-4 h-4 text-green-400" />
           ) : (
             <TrendingDown className="w-4 h-4 text-green-400" />
@@ -413,13 +445,15 @@ function PremiumCard({ title, subtitle, icon: Icon, children, highlight }: Premi
       initial={{ opacity: 0, y: 20 }}
       animate={{ opacity: 1, y: 0 }}
       className={`bg-gradient-to-br from-gray-800/40 to-gray-900/40 backdrop-blur-xl border rounded-3xl p-8 transition-all ${
-        highlight ? "border-blue-500/30 shadow-xl shadow-blue-500/10" : "border-gray-700/50 hover:border-gray-600/50"
+        highlight
+          ? 'border-blue-500/30 shadow-xl shadow-blue-500/10'
+          : 'border-gray-700/50 hover:border-gray-600/50'
       }`}
     >
       <div className="flex items-center gap-4 mb-6">
         <div
           className={`w-12 h-12 bg-gradient-to-br ${
-            highlight ? "from-blue-500 to-purple-500" : "from-gray-700 to-gray-800"
+            highlight ? 'from-blue-500 to-purple-500' : 'from-gray-700 to-gray-800'
           } rounded-2xl flex items-center justify-center shadow-lg`}
         >
           <Icon className="w-6 h-6 text-white" />
@@ -439,14 +473,14 @@ interface RecommendationCardProps {
   title: string;
   description: string;
   savings: string;
-  impact: "high" | "medium" | "low";
+  impact: 'high' | 'medium' | 'low';
 }
 
 function RecommendationCard({ title, description, savings, impact }: RecommendationCardProps) {
   const impactColors = {
-    high: { bg: "bg-green-500/10", border: "border-green-500/30", text: "text-green-400" },
-    medium: { bg: "bg-yellow-500/10", border: "border-yellow-500/30", text: "text-yellow-400" },
-    low: { bg: "bg-blue-500/10", border: "border-blue-500/30", text: "text-blue-400" },
+    high: { bg: 'bg-green-500/10', border: 'border-green-500/30', text: 'text-green-400' },
+    medium: { bg: 'bg-yellow-500/10', border: 'border-yellow-500/30', text: 'text-yellow-400' },
+    low: { bg: 'bg-blue-500/10', border: 'border-blue-500/30', text: 'text-blue-400' },
   };
 
   const colors = impactColors[impact];

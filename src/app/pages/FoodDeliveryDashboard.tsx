@@ -22,10 +22,34 @@ import {
 
 // Sample Data
 const stats = [
-  { label: 'Total Revenue', value: '$24,580', change: '+12.5%', trend: 'up' as const, icon: <DollarSign className="w-6 h-6 text-black" /> },
-  { label: 'Orders Today', value: '156', change: '+8.2%', trend: 'up' as const, icon: <ShoppingCart className="w-6 h-6 text-black" /> },
-  { label: 'Active Customers', value: '1,240', change: '+5.4%', trend: 'up' as const, icon: <Users className="w-6 h-6 text-black" /> },
-  { label: 'Avg. Delivery Time', value: '28 min', change: '-12%', trend: 'down' as const, icon: <Clock className="w-6 h-6 text-black" /> },
+  {
+    label: 'Total Revenue',
+    value: '$24,580',
+    change: '+12.5%',
+    trend: 'up' as const,
+    icon: <DollarSign className="w-6 h-6 text-black" />,
+  },
+  {
+    label: 'Orders Today',
+    value: '156',
+    change: '+8.2%',
+    trend: 'up' as const,
+    icon: <ShoppingCart className="w-6 h-6 text-black" />,
+  },
+  {
+    label: 'Active Customers',
+    value: '1,240',
+    change: '+5.4%',
+    trend: 'up' as const,
+    icon: <Users className="w-6 h-6 text-black" />,
+  },
+  {
+    label: 'Avg. Delivery Time',
+    value: '28 min',
+    change: '-12%',
+    trend: 'down' as const,
+    icon: <Clock className="w-6 h-6 text-black" />,
+  },
 ];
 
 const popularDishes = [
@@ -72,10 +96,38 @@ const popularDishes = [
 ];
 
 const recentOrders = [
-  { id: '#ORD-1234', customer: 'John Doe', items: 3, total: 45.99, status: 'Delivered', time: '2m ago' },
-  { id: '#ORD-1235', customer: 'Jane Smith', items: 2, total: 28.50, status: 'In Transit', time: '5m ago' },
-  { id: '#ORD-1236', customer: 'Mike Johnson', items: 5, total: 67.80, status: 'Preparing', time: '12m ago' },
-  { id: '#ORD-1237', customer: 'Sarah Williams', items: 1, total: 12.99, status: 'Pending', time: '18m ago' },
+  {
+    id: '#ORD-1234',
+    customer: 'John Doe',
+    items: 3,
+    total: 45.99,
+    status: 'Delivered',
+    time: '2m ago',
+  },
+  {
+    id: '#ORD-1235',
+    customer: 'Jane Smith',
+    items: 2,
+    total: 28.5,
+    status: 'In Transit',
+    time: '5m ago',
+  },
+  {
+    id: '#ORD-1236',
+    customer: 'Mike Johnson',
+    items: 5,
+    total: 67.8,
+    status: 'Preparing',
+    time: '12m ago',
+  },
+  {
+    id: '#ORD-1237',
+    customer: 'Sarah Williams',
+    items: 1,
+    total: 12.99,
+    status: 'Pending',
+    time: '18m ago',
+  },
 ];
 
 const topRestaurants = [
@@ -122,19 +174,11 @@ export default function FoodDeliveryDashboard() {
             </div>
 
             <div className="flex gap-3">
-              <ResponsiveButton
-                variant="secondary"
-                size="md"
-                leftIcon={<Package size={20} />}
-              >
+              <ResponsiveButton variant="secondary" size="md" leftIcon={<Package size={20} />}>
                 <span className="hidden sm:inline">View Orders</span>
                 <span className="sm:hidden">Orders</span>
               </ResponsiveButton>
-              <ResponsiveButton
-                variant="primary"
-                size="md"
-                leftIcon={<Plus size={20} />}
-              >
+              <ResponsiveButton variant="primary" size="md" leftIcon={<Plus size={20} />}>
                 <span className="hidden sm:inline">New Order</span>
                 <span className="sm:hidden">New</span>
               </ResponsiveButton>
@@ -169,9 +213,10 @@ export default function FoodDeliveryDashboard() {
                     className={`
                       px-4 sm:px-6 py-2 sm:py-3 rounded-xl font-semibold whitespace-nowrap
                       transition-all duration-200 flex-shrink-0
-                      ${selectedCategory === category
-                        ? 'bg-yellow-400 text-black shadow-lg'
-                        : 'bg-white dark:bg-gray-900 text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-white'
+                      ${
+                        selectedCategory === category
+                          ? 'bg-yellow-400 text-black shadow-lg'
+                          : 'bg-white dark:bg-gray-900 text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-white'
                       }
                     `}
                   >
@@ -193,7 +238,11 @@ export default function FoodDeliveryDashboard() {
 
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 sm:gap-6">
                   {popularDishes.map((dish, index) => (
-                    <FoodCard key={index} {...dish} onClick={() => console.log('Clicked:', dish.name)} />
+                    <FoodCard
+                      key={index}
+                      {...dish}
+                      onClick={() => console.log('Clicked:', dish.name)}
+                    />
                   ))}
                 </div>
               </div>
@@ -213,33 +262,65 @@ export default function FoodDeliveryDashboard() {
                   <table className="w-full min-w-[600px]">
                     <thead>
                       <tr className="text-left border-b border-gray-200 dark:border-gray-700">
-                        <th className="pb-3 px-4 sm:px-0 text-sm font-semibold text-gray-600 dark:text-gray-400">Order ID</th>
-                        <th className="pb-3 text-sm font-semibold text-gray-600 dark:text-gray-400">Customer</th>
-                        <th className="pb-3 text-sm font-semibold text-gray-600 dark:text-gray-400">Items</th>
-                        <th className="pb-3 text-sm font-semibold text-gray-600 dark:text-gray-400">Total</th>
-                        <th className="pb-3 text-sm font-semibold text-gray-600 dark:text-gray-400">Status</th>
-                        <th className="pb-3 px-4 sm:px-0 text-sm font-semibold text-gray-600 dark:text-gray-400">Time</th>
+                        <th className="pb-3 px-4 sm:px-0 text-sm font-semibold text-gray-600 dark:text-gray-400">
+                          Order ID
+                        </th>
+                        <th className="pb-3 text-sm font-semibold text-gray-600 dark:text-gray-400">
+                          Customer
+                        </th>
+                        <th className="pb-3 text-sm font-semibold text-gray-600 dark:text-gray-400">
+                          Items
+                        </th>
+                        <th className="pb-3 text-sm font-semibold text-gray-600 dark:text-gray-400">
+                          Total
+                        </th>
+                        <th className="pb-3 text-sm font-semibold text-gray-600 dark:text-gray-400">
+                          Status
+                        </th>
+                        <th className="pb-3 px-4 sm:px-0 text-sm font-semibold text-gray-600 dark:text-gray-400">
+                          Time
+                        </th>
                       </tr>
                     </thead>
                     <tbody>
                       {recentOrders.map((order) => (
-                        <tr key={order.id} className="border-b border-gray-100 dark:border-gray-800 hover:bg-gray-50 dark:hover:bg-gray-800/50 transition-colors">
-                          <td className="py-4 px-4 sm:px-0 font-mono text-sm text-gray-900 dark:text-white">{order.id}</td>
-                          <td className="py-4 text-sm text-gray-900 dark:text-white">{order.customer}</td>
-                          <td className="py-4 text-sm text-gray-600 dark:text-gray-400">{order.items}</td>
-                          <td className="py-4 text-sm font-semibold text-gray-900 dark:text-white">${order.total}</td>
+                        <tr
+                          key={order.id}
+                          className="border-b border-gray-100 dark:border-gray-800 hover:bg-gray-50 dark:hover:bg-gray-800/50 transition-colors"
+                        >
+                          <td className="py-4 px-4 sm:px-0 font-mono text-sm text-gray-900 dark:text-white">
+                            {order.id}
+                          </td>
+                          <td className="py-4 text-sm text-gray-900 dark:text-white">
+                            {order.customer}
+                          </td>
+                          <td className="py-4 text-sm text-gray-600 dark:text-gray-400">
+                            {order.items}
+                          </td>
+                          <td className="py-4 text-sm font-semibold text-gray-900 dark:text-white">
+                            ${order.total}
+                          </td>
                           <td className="py-4">
-                            <span className={`
+                            <span
+                              className={`
                               px-3 py-1 rounded-full text-xs font-semibold
-                              ${order.status === 'Delivered' ? 'bg-green-100 text-green-700 dark:bg-green-900/30 dark:text-green-400' :
-                                order.status === 'In Transit' ? 'bg-blue-100 text-blue-700 dark:bg-blue-900/30 dark:text-blue-400' :
-                                order.status === 'Preparing' ? 'bg-yellow-100 text-yellow-700 dark:bg-yellow-900/30 dark:text-yellow-400' :
-                                'bg-gray-100 text-gray-700 dark:bg-gray-800 dark:text-gray-400'}
-                            `}>
+                              ${
+                                order.status === 'Delivered'
+                                  ? 'bg-green-100 text-green-700 dark:bg-green-900/30 dark:text-green-400'
+                                  : order.status === 'In Transit'
+                                    ? 'bg-blue-100 text-blue-700 dark:bg-blue-900/30 dark:text-blue-400'
+                                    : order.status === 'Preparing'
+                                      ? 'bg-yellow-100 text-yellow-700 dark:bg-yellow-900/30 dark:text-yellow-400'
+                                      : 'bg-gray-100 text-gray-700 dark:bg-gray-800 dark:text-gray-400'
+                              }
+                            `}
+                            >
                               {order.status}
                             </span>
                           </td>
-                          <td className="py-4 px-4 sm:px-0 text-sm text-gray-500 dark:text-gray-500">{order.time}</td>
+                          <td className="py-4 px-4 sm:px-0 text-sm text-gray-500 dark:text-gray-500">
+                            {order.time}
+                          </td>
                         </tr>
                       ))}
                     </tbody>
@@ -268,12 +349,16 @@ export default function FoodDeliveryDashboard() {
                           {index + 1}
                         </div>
                         <div>
-                          <p className="font-semibold text-gray-900 dark:text-white text-sm">{restaurant.name}</p>
+                          <p className="font-semibold text-gray-900 dark:text-white text-sm">
+                            {restaurant.name}
+                          </p>
                           <p className="text-xs text-gray-500">{restaurant.orders} orders</p>
                         </div>
                       </div>
                       <div className="text-right">
-                        <p className="font-semibold text-gray-900 dark:text-white text-sm">{restaurant.revenue}</p>
+                        <p className="font-semibold text-gray-900 dark:text-white text-sm">
+                          {restaurant.revenue}
+                        </p>
                         <p className="text-xs text-yellow-600 flex items-center gap-1">
                           ⭐ {restaurant.rating}
                         </p>
@@ -285,7 +370,9 @@ export default function FoodDeliveryDashboard() {
 
               {/* Quick Actions */}
               <ResponsiveCard variant="filled" padding="lg">
-                <h3 className="text-lg font-bold text-gray-900 dark:text-white mb-4">Quick Actions</h3>
+                <h3 className="text-lg font-bold text-gray-900 dark:text-white mb-4">
+                  Quick Actions
+                </h3>
                 <div className="space-y-3">
                   <ResponsiveButton variant="primary" fullWidth leftIcon={<Plus size={20} />}>
                     Add New Dish

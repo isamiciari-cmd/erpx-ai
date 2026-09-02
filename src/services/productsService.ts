@@ -45,11 +45,7 @@ export async function getProduct(productId: string): Promise<Product | null> {
     return null;
   }
 
-  const { data, error } = await supabase
-    .from('products')
-    .select('*')
-    .eq('id', productId)
-    .single();
+  const { data, error } = await supabase.from('products').select('*').eq('id', productId).single();
 
   if (error) {
     console.error('[Supabase] getProduct error:', error);
@@ -65,11 +61,7 @@ export async function createProduct(productData: Partial<Product>): Promise<Prod
     throw new Error('Demo mode: Cannot create products');
   }
 
-  const { data, error } = await supabase
-    .from('products')
-    .insert(productData)
-    .select()
-    .single();
+  const { data, error } = await supabase.from('products').insert(productData).select().single();
 
   if (error) {
     console.error('[Supabase] createProduct error:', error);
@@ -80,7 +72,10 @@ export async function createProduct(productData: Partial<Product>): Promise<Prod
 }
 
 // Update product
-export async function updateProduct(productId: string, updates: Partial<Product>): Promise<Product> {
+export async function updateProduct(
+  productId: string,
+  updates: Partial<Product>,
+): Promise<Product> {
   if (isDemoMode) {
     throw new Error('Demo mode: Cannot update products');
   }
@@ -106,10 +101,7 @@ export async function deleteProduct(productId: string): Promise<void> {
     throw new Error('Demo mode: Cannot delete products');
   }
 
-  const { error } = await supabase
-    .from('products')
-    .delete()
-    .eq('id', productId);
+  const { error } = await supabase.from('products').delete().eq('id', productId);
 
   if (error) {
     console.error('[Supabase] deleteProduct error:', error);
@@ -127,7 +119,9 @@ export async function searchProducts(companyId: string, searchTerm: string): Pro
     .from('products')
     .select('*')
     .eq('company_id', companyId)
-    .or(`product_name.ilike.%${searchTerm}%,sku.ilike.%${searchTerm}%,description.ilike.%${searchTerm}%`)
+    .or(
+      `product_name.ilike.%${searchTerm}%,sku.ilike.%${searchTerm}%,description.ilike.%${searchTerm}%`,
+    )
     .limit(20);
 
   if (error) {
@@ -139,7 +133,10 @@ export async function searchProducts(companyId: string, searchTerm: string): Pro
 }
 
 // Get product by barcode/SKU
-export async function getProductByBarcode(companyId: string, barcode: string): Promise<Product | null> {
+export async function getProductByBarcode(
+  companyId: string,
+  barcode: string,
+): Promise<Product | null> {
   if (isDemoMode) {
     return null;
   }
@@ -161,20 +158,25 @@ export async function getProductByBarcode(companyId: string, barcode: string): P
 }
 
 // Get products with stock information
-export async function getProductsWithStock(companyId: string, warehouseId?: string): Promise<Product[]> {
+export async function getProductsWithStock(
+  companyId: string,
+  warehouseId?: string,
+): Promise<Product[]> {
   if (isDemoMode) {
     return [];
   }
 
   const { data, error } = await supabase
     .from('products')
-    .select(`
+    .select(
+      `
       *,
       inventory (
         quantity_available,
         warehouse_id
       )
-    `)
+    `,
+    )
     .eq('company_id', companyId)
     .eq('is_active', true)
     .order('product_name', { ascending: true });
@@ -195,7 +197,10 @@ export async function getProductsWithStock(companyId: string, warehouseId?: stri
       const warehouseInventory = inventory.find((inv: any) => inv.warehouse_id === warehouseId);
       totalStock = warehouseInventory?.quantity_available || 0;
     } else {
-      totalStock = inventory.reduce((sum: number, inv: any) => sum + (inv.quantity_available || 0), 0);
+      totalStock = inventory.reduce(
+        (sum: number, inv: any) => sum + (inv.quantity_available || 0),
+        0,
+      );
     }
 
     return {

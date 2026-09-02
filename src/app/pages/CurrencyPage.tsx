@@ -1,6 +1,6 @@
-import { useState, useEffect } from "react";
-import { motion } from "motion/react";
-import { DollarSign, RefreshCw, TrendingUp, TrendingDown } from "lucide-react";
+import { useState, useEffect } from 'react';
+import { motion } from 'motion/react';
+import { DollarSign, RefreshCw, TrendingUp, TrendingDown } from 'lucide-react';
 
 interface Currency {
   code: string;
@@ -12,12 +12,12 @@ interface Currency {
 // Mock API - in production, connect to exchangerate-api.com
 const currencyAPI = {
   currencies: [
-    { code: "SAR", name: "Saudi Riyal", rate: 1, change: 0 },
-    { code: "USD", name: "US Dollar", rate: 0.27, change: 0.5 },
-    { code: "EUR", name: "Euro", rate: 0.25, change: -0.3 },
-    { code: "GBP", name: "British Pound", rate: 0.21, change: 0.2 },
-    { code: "AED", name: "UAE Dirham", rate: 0.98, change: 0.1 },
-    { code: "KWD", name: "Kuwaiti Dinar", rate: 0.08, change: -0.1 },
+    { code: 'SAR', name: 'Saudi Riyal', rate: 1, change: 0 },
+    { code: 'USD', name: 'US Dollar', rate: 0.27, change: 0.5 },
+    { code: 'EUR', name: 'Euro', rate: 0.25, change: -0.3 },
+    { code: 'GBP', name: 'British Pound', rate: 0.21, change: 0.2 },
+    { code: 'AED', name: 'UAE Dirham', rate: 0.98, change: 0.1 },
+    { code: 'KWD', name: 'Kuwaiti Dinar', rate: 0.08, change: -0.1 },
   ] as Currency[],
 
   async fetchRates(): Promise<Currency[]> {
@@ -41,9 +41,9 @@ export default function CurrencyPage() {
   const [lastUpdate, setLastUpdate] = useState<Date>(new Date());
 
   // Converter state
-  const [amount, setAmount] = useState("100");
-  const [fromCurrency, setFromCurrency] = useState("SAR");
-  const [toCurrency, setToCurrency] = useState("USD");
+  const [amount, setAmount] = useState('100');
+  const [fromCurrency, setFromCurrency] = useState('SAR');
+  const [toCurrency, setToCurrency] = useState('USD');
   const [result, setResult] = useState(0);
 
   const fetchRates = async () => {
@@ -90,7 +90,7 @@ export default function CurrencyPage() {
           disabled={loading}
           className="px-6 py-3 bg-gradient-to-r from-blue-600 to-cyan-600 text-white rounded-xl font-medium hover:shadow-lg hover:shadow-blue-500/30 transition-all flex items-center gap-2"
         >
-          <RefreshCw className={`w-5 h-5 ${loading ? "animate-spin" : ""}`} />
+          <RefreshCw className={`w-5 h-5 ${loading ? 'animate-spin' : ''}`} />
           Refresh Rates
         </motion.button>
       </div>
@@ -156,11 +156,11 @@ export default function CurrencyPage() {
                 {result.toFixed(2)} {toCurrency}
               </p>
               <p className="text-sm text-gray-400 mt-2">
-                1 {fromCurrency} ={" "}
+                1 {fromCurrency} ={' '}
                 {(
                   (currencies.find((c) => c.code === toCurrency)?.rate || 1) /
                   (currencies.find((c) => c.code === fromCurrency)?.rate || 1)
-                ).toFixed(4)}{" "}
+                ).toFixed(4)}{' '}
                 {toCurrency}
               </p>
             </div>
@@ -198,7 +198,7 @@ export default function CurrencyPage() {
                   <p className="text-white font-semibold">{currency.rate.toFixed(4)}</p>
                   <div
                     className={`flex items-center gap-1 text-xs ${
-                      currency.change >= 0 ? "text-green-400" : "text-red-400"
+                      currency.change >= 0 ? 'text-green-400' : 'text-red-400'
                     }`}
                   >
                     {currency.change >= 0 ? (

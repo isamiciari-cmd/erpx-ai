@@ -51,6 +51,7 @@ pnpm dev
 Visit http://localhost:5173
 
 **Test Credentials:**
+
 - Admin: `admin-1@erpx-ai.com` / `@12345@`
 - Cashier: `cashier@erpx-ai.com` / `Aa12141312@`
 
@@ -67,6 +68,7 @@ pnpm exec vercel --prod      # Deploy to production
 #### Option B: GitHub Integration
 
 1. Push code to GitHub:
+
    ```bash
    git push origin main
    ```
@@ -87,6 +89,7 @@ VITE_SUPABASE_ANON_KEY=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...
 ```
 
 Add these in Vercel:
+
 - Dashboard → Settings → Environment Variables
 - Add for: Production, Preview, Development
 
@@ -160,6 +163,7 @@ Configure in Supabase Dashboard → Authentication → URL Configuration:
 **Site URL:** `https://erpx-ai.com`
 
 **Redirect URLs:**
+
 ```
 https://erpx-ai.com/**
 https://*.vercel.app/**
@@ -171,6 +175,7 @@ http://localhost:5173/**
 ### Automatic Deployment
 
 Once connected to GitHub:
+
 1. Push to `main` branch
 2. Vercel auto-deploys
 3. Preview deployments for PRs
@@ -214,6 +219,7 @@ See [docs/troubleshooting/COMMON_ISSUES.md](troubleshooting/COMMON_ISSUES.md)
 ### Quick Fixes
 
 **"Failed to fetch" error:**
+
 ```bash
 # 1. Check environment variables in Vercel
 # 2. Verify Supabase project is active
@@ -221,6 +227,7 @@ See [docs/troubleshooting/COMMON_ISSUES.md](troubleshooting/COMMON_ISSUES.md)
 ```
 
 **Build fails:**
+
 ```bash
 # Test build locally first
 pnpm build
@@ -229,6 +236,7 @@ pnpm build
 ```
 
 **Database connection issues:**
+
 ```bash
 # Verify RLS policies are correct
 # Check user permissions
@@ -276,6 +284,7 @@ build: {
 ### CDN Configuration
 
 Enable on Vercel:
+
 - Edge Network
 - Automatic Static Optimization
 - Image Optimization

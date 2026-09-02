@@ -1,5 +1,15 @@
 import { useState } from 'react';
-import { Plus, Edit, Trash2, CheckCircle, XCircle, Clock, FileText, Search, Filter } from 'lucide-react';
+import {
+  Plus,
+  Edit,
+  Trash2,
+  CheckCircle,
+  XCircle,
+  Clock,
+  FileText,
+  Search,
+  Filter,
+} from 'lucide-react';
 
 const journalEntries = [
   {
@@ -16,7 +26,7 @@ const journalEntries = [
     lines: [
       { account: 'Cash - Main', accountCode: '1010', debit: 15000, credit: 0 },
       { account: 'Accounts Receivable', accountCode: '1200', debit: 0, credit: 15000 },
-    ]
+    ],
   },
   {
     id: 2,
@@ -32,7 +42,7 @@ const journalEntries = [
     lines: [
       { account: 'Inventory', accountCode: '1300', debit: 8500, credit: 0 },
       { account: 'Accounts Payable', accountCode: '2100', debit: 0, credit: 8500 },
-    ]
+    ],
   },
   {
     id: 3,
@@ -48,7 +58,7 @@ const journalEntries = [
     lines: [
       { account: 'Salary Expense', accountCode: '5010', debit: 85000, credit: 0 },
       { account: 'Employee Payable', accountCode: '2200', debit: 0, credit: 85000 },
-    ]
+    ],
   },
   {
     id: 4,
@@ -64,7 +74,7 @@ const journalEntries = [
     lines: [
       { account: 'Rent Expense', accountCode: '5110', debit: 12000, credit: 0 },
       { account: 'Bank - Al Rajhi', accountCode: '1020', debit: 0, credit: 12000 },
-    ]
+    ],
   },
 ];
 
@@ -74,9 +84,10 @@ export default function JournalEntriesPage() {
   const [searchTerm, setSearchTerm] = useState('');
   const [filterStatus, setFilterStatus] = useState('all');
 
-  const filteredEntries = journalEntries.filter(entry => {
-    const matchesSearch = entry.entryNumber.toLowerCase().includes(searchTerm.toLowerCase()) ||
-                         entry.description.toLowerCase().includes(searchTerm.toLowerCase());
+  const filteredEntries = journalEntries.filter((entry) => {
+    const matchesSearch =
+      entry.entryNumber.toLowerCase().includes(searchTerm.toLowerCase()) ||
+      entry.description.toLowerCase().includes(searchTerm.toLowerCase());
     const matchesStatus = filterStatus === 'all' || entry.status === filterStatus;
     return matchesSearch && matchesStatus;
   });
@@ -133,34 +144,66 @@ export default function JournalEntriesPage() {
           <table className="w-full">
             <thead className="bg-gray-50 border-b">
               <tr>
-                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Entry #</th>
-                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Date</th>
-                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Reference</th>
-                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Source</th>
-                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Description</th>
-                <th className="px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase tracking-wider">Debit</th>
-                <th className="px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase tracking-wider">Credit</th>
-                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Status</th>
-                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Actions</th>
+                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                  Entry #
+                </th>
+                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                  Date
+                </th>
+                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                  Reference
+                </th>
+                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                  Source
+                </th>
+                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                  Description
+                </th>
+                <th className="px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase tracking-wider">
+                  Debit
+                </th>
+                <th className="px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase tracking-wider">
+                  Credit
+                </th>
+                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                  Status
+                </th>
+                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                  Actions
+                </th>
               </tr>
             </thead>
             <tbody className="bg-white divide-y divide-gray-200">
               {filteredEntries.map((entry) => (
-                <tr key={entry.id} className="hover:bg-gray-50 cursor-pointer" onClick={() => setSelectedEntry(entry)}>
+                <tr
+                  key={entry.id}
+                  className="hover:bg-gray-50 cursor-pointer"
+                  onClick={() => setSelectedEntry(entry)}
+                >
                   <td className="px-6 py-4 whitespace-nowrap">
                     <div className="flex items-center gap-2">
                       <FileText className="w-4 h-4 text-gray-400" />
                       <span className="font-medium text-blue-600">{entry.entryNumber}</span>
                     </div>
                   </td>
-                  <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">{entry.date}</td>
-                  <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">{entry.reference}</td>
+                  <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
+                    {entry.date}
+                  </td>
+                  <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
+                    {entry.reference}
+                  </td>
                   <td className="px-6 py-4 whitespace-nowrap">
-                    <span className="px-2 py-1 text-xs rounded-full bg-purple-100 text-purple-800">{entry.source}</span>
+                    <span className="px-2 py-1 text-xs rounded-full bg-purple-100 text-purple-800">
+                      {entry.source}
+                    </span>
                   </td>
                   <td className="px-6 py-4 text-sm text-gray-900">{entry.description}</td>
-                  <td className="px-6 py-4 whitespace-nowrap text-sm text-right font-medium">${entry.totalDebit.toLocaleString()}</td>
-                  <td className="px-6 py-4 whitespace-nowrap text-sm text-right font-medium">${entry.totalCredit.toLocaleString()}</td>
+                  <td className="px-6 py-4 whitespace-nowrap text-sm text-right font-medium">
+                    ${entry.totalDebit.toLocaleString()}
+                  </td>
+                  <td className="px-6 py-4 whitespace-nowrap text-sm text-right font-medium">
+                    ${entry.totalCredit.toLocaleString()}
+                  </td>
                   <td className="px-6 py-4 whitespace-nowrap">
                     <StatusBadge status={entry.status} />
                   </td>
@@ -183,15 +226,24 @@ export default function JournalEntriesPage() {
 
       {/* Entry Details Modal */}
       {selectedEntry && (
-        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center p-4 z-50" onClick={() => setSelectedEntry(null)}>
-          <div className="bg-white rounded-lg max-w-4xl w-full max-h-[90vh] overflow-y-auto" onClick={(e) => e.stopPropagation()}>
+        <div
+          className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center p-4 z-50"
+          onClick={() => setSelectedEntry(null)}
+        >
+          <div
+            className="bg-white rounded-lg max-w-4xl w-full max-h-[90vh] overflow-y-auto"
+            onClick={(e) => e.stopPropagation()}
+          >
             <div className="p-6 border-b">
               <div className="flex justify-between items-start">
                 <div>
                   <h2 className="text-2xl font-bold mb-2">{selectedEntry.entryNumber}</h2>
                   <p className="text-gray-600">{selectedEntry.description}</p>
                 </div>
-                <button onClick={() => setSelectedEntry(null)} className="text-gray-400 hover:text-gray-600">
+                <button
+                  onClick={() => setSelectedEntry(null)}
+                  className="text-gray-400 hover:text-gray-600"
+                >
                   <XCircle className="w-6 h-6" />
                 </button>
               </div>
@@ -225,10 +277,18 @@ export default function JournalEntriesPage() {
                   <table className="w-full">
                     <thead className="bg-gray-50">
                       <tr>
-                        <th className="px-4 py-3 text-left text-sm font-medium text-gray-700">Account Code</th>
-                        <th className="px-4 py-3 text-left text-sm font-medium text-gray-700">Account Name</th>
-                        <th className="px-4 py-3 text-right text-sm font-medium text-gray-700">Debit</th>
-                        <th className="px-4 py-3 text-right text-sm font-medium text-gray-700">Credit</th>
+                        <th className="px-4 py-3 text-left text-sm font-medium text-gray-700">
+                          Account Code
+                        </th>
+                        <th className="px-4 py-3 text-left text-sm font-medium text-gray-700">
+                          Account Name
+                        </th>
+                        <th className="px-4 py-3 text-right text-sm font-medium text-gray-700">
+                          Debit
+                        </th>
+                        <th className="px-4 py-3 text-right text-sm font-medium text-gray-700">
+                          Credit
+                        </th>
                       </tr>
                     </thead>
                     <tbody className="divide-y">
@@ -245,9 +305,15 @@ export default function JournalEntriesPage() {
                         </tr>
                       ))}
                       <tr className="bg-gray-50 font-semibold">
-                        <td colSpan={2} className="px-4 py-3 text-sm">Total</td>
-                        <td className="px-4 py-3 text-sm text-right">${selectedEntry.totalDebit.toLocaleString()}</td>
-                        <td className="px-4 py-3 text-sm text-right">${selectedEntry.totalCredit.toLocaleString()}</td>
+                        <td colSpan={2} className="px-4 py-3 text-sm">
+                          Total
+                        </td>
+                        <td className="px-4 py-3 text-sm text-right">
+                          ${selectedEntry.totalDebit.toLocaleString()}
+                        </td>
+                        <td className="px-4 py-3 text-sm text-right">
+                          ${selectedEntry.totalCredit.toLocaleString()}
+                        </td>
                       </tr>
                     </tbody>
                   </table>
@@ -285,8 +351,14 @@ export default function JournalEntriesPage() {
 
       {/* Create Entry Modal */}
       {showCreateModal && (
-        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center p-4 z-50" onClick={() => setShowCreateModal(false)}>
-          <div className="bg-white rounded-lg max-w-5xl w-full max-h-[90vh] overflow-y-auto" onClick={(e) => e.stopPropagation()}>
+        <div
+          className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center p-4 z-50"
+          onClick={() => setShowCreateModal(false)}
+        >
+          <div
+            className="bg-white rounded-lg max-w-5xl w-full max-h-[90vh] overflow-y-auto"
+            onClick={(e) => e.stopPropagation()}
+          >
             <div className="p-6 border-b">
               <h2 className="text-2xl font-bold">Create Journal Entry</h2>
             </div>
@@ -314,7 +386,9 @@ function StatusBadge({ status }: { status: string }) {
   };
 
   return (
-    <span className={`inline-flex items-center gap-1 px-2 py-1 rounded-full text-xs font-medium ${styles[status as keyof typeof styles]}`}>
+    <span
+      className={`inline-flex items-center gap-1 px-2 py-1 rounded-full text-xs font-medium ${styles[status as keyof typeof styles]}`}
+    >
       {icons[status as keyof typeof icons]}
       {status.charAt(0).toUpperCase() + status.slice(1)}
     </span>
@@ -328,7 +402,10 @@ function JournalEntryForm({ onClose }: { onClose: () => void }) {
   ]);
 
   const addLine = () => {
-    setLines([...lines, { accountCode: '', accountName: '', debit: 0, credit: 0, costCenter: '', description: '' }]);
+    setLines([
+      ...lines,
+      { accountCode: '', accountName: '', debit: 0, credit: 0, costCenter: '', description: '' },
+    ]);
   };
 
   const totalDebit = lines.reduce((sum, line) => sum + (line.debit || 0), 0);
@@ -340,11 +417,18 @@ function JournalEntryForm({ onClose }: { onClose: () => void }) {
       <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
         <div>
           <label className="block text-sm font-medium text-gray-700 mb-1">Posting Date</label>
-          <input type="date" className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500" />
+          <input
+            type="date"
+            className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500"
+          />
         </div>
         <div>
           <label className="block text-sm font-medium text-gray-700 mb-1">Reference Number</label>
-          <input type="text" placeholder="REF-001" className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500" />
+          <input
+            type="text"
+            placeholder="REF-001"
+            className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500"
+          />
         </div>
         <div>
           <label className="block text-sm font-medium text-gray-700 mb-1">Source Module</label>
@@ -360,13 +444,20 @@ function JournalEntryForm({ onClose }: { onClose: () => void }) {
 
       <div>
         <label className="block text-sm font-medium text-gray-700 mb-1">Description</label>
-        <textarea className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500" rows={2} placeholder="Entry description..." />
+        <textarea
+          className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500"
+          rows={2}
+          placeholder="Entry description..."
+        />
       </div>
 
       <div>
         <div className="flex justify-between items-center mb-3">
           <h3 className="text-lg font-semibold">Journal Lines</h3>
-          <button onClick={addLine} className="flex items-center gap-1 text-blue-600 hover:text-blue-700">
+          <button
+            onClick={addLine}
+            className="flex items-center gap-1 text-blue-600 hover:text-blue-700"
+          >
             <Plus className="w-4 h-4" />
             Add Line
           </button>
@@ -378,7 +469,9 @@ function JournalEntryForm({ onClose }: { onClose: () => void }) {
               <thead className="bg-gray-50">
                 <tr>
                   <th className="px-3 py-2 text-left text-xs font-medium text-gray-700">Account</th>
-                  <th className="px-3 py-2 text-left text-xs font-medium text-gray-700">Description</th>
+                  <th className="px-3 py-2 text-left text-xs font-medium text-gray-700">
+                    Description
+                  </th>
                   <th className="px-3 py-2 text-right text-xs font-medium text-gray-700">Debit</th>
                   <th className="px-3 py-2 text-right text-xs font-medium text-gray-700">Credit</th>
                   <th className="px-3 py-2"></th>
@@ -388,16 +481,32 @@ function JournalEntryForm({ onClose }: { onClose: () => void }) {
                 {lines.map((line, index) => (
                   <tr key={index}>
                     <td className="px-3 py-2">
-                      <input type="text" placeholder="Search account..." className="w-full px-2 py-1 border border-gray-300 rounded text-sm" />
+                      <input
+                        type="text"
+                        placeholder="Search account..."
+                        className="w-full px-2 py-1 border border-gray-300 rounded text-sm"
+                      />
                     </td>
                     <td className="px-3 py-2">
-                      <input type="text" placeholder="Line description" className="w-full px-2 py-1 border border-gray-300 rounded text-sm" />
+                      <input
+                        type="text"
+                        placeholder="Line description"
+                        className="w-full px-2 py-1 border border-gray-300 rounded text-sm"
+                      />
                     </td>
                     <td className="px-3 py-2">
-                      <input type="number" placeholder="0.00" className="w-full px-2 py-1 border border-gray-300 rounded text-sm text-right" />
+                      <input
+                        type="number"
+                        placeholder="0.00"
+                        className="w-full px-2 py-1 border border-gray-300 rounded text-sm text-right"
+                      />
                     </td>
                     <td className="px-3 py-2">
-                      <input type="number" placeholder="0.00" className="w-full px-2 py-1 border border-gray-300 rounded text-sm text-right" />
+                      <input
+                        type="number"
+                        placeholder="0.00"
+                        className="w-full px-2 py-1 border border-gray-300 rounded text-sm text-right"
+                      />
                     </td>
                     <td className="px-3 py-2">
                       <button className="text-red-600 hover:text-red-800">
@@ -407,7 +516,9 @@ function JournalEntryForm({ onClose }: { onClose: () => void }) {
                   </tr>
                 ))}
                 <tr className="bg-gray-50 font-semibold">
-                  <td colSpan={2} className="px-3 py-2 text-sm">Total</td>
+                  <td colSpan={2} className="px-3 py-2 text-sm">
+                    Total
+                  </td>
                   <td className="px-3 py-2 text-sm text-right">${totalDebit.toLocaleString()}</td>
                   <td className="px-3 py-2 text-sm text-right">${totalCredit.toLocaleString()}</td>
                   <td></td>
@@ -418,7 +529,9 @@ function JournalEntryForm({ onClose }: { onClose: () => void }) {
         </div>
 
         {!isBalanced && totalDebit > 0 && (
-          <p className="text-red-600 text-sm mt-2">Entry is not balanced. Debit and Credit must be equal.</p>
+          <p className="text-red-600 text-sm mt-2">
+            Entry is not balanced. Debit and Credit must be equal.
+          </p>
         )}
       </div>
 
@@ -432,7 +545,10 @@ function JournalEntryForm({ onClose }: { onClose: () => void }) {
         <button className="px-6 py-2 border border-gray-300 rounded-lg hover:bg-gray-50">
           Save as Draft
         </button>
-        <button onClick={onClose} className="px-6 py-2 border border-gray-300 rounded-lg hover:bg-gray-50">
+        <button
+          onClick={onClose}
+          className="px-6 py-2 border border-gray-300 rounded-lg hover:bg-gray-50"
+        >
           Cancel
         </button>
       </div>

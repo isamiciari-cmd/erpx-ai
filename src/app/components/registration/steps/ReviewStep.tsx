@@ -1,12 +1,12 @@
-import { motion } from "motion/react";
-import { UseFormReturn } from "react-hook-form";
-import { Building2, User, Package } from "lucide-react";
+import { motion } from 'motion/react';
+import { UseFormReturn } from 'react-hook-form';
+import { Building2, User, Package } from 'lucide-react';
 import type {
   CompanyInfo,
   AdminUser,
   Subscription,
   Review,
-} from "../../../../lib/validation/registrationSchema";
+} from '../../../../lib/validation/registrationSchema';
 
 interface ReviewStepProps {
   form: UseFormReturn<Review>;
@@ -50,21 +50,15 @@ export default function ReviewStep({
           </div>
           <div>
             <p className="text-gray-400">CR Number</p>
-            <p className="text-white font-semibold">
-              {companyData.commercialRegistrationNumber}
-            </p>
+            <p className="text-white font-semibold">{companyData.commercialRegistrationNumber}</p>
           </div>
           <div>
             <p className="text-gray-400">Business Sector</p>
-            <p className="text-white font-semibold">
-              {companyData.businessSector}
-            </p>
+            <p className="text-white font-semibold">{companyData.businessSector}</p>
           </div>
           <div>
             <p className="text-gray-400">Company Size</p>
-            <p className="text-white font-semibold">
-              {companyData.companySize}
-            </p>
+            <p className="text-white font-semibold">{companyData.companySize}</p>
           </div>
           <div>
             <p className="text-gray-400">Location</p>
@@ -74,9 +68,7 @@ export default function ReviewStep({
           </div>
           <div>
             <p className="text-gray-400">Website</p>
-            <p className="text-white font-semibold">
-              {companyData.website || "Not provided"}
-            </p>
+            <p className="text-white font-semibold">{companyData.website || 'Not provided'}</p>
           </div>
         </div>
       </div>
@@ -116,21 +108,15 @@ export default function ReviewStep({
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4 text-sm mb-4">
           <div>
             <p className="text-gray-400">Plan</p>
-            <p className="text-white font-semibold capitalize">
-              {subscriptionData.plan}
-            </p>
+            <p className="text-white font-semibold capitalize">{subscriptionData.plan}</p>
           </div>
           <div>
             <p className="text-gray-400">Branches</p>
-            <p className="text-white font-semibold">
-              {subscriptionData.numberOfBranches}
-            </p>
+            <p className="text-white font-semibold">{subscriptionData.numberOfBranches}</p>
           </div>
           <div>
             <p className="text-gray-400">Users</p>
-            <p className="text-white font-semibold">
-              {subscriptionData.numberOfUsers}
-            </p>
+            <p className="text-white font-semibold">{subscriptionData.numberOfUsers}</p>
           </div>
           <div>
             <p className="text-gray-400">Selected Modules</p>
@@ -156,33 +142,30 @@ export default function ReviewStep({
       <div className="bg-yellow-500/10 border border-yellow-500/50 rounded-xl p-6">
         <label className="flex items-start gap-3 cursor-pointer">
           <input
-            {...register("termsAccepted")}
+            {...register('termsAccepted')}
             type="checkbox"
             className="w-5 h-5 mt-0.5 bg-white/5 border border-white/10 rounded focus:ring-2 focus:ring-blue-500 text-blue-500"
           />
           <div className="flex-1">
             <p className="text-white font-semibold text-sm">
-              I agree to the Terms & Conditions and Privacy Policy{" "}
+              I agree to the Terms & Conditions and Privacy Policy{' '}
               <span className="text-red-400">*</span>
             </p>
             <p className="text-gray-400 text-xs mt-1">
-              By registering, you agree to ERPX-AI's terms of service and privacy
-              policy. You can review them at any time.
+              By registering, you agree to ERPX-AI's terms of service and privacy policy. You can
+              review them at any time.
             </p>
           </div>
         </label>
         {errors.termsAccepted && (
-          <p className="text-red-400 text-sm mt-2">
-            {errors.termsAccepted.message}
-          </p>
+          <p className="text-red-400 text-sm mt-2">{errors.termsAccepted.message}</p>
         )}
       </div>
 
       <div className="bg-blue-500/10 border border-blue-500/50 rounded-xl p-4">
         <p className="text-sm text-blue-300">
-          <strong>Note:</strong> After creating your account, you'll receive a
-          verification email. Please verify your email to activate your account
-          and access all features.
+          <strong>Note:</strong> After creating your account, you'll receive a verification email.
+          Please verify your email to activate your account and access all features.
         </p>
       </div>
     </motion.div>

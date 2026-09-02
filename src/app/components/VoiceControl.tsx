@@ -1,33 +1,34 @@
-import { useEffect, useState } from "react";
-import { motion } from "motion/react";
-import { Mic, MicOff, Volume2 } from "lucide-react";
-import { useNavigate } from "react-router";
+import { useEffect, useState } from 'react';
+import { motion } from 'motion/react';
+import { Mic, MicOff, Volume2 } from 'lucide-react';
+import { useNavigate } from 'react-router';
 
 export default function VoiceControl() {
   const [isListening, setIsListening] = useState(false);
-  const [transcript, setTranscript] = useState("");
+  const [transcript, setTranscript] = useState('');
   const [isSupported, setIsSupported] = useState(false);
   const navigate = useNavigate();
 
   useEffect(() => {
     // Check if browser supports Web Speech API
-    if ("webkitSpeechRecognition" in window || "SpeechRecognition" in window) {
+    if ('webkitSpeechRecognition' in window || 'SpeechRecognition' in window) {
       setIsSupported(true);
     }
   }, []);
 
   const startListening = () => {
     if (!isSupported) {
-      alert("Voice control is not supported in this browser. Please use Chrome or Edge.");
+      alert('Voice control is not supported in this browser. Please use Chrome or Edge.');
       return;
     }
 
-    const SpeechRecognition = (window as any).webkitSpeechRecognition || (window as any).SpeechRecognition;
+    const SpeechRecognition =
+      (window as any).webkitSpeechRecognition || (window as any).SpeechRecognition;
     const recognition = new SpeechRecognition();
 
     recognition.continuous = false;
     recognition.interimResults = false;
-    recognition.lang = "en-US";
+    recognition.lang = 'en-US';
 
     recognition.onstart = () => {
       setIsListening(true);
@@ -40,7 +41,7 @@ export default function VoiceControl() {
     };
 
     recognition.onerror = (event: any) => {
-      console.error("Speech recognition error:", event.error);
+      console.error('Speech recognition error:', event.error);
       setIsListening(false);
     };
 
@@ -53,25 +54,25 @@ export default function VoiceControl() {
 
   const processCommand = (command: string) => {
     // Navigation commands
-    if (command.includes("dashboard") || command.includes("home")) {
-      navigate("/");
-    } else if (command.includes("finance") || command.includes("accounting")) {
-      navigate("/finance/accounting");
-    } else if (command.includes("invoice")) {
-      navigate("/finance/invoicing");
-    } else if (command.includes("orders")) {
-      navigate("/crm");
-    } else if (command.includes("inventory")) {
-      navigate("/inventory");
-    } else if (command.includes("zatca")) {
-      navigate("/finance/zatca");
-    } else if (command.includes("tenant")) {
-      navigate("/admin/tenants");
+    if (command.includes('dashboard') || command.includes('home')) {
+      navigate('/');
+    } else if (command.includes('finance') || command.includes('accounting')) {
+      navigate('/finance/accounting');
+    } else if (command.includes('invoice')) {
+      navigate('/finance/invoicing');
+    } else if (command.includes('orders')) {
+      navigate('/crm');
+    } else if (command.includes('inventory')) {
+      navigate('/inventory');
+    } else if (command.includes('zatca')) {
+      navigate('/finance/zatca');
+    } else if (command.includes('tenant')) {
+      navigate('/admin/tenants');
     } else {
       // Speak back unrecognized command
-      if ("speechSynthesis" in window) {
+      if ('speechSynthesis' in window) {
         const utterance = new SpeechSynthesisUtterance(
-          "Command not recognized. Try saying dashboard, finance, orders, or inventory."
+          'Command not recognized. Try saying dashboard, finance, orders, or inventory.',
         );
         window.speechSynthesis.speak(utterance);
       }
@@ -95,11 +96,15 @@ export default function VoiceControl() {
         disabled={isListening}
         className={`w-16 h-16 rounded-full flex items-center justify-center shadow-2xl transition-all ${
           isListening
-            ? "bg-gradient-to-r from-red-500 to-rose-500 animate-pulse"
-            : "bg-gradient-to-r from-blue-500 to-cyan-500 hover:shadow-blue-500/50"
+            ? 'bg-gradient-to-r from-red-500 to-rose-500 animate-pulse'
+            : 'bg-gradient-to-r from-blue-500 to-cyan-500 hover:shadow-blue-500/50'
         }`}
       >
-        {isListening ? <MicOff className="w-7 h-7 text-white" /> : <Mic className="w-7 h-7 text-white" />}
+        {isListening ? (
+          <MicOff className="w-7 h-7 text-white" />
+        ) : (
+          <Mic className="w-7 h-7 text-white" />
+        )}
       </motion.button>
 
       {/* Transcript Display */}

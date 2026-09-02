@@ -1,7 +1,16 @@
 import { useState } from 'react';
-import {  Plus, Download, Heart, Share, Trash2, Edit, Settings, Star } from 'lucide-react';
-import { ResponsiveContainer, ResponsiveGrid, Stack, HStack } from '../design-system/components/ResponsiveContainer';
-import { ResponsiveButton, IconButton, ButtonGroup } from '../design-system/components/ResponsiveButton';
+import { Plus, Download, Heart, Share, Trash2, Edit, Settings, Star } from 'lucide-react';
+import {
+  ResponsiveContainer,
+  ResponsiveGrid,
+  Stack,
+  HStack,
+} from '../design-system/components/ResponsiveContainer';
+import {
+  ResponsiveButton,
+  IconButton,
+  ButtonGroup,
+} from '../design-system/components/ResponsiveButton';
 import { ResponsiveCard, FoodCard, StatCard } from '../design-system/components/ResponsiveCard';
 import { designTokens } from '../design-system/tokens';
 
@@ -32,12 +41,20 @@ export default function DesignSystemShowcase() {
         {/* Design Tokens */}
         <Section title="Design Tokens" subtitle="Foundation of the design system">
           <ResponsiveGrid cols={{ mobile: 1, tablet: 2, desktop: 3 }}>
-            <TokenCard title="Spacing (8pt Grid)" items={Object.entries(designTokens.spacing).map(([key, value]) => `${key}: ${value}`)} />
+            <TokenCard
+              title="Spacing (8pt Grid)"
+              items={Object.entries(designTokens.spacing).map(([key, value]) => `${key}: ${value}`)}
+            />
             <TokenCard
               title="Breakpoints"
-              items={Object.entries(designTokens.breakpoints).map(([key, value]) => `${key}: ${value}`)}
+              items={Object.entries(designTokens.breakpoints).map(
+                ([key, value]) => `${key}: ${value}`,
+              )}
             />
-            <TokenCard title="Border Radius" items={Object.entries(designTokens.radius).map(([key, value]) => `${key}: ${value}`)} />
+            <TokenCard
+              title="Border Radius"
+              items={Object.entries(designTokens.radius).map(([key, value]) => `${key}: ${value}`)}
+            />
           </ResponsiveGrid>
         </Section>
 
@@ -45,23 +62,33 @@ export default function DesignSystemShowcase() {
         <Section title="Typography" subtitle="Fluid type scale for all screen sizes">
           <Stack spacing={6}>
             <div>
-              <h1 className="text-4xl sm:text-5xl lg:text-6xl font-bold text-gray-900 dark:text-white mb-2">Heading 1</h1>
+              <h1 className="text-4xl sm:text-5xl lg:text-6xl font-bold text-gray-900 dark:text-white mb-2">
+                Heading 1
+              </h1>
               <p className="text-sm text-gray-500">Mobile: 36px | Tablet: 48px | Desktop: 64px</p>
             </div>
             <div>
-              <h2 className="text-3xl sm:text-4xl lg:text-5xl font-bold text-gray-900 dark:text-white mb-2">Heading 2</h2>
+              <h2 className="text-3xl sm:text-4xl lg:text-5xl font-bold text-gray-900 dark:text-white mb-2">
+                Heading 2
+              </h2>
               <p className="text-sm text-gray-500">Mobile: 28px | Tablet: 36px | Desktop: 48px</p>
             </div>
             <div>
-              <h3 className="text-2xl sm:text-3xl lg:text-4xl font-semibold text-gray-900 dark:text-white mb-2">Heading 3</h3>
+              <h3 className="text-2xl sm:text-3xl lg:text-4xl font-semibold text-gray-900 dark:text-white mb-2">
+                Heading 3
+              </h3>
               <p className="text-sm text-gray-500">Mobile: 24px | Tablet: 28px | Desktop: 36px</p>
             </div>
             <div>
-              <p className="text-base text-gray-900 dark:text-white mb-2">Body Text - The quick brown fox jumps over the lazy dog</p>
+              <p className="text-base text-gray-900 dark:text-white mb-2">
+                Body Text - The quick brown fox jumps over the lazy dog
+              </p>
               <p className="text-sm text-gray-500">All devices: 16px / 24px line-height</p>
             </div>
             <div>
-              <p className="text-sm text-gray-600 dark:text-gray-400 mb-2">Small Text - Additional details and descriptions</p>
+              <p className="text-sm text-gray-600 dark:text-gray-400 mb-2">
+                Small Text - Additional details and descriptions
+              </p>
               <p className="text-sm text-gray-500">All devices: 14px / 20px line-height</p>
             </div>
           </Stack>
@@ -87,10 +114,18 @@ export default function DesignSystemShowcase() {
             <div>
               <h3 className="text-xl font-bold text-gray-900 dark:text-white mb-4">Sizes</h3>
               <HStack spacing={4} className="items-end flex-wrap">
-                <ResponsiveButton variant="primary" size="sm">Small</ResponsiveButton>
-                <ResponsiveButton variant="primary" size="md">Medium</ResponsiveButton>
-                <ResponsiveButton variant="primary" size="lg">Large</ResponsiveButton>
-                <ResponsiveButton variant="primary" size="xl">Extra Large</ResponsiveButton>
+                <ResponsiveButton variant="primary" size="sm">
+                  Small
+                </ResponsiveButton>
+                <ResponsiveButton variant="primary" size="md">
+                  Medium
+                </ResponsiveButton>
+                <ResponsiveButton variant="primary" size="lg">
+                  Large
+                </ResponsiveButton>
+                <ResponsiveButton variant="primary" size="xl">
+                  Extra Large
+                </ResponsiveButton>
               </HStack>
             </div>
 
@@ -98,9 +133,15 @@ export default function DesignSystemShowcase() {
             <div>
               <h3 className="text-xl font-bold text-gray-900 dark:text-white mb-4">With Icons</h3>
               <HStack spacing={4} className="flex-wrap">
-                <ResponsiveButton variant="primary" leftIcon={<Plus size={20} />}>Add Item</ResponsiveButton>
-                <ResponsiveButton variant="secondary" leftIcon={<Download size={20} />}>Download</ResponsiveButton>
-                <ResponsiveButton variant="outline" rightIcon={<Share size={20} />}>Share</ResponsiveButton>
+                <ResponsiveButton variant="primary" leftIcon={<Plus size={20} />}>
+                  Add Item
+                </ResponsiveButton>
+                <ResponsiveButton variant="secondary" leftIcon={<Download size={20} />}>
+                  Download
+                </ResponsiveButton>
+                <ResponsiveButton variant="outline" rightIcon={<Share size={20} />}>
+                  Share
+                </ResponsiveButton>
               </HStack>
             </div>
 
@@ -109,8 +150,12 @@ export default function DesignSystemShowcase() {
               <h3 className="text-xl font-bold text-gray-900 dark:text-white mb-4">States</h3>
               <HStack spacing={4} className="flex-wrap">
                 <ResponsiveButton variant="primary">Normal</ResponsiveButton>
-                <ResponsiveButton variant="primary" isLoading>Loading</ResponsiveButton>
-                <ResponsiveButton variant="primary" disabled>Disabled</ResponsiveButton>
+                <ResponsiveButton variant="primary" isLoading>
+                  Loading
+                </ResponsiveButton>
+                <ResponsiveButton variant="primary" disabled>
+                  Disabled
+                </ResponsiveButton>
               </HStack>
             </div>
 
@@ -156,15 +201,21 @@ export default function DesignSystemShowcase() {
               <ResponsiveGrid cols={{ mobile: 1, tablet: 2, desktop: 4 }}>
                 <ResponsiveCard variant="elevated" padding="lg">
                   <h4 className="font-bold text-gray-900 dark:text-white mb-2">Elevated</h4>
-                  <p className="text-sm text-gray-600 dark:text-gray-400">Card with shadow elevation</p>
+                  <p className="text-sm text-gray-600 dark:text-gray-400">
+                    Card with shadow elevation
+                  </p>
                 </ResponsiveCard>
                 <ResponsiveCard variant="outlined" padding="lg">
                   <h4 className="font-bold text-gray-900 dark:text-white mb-2">Outlined</h4>
-                  <p className="text-sm text-gray-600 dark:text-gray-400">Card with border outline</p>
+                  <p className="text-sm text-gray-600 dark:text-gray-400">
+                    Card with border outline
+                  </p>
                 </ResponsiveCard>
                 <ResponsiveCard variant="filled" padding="lg">
                   <h4 className="font-bold text-gray-900 dark:text-white mb-2">Filled</h4>
-                  <p className="text-sm text-gray-600 dark:text-gray-400">Card with filled background</p>
+                  <p className="text-sm text-gray-600 dark:text-gray-400">
+                    Card with filled background
+                  </p>
                 </ResponsiveCard>
                 <ResponsiveCard variant="glass" padding="lg">
                   <h4 className="font-bold text-gray-900 dark:text-white mb-2">Glass</h4>
@@ -210,7 +261,9 @@ export default function DesignSystemShowcase() {
 
             {/* Food Cards */}
             <div>
-              <h3 className="text-xl font-bold text-gray-900 dark:text-white mb-4">Food Cards (Product Cards)</h3>
+              <h3 className="text-xl font-bold text-gray-900 dark:text-white mb-4">
+                Food Cards (Product Cards)
+              </h3>
               <ResponsiveGrid cols={{ mobile: 1, tablet: 2, desktop: 3 }}>
                 <FoodCard
                   name="Margherita Pizza"
@@ -251,7 +304,9 @@ export default function DesignSystemShowcase() {
         <Section title="Grid System" subtitle="Responsive 12-column grid with breakpoints">
           <Stack spacing={8}>
             <div>
-              <h3 className="text-xl font-bold text-gray-900 dark:text-white mb-4">Mobile (4 cols) → Tablet (8 cols) → Desktop (12 cols)</h3>
+              <h3 className="text-xl font-bold text-gray-900 dark:text-white mb-4">
+                Mobile (4 cols) → Tablet (8 cols) → Desktop (12 cols)
+              </h3>
               <ResponsiveGrid cols={{ mobile: 1, tablet: 2, desktop: 3 }}>
                 {[1, 2, 3, 4, 5, 6].map((i) => (
                   <div
@@ -265,7 +320,9 @@ export default function DesignSystemShowcase() {
             </div>
 
             <div>
-              <h3 className="text-xl font-bold text-gray-900 dark:text-white mb-4">2 Columns → 4 Columns → 6 Columns</h3>
+              <h3 className="text-xl font-bold text-gray-900 dark:text-white mb-4">
+                2 Columns → 4 Columns → 6 Columns
+              </h3>
               <ResponsiveGrid cols={{ mobile: 2, tablet: 4, desktop: 6 }}>
                 {[1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12].map((i) => (
                   <div
@@ -296,7 +353,9 @@ export default function DesignSystemShowcase() {
             </div>
 
             <div>
-              <h3 className="text-xl font-bold text-gray-900 dark:text-white mb-4">Semantic Colors</h3>
+              <h3 className="text-xl font-bold text-gray-900 dark:text-white mb-4">
+                Semantic Colors
+              </h3>
               <div className="grid grid-cols-2 sm:grid-cols-4 gap-4">
                 <ColorSwatch name="Success" color="#10B981" />
                 <ColorSwatch name="Warning" color="#F59E0B" />
@@ -312,7 +371,9 @@ export default function DesignSystemShowcase() {
           <ResponsiveCard variant="glass" padding="lg">
             <Stack spacing={6}>
               <div>
-                <h4 className="font-bold text-gray-900 dark:text-white mb-2">Mobile (320px - 480px)</h4>
+                <h4 className="font-bold text-gray-900 dark:text-white mb-2">
+                  Mobile (320px - 480px)
+                </h4>
                 <ul className="text-sm text-gray-600 dark:text-gray-400 space-y-1">
                   <li>• Single column layout</li>
                   <li>• Bottom navigation bar</li>
@@ -322,7 +383,9 @@ export default function DesignSystemShowcase() {
                 </ul>
               </div>
               <div>
-                <h4 className="font-bold text-gray-900 dark:text-white mb-2">Tablet (481px - 1024px)</h4>
+                <h4 className="font-bold text-gray-900 dark:text-white mb-2">
+                  Tablet (481px - 1024px)
+                </h4>
                 <ul className="text-sm text-gray-600 dark:text-gray-400 space-y-1">
                   <li>• 2-column layout</li>
                   <li>• Collapsed sidebar with icons</li>
@@ -359,7 +422,9 @@ function Section({ title, subtitle, children }: SectionProps) {
   return (
     <section className="mb-20">
       <div className="mb-8">
-        <h2 className="text-3xl sm:text-4xl font-bold text-gray-900 dark:text-white mb-2">{title}</h2>
+        <h2 className="text-3xl sm:text-4xl font-bold text-gray-900 dark:text-white mb-2">
+          {title}
+        </h2>
         <p className="text-gray-600 dark:text-gray-400">{subtitle}</p>
       </div>
       {children}

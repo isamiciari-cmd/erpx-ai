@@ -1,6 +1,15 @@
 import { useState } from 'react';
 import { Wallet, CreditCard, ArrowUpRight, ArrowDownRight, RefreshCw } from 'lucide-react';
-import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer } from 'recharts';
+import {
+  LineChart,
+  Line,
+  XAxis,
+  YAxis,
+  CartesianGrid,
+  Tooltip,
+  Legend,
+  ResponsiveContainer,
+} from 'recharts';
 
 const cashAccounts = [
   { id: 1, name: 'Main Cash Drawer', branch: 'HQ - Riyadh', balance: 58000, currency: 'SAR' },
@@ -8,16 +17,70 @@ const cashAccounts = [
 ];
 
 const bankAccounts = [
-  { id: 1, bankName: 'Al Rajhi Bank', accountNumber: '****5678', iban: 'SA44 8000 0000 0000 1234 5678', balance: 1245000, currency: 'SAR' },
-  { id: 2, bankName: 'Saudi National Bank', accountNumber: '****9012', iban: 'SA44 1000 0000 0000 9876 5432', balance: 850000, currency: 'SAR' },
+  {
+    id: 1,
+    bankName: 'Al Rajhi Bank',
+    accountNumber: '****5678',
+    iban: 'SA44 8000 0000 0000 1234 5678',
+    balance: 1245000,
+    currency: 'SAR',
+  },
+  {
+    id: 2,
+    bankName: 'Saudi National Bank',
+    accountNumber: '****9012',
+    iban: 'SA44 1000 0000 0000 9876 5432',
+    balance: 850000,
+    currency: 'SAR',
+  },
 ];
 
 const recentTransactions = [
-  { id: 1, date: '2026-04-30', type: 'deposit', account: 'Al Rajhi Bank', amount: 45000, reference: 'Customer Payment INV-1245', status: 'completed' },
-  { id: 2, date: '2026-04-30', type: 'withdrawal', account: 'Al Rajhi Bank', amount: 12000, reference: 'Rent Payment', status: 'completed' },
-  { id: 3, date: '2026-04-29', type: 'transfer', account: 'Transfer: SNB → Al Rajhi', amount: 50000, reference: 'Internal Transfer', status: 'completed' },
-  { id: 4, date: '2026-04-28', type: 'deposit', account: 'Main Cash Drawer', amount: 18500, reference: 'Daily POS Collection', status: 'completed' },
-  { id: 5, date: '2026-04-28', type: 'withdrawal', account: 'SNB', amount: 8500, reference: 'Supplier Payment BILL-890', status: 'completed' },
+  {
+    id: 1,
+    date: '2026-04-30',
+    type: 'deposit',
+    account: 'Al Rajhi Bank',
+    amount: 45000,
+    reference: 'Customer Payment INV-1245',
+    status: 'completed',
+  },
+  {
+    id: 2,
+    date: '2026-04-30',
+    type: 'withdrawal',
+    account: 'Al Rajhi Bank',
+    amount: 12000,
+    reference: 'Rent Payment',
+    status: 'completed',
+  },
+  {
+    id: 3,
+    date: '2026-04-29',
+    type: 'transfer',
+    account: 'Transfer: SNB → Al Rajhi',
+    amount: 50000,
+    reference: 'Internal Transfer',
+    status: 'completed',
+  },
+  {
+    id: 4,
+    date: '2026-04-28',
+    type: 'deposit',
+    account: 'Main Cash Drawer',
+    amount: 18500,
+    reference: 'Daily POS Collection',
+    status: 'completed',
+  },
+  {
+    id: 5,
+    date: '2026-04-28',
+    type: 'withdrawal',
+    account: 'SNB',
+    amount: 8500,
+    reference: 'Supplier Payment BILL-890',
+    status: 'completed',
+  },
 ];
 
 const cashFlowChart = [
@@ -79,8 +142,20 @@ export default function CashBankManagementPage() {
             <YAxis />
             <Tooltip formatter={(value) => `$${value.toLocaleString()}`} />
             <Legend />
-            <Line type="monotone" dataKey="inflow" stroke="#10b981" strokeWidth={2} name="Cash Inflow" />
-            <Line type="monotone" dataKey="outflow" stroke="#ef4444" strokeWidth={2} name="Cash Outflow" />
+            <Line
+              type="monotone"
+              dataKey="inflow"
+              stroke="#10b981"
+              strokeWidth={2}
+              name="Cash Inflow"
+            />
+            <Line
+              type="monotone"
+              dataKey="outflow"
+              stroke="#ef4444"
+              strokeWidth={2}
+              name="Cash Outflow"
+            />
           </LineChart>
         </ResponsiveContainer>
       </div>
@@ -92,7 +167,9 @@ export default function CashBankManagementPage() {
             <button
               onClick={() => setSelectedTab('overview')}
               className={`py-4 px-2 border-b-2 font-medium ${
-                selectedTab === 'overview' ? 'border-blue-600 text-blue-600' : 'border-transparent text-gray-600'
+                selectedTab === 'overview'
+                  ? 'border-blue-600 text-blue-600'
+                  : 'border-transparent text-gray-600'
               }`}
             >
               Overview
@@ -100,7 +177,9 @@ export default function CashBankManagementPage() {
             <button
               onClick={() => setSelectedTab('cash')}
               className={`py-4 px-2 border-b-2 font-medium ${
-                selectedTab === 'cash' ? 'border-blue-600 text-blue-600' : 'border-transparent text-gray-600'
+                selectedTab === 'cash'
+                  ? 'border-blue-600 text-blue-600'
+                  : 'border-transparent text-gray-600'
               }`}
             >
               Cash Accounts
@@ -108,7 +187,9 @@ export default function CashBankManagementPage() {
             <button
               onClick={() => setSelectedTab('bank')}
               className={`py-4 px-2 border-b-2 font-medium ${
-                selectedTab === 'bank' ? 'border-blue-600 text-blue-600' : 'border-transparent text-gray-600'
+                selectedTab === 'bank'
+                  ? 'border-blue-600 text-blue-600'
+                  : 'border-transparent text-gray-600'
               }`}
             >
               Bank Accounts
@@ -116,7 +197,9 @@ export default function CashBankManagementPage() {
             <button
               onClick={() => setSelectedTab('transactions')}
               className={`py-4 px-2 border-b-2 font-medium ${
-                selectedTab === 'transactions' ? 'border-blue-600 text-blue-600' : 'border-transparent text-gray-600'
+                selectedTab === 'transactions'
+                  ? 'border-blue-600 text-blue-600'
+                  : 'border-transparent text-gray-600'
               }`}
             >
               Transactions
@@ -124,7 +207,9 @@ export default function CashBankManagementPage() {
             <button
               onClick={() => setSelectedTab('reconciliation')}
               className={`py-4 px-2 border-b-2 font-medium ${
-                selectedTab === 'reconciliation' ? 'border-blue-600 text-blue-600' : 'border-transparent text-gray-600'
+                selectedTab === 'reconciliation'
+                  ? 'border-blue-600 text-blue-600'
+                  : 'border-transparent text-gray-600'
               }`}
             >
               Reconciliation
@@ -136,7 +221,10 @@ export default function CashBankManagementPage() {
           {selectedTab === 'cash' && (
             <div className="space-y-4">
               {cashAccounts.map((account) => (
-                <div key={account.id} className="border rounded-lg p-4 flex justify-between items-center">
+                <div
+                  key={account.id}
+                  className="border rounded-lg p-4 flex justify-between items-center"
+                >
                   <div>
                     <h3 className="font-semibold text-lg">{account.name}</h3>
                     <p className="text-sm text-gray-600">{account.branch}</p>
@@ -178,12 +266,24 @@ export default function CashBankManagementPage() {
               <table className="w-full">
                 <thead className="bg-gray-50">
                   <tr>
-                    <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase">Date</th>
-                    <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase">Type</th>
-                    <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase">Account</th>
-                    <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase">Reference</th>
-                    <th className="px-4 py-3 text-right text-xs font-medium text-gray-500 uppercase">Amount</th>
-                    <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase">Status</th>
+                    <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase">
+                      Date
+                    </th>
+                    <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase">
+                      Type
+                    </th>
+                    <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase">
+                      Account
+                    </th>
+                    <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase">
+                      Reference
+                    </th>
+                    <th className="px-4 py-3 text-right text-xs font-medium text-gray-500 uppercase">
+                      Amount
+                    </th>
+                    <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase">
+                      Status
+                    </th>
                   </tr>
                 </thead>
                 <tbody className="divide-y">
@@ -192,16 +292,24 @@ export default function CashBankManagementPage() {
                       <td className="px-4 py-3 text-sm">{txn.date}</td>
                       <td className="px-4 py-3">
                         <div className="flex items-center gap-2">
-                          {txn.type === 'deposit' && <ArrowDownRight className="w-4 h-4 text-green-600" />}
-                          {txn.type === 'withdrawal' && <ArrowUpRight className="w-4 h-4 text-red-600" />}
-                          {txn.type === 'transfer' && <RefreshCw className="w-4 h-4 text-blue-600" />}
+                          {txn.type === 'deposit' && (
+                            <ArrowDownRight className="w-4 h-4 text-green-600" />
+                          )}
+                          {txn.type === 'withdrawal' && (
+                            <ArrowUpRight className="w-4 h-4 text-red-600" />
+                          )}
+                          {txn.type === 'transfer' && (
+                            <RefreshCw className="w-4 h-4 text-blue-600" />
+                          )}
                           <span className="text-sm capitalize">{txn.type}</span>
                         </div>
                       </td>
                       <td className="px-4 py-3 text-sm">{txn.account}</td>
                       <td className="px-4 py-3 text-sm text-gray-600">{txn.reference}</td>
                       <td className="px-4 py-3 text-sm text-right font-bold">
-                        <span className={txn.type === 'deposit' ? 'text-green-600' : 'text-red-600'}>
+                        <span
+                          className={txn.type === 'deposit' ? 'text-green-600' : 'text-red-600'}
+                        >
                           {txn.type === 'deposit' ? '+' : '-'}${txn.amount.toLocaleString()}
                         </span>
                       </td>
@@ -221,7 +329,9 @@ export default function CashBankManagementPage() {
             <div className="text-center py-12">
               <RefreshCw className="w-16 h-16 text-gray-400 mx-auto mb-4" />
               <h3 className="text-xl font-semibold mb-2">Bank Reconciliation</h3>
-              <p className="text-gray-600 mb-6">Compare bank statements with your accounting records</p>
+              <p className="text-gray-600 mb-6">
+                Compare bank statements with your accounting records
+              </p>
               <button className="px-6 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700">
                 Start Reconciliation
               </button>
@@ -236,7 +346,12 @@ export default function CashBankManagementPage() {
 function DollarSign({ className }: { className?: string }) {
   return (
     <svg className={className} fill="none" stroke="currentColor" viewBox="0 0 24 24">
-      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+      <path
+        strokeLinecap="round"
+        strokeLinejoin="round"
+        strokeWidth={2}
+        d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z"
+      />
     </svg>
   );
 }

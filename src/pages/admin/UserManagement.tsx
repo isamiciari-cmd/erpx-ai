@@ -57,23 +57,24 @@ export function UserManagement() {
       const usersWithRoles: UserWithRoles[] = await Promise.all(
         (profiles || []).map(async (profile) => {
           const { data: rolesData } = await supabase.rpc('get_user_roles', {
-            p_user_id: profile.id
+            p_user_id: profile.id,
           });
 
           const { data: tenantsData } = await supabase.rpc('get_user_tenants', {
-            p_user_id: profile.id
+            p_user_id: profile.id,
           });
 
           return {
             ...profile,
             roles: rolesData || [],
-            tenants: tenantsData?.map((t: any) => ({
-              id: t.tenant_id,
-              name: t.tenant_name,
-              is_primary: t.is_primary
-            })) || []
+            tenants:
+              tenantsData?.map((t: any) => ({
+                id: t.tenant_id,
+                name: t.tenant_name,
+                is_primary: t.is_primary,
+              })) || [],
           };
-        })
+        }),
       );
 
       setUsers(usersWithRoles);
@@ -87,7 +88,7 @@ export function UserManagement() {
 
   const getRoleLevel = (roles: UserWithRoles['roles']) => {
     if (roles.length === 0) return 0;
-    return Math.max(...roles.map(r => r.level));
+    return Math.max(...roles.map((r) => r.level));
   };
 
   const getRoleBadgeColor = (level: number) => {
@@ -165,7 +166,9 @@ export function UserManagement() {
                         </div>
                       </div>
                       <div className="ml-4">
-                        <div className="text-sm font-medium text-gray-900">{user.full_name || 'No name'}</div>
+                        <div className="text-sm font-medium text-gray-900">
+                          {user.full_name || 'No name'}
+                        </div>
                         <div className="text-sm text-gray-500">{user.email}</div>
                       </div>
                     </div>
@@ -193,7 +196,9 @@ export function UserManagement() {
                             <div key={tenant.id} className="flex items-center gap-1">
                               <span>{tenant.name}</span>
                               {tenant.is_primary && (
-                                <span className="text-xs bg-blue-100 text-blue-800 px-1 rounded">Primary</span>
+                                <span className="text-xs bg-blue-100 text-blue-800 px-1 rounded">
+                                  Primary
+                                </span>
                               )}
                             </div>
                           ))}
@@ -204,11 +209,15 @@ export function UserManagement() {
                     </div>
                   </td>
                   <td className="px-6 py-4 whitespace-nowrap">
-                    <span className={`px-2 py-1 inline-flex text-xs leading-5 font-semibold rounded-full ${
-                      user.status === 'active' ? 'bg-green-100 text-green-800' :
-                      user.status === 'inactive' ? 'bg-gray-100 text-gray-800' :
-                      'bg-red-100 text-red-800'
-                    }`}>
+                    <span
+                      className={`px-2 py-1 inline-flex text-xs leading-5 font-semibold rounded-full ${
+                        user.status === 'active'
+                          ? 'bg-green-100 text-green-800'
+                          : user.status === 'inactive'
+                            ? 'bg-gray-100 text-gray-800'
+                            : 'bg-red-100 text-red-800'
+                      }`}
+                    >
                       {user.status}
                     </span>
                   </td>
@@ -219,14 +228,10 @@ export function UserManagement() {
                     <td className="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
                       <div className="flex justify-end gap-2">
                         {canUpdate && (
-                          <button className="text-blue-600 hover:text-blue-900">
-                            Edit
-                          </button>
+                          <button className="text-blue-600 hover:text-blue-900">Edit</button>
                         )}
                         {canDelete && (
-                          <button className="text-red-600 hover:text-red-900">
-                            Delete
-                          </button>
+                          <button className="text-red-600 hover:text-red-900">Delete</button>
                         )}
                       </div>
                     </td>

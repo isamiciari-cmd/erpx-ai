@@ -1,14 +1,85 @@
 import { useState } from 'react';
 import { DollarSign, AlertTriangle, Clock, CheckCircle, FileText, Download } from 'lucide-react';
-import { PieChart, Pie, Cell, BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, Legend } from 'recharts';
+import {
+  PieChart,
+  Pie,
+  Cell,
+  BarChart,
+  Bar,
+  XAxis,
+  YAxis,
+  CartesianGrid,
+  Tooltip,
+  ResponsiveContainer,
+} from 'recharts';
 
 const receivables = [
-  { id: 1, customer: 'Al-Noor Trading Co.', invoiceNumber: 'INV-1245', amount: 45000, paid: 0, remaining: 45000, dueDate: '2026-05-15', status: 'outstanding', daysOverdue: 0 },
-  { id: 2, customer: 'Tech Solutions Ltd.', invoiceNumber: 'INV-1238', amount: 28000, paid: 28000, remaining: 0, dueDate: '2026-04-20', status: 'paid', daysOverdue: 0 },
-  { id: 3, customer: 'Modern Electronics', invoiceNumber: 'INV-1232', amount: 65000, paid: 30000, remaining: 35000, dueDate: '2026-03-15', status: 'overdue', daysOverdue: 45 },
-  { id: 4, customer: 'Global Imports Inc.', invoiceNumber: 'INV-1250', amount: 82000, paid: 0, remaining: 82000, dueDate: '2026-05-20', status: 'outstanding', daysOverdue: 0 },
-  { id: 5, customer: 'City Mall Retail', invoiceNumber: 'INV-1215', amount: 15000, paid: 0, remaining: 15000, dueDate: '2026-03-01', status: 'overdue', daysOverdue: 60 },
-  { id: 6, customer: 'Prime Contractors', invoiceNumber: 'INV-1247', amount: 120000, paid: 50000, remaining: 70000, dueDate: '2026-04-10', status: 'overdue', daysOverdue: 20 },
+  {
+    id: 1,
+    customer: 'Al-Noor Trading Co.',
+    invoiceNumber: 'INV-1245',
+    amount: 45000,
+    paid: 0,
+    remaining: 45000,
+    dueDate: '2026-05-15',
+    status: 'outstanding',
+    daysOverdue: 0,
+  },
+  {
+    id: 2,
+    customer: 'Tech Solutions Ltd.',
+    invoiceNumber: 'INV-1238',
+    amount: 28000,
+    paid: 28000,
+    remaining: 0,
+    dueDate: '2026-04-20',
+    status: 'paid',
+    daysOverdue: 0,
+  },
+  {
+    id: 3,
+    customer: 'Modern Electronics',
+    invoiceNumber: 'INV-1232',
+    amount: 65000,
+    paid: 30000,
+    remaining: 35000,
+    dueDate: '2026-03-15',
+    status: 'overdue',
+    daysOverdue: 45,
+  },
+  {
+    id: 4,
+    customer: 'Global Imports Inc.',
+    invoiceNumber: 'INV-1250',
+    amount: 82000,
+    paid: 0,
+    remaining: 82000,
+    dueDate: '2026-05-20',
+    status: 'outstanding',
+    daysOverdue: 0,
+  },
+  {
+    id: 5,
+    customer: 'City Mall Retail',
+    invoiceNumber: 'INV-1215',
+    amount: 15000,
+    paid: 0,
+    remaining: 15000,
+    dueDate: '2026-03-01',
+    status: 'overdue',
+    daysOverdue: 60,
+  },
+  {
+    id: 6,
+    customer: 'Prime Contractors',
+    invoiceNumber: 'INV-1247',
+    amount: 120000,
+    paid: 50000,
+    remaining: 70000,
+    dueDate: '2026-04-10',
+    status: 'overdue',
+    daysOverdue: 20,
+  },
 ];
 
 const agingData = [
@@ -30,9 +101,11 @@ export default function AccountsReceivablePage() {
   const [selectedTab, setSelectedTab] = useState('invoices');
 
   const totalReceivable = receivables.reduce((sum, r) => sum + r.remaining, 0);
-  const overdueAmount = receivables.filter(r => r.status === 'overdue').reduce((sum, r) => sum + r.remaining, 0);
-  const outstandingCount = receivables.filter(r => r.status === 'outstanding').length;
-  const overdueCount = receivables.filter(r => r.status === 'overdue').length;
+  const overdueAmount = receivables
+    .filter((r) => r.status === 'overdue')
+    .reduce((sum, r) => sum + r.remaining, 0);
+  const outstandingCount = receivables.filter((r) => r.status === 'outstanding').length;
+  const overdueCount = receivables.filter((r) => r.status === 'overdue').length;
 
   return (
     <div className="space-y-6">
@@ -151,7 +224,9 @@ export default function AccountsReceivablePage() {
             <button
               onClick={() => setSelectedTab('invoices')}
               className={`py-4 px-2 border-b-2 font-medium ${
-                selectedTab === 'invoices' ? 'border-blue-600 text-blue-600' : 'border-transparent text-gray-600 hover:text-gray-900'
+                selectedTab === 'invoices'
+                  ? 'border-blue-600 text-blue-600'
+                  : 'border-transparent text-gray-600 hover:text-gray-900'
               }`}
             >
               Invoices
@@ -159,7 +234,9 @@ export default function AccountsReceivablePage() {
             <button
               onClick={() => setSelectedTab('aging')}
               className={`py-4 px-2 border-b-2 font-medium ${
-                selectedTab === 'aging' ? 'border-blue-600 text-blue-600' : 'border-transparent text-gray-600 hover:text-gray-900'
+                selectedTab === 'aging'
+                  ? 'border-blue-600 text-blue-600'
+                  : 'border-transparent text-gray-600 hover:text-gray-900'
               }`}
             >
               Aging Report
@@ -167,7 +244,9 @@ export default function AccountsReceivablePage() {
             <button
               onClick={() => setSelectedTab('customers')}
               className={`py-4 px-2 border-b-2 font-medium ${
-                selectedTab === 'customers' ? 'border-blue-600 text-blue-600' : 'border-transparent text-gray-600 hover:text-gray-900'
+                selectedTab === 'customers'
+                  ? 'border-blue-600 text-blue-600'
+                  : 'border-transparent text-gray-600 hover:text-gray-900'
               }`}
             >
               Customer Balances
@@ -181,14 +260,30 @@ export default function AccountsReceivablePage() {
               <table className="w-full">
                 <thead className="bg-gray-50">
                   <tr>
-                    <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase">Invoice #</th>
-                    <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase">Customer</th>
-                    <th className="px-4 py-3 text-right text-xs font-medium text-gray-500 uppercase">Amount</th>
-                    <th className="px-4 py-3 text-right text-xs font-medium text-gray-500 uppercase">Paid</th>
-                    <th className="px-4 py-3 text-right text-xs font-medium text-gray-500 uppercase">Remaining</th>
-                    <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase">Due Date</th>
-                    <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase">Status</th>
-                    <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase">Actions</th>
+                    <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase">
+                      Invoice #
+                    </th>
+                    <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase">
+                      Customer
+                    </th>
+                    <th className="px-4 py-3 text-right text-xs font-medium text-gray-500 uppercase">
+                      Amount
+                    </th>
+                    <th className="px-4 py-3 text-right text-xs font-medium text-gray-500 uppercase">
+                      Paid
+                    </th>
+                    <th className="px-4 py-3 text-right text-xs font-medium text-gray-500 uppercase">
+                      Remaining
+                    </th>
+                    <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase">
+                      Due Date
+                    </th>
+                    <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase">
+                      Status
+                    </th>
+                    <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase">
+                      Actions
+                    </th>
                   </tr>
                 </thead>
                 <tbody className="divide-y">
@@ -201,9 +296,15 @@ export default function AccountsReceivablePage() {
                         </div>
                       </td>
                       <td className="px-4 py-3 text-sm">{item.customer}</td>
-                      <td className="px-4 py-3 text-sm text-right font-medium">${item.amount.toLocaleString()}</td>
-                      <td className="px-4 py-3 text-sm text-right text-green-600">${item.paid.toLocaleString()}</td>
-                      <td className="px-4 py-3 text-sm text-right font-bold">${item.remaining.toLocaleString()}</td>
+                      <td className="px-4 py-3 text-sm text-right font-medium">
+                        ${item.amount.toLocaleString()}
+                      </td>
+                      <td className="px-4 py-3 text-sm text-right text-green-600">
+                        ${item.paid.toLocaleString()}
+                      </td>
+                      <td className="px-4 py-3 text-sm text-right font-bold">
+                        ${item.remaining.toLocaleString()}
+                      </td>
                       <td className="px-4 py-3 text-sm">{item.dueDate}</td>
                       <td className="px-4 py-3">
                         <StatusBadge status={item.status} daysOverdue={item.daysOverdue} />
@@ -236,7 +337,7 @@ export default function AccountsReceivablePage() {
                       className="h-2 rounded-full"
                       style={{
                         backgroundColor: bucket.color,
-                        width: `${(bucket.amount / totalReceivable) * 100}%`
+                        width: `${(bucket.amount / totalReceivable) * 100}%`,
                       }}
                     />
                   </div>
@@ -250,16 +351,24 @@ export default function AccountsReceivablePage() {
               <table className="w-full">
                 <thead className="bg-gray-50">
                   <tr>
-                    <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase">Customer</th>
-                    <th className="px-4 py-3 text-right text-xs font-medium text-gray-500 uppercase">Outstanding Balance</th>
-                    <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase">Actions</th>
+                    <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase">
+                      Customer
+                    </th>
+                    <th className="px-4 py-3 text-right text-xs font-medium text-gray-500 uppercase">
+                      Outstanding Balance
+                    </th>
+                    <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase">
+                      Actions
+                    </th>
                   </tr>
                 </thead>
                 <tbody className="divide-y">
                   {customerBalances.map((customer, index) => (
                     <tr key={index} className="hover:bg-gray-50">
                       <td className="px-4 py-3 font-medium">{customer.customer}</td>
-                      <td className="px-4 py-3 text-right text-lg font-bold">${customer.balance.toLocaleString()}</td>
+                      <td className="px-4 py-3 text-right text-lg font-bold">
+                        ${customer.balance.toLocaleString()}
+                      </td>
                       <td className="px-4 py-3">
                         <button className="text-sm text-blue-600 hover:text-blue-800 font-medium">
                           View Statement
@@ -291,9 +400,13 @@ function StatusBadge({ status, daysOverdue }: { status: string; daysOverdue: num
   };
 
   return (
-    <span className={`inline-flex items-center gap-1 px-2 py-1 rounded-full text-xs font-medium ${styles[status as keyof typeof styles]}`}>
+    <span
+      className={`inline-flex items-center gap-1 px-2 py-1 rounded-full text-xs font-medium ${styles[status as keyof typeof styles]}`}
+    >
       {icons[status as keyof typeof icons]}
-      {status === 'overdue' ? `${daysOverdue} days overdue` : status.charAt(0).toUpperCase() + status.slice(1)}
+      {status === 'overdue'
+        ? `${daysOverdue} days overdue`
+        : status.charAt(0).toUpperCase() + status.slice(1)}
     </span>
   );
 }

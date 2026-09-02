@@ -45,7 +45,7 @@ export function RequirePermission({
   requireAll = false,
   fallback = null,
   redirectTo = '/unauthorized',
-  showLoading = true
+  showLoading = true,
 }: RequirePermissionProps) {
   const { hasPermission, loading } = usePermissions();
 
@@ -59,8 +59,8 @@ export function RequirePermission({
 
   const permissions = Array.isArray(permission) ? permission : [permission];
   const hasAccess = requireAll
-    ? permissions.every(p => hasPermission(p))
-    : permissions.some(p => hasPermission(p));
+    ? permissions.every((p) => hasPermission(p))
+    : permissions.some((p) => hasPermission(p));
 
   if (!hasAccess) {
     return redirectTo ? <Navigate to={redirectTo} replace /> : <>{fallback}</>;

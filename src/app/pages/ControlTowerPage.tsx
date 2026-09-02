@@ -1,5 +1,5 @@
-import { useState, useEffect } from "react";
-import { motion } from "motion/react";
+import { useState, useEffect } from 'react';
+import { motion } from 'motion/react';
 import {
   Activity,
   AlertTriangle,
@@ -16,29 +16,27 @@ import {
   XCircle,
   Brain,
   ShoppingBag,
-} from "lucide-react";
+} from 'lucide-react';
 import {
   LineChart,
   Line,
-  BarChart,
-  Bar,
   XAxis,
   YAxis,
   CartesianGrid,
   Tooltip,
   ResponsiveContainer,
-} from "recharts";
+} from 'recharts';
 
 interface SystemHealth {
   service: string;
-  status: "ok" | "down" | "slow";
+  status: 'ok' | 'down' | 'slow';
   latency: number;
   uptime: number;
 }
 
 interface AIInsight {
   id: number;
-  type: "warning" | "opportunity" | "critical" | "info";
+  type: 'warning' | 'opportunity' | 'critical' | 'info';
   message: string;
   tenantId?: number;
   tenantName?: string;
@@ -58,19 +56,19 @@ interface MarketplaceModule {
 
 const controlTowerAPI = {
   systemHealth: [
-    { service: "API Gateway", status: "ok" as const, latency: 45, uptime: 99.98 },
-    { service: "Database", status: "ok" as const, latency: 12, uptime: 99.99 },
-    { service: "Auth Service", status: "ok" as const, latency: 23, uptime: 99.95 },
-    { service: "Billing Service", status: "slow" as const, latency: 180, uptime: 99.2 },
-    { service: "Storage", status: "ok" as const, latency: 35, uptime: 99.97 },
-    { service: "Cache", status: "ok" as const, latency: 8, uptime: 100 },
+    { service: 'API Gateway', status: 'ok' as const, latency: 45, uptime: 99.98 },
+    { service: 'Database', status: 'ok' as const, latency: 12, uptime: 99.99 },
+    { service: 'Auth Service', status: 'ok' as const, latency: 23, uptime: 99.95 },
+    { service: 'Billing Service', status: 'slow' as const, latency: 180, uptime: 99.2 },
+    { service: 'Storage', status: 'ok' as const, latency: 35, uptime: 99.97 },
+    { service: 'Cache', status: 'ok' as const, latency: 8, uptime: 100 },
   ] as SystemHealth[],
 
   marketplaceModules: [
     {
       id: 1,
-      name: "Advanced Analytics",
-      description: "AI-powered business intelligence",
+      name: 'Advanced Analytics',
+      description: 'AI-powered business intelligence',
       price: 199,
       active: true,
       installs: 450,
@@ -78,8 +76,8 @@ const controlTowerAPI = {
     },
     {
       id: 2,
-      name: "Mobile App",
-      description: "iOS & Android native apps",
+      name: 'Mobile App',
+      description: 'iOS & Android native apps',
       price: 299,
       active: true,
       installs: 320,
@@ -87,8 +85,8 @@ const controlTowerAPI = {
     },
     {
       id: 3,
-      name: "E-Signature",
-      description: "Digital document signing",
+      name: 'E-Signature',
+      description: 'Digital document signing',
       price: 149,
       active: true,
       installs: 280,
@@ -96,8 +94,8 @@ const controlTowerAPI = {
     },
     {
       id: 4,
-      name: "WhatsApp Integration",
-      description: "Customer messaging via WhatsApp",
+      name: 'WhatsApp Integration',
+      description: 'Customer messaging via WhatsApp',
       price: 99,
       active: false,
       installs: 150,
@@ -110,64 +108,62 @@ const controlTowerAPI = {
   },
 
   async getMarketplaceModules(): Promise<MarketplaceModule[]> {
-    return new Promise((resolve) =>
-      setTimeout(() => resolve([...this.marketplaceModules]), 300)
-    );
+    return new Promise((resolve) => setTimeout(() => resolve([...this.marketplaceModules]), 300));
   },
 
   generateAIInsights(): AIInsight[] {
     return [
       {
         id: 1,
-        type: "critical",
+        type: 'critical',
         message: "Tenant 'Acme Corp' payment failed 3 times. Risk of suspension.",
         tenantId: 1,
-        tenantName: "Acme Corp",
+        tenantName: 'Acme Corp',
         timestamp: new Date().toISOString(),
-        action: "Suspend tenant",
+        action: 'Suspend tenant',
       },
       {
         id: 2,
-        type: "opportunity",
+        type: 'opportunity',
         message: "Tenant 'TechStart Ltd' usage increased 40%. Suggest Pro plan upgrade.",
         tenantId: 2,
-        tenantName: "TechStart Ltd",
+        tenantName: 'TechStart Ltd',
         timestamp: new Date().toISOString(),
-        action: "Send upgrade email",
+        action: 'Send upgrade email',
       },
       {
         id: 3,
-        type: "warning",
+        type: 'warning',
         message: "Tenant 'SmallBiz Co' revenue dropped 20% due to low Sales module usage.",
         tenantId: 4,
-        tenantName: "SmallBiz Co",
+        tenantName: 'SmallBiz Co',
         timestamp: new Date().toISOString(),
-        action: "Send engagement email",
+        action: 'Send engagement email',
       },
       {
         id: 4,
-        type: "info",
-        message: "12 tenants identified as churn risk based on usage patterns.",
+        type: 'info',
+        message: '12 tenants identified as churn risk based on usage patterns.',
         timestamp: new Date().toISOString(),
-        action: "Review tenant list",
+        action: 'Review tenant list',
       },
       {
         id: 5,
-        type: "critical",
-        message: "Billing Service latency is 180ms (threshold: 100ms). Investigate immediately.",
+        type: 'critical',
+        message: 'Billing Service latency is 180ms (threshold: 100ms). Investigate immediately.',
         timestamp: new Date().toISOString(),
-        action: "Check service logs",
+        action: 'Check service logs',
       },
     ];
   },
 
   async suspendTenant(id: number): Promise<void> {
-    console.log("Suspending tenant:", id);
+    console.log('Suspending tenant:', id);
     return new Promise((resolve) => setTimeout(() => resolve(), 500));
   },
 
   async sendUpgradeEmail(id: number): Promise<void> {
-    console.log("Sending upgrade email to tenant:", id);
+    console.log('Sending upgrade email to tenant:', id);
     return new Promise((resolve) => setTimeout(() => resolve(), 500));
   },
 
@@ -209,14 +205,14 @@ export default function ControlTowerPage() {
   }, [autoRefresh]);
 
   const handleAction = async (insight: AIInsight) => {
-    if (insight.action === "Suspend tenant" && insight.tenantId) {
+    if (insight.action === 'Suspend tenant' && insight.tenantId) {
       if (confirm(`Are you sure you want to suspend ${insight.tenantName}?`)) {
         await controlTowerAPI.suspendTenant(insight.tenantId);
-        alert("Tenant suspended successfully");
+        alert('Tenant suspended successfully');
       }
-    } else if (insight.action === "Send upgrade email" && insight.tenantId) {
+    } else if (insight.action === 'Send upgrade email' && insight.tenantId) {
       await controlTowerAPI.sendUpgradeEmail(insight.tenantId);
-      alert("Upgrade email sent successfully");
+      alert('Upgrade email sent successfully');
     } else {
       alert(`Action: ${insight.action}`);
     }
@@ -227,51 +223,50 @@ export default function ControlTowerPage() {
     fetchData();
   };
 
-  const criticalServices = systemHealth.filter((s) => s.status === "down").length;
-  const slowServices = systemHealth.filter((s) => s.status === "slow").length;
-  const avgUptime =
-    systemHealth.reduce((sum, s) => sum + s.uptime, 0) / systemHealth.length;
+  const criticalServices = systemHealth.filter((s) => s.status === 'down').length;
+  const slowServices = systemHealth.filter((s) => s.status === 'slow').length;
+  const avgUptime = systemHealth.reduce((sum, s) => sum + s.uptime, 0) / systemHealth.length;
 
   const revenueData = [
-    { id: "jan", month: "Jan", revenue: 380000 },
-    { id: "feb", month: "Feb", revenue: 420000 },
-    { id: "mar", month: "Mar", revenue: 450000 },
-    { id: "apr", month: "Apr", revenue: 480000 },
-    { id: "may", month: "May", revenue: 520000 },
+    { id: 'jan', month: 'Jan', revenue: 380000 },
+    { id: 'feb', month: 'Feb', revenue: 420000 },
+    { id: 'mar', month: 'Mar', revenue: 450000 },
+    { id: 'apr', month: 'Apr', revenue: 480000 },
+    { id: 'may', month: 'May', revenue: 520000 },
   ];
 
   const stats = [
     {
-      label: "Active Tenants",
-      value: "1,240",
+      label: 'Active Tenants',
+      value: '1,240',
       icon: Users,
-      color: "from-blue-500 to-cyan-500",
-      change: "+12.5%",
-      trend: "up",
+      color: 'from-blue-500 to-cyan-500',
+      change: '+12.5%',
+      trend: 'up',
     },
     {
-      label: "Monthly Recurring Revenue",
-      value: "SAR 480K",
+      label: 'Monthly Recurring Revenue',
+      value: 'SAR 480K',
       icon: DollarSign,
-      color: "from-green-500 to-emerald-500",
-      change: "+22.3%",
-      trend: "up",
+      color: 'from-green-500 to-emerald-500',
+      change: '+22.3%',
+      trend: 'up',
     },
     {
-      label: "Active Modules",
+      label: 'Active Modules',
       value: modules.filter((m) => m.active).length.toString(),
       icon: Package,
-      color: "from-purple-500 to-pink-500",
-      change: "+2",
-      trend: "up",
+      color: 'from-purple-500 to-pink-500',
+      change: '+2',
+      trend: 'up',
     },
     {
-      label: "System Health",
+      label: 'System Health',
       value: `${avgUptime.toFixed(2)}%`,
       icon: Activity,
-      color: "from-orange-500 to-yellow-500",
-      change: criticalServices > 0 ? "Critical" : slowServices > 0 ? "Degraded" : "Healthy",
-      trend: criticalServices > 0 ? "down" : "neutral",
+      color: 'from-orange-500 to-yellow-500',
+      change: criticalServices > 0 ? 'Critical' : slowServices > 0 ? 'Degraded' : 'Healthy',
+      trend: criticalServices > 0 ? 'down' : 'neutral',
     },
   ];
 
@@ -294,12 +289,12 @@ export default function ControlTowerPage() {
           onClick={() => setAutoRefresh(!autoRefresh)}
           className={`px-4 py-2 rounded-xl flex items-center gap-2 transition-all ${
             autoRefresh
-              ? "bg-green-500/20 text-green-400 border border-green-500/30"
-              : "bg-gray-500/20 text-gray-400 border border-gray-500/30"
+              ? 'bg-green-500/20 text-green-400 border border-green-500/30'
+              : 'bg-gray-500/20 text-gray-400 border border-gray-500/30'
           }`}
         >
-          <Zap className={`w-4 h-4 ${autoRefresh ? "animate-pulse" : ""}`} />
-          {autoRefresh ? "Live Updates" : "Paused"}
+          <Zap className={`w-4 h-4 ${autoRefresh ? 'animate-pulse' : ''}`} />
+          {autoRefresh ? 'Live Updates' : 'Paused'}
         </motion.button>
       </div>
 
@@ -322,15 +317,15 @@ export default function ControlTowerPage() {
             <h3 className="text-3xl font-bold text-white mb-1">{stat.value}</h3>
             <p className="text-sm text-gray-400 mb-2">{stat.label}</p>
             <div className="flex items-center gap-2">
-              {stat.trend === "up" && <TrendingUp className="w-4 h-4 text-green-400" />}
-              {stat.trend === "down" && <TrendingDown className="w-4 h-4 text-red-400" />}
+              {stat.trend === 'up' && <TrendingUp className="w-4 h-4 text-green-400" />}
+              {stat.trend === 'down' && <TrendingDown className="w-4 h-4 text-red-400" />}
               <span
                 className={`text-xs font-semibold ${
-                  stat.trend === "up"
-                    ? "text-green-400"
-                    : stat.trend === "down"
-                    ? "text-red-400"
-                    : "text-gray-400"
+                  stat.trend === 'up'
+                    ? 'text-green-400'
+                    : stat.trend === 'down'
+                      ? 'text-red-400'
+                      : 'text-gray-400'
                 }`}
               >
                 {stat.change}
@@ -352,9 +347,7 @@ export default function ControlTowerPage() {
           </div>
           <div>
             <h2 className="text-xl font-bold text-white">AI Insights & Recommendations</h2>
-            <p className="text-sm text-gray-400">
-              Automated intelligence for proactive management
-            </p>
+            <p className="text-sm text-gray-400">Automated intelligence for proactive management</p>
           </div>
         </div>
 
@@ -366,27 +359,27 @@ export default function ControlTowerPage() {
               animate={{ opacity: 1, x: 0 }}
               transition={{ delay: i * 0.05 }}
               className={`p-4 rounded-xl border ${
-                insight.type === "critical"
-                  ? "bg-red-500/10 border-red-500/30"
-                  : insight.type === "warning"
-                  ? "bg-yellow-500/10 border-yellow-500/30"
-                  : insight.type === "opportunity"
-                  ? "bg-green-500/10 border-green-500/30"
-                  : "bg-blue-500/10 border-blue-500/30"
+                insight.type === 'critical'
+                  ? 'bg-red-500/10 border-red-500/30'
+                  : insight.type === 'warning'
+                    ? 'bg-yellow-500/10 border-yellow-500/30'
+                    : insight.type === 'opportunity'
+                      ? 'bg-green-500/10 border-green-500/30'
+                      : 'bg-blue-500/10 border-blue-500/30'
               }`}
             >
               <div className="flex items-start justify-between">
                 <div className="flex items-start gap-3 flex-1">
-                  {insight.type === "critical" && (
+                  {insight.type === 'critical' && (
                     <XCircle className="w-5 h-5 text-red-400 flex-shrink-0 mt-0.5" />
                   )}
-                  {insight.type === "warning" && (
+                  {insight.type === 'warning' && (
                     <AlertTriangle className="w-5 h-5 text-yellow-400 flex-shrink-0 mt-0.5" />
                   )}
-                  {insight.type === "opportunity" && (
+                  {insight.type === 'opportunity' && (
                     <TrendingUp className="w-5 h-5 text-green-400 flex-shrink-0 mt-0.5" />
                   )}
-                  {insight.type === "info" && (
+                  {insight.type === 'info' && (
                     <CheckCircle className="w-5 h-5 text-blue-400 flex-shrink-0 mt-0.5" />
                   )}
                   <div className="flex-1">
@@ -435,25 +428,25 @@ export default function ControlTowerPage() {
               >
                 <div className="flex items-center justify-between mb-2">
                   <div className="flex items-center gap-3">
-                    {service.service.includes("Database") && (
+                    {service.service.includes('Database') && (
                       <Database className="w-5 h-5 text-purple-400" />
                     )}
-                    {service.service.includes("Gateway") && (
+                    {service.service.includes('Gateway') && (
                       <Wifi className="w-5 h-5 text-blue-400" />
                     )}
-                    {!service.service.includes("Database") &&
-                      !service.service.includes("Gateway") && (
+                    {!service.service.includes('Database') &&
+                      !service.service.includes('Gateway') && (
                         <Server className="w-5 h-5 text-cyan-400" />
                       )}
                     <span className="text-white font-semibold">{service.service}</span>
                   </div>
                   <span
                     className={`px-3 py-1 rounded-full text-xs font-semibold ${
-                      service.status === "ok"
-                        ? "bg-green-500/10 text-green-400 border border-green-500/20"
-                        : service.status === "slow"
-                        ? "bg-yellow-500/10 text-yellow-400 border border-yellow-500/20"
-                        : "bg-red-500/10 text-red-400 border border-red-500/20"
+                      service.status === 'ok'
+                        ? 'bg-green-500/10 text-green-400 border border-green-500/20'
+                        : service.status === 'slow'
+                          ? 'bg-yellow-500/10 text-yellow-400 border border-yellow-500/20'
+                          : 'bg-red-500/10 text-red-400 border border-red-500/20'
                     }`}
                   >
                     {service.status.toUpperCase()}
@@ -465,10 +458,10 @@ export default function ControlTowerPage() {
                     <p
                       className={`font-semibold ${
                         service.latency < 50
-                          ? "text-green-400"
+                          ? 'text-green-400'
                           : service.latency < 150
-                          ? "text-yellow-400"
-                          : "text-red-400"
+                            ? 'text-yellow-400'
+                            : 'text-red-400'
                       }`}
                     >
                       {service.latency}ms
@@ -504,10 +497,10 @@ export default function ControlTowerPage() {
               <YAxis stroke="#6b7280" style={{ fontSize: 12 }} />
               <Tooltip
                 contentStyle={{
-                  backgroundColor: "#1f2937",
-                  border: "1px solid #374151",
-                  borderRadius: "12px",
-                  color: "#fff",
+                  backgroundColor: '#1f2937',
+                  border: '1px solid #374151',
+                  borderRadius: '12px',
+                  color: '#fff',
                 }}
               />
               <Line
@@ -551,11 +544,11 @@ export default function ControlTowerPage() {
                 <span
                   className={`px-3 py-1 rounded-full text-xs font-semibold ${
                     module.active
-                      ? "bg-green-500/10 text-green-400 border border-green-500/20"
-                      : "bg-gray-500/10 text-gray-400 border border-gray-500/20"
+                      ? 'bg-green-500/10 text-green-400 border border-green-500/20'
+                      : 'bg-gray-500/10 text-gray-400 border border-gray-500/20'
                   }`}
                 >
-                  {module.active ? "Active" : "Inactive"}
+                  {module.active ? 'Active' : 'Inactive'}
                 </span>
               </div>
 
@@ -577,11 +570,11 @@ export default function ControlTowerPage() {
                 onClick={() => toggleModule(module.id)}
                 className={`w-full py-2 rounded-xl font-medium transition-all ${
                   module.active
-                    ? "bg-red-500/20 text-red-400 border border-red-500/30 hover:bg-red-500/30"
-                    : "bg-purple-500/20 text-purple-400 border border-purple-500/30 hover:bg-purple-500/30"
+                    ? 'bg-red-500/20 text-red-400 border border-red-500/30 hover:bg-red-500/30'
+                    : 'bg-purple-500/20 text-purple-400 border border-purple-500/30 hover:bg-purple-500/30'
                 }`}
               >
-                {module.active ? "Deactivate" : "Activate"}
+                {module.active ? 'Deactivate' : 'Activate'}
               </motion.button>
             </motion.div>
           ))}

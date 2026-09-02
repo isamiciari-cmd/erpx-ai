@@ -4,7 +4,8 @@ GLOBAL REQUIREMENT:
 Every button, icon, action, and clickable element must have a defined behavior, interaction state, and system logic.
 
 1. BUTTON STATES (FOR ALL BUTTONS)
-Define states for every button:
+   Define states for every button:
+
 - Default
 - Hover
 - Active (pressed)
@@ -12,20 +13,23 @@ Define states for every button:
 - Disabled
 
 Add visual feedback:
+
 - Hover effect (color change / shadow)
 - Click animation
 - Loading spinner for async actions
 - Disabled opacity
 
 2. GLOBAL BUTTON ACTION TYPES
-Assign actions to all buttons based on type:
+   Assign actions to all buttons based on type:
 
 Navigation Buttons:
+
 - Navigate to specific pages
 - Open module dashboards
 - Redirect based on routes
 
 Action Buttons:
+
 - Add (Create new record)
 - Edit (Open edit form)
 - Delete (Open confirmation modal)
@@ -34,6 +38,7 @@ Action Buttons:
 - Submit (Send data to backend)
 
 System Buttons:
+
 - Approve / Reject
 - Print
 - Export (PDF / Excel)
@@ -42,7 +47,8 @@ System Buttons:
 - Refresh
 
 3. FORM BUTTONS BEHAVIOR
-For all forms:
+   For all forms:
+
 - Validate inputs before submission
 - Show error messages
 - Show success message after submit
@@ -51,6 +57,7 @@ For all forms:
 
 Example:
 Click "Save Item" →
+
 - Validate fields
 - Show loading
 - Send API request
@@ -58,19 +65,22 @@ Click "Save Item" →
 - Redirect to list page
 
 4. TABLE ACTION BUTTONS
-For all data tables:
-Each row must include:
+   For all data tables:
+   Each row must include:
+
 - View button → opens details page
 - Edit button → opens edit form
 - Delete button → opens confirmation modal
 
 Bulk actions:
+
 - Multi-select rows
 - Delete selected
 - Export selected
 
 5. DELETE BUTTON LOGIC
-All delete buttons must:
+   All delete buttons must:
+
 - Open confirmation modal:
   Title: "Confirm Deletion"
   Message: "Are you sure you want to delete this item?"
@@ -83,14 +93,16 @@ All delete buttons must:
   - Refresh table
 
 6. APPROVAL BUTTONS
-For all approval workflows:
+   For all approval workflows:
+
 - Approve button → updates status to Approved
 - Reject button → updates status to Rejected
 - Show confirmation modal before action
 - Update UI instantly after action
 
 7. MODAL BEHAVIOR
-All modals must:
+   All modals must:
+
 - Open smoothly (animation)
 - Close on:
   - Cancel button
@@ -100,12 +112,14 @@ All modals must:
 - Return focus after closing
 
 8. SEARCH AND FILTER
+
 - Search input must filter results in real time
 - Filter buttons must open filter panel
 - Apply filters → update table
 - Reset filters button
 
 9. EXPORT & PRINT BUTTONS
+
 - Export button:
   - Export data to PDF / Excel
 - Print button:
@@ -113,21 +127,25 @@ All modals must:
   - Format page for printing
 
 10. DASHBOARD BUTTONS
-All dashboard cards must be clickable:
+    All dashboard cards must be clickable:
+
 - Clicking KPI → navigate to detailed report page
 
 Example:
+
 - Total Sales → go to sales report
 - Inventory value → go to inventory report
 
 11. SIDEBAR NAVIGATION
+
 - All sidebar items must navigate correctly
 - Highlight active menu
 - Collapse/expand sections
 - Hide unauthorized modules
 
 12. ICON ACTIONS
-Every icon must have function:
+    Every icon must have function:
+
 - Eye icon → View details
 - Pencil icon → Edit
 - Trash icon → Delete
@@ -137,69 +155,79 @@ Every icon must have function:
 - User icon → Open profile menu
 
 13. NOTIFICATIONS SYSTEM
+
 - Notification bell opens dropdown
 - Show unread notifications
 - Mark as read
 - Click notification → navigate to related page
 
 14. TOAST & FEEDBACK SYSTEM
-Add system-wide feedback:
+    Add system-wide feedback:
+
 - Success toast
 - Error toast
 - Warning toast
 - Info toast
 
 15. LOADING STATES
-Add loading states for:
+    Add loading states for:
+
 - Pages
 - Tables
 - Forms
 - Buttons
 
 Examples:
+
 - Skeleton loading
 - Spinner
 
 16. EMPTY STATES
-For all empty data:
+    For all empty data:
+
 - Show message:
   "No data available"
 - Add CTA button:
   "Create New"
 
 17. ERROR HANDLING
-For all failures:
+    For all failures:
+
 - Show error message
 - Retry button
 - Log error
 
 18. ROUTE GUARD BEHAVIOR
+
 - Block access if no permission
 - Redirect to Unauthorized page
 - Show message:
   "Access Denied"
 
 19. PERMISSION-BASED BUTTON CONTROL
-Buttons must appear only if user has permission:
+    Buttons must appear only if user has permission:
 
 Example:
+
 - Show "Add" only if user has create permission
 - Show "Delete" only if user has delete permission
 - Show "Approve" only if user has approve permission
 
 20. GLOBAL EVENT FLOW
-For all actions:
-Click → Validate → Show loading → Execute → Update UI → Show result
+    For all actions:
+    Click → Validate → Show loading → Execute → Update UI → Show result
 
 21. UI MICRO-INTERACTIONS
-Add modern UX:
+    Add modern UX:
+
 - Button ripple effect
 - Smooth transitions
 - Hover animations
 - Icon motion
 
 22. SYSTEM CONSISTENCY
-Ensure:
+    Ensure:
+
 - Same behavior across all modules:
   - Inventory
   - Sales
@@ -209,7 +237,8 @@ Ensure:
 - Reusable components
 
 23. OUTPUT REQUIRED
-Update all screens to include:
+    Update all screens to include:
+
 - Fully functional buttons
 - Interactive elements
 - Defined navigation

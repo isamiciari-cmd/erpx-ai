@@ -35,13 +35,22 @@ export default function WebsiteFooter() {
               AI-powered enterprise resource planning platform for modern businesses.
             </p>
             <div className="flex gap-3">
-              <a href="#" className="w-10 h-10 bg-white/5 hover:bg-white/10 rounded-lg flex items-center justify-center text-gray-400 hover:text-white transition-all">
+              <a
+                href="#"
+                className="w-10 h-10 bg-white/5 hover:bg-white/10 rounded-lg flex items-center justify-center text-gray-400 hover:text-white transition-all"
+              >
                 <Linkedin className="w-5 h-5" />
               </a>
-              <a href="#" className="w-10 h-10 bg-white/5 hover:bg-white/10 rounded-lg flex items-center justify-center text-gray-400 hover:text-white transition-all">
+              <a
+                href="#"
+                className="w-10 h-10 bg-white/5 hover:bg-white/10 rounded-lg flex items-center justify-center text-gray-400 hover:text-white transition-all"
+              >
                 <Twitter className="w-5 h-5" />
               </a>
-              <a href="#" className="w-10 h-10 bg-white/5 hover:bg-white/10 rounded-lg flex items-center justify-center text-gray-400 hover:text-white transition-all">
+              <a
+                href="#"
+                className="w-10 h-10 bg-white/5 hover:bg-white/10 rounded-lg flex items-center justify-center text-gray-400 hover:text-white transition-all"
+              >
                 <Facebook className="w-5 h-5" />
               </a>
             </div>
@@ -53,7 +62,10 @@ export default function WebsiteFooter() {
             <ul className="space-y-2">
               {modules.map((item) => (
                 <li key={item.name}>
-                  <Link to={item.href} className="text-gray-400 hover:text-white text-sm transition-colors">
+                  <Link
+                    to={item.href}
+                    className="text-gray-400 hover:text-white text-sm transition-colors"
+                  >
                     {item.name}
                   </Link>
                 </li>
@@ -67,7 +79,10 @@ export default function WebsiteFooter() {
             <ul className="space-y-2">
               {company.map((item) => (
                 <li key={item.name}>
-                  <Link to={item.href} className="text-gray-400 hover:text-white text-sm transition-colors">
+                  <Link
+                    to={item.href}
+                    className="text-gray-400 hover:text-white text-sm transition-colors"
+                  >
                     {item.name}
                   </Link>
                 </li>
@@ -88,12 +103,8 @@ export default function WebsiteFooter() {
                   i.sami.ciari@erpx-ai.com
                 </a>
               </li>
-              <li className="text-gray-400 text-sm">
-                Support: 24/7
-              </li>
-              <li className="text-gray-400 text-sm">
-                Cloud-based platform
-              </li>
+              <li className="text-gray-400 text-sm">Support: 24/7</li>
+              <li className="text-gray-400 text-sm">Cloud-based platform</li>
             </ul>
           </div>
         </div>

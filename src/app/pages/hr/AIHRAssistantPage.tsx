@@ -1,13 +1,25 @@
 import { useState } from 'react';
 import { Sparkles, TrendingUp, AlertTriangle, Users, Send } from 'lucide-react';
-import { LineChart, Line, BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, Legend } from 'recharts';
+import {
+  LineChart,
+  Line,
+  BarChart,
+  Bar,
+  XAxis,
+  YAxis,
+  CartesianGrid,
+  Tooltip,
+  ResponsiveContainer,
+  Legend,
+} from 'recharts';
 
 const aiInsights = [
   {
     id: 1,
     type: 'prediction',
     title: 'Turnover Risk Alert',
-    description: '5 employees showing patterns similar to past resignations. Consider engagement initiatives.',
+    description:
+      '5 employees showing patterns similar to past resignations. Consider engagement initiatives.',
     confidence: 85,
     icon: <AlertTriangle className="w-5 h-5" />,
     color: 'red',
@@ -56,28 +68,63 @@ const performanceDistribution = [
 ];
 
 const aiCapabilities = [
-  { icon: '🔮', title: 'Turnover Prediction', description: 'Predict which employees are at risk of leaving' },
-  { icon: '📊', title: 'Attendance Pattern Analysis', description: 'Identify trends and anomalies in attendance' },
-  { icon: '🎯', title: 'Promotion Recommendations', description: 'Suggest high-performing employees for advancement' },
-  { icon: '⚠️', title: 'Performance Issue Detection', description: 'Early identification of underperforming employees' },
-  { icon: '📚', title: 'Training Program Suggestions', description: 'Recommend personalized training based on gaps' },
-  { icon: '👥', title: 'Workforce Planning', description: 'Optimize headcount and team composition' },
+  {
+    icon: '🔮',
+    title: 'Turnover Prediction',
+    description: 'Predict which employees are at risk of leaving',
+  },
+  {
+    icon: '📊',
+    title: 'Attendance Pattern Analysis',
+    description: 'Identify trends and anomalies in attendance',
+  },
+  {
+    icon: '🎯',
+    title: 'Promotion Recommendations',
+    description: 'Suggest high-performing employees for advancement',
+  },
+  {
+    icon: '⚠️',
+    title: 'Performance Issue Detection',
+    description: 'Early identification of underperforming employees',
+  },
+  {
+    icon: '📚',
+    title: 'Training Program Suggestions',
+    description: 'Recommend personalized training based on gaps',
+  },
+  {
+    icon: '👥',
+    title: 'Workforce Planning',
+    description: 'Optimize headcount and team composition',
+  },
   { icon: '🔍', title: 'Hiring Needs Forecast', description: 'Predict future hiring requirements' },
-  { icon: '📝', title: 'Auto Report Generation', description: 'Generate HR insights automatically' },
+  {
+    icon: '📝',
+    title: 'Auto Report Generation',
+    description: 'Generate HR insights automatically',
+  },
 ];
 
 export default function AIHRAssistantPage() {
   const [chatMessages, setChatMessages] = useState([
-    { role: 'assistant', text: 'Hello! I\'m your AI HR Assistant. I can help you with employee turnover predictions, performance analysis, workforce planning, and more. How can I assist you today?' }
+    {
+      role: 'assistant',
+      text: "Hello! I'm your AI HR Assistant. I can help you with employee turnover predictions, performance analysis, workforce planning, and more. How can I assist you today?",
+    },
   ]);
   const [inputMessage, setInputMessage] = useState('');
 
   const handleSendMessage = () => {
     if (!inputMessage.trim()) return;
 
-    setChatMessages([...chatMessages,
+    setChatMessages([
+      ...chatMessages,
       { role: 'user', text: inputMessage },
-      { role: 'assistant', text: 'I\'m analyzing your HR data... This is a demo response. In production, I would provide real AI-powered insights based on your query.' }
+      {
+        role: 'assistant',
+        text: "I'm analyzing your HR data... This is a demo response. In production, I would provide real AI-powered insights based on your query.",
+      },
     ]);
     setInputMessage('');
   };
@@ -105,11 +152,12 @@ export default function AIHRAssistantPage() {
           };
 
           return (
-            <div key={insight.id} className={`border rounded-lg p-5 ${colorClasses[insight.color as keyof typeof colorClasses]}`}>
+            <div
+              key={insight.id}
+              className={`border rounded-lg p-5 ${colorClasses[insight.color as keyof typeof colorClasses]}`}
+            >
               <div className="flex items-start gap-3 mb-3">
-                <div className="p-2 rounded-lg bg-white bg-opacity-50">
-                  {insight.icon}
-                </div>
+                <div className="p-2 rounded-lg bg-white bg-opacity-50">{insight.icon}</div>
                 <div className="flex-1">
                   <h3 className="font-semibold text-lg mb-1">{insight.title}</h3>
                   <p className="text-sm opacity-90">{insight.description}</p>
@@ -135,8 +183,20 @@ export default function AIHRAssistantPage() {
               <YAxis />
               <Tooltip />
               <Legend />
-              <Line type="monotone" dataKey="projected" stroke="#8b5cf6" strokeWidth={3} name="Projected" />
-              <Line type="monotone" dataKey="historical" stroke="#cbd5e1" strokeDasharray="5 5" name="Historical Avg" />
+              <Line
+                type="monotone"
+                dataKey="projected"
+                stroke="#8b5cf6"
+                strokeWidth={3}
+                name="Projected"
+              />
+              <Line
+                type="monotone"
+                dataKey="historical"
+                stroke="#cbd5e1"
+                strokeDasharray="5 5"
+                name="Historical Avg"
+              />
             </LineChart>
           </ResponsiveContainer>
         </div>
@@ -164,12 +224,15 @@ export default function AIHRAssistantPage() {
           </div>
           <div className="flex-1 overflow-y-auto p-6 space-y-4">
             {chatMessages.map((msg, index) => (
-              <div key={index} className={`flex ${msg.role === 'user' ? 'justify-end' : 'justify-start'}`}>
-                <div className={`max-w-[80%] rounded-lg p-3 ${
-                  msg.role === 'user'
-                    ? 'bg-blue-600 text-white'
-                    : 'bg-gray-100 text-gray-900'
-                }`}>
+              <div
+                key={index}
+                className={`flex ${msg.role === 'user' ? 'justify-end' : 'justify-start'}`}
+              >
+                <div
+                  className={`max-w-[80%] rounded-lg p-3 ${
+                    msg.role === 'user' ? 'bg-blue-600 text-white' : 'bg-gray-100 text-gray-900'
+                  }`}
+                >
                   {msg.text}
                 </div>
               </div>
@@ -203,7 +266,10 @@ export default function AIHRAssistantPage() {
           <div className="p-6">
             <div className="grid grid-cols-1 gap-3">
               {aiCapabilities.map((feature, index) => (
-                <div key={index} className="flex items-start gap-3 p-3 border rounded-lg hover:border-blue-500 hover:bg-blue-50 transition-all cursor-pointer">
+                <div
+                  key={index}
+                  className="flex items-start gap-3 p-3 border rounded-lg hover:border-blue-500 hover:bg-blue-50 transition-all cursor-pointer"
+                >
                   <div className="text-2xl">{feature.icon}</div>
                   <div>
                     <h3 className="font-semibold">{feature.title}</h3>

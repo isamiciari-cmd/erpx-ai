@@ -3,6 +3,7 @@
 ## The Problem
 
 Your `.env` file currently has:
+
 ```env
 VITE_SUPABASE_ANON_KEY=YOUR_ANON_KEY_HERE
 ```
@@ -35,6 +36,7 @@ This is **NOT a real key** - it's just a placeholder!
    - Click the **Copy** button next to the anon key
 
 **What the anon key looks like:**
+
 ```
 eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZS...
 (long string, about 200+ characters)
@@ -58,6 +60,7 @@ Then I'll update the .env file for you.
 4. Save the file
 
 **Should look like:**
+
 ```env
 # Supabase Configuration
 VITE_SUPABASE_URL=https://svxmlejmhlocsjjtftxd.supabase.co
@@ -78,6 +81,7 @@ VITE_ENV=development
    - Press `Ctrl+C` in the terminal
 
 2. **Start it again:**
+
    ```bash
    pnpm dev
    ```
@@ -101,6 +105,7 @@ VITE_ENV=development
 ### "I can't find the anon key"
 
 **Make sure you're looking at the right place:**
+
 1. Supabase Dashboard → Your Project
 2. Settings (not Database, not Authentication)
 3. API (not General, not Auth)
@@ -110,6 +115,7 @@ VITE_ENV=development
 ### "Still getting Failed to fetch"
 
 **Checklist:**
+
 1. ✅ Did you copy the **anon** key (not service_role)?
 2. ✅ Did you paste it in `.env` file?
 3. ✅ Did you **restart the dev server**? (Very important!)
@@ -175,6 +181,7 @@ Once you add the real anon key and restart:
 ## Need Help?
 
 **Tell me:**
+
 1. Did you find the anon key in Supabase dashboard?
 2. Do you want me to update the .env file? (Give me the key)
 3. Are you stuck on a specific step?

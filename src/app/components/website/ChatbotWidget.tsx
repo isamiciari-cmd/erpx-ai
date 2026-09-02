@@ -12,7 +12,7 @@ export default function ChatbotWidget() {
   const [messages, setMessages] = useState<Message[]>([
     {
       role: 'assistant',
-      text: 'Hello! I\'m the ERPX-AI Assistant. How can I help you today? 👋\n\nمرحباً! أنا مساعد ERPX-AI. كيف يمكنني مساعدتك اليوم؟',
+      text: "Hello! I'm the ERPX-AI Assistant. How can I help you today? 👋\n\nمرحباً! أنا مساعد ERPX-AI. كيف يمكنني مساعدتك اليوم؟",
     },
   ]);
   const [input, setInput] = useState('');
@@ -31,12 +31,12 @@ export default function ChatbotWidget() {
     if (!input.trim()) return;
 
     const userMessage: Message = { role: 'user', text: input };
-    setMessages(prev => [...prev, userMessage]);
+    setMessages((prev) => [...prev, userMessage]);
 
     // Simulate AI response
     setTimeout(() => {
       const response = getAIResponse(input);
-      setMessages(prev => [...prev, { role: 'assistant', text: response }]);
+      setMessages((prev) => [...prev, { role: 'assistant', text: response }]);
     }, 1000);
 
     setInput('');
@@ -50,7 +50,7 @@ export default function ChatbotWidget() {
     }
 
     if (q.includes('demo')) {
-      return 'I\'d be happy to help you schedule a demo! \n\nPlease visit our demo request page or provide:\n• Your name\n• Email\n• Company name\n• Phone number\n\nOur team will contact you within 24 hours to schedule a personalized demo session.';
+      return "I'd be happy to help you schedule a demo! \n\nPlease visit our demo request page or provide:\n• Your name\n• Email\n• Company name\n• Phone number\n\nOur team will contact you within 24 hours to schedule a personalized demo session.";
     }
 
     if (q.includes('ai') || q.includes('artificial intelligence')) {

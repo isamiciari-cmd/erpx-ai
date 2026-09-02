@@ -48,9 +48,10 @@ export function DesktopSidebar({ logo, items, collapsed = false, onToggle }: Res
                   className={`
                     flex items-center gap-3 p-4 rounded-xl
                     transition-all duration-200
-                    ${isActive
-                      ? 'bg-yellow-400 text-black'
-                      : 'text-gray-400 hover:bg-gray-800 hover:text-white'
+                    ${
+                      isActive
+                        ? 'bg-yellow-400 text-black'
+                        : 'text-gray-400 hover:bg-gray-800 hover:text-white'
                     }
                   `}
                 >
@@ -112,9 +113,10 @@ export function TabletSidebar({ logo, items }: ResponsiveNavProps) {
                   className={`
                     flex items-center justify-center p-3 rounded-xl
                     transition-all duration-200
-                    ${isActive
-                      ? 'bg-yellow-400 text-black'
-                      : 'text-gray-400 hover:bg-gray-800 hover:text-white'
+                    ${
+                      isActive
+                        ? 'bg-yellow-400 text-black'
+                        : 'text-gray-400 hover:bg-gray-800 hover:text-white'
                     }
                   `}
                   title={item.name}
@@ -203,28 +205,23 @@ export function MobileHamburgerMenu({ logo, items }: ResponsiveNavProps) {
               transition={{ type: 'spring', damping: 25, stiffness: 300 }}
               className="fixed top-0 left-0 bottom-0 w-80 bg-black border-r border-gray-800 z-50 overflow-y-auto"
             >
-              <div className="p-6 border-b border-gray-800">
-                {logo}
-              </div>
+              <div className="p-6 border-b border-gray-800">{logo}</div>
 
               <nav className="p-4">
                 <div className="space-y-2">
                   {items.map((item) => {
                     const isActive = location.pathname === item.path;
                     return (
-                      <Link
-                        key={item.path}
-                        to={item.path}
-                        onClick={() => setIsOpen(false)}
-                      >
+                      <Link key={item.path} to={item.path} onClick={() => setIsOpen(false)}>
                         <motion.div
                           whileTap={{ scale: 0.98 }}
                           className={`
                             flex items-center gap-3 p-4 rounded-xl
                             transition-all duration-200
-                            ${isActive
-                              ? 'bg-yellow-400 text-black'
-                              : 'text-gray-400 hover:bg-gray-800 hover:text-white'
+                            ${
+                              isActive
+                                ? 'bg-yellow-400 text-black'
+                                : 'text-gray-400 hover:bg-gray-800 hover:text-white'
                             }
                           `}
                         >
@@ -245,7 +242,10 @@ export function MobileHamburgerMenu({ logo, items }: ResponsiveNavProps) {
 }
 
 // Combined Responsive Navigation
-export function ResponsiveNavigation({ logo, items }: Omit<ResponsiveNavProps, 'collapsed' | 'onToggle'>) {
+export function ResponsiveNavigation({
+  logo,
+  items,
+}: Omit<ResponsiveNavProps, 'collapsed' | 'onToggle'>) {
   const [sidebarCollapsed, setSidebarCollapsed] = useState(false);
 
   return (

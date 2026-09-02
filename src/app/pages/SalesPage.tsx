@@ -1,32 +1,20 @@
-import { useState, useEffect } from "react";
-import { motion } from "motion/react";
+import { useState, useEffect } from 'react';
+import { motion } from 'motion/react';
 import {
   DollarSign,
   TrendingUp,
   TrendingDown,
   Users,
   FileText,
-  CreditCard,
-  AlertCircle,
   Target,
   Brain,
   Plus,
   Download,
-  Filter,
-  Search,
   ArrowRight,
-  CheckCircle,
-  Clock,
-  XCircle,
-} from "lucide-react";
+} from 'lucide-react';
 import {
-  LineChart,
-  Line,
   BarChart,
   Bar,
-  PieChart,
-  Pie,
-  Cell,
   XAxis,
   YAxis,
   CartesianGrid,
@@ -34,82 +22,110 @@ import {
   ResponsiveContainer,
   AreaChart,
   Area,
-} from "recharts";
+} from 'recharts';
 
 // Revenue trend data
 const revenueData = [
-  { id: "month-0", month: "Jan", revenue: 125000, profit: 42000 },
-  { id: "month-1", month: "Feb", revenue: 142000, profit: 48000 },
-  { id: "month-2", month: "Mar", revenue: 138000, profit: 45000 },
-  { id: "month-3", month: "Apr", revenue: 165000, profit: 58000 },
-  { id: "month-4", month: "May", revenue: 158000, profit: 52000 },
-  { id: "month-5", month: "Jun", revenue: 182000, profit: 65000 },
+  { id: 'month-0', month: 'Jan', revenue: 125000, profit: 42000 },
+  { id: 'month-1', month: 'Feb', revenue: 142000, profit: 48000 },
+  { id: 'month-2', month: 'Mar', revenue: 138000, profit: 45000 },
+  { id: 'month-3', month: 'Apr', revenue: 165000, profit: 58000 },
+  { id: 'month-4', month: 'May', revenue: 158000, profit: 52000 },
+  { id: 'month-5', month: 'Jun', revenue: 182000, profit: 65000 },
 ];
 
 // Sales by branch
 const branchData = [
-  { id: "branch-0", branch: "Riyadh", sales: 85000 },
-  { id: "branch-1", branch: "Jeddah", sales: 62000 },
-  { id: "branch-2", branch: "Dammam", sales: 48000 },
-  { id: "branch-3", branch: "Makkah", sales: 35000 },
+  { id: 'branch-0', branch: 'Riyadh', sales: 85000 },
+  { id: 'branch-1', branch: 'Jeddah', sales: 62000 },
+  { id: 'branch-2', branch: 'Dammam', sales: 48000 },
+  { id: 'branch-3', branch: 'Makkah', sales: 35000 },
 ];
 
 // Sales pipeline stages
 const pipelineData = [
-  { id: "stage-0", stage: "Lead", value: 45, count: 23 },
-  { id: "stage-1", stage: "Qualified", value: 28, count: 14 },
-  { id: "stage-2", stage: "Proposal", value: 18, count: 9 },
-  { id: "stage-3", stage: "Negotiation", value: 12, count: 6 },
-  { id: "stage-4", stage: "Closed", value: 8, count: 4 },
+  { id: 'stage-0', stage: 'Lead', value: 45, count: 23 },
+  { id: 'stage-1', stage: 'Qualified', value: 28, count: 14 },
+  { id: 'stage-2', stage: 'Proposal', value: 18, count: 9 },
+  { id: 'stage-3', stage: 'Negotiation', value: 12, count: 6 },
+  { id: 'stage-4', stage: 'Closed', value: 8, count: 4 },
 ];
 
-const COLORS = ["#3B82F6", "#8B5CF6", "#EC4899", "#F59E0B", "#10B981"];
+const COLORS = ['#3B82F6', '#8B5CF6', '#EC4899', '#F59E0B', '#10B981'];
 
 // Top customers
 const topCustomers = [
-  { id: 1, name: "Ahmed Trading Co.", revenue: 45000, orders: 28, growth: "+15%" },
-  { id: 2, name: "Al-Noor Electronics", revenue: 38000, orders: 22, growth: "+12%" },
-  { id: 3, name: "Saudi Tech Solutions", revenue: 32000, orders: 18, growth: "+8%" },
-  { id: 4, name: "Modern Retail Group", revenue: 28000, orders: 15, growth: "+22%" },
+  { id: 1, name: 'Ahmed Trading Co.', revenue: 45000, orders: 28, growth: '+15%' },
+  { id: 2, name: 'Al-Noor Electronics', revenue: 38000, orders: 22, growth: '+12%' },
+  { id: 3, name: 'Saudi Tech Solutions', revenue: 32000, orders: 18, growth: '+8%' },
+  { id: 4, name: 'Modern Retail Group', revenue: 28000, orders: 15, growth: '+22%' },
 ];
 
 // Recent invoices
 const recentInvoices = [
-  { id: "INV-1234", customer: "Ahmed Trading Co.", amount: 4500, status: "Paid", date: "2h ago" },
-  { id: "INV-1235", customer: "Al-Noor Electronics", amount: 3200, status: "Pending", date: "4h ago" },
-  { id: "INV-1236", customer: "Saudi Tech", amount: 5800, status: "Overdue", date: "1d ago" },
-  { id: "INV-1237", customer: "Modern Retail", amount: 2100, status: "Paid", date: "2d ago" },
+  { id: 'INV-1234', customer: 'Ahmed Trading Co.', amount: 4500, status: 'Paid', date: '2h ago' },
+  {
+    id: 'INV-1235',
+    customer: 'Al-Noor Electronics',
+    amount: 3200,
+    status: 'Pending',
+    date: '4h ago',
+  },
+  { id: 'INV-1236', customer: 'Saudi Tech', amount: 5800, status: 'Overdue', date: '1d ago' },
+  { id: 'INV-1237', customer: 'Modern Retail', amount: 2100, status: 'Paid', date: '2d ago' },
 ];
 
 // Sales opportunities
 const opportunities = [
-  { id: 1, name: "Office Equipment Deal", customer: "Tech Corp", value: 45000, stage: "Proposal", probability: 75 },
-  { id: 2, name: "Software Licenses", customer: "Digital Co", value: 32000, stage: "Negotiation", probability: 60 },
-  { id: 3, name: "Furniture Supply", customer: "Modern Office", value: 28000, stage: "Qualified", probability: 40 },
+  {
+    id: 1,
+    name: 'Office Equipment Deal',
+    customer: 'Tech Corp',
+    value: 45000,
+    stage: 'Proposal',
+    probability: 75,
+  },
+  {
+    id: 2,
+    name: 'Software Licenses',
+    customer: 'Digital Co',
+    value: 32000,
+    stage: 'Negotiation',
+    probability: 60,
+  },
+  {
+    id: 3,
+    name: 'Furniture Supply',
+    customer: 'Modern Office',
+    value: 28000,
+    stage: 'Qualified',
+    probability: 40,
+  },
 ];
 
 // AI Insights
 const aiInsights = [
   {
     id: 1,
-    type: "success",
-    title: "Upselling Opportunity",
-    message: "Ahmed Trading Co. shows 85% likelihood of purchasing additional products. Recommend product bundle.",
-    confidence: "92%",
+    type: 'success',
+    title: 'Upselling Opportunity',
+    message:
+      'Ahmed Trading Co. shows 85% likelihood of purchasing additional products. Recommend product bundle.',
+    confidence: '92%',
   },
   {
     id: 2,
-    type: "warning",
-    title: "Churn Risk Detected",
+    type: 'warning',
+    title: 'Churn Risk Detected',
     message: "3 key customers haven't placed orders in 45 days. Immediate follow-up recommended.",
-    confidence: "88%",
+    confidence: '88%',
   },
   {
     id: 3,
-    type: "info",
-    title: "Revenue Forecast",
-    message: "Based on current pipeline, expected revenue next month: SAR 195,000 (+7%).",
-    confidence: "94%",
+    type: 'info',
+    title: 'Revenue Forecast',
+    message: 'Based on current pipeline, expected revenue next month: SAR 195,000 (+7%).',
+    confidence: '94%',
   },
 ];
 
@@ -217,8 +233,18 @@ export default function SalesPage() {
                   <stop key="sales-rev-stop-1" offset="95%" stopColor="#3B82F6" stopOpacity={0} />
                 </linearGradient>
                 <linearGradient id="profitGradient" x1="0" y1="0" x2="0" y2="1">
-                  <stop key="sales-profit-stop-0" offset="5%" stopColor="#10B981" stopOpacity={0.3} />
-                  <stop key="sales-profit-stop-1" offset="95%" stopColor="#10B981" stopOpacity={0} />
+                  <stop
+                    key="sales-profit-stop-0"
+                    offset="5%"
+                    stopColor="#10B981"
+                    stopOpacity={0.3}
+                  />
+                  <stop
+                    key="sales-profit-stop-1"
+                    offset="95%"
+                    stopColor="#10B981"
+                    stopOpacity={0}
+                  />
                 </linearGradient>
               </defs>
               <CartesianGrid strokeDasharray="3 3" stroke="#374151" />
@@ -226,9 +252,9 @@ export default function SalesPage() {
               <YAxis stroke="#9CA3AF" />
               <Tooltip
                 contentStyle={{
-                  backgroundColor: "#1F2937",
-                  border: "1px solid #374151",
-                  borderRadius: "8px",
+                  backgroundColor: '#1F2937',
+                  border: '1px solid #374151',
+                  borderRadius: '8px',
                 }}
               />
               <Area
@@ -270,9 +296,9 @@ export default function SalesPage() {
               <YAxis stroke="#9CA3AF" />
               <Tooltip
                 contentStyle={{
-                  backgroundColor: "#1F2937",
-                  border: "1px solid #374151",
-                  borderRadius: "8px",
+                  backgroundColor: '#1F2937',
+                  border: '1px solid #374151',
+                  borderRadius: '8px',
                 }}
               />
               <Bar dataKey="sales" fill="url(#barGradient)" radius={[8, 8, 0, 0]} name="Sales" />
@@ -341,11 +367,11 @@ export default function SalesPage() {
                 key={insight.id}
                 whileHover={{ scale: 1.02 }}
                 className={`p-4 rounded-xl border ${
-                  insight.type === "warning"
-                    ? "bg-yellow-500/5 border-yellow-500/30"
-                    : insight.type === "success"
-                    ? "bg-green-500/5 border-green-500/30"
-                    : "bg-blue-500/5 border-blue-500/30"
+                  insight.type === 'warning'
+                    ? 'bg-yellow-500/5 border-yellow-500/30'
+                    : insight.type === 'success'
+                      ? 'bg-green-500/5 border-green-500/30'
+                      : 'bg-blue-500/5 border-blue-500/30'
                 } cursor-pointer`}
               >
                 <h4 className="text-white font-semibold text-sm mb-1">{insight.title}</h4>
@@ -387,7 +413,9 @@ export default function SalesPage() {
                     <p className="text-xs text-gray-400">{customer.orders} orders</p>
                   </div>
                   <div className="text-right">
-                    <p className="text-white font-semibold">SAR {customer.revenue.toLocaleString()}</p>
+                    <p className="text-white font-semibold">
+                      SAR {customer.revenue.toLocaleString()}
+                    </p>
                     <p className="text-xs text-green-400">{customer.growth}</p>
                   </div>
                 </div>
@@ -416,11 +444,11 @@ export default function SalesPage() {
                   </div>
                   <span
                     className={`px-2 py-1 rounded text-xs font-semibold ${
-                      invoice.status === "Paid"
-                        ? "bg-green-500/20 text-green-400"
-                        : invoice.status === "Pending"
-                        ? "bg-yellow-500/20 text-yellow-400"
-                        : "bg-red-500/20 text-red-400"
+                      invoice.status === 'Paid'
+                        ? 'bg-green-500/20 text-green-400'
+                        : invoice.status === 'Pending'
+                          ? 'bg-yellow-500/20 text-yellow-400'
+                          : 'bg-red-500/20 text-red-400'
                     }`}
                   >
                     {invoice.status}
@@ -455,11 +483,17 @@ export default function SalesPage() {
           <table className="w-full">
             <thead className="bg-gray-800/50">
               <tr>
-                <th className="px-6 py-3 text-left text-xs font-semibold text-gray-400">Opportunity</th>
-                <th className="px-6 py-3 text-left text-xs font-semibold text-gray-400">Customer</th>
+                <th className="px-6 py-3 text-left text-xs font-semibold text-gray-400">
+                  Opportunity
+                </th>
+                <th className="px-6 py-3 text-left text-xs font-semibold text-gray-400">
+                  Customer
+                </th>
                 <th className="px-6 py-3 text-left text-xs font-semibold text-gray-400">Value</th>
                 <th className="px-6 py-3 text-left text-xs font-semibold text-gray-400">Stage</th>
-                <th className="px-6 py-3 text-left text-xs font-semibold text-gray-400">Probability</th>
+                <th className="px-6 py-3 text-left text-xs font-semibold text-gray-400">
+                  Probability
+                </th>
               </tr>
             </thead>
             <tbody>
@@ -513,10 +547,14 @@ function KPICard({ title, value, icon: Icon, trend, color, trendDown }: KPICardP
       className="bg-[#111827] border border-gray-800 rounded-2xl p-6 hover:border-blue-500/50 hover:shadow-lg hover:shadow-blue-500/10 transition-all cursor-pointer"
     >
       <div className="flex items-start justify-between mb-4">
-        <div className={`w-12 h-12 bg-gradient-to-br ${color} rounded-xl flex items-center justify-center shadow-lg`}>
+        <div
+          className={`w-12 h-12 bg-gradient-to-br ${color} rounded-xl flex items-center justify-center shadow-lg`}
+        >
           <Icon className="w-6 h-6 text-white" />
         </div>
-        <span className={`text-sm font-semibold flex items-center gap-1 ${trendDown ? 'text-red-400' : 'text-green-400'}`}>
+        <span
+          className={`text-sm font-semibold flex items-center gap-1 ${trendDown ? 'text-red-400' : 'text-green-400'}`}
+        >
           {trendDown ? <TrendingDown className="w-4 h-4" /> : <TrendingUp className="w-4 h-4" />}
           {trend}
         </span>

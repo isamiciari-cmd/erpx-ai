@@ -27,10 +27,12 @@ export async function listInvoices(companyId: string, status?: string): Promise<
 
   let query = supabase
     .from('invoices')
-    .select(`
+    .select(
+      `
       *,
       customer:customers(company_name)
-    `)
+    `,
+    )
     .eq('company_id', companyId)
     .order('issue_date', { ascending: false });
 
@@ -56,10 +58,12 @@ export async function getInvoice(invoiceId: string): Promise<Invoice | null> {
 
   const { data, error } = await supabase
     .from('invoices')
-    .select(`
+    .select(
+      `
       *,
       customer:customers(*)
-    `)
+    `,
+    )
     .eq('id', invoiceId)
     .single();
 
@@ -77,11 +81,7 @@ export async function createInvoice(invoiceData: Partial<Invoice>): Promise<Invo
     throw new Error('Demo mode: Cannot create invoices');
   }
 
-  const { data, error } = await supabase
-    .from('invoices')
-    .insert(invoiceData)
-    .select()
-    .single();
+  const { data, error } = await supabase.from('invoices').insert(invoiceData).select().single();
 
   if (error) {
     console.error('[Supabase] createInvoice error:', error);
@@ -92,7 +92,10 @@ export async function createInvoice(invoiceData: Partial<Invoice>): Promise<Invo
 }
 
 // Update invoice
-export async function updateInvoice(invoiceId: string, updates: Partial<Invoice>): Promise<Invoice> {
+export async function updateInvoice(
+  invoiceId: string,
+  updates: Partial<Invoice>,
+): Promise<Invoice> {
   if (isDemoMode) {
     throw new Error('Demo mode: Cannot update invoices');
   }
@@ -118,10 +121,7 @@ export async function deleteInvoice(invoiceId: string): Promise<void> {
     throw new Error('Demo mode: Cannot delete invoices');
   }
 
-  const { error } = await supabase
-    .from('invoices')
-    .delete()
-    .eq('id', invoiceId);
+  const { error } = await supabase.from('invoices').delete().eq('id', invoiceId);
 
   if (error) {
     console.error('[Supabase] deleteInvoice error:', error);
@@ -130,7 +130,10 @@ export async function deleteInvoice(invoiceId: string): Promise<void> {
 }
 
 // Mark invoice as paid
-export async function markInvoiceAsPaid(invoiceId: string, paymentAmount: number): Promise<Invoice> {
+export async function markInvoiceAsPaid(
+  invoiceId: string,
+  paymentAmount: number,
+): Promise<Invoice> {
   if (isDemoMode) {
     throw new Error('Demo mode: Cannot update invoices');
   }
@@ -140,7 +143,7 @@ export async function markInvoiceAsPaid(invoiceId: string, paymentAmount: number
     .update({
       status: 'PAID',
       amount_paid: paymentAmount,
-      amount_due: 0
+      amount_due: 0,
     })
     .eq('id', invoiceId)
     .select()

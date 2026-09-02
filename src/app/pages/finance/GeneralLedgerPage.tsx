@@ -1,15 +1,87 @@
 import { useState } from 'react';
-import { FileText, Download, Filter, Calendar } from 'lucide-react';
+import { Download } from 'lucide-react';
 
 const ledgerData = [
-  { date: '2026-04-01', entryNumber: 'JE-2026-001', account: 'Cash - Main', accountCode: '1010', debit: 50000, credit: 0, balance: 50000, reference: 'Opening Balance' },
-  { date: '2026-04-05', entryNumber: 'JE-2026-015', account: 'Cash - Main', accountCode: '1010', debit: 15000, credit: 0, balance: 65000, reference: 'Customer Payment INV-1245' },
-  { date: '2026-04-08', entryNumber: 'JE-2026-023', account: 'Cash - Main', accountCode: '1010', debit: 0, credit: 8500, balance: 56500, reference: 'Supplier Payment BILL-890' },
-  { date: '2026-04-12', entryNumber: 'JE-2026-031', account: 'Cash - Main', accountCode: '1010', debit: 22000, credit: 0, balance: 78500, reference: 'Sales Revenue' },
-  { date: '2026-04-15', entryNumber: 'JE-2026-045', account: 'Cash - Main', accountCode: '1010', debit: 0, credit: 12000, balance: 66500, reference: 'Rent Payment' },
-  { date: '2026-04-20', entryNumber: 'JE-2026-052', account: 'Cash - Main', accountCode: '1010', debit: 35000, credit: 0, balance: 101500, reference: 'Customer Payment INV-1289' },
-  { date: '2026-04-25', entryNumber: 'JE-2026-067', account: 'Cash - Main', accountCode: '1010', debit: 0, credit: 18500, balance: 83000, reference: 'Utilities & Expenses' },
-  { date: '2026-04-30', entryNumber: 'JE-2026-078', account: 'Cash - Main', accountCode: '1010', debit: 0, credit: 25000, balance: 58000, reference: 'Salary Payment' },
+  {
+    date: '2026-04-01',
+    entryNumber: 'JE-2026-001',
+    account: 'Cash - Main',
+    accountCode: '1010',
+    debit: 50000,
+    credit: 0,
+    balance: 50000,
+    reference: 'Opening Balance',
+  },
+  {
+    date: '2026-04-05',
+    entryNumber: 'JE-2026-015',
+    account: 'Cash - Main',
+    accountCode: '1010',
+    debit: 15000,
+    credit: 0,
+    balance: 65000,
+    reference: 'Customer Payment INV-1245',
+  },
+  {
+    date: '2026-04-08',
+    entryNumber: 'JE-2026-023',
+    account: 'Cash - Main',
+    accountCode: '1010',
+    debit: 0,
+    credit: 8500,
+    balance: 56500,
+    reference: 'Supplier Payment BILL-890',
+  },
+  {
+    date: '2026-04-12',
+    entryNumber: 'JE-2026-031',
+    account: 'Cash - Main',
+    accountCode: '1010',
+    debit: 22000,
+    credit: 0,
+    balance: 78500,
+    reference: 'Sales Revenue',
+  },
+  {
+    date: '2026-04-15',
+    entryNumber: 'JE-2026-045',
+    account: 'Cash - Main',
+    accountCode: '1010',
+    debit: 0,
+    credit: 12000,
+    balance: 66500,
+    reference: 'Rent Payment',
+  },
+  {
+    date: '2026-04-20',
+    entryNumber: 'JE-2026-052',
+    account: 'Cash - Main',
+    accountCode: '1010',
+    debit: 35000,
+    credit: 0,
+    balance: 101500,
+    reference: 'Customer Payment INV-1289',
+  },
+  {
+    date: '2026-04-25',
+    entryNumber: 'JE-2026-067',
+    account: 'Cash - Main',
+    accountCode: '1010',
+    debit: 0,
+    credit: 18500,
+    balance: 83000,
+    reference: 'Utilities & Expenses',
+  },
+  {
+    date: '2026-04-30',
+    entryNumber: 'JE-2026-078',
+    account: 'Cash - Main',
+    accountCode: '1010',
+    debit: 0,
+    credit: 25000,
+    balance: 58000,
+    reference: 'Salary Payment',
+  },
 ];
 
 export default function GeneralLedgerPage() {
@@ -108,12 +180,24 @@ export default function GeneralLedgerPage() {
           <table className="w-full">
             <thead className="bg-gray-50 border-b">
               <tr>
-                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Date</th>
-                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Entry #</th>
-                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Reference</th>
-                <th className="px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase tracking-wider">Debit</th>
-                <th className="px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase tracking-wider">Credit</th>
-                <th className="px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase tracking-wider">Balance</th>
+                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                  Date
+                </th>
+                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                  Entry #
+                </th>
+                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                  Reference
+                </th>
+                <th className="px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase tracking-wider">
+                  Debit
+                </th>
+                <th className="px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase tracking-wider">
+                  Credit
+                </th>
+                <th className="px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase tracking-wider">
+                  Balance
+                </th>
               </tr>
             </thead>
             <tbody className="bg-white divide-y divide-gray-200">
@@ -138,7 +222,9 @@ export default function GeneralLedgerPage() {
             </tbody>
             <tfoot className="bg-gray-50 border-t">
               <tr className="font-bold">
-                <td colSpan={3} className="px-6 py-4 text-sm">Period Totals</td>
+                <td colSpan={3} className="px-6 py-4 text-sm">
+                  Period Totals
+                </td>
                 <td className="px-6 py-4 text-sm text-right text-green-600">$122,000</td>
                 <td className="px-6 py-4 text-sm text-right text-red-600">$114,000</td>
                 <td className="px-6 py-4 text-sm text-right text-purple-600">$58,000</td>

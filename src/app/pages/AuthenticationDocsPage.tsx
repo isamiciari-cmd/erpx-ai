@@ -3,7 +3,9 @@ export default function AuthenticationDocsPage() {
     <div className="space-y-6 max-w-5xl">
       <div>
         <h1 className="text-3xl font-bold mb-2">Authentication & User Management Documentation</h1>
-        <p className="text-gray-600">Complete API structure and database schema for ERPX-AI authentication system</p>
+        <p className="text-gray-600">
+          Complete API structure and database schema for ERPX-AI authentication system
+        </p>
       </div>
 
       {/* Database Schema */}
@@ -42,7 +44,9 @@ export default function AuthenticationDocsPage() {
               <tr>
                 <td className="border px-4 py-2 font-mono">role_id</td>
                 <td className="border px-4 py-2">string</td>
-                <td className="border px-4 py-2">Role identifier (SUPER_ADMIN, FINANCE_MANAGER, etc.)</td>
+                <td className="border px-4 py-2">
+                  Role identifier (SUPER_ADMIN, FINANCE_MANAGER, etc.)
+                </td>
               </tr>
               <tr>
                 <td className="border px-4 py-2 font-mono">department</td>
@@ -57,7 +61,9 @@ export default function AuthenticationDocsPage() {
               <tr className="bg-yellow-50">
                 <td className="border px-4 py-2 font-mono font-bold">must_change_password</td>
                 <td className="border px-4 py-2">boolean</td>
-                <td className="border px-4 py-2">Force password change on next login (default: true)</td>
+                <td className="border px-4 py-2">
+                  Force password change on next login (default: true)
+                </td>
               </tr>
               <tr>
                 <td className="border px-4 py-2 font-mono">status</td>
@@ -96,7 +102,9 @@ export default function AuthenticationDocsPage() {
         {/* Login */}
         <div className="mb-6">
           <div className="flex items-center gap-3 mb-2">
-            <span className="px-2 py-1 bg-green-100 text-green-800 text-xs font-bold rounded">POST</span>
+            <span className="px-2 py-1 bg-green-100 text-green-800 text-xs font-bold rounded">
+              POST
+            </span>
             <code className="text-sm font-mono">/api/auth/login</code>
           </div>
           <p className="text-sm text-gray-600 mb-3">Authenticate user and return session token</p>
@@ -125,10 +133,14 @@ export default function AuthenticationDocsPage() {
         {/* Change Password */}
         <div className="mb-6">
           <div className="flex items-center gap-3 mb-2">
-            <span className="px-2 py-1 bg-green-100 text-green-800 text-xs font-bold rounded">POST</span>
+            <span className="px-2 py-1 bg-green-100 text-green-800 text-xs font-bold rounded">
+              POST
+            </span>
             <code className="text-sm font-mono">/api/auth/change-password</code>
           </div>
-          <p className="text-sm text-gray-600 mb-3">Change user password (requires authentication)</p>
+          <p className="text-sm text-gray-600 mb-3">
+            Change user password (requires authentication)
+          </p>
           <div className="bg-gray-50 rounded-lg p-4 mb-3">
             <p className="text-xs font-semibold mb-2">Request Body:</p>
             <pre className="text-xs overflow-x-auto">{`{
@@ -148,7 +160,9 @@ export default function AuthenticationDocsPage() {
         {/* Get Current User */}
         <div className="mb-6">
           <div className="flex items-center gap-3 mb-2">
-            <span className="px-2 py-1 bg-blue-100 text-blue-800 text-xs font-bold rounded">GET</span>
+            <span className="px-2 py-1 bg-blue-100 text-blue-800 text-xs font-bold rounded">
+              GET
+            </span>
             <code className="text-sm font-mono">/api/auth/me</code>
           </div>
           <p className="text-sm text-gray-600 mb-3">Get current authenticated user details</p>
@@ -170,7 +184,9 @@ export default function AuthenticationDocsPage() {
         {/* Logout */}
         <div>
           <div className="flex items-center gap-3 mb-2">
-            <span className="px-2 py-1 bg-green-100 text-green-800 text-xs font-bold rounded">POST</span>
+            <span className="px-2 py-1 bg-green-100 text-green-800 text-xs font-bold rounded">
+              POST
+            </span>
             <code className="text-sm font-mono">/api/auth/logout</code>
           </div>
           <p className="text-sm text-gray-600 mb-3">Invalidate current session</p>
@@ -188,31 +204,45 @@ export default function AuthenticationDocsPage() {
         <h2 className="text-2xl font-bold mb-4">Complete Login Flow</h2>
         <div className="space-y-4">
           <div className="flex gap-4">
-            <div className="w-8 h-8 rounded-full bg-blue-600 text-white flex items-center justify-center font-bold flex-shrink-0">1</div>
+            <div className="w-8 h-8 rounded-full bg-blue-600 text-white flex items-center justify-center font-bold flex-shrink-0">
+              1
+            </div>
             <div>
               <h3 className="font-semibold">User enters credentials</h3>
-              <p className="text-sm text-gray-600">Email and password (@12345 for first-time users)</p>
+              <p className="text-sm text-gray-600">
+                Email and password (@12345 for first-time users)
+              </p>
             </div>
           </div>
 
           <div className="flex gap-4">
-            <div className="w-8 h-8 rounded-full bg-blue-600 text-white flex items-center justify-center font-bold flex-shrink-0">2</div>
+            <div className="w-8 h-8 rounded-full bg-blue-600 text-white flex items-center justify-center font-bold flex-shrink-0">
+              2
+            </div>
             <div>
               <h3 className="font-semibold">System validates credentials</h3>
-              <p className="text-sm text-gray-600">Check email exists, verify password hash, check account status</p>
+              <p className="text-sm text-gray-600">
+                Check email exists, verify password hash, check account status
+              </p>
             </div>
           </div>
 
           <div className="flex gap-4">
-            <div className="w-8 h-8 rounded-full bg-blue-600 text-white flex items-center justify-center font-bold flex-shrink-0">3</div>
+            <div className="w-8 h-8 rounded-full bg-blue-600 text-white flex items-center justify-center font-bold flex-shrink-0">
+              3
+            </div>
             <div>
               <h3 className="font-semibold">Check login attempts</h3>
-              <p className="text-sm text-gray-600">If failed: increment counter. Lock account after 5 attempts.</p>
+              <p className="text-sm text-gray-600">
+                If failed: increment counter. Lock account after 5 attempts.
+              </p>
             </div>
           </div>
 
           <div className="flex gap-4">
-            <div className="w-8 h-8 rounded-full bg-yellow-600 text-white flex items-center justify-center font-bold flex-shrink-0">4</div>
+            <div className="w-8 h-8 rounded-full bg-yellow-600 text-white flex items-center justify-center font-bold flex-shrink-0">
+              4
+            </div>
             <div>
               <h3 className="font-semibold">Check must_change_password flag</h3>
               <p className="text-sm text-gray-600">If true: redirect to /change-password page</p>
@@ -220,26 +250,38 @@ export default function AuthenticationDocsPage() {
           </div>
 
           <div className="flex gap-4">
-            <div className="w-8 h-8 rounded-full bg-yellow-600 text-white flex items-center justify-center font-bold flex-shrink-0">5</div>
+            <div className="w-8 h-8 rounded-full bg-yellow-600 text-white flex items-center justify-center font-bold flex-shrink-0">
+              5
+            </div>
             <div>
               <h3 className="font-semibold">User sets new password</h3>
-              <p className="text-sm text-gray-600">Validate password strength, confirm match, hash with bcrypt</p>
+              <p className="text-sm text-gray-600">
+                Validate password strength, confirm match, hash with bcrypt
+              </p>
             </div>
           </div>
 
           <div className="flex gap-4">
-            <div className="w-8 h-8 rounded-full bg-yellow-600 text-white flex items-center justify-center font-bold flex-shrink-0">6</div>
+            <div className="w-8 h-8 rounded-full bg-yellow-600 text-white flex items-center justify-center font-bold flex-shrink-0">
+              6
+            </div>
             <div>
               <h3 className="font-semibold">Update database</h3>
-              <p className="text-sm text-gray-600">Set must_change_password = false, save new password hash</p>
+              <p className="text-sm text-gray-600">
+                Set must_change_password = false, save new password hash
+              </p>
             </div>
           </div>
 
           <div className="flex gap-4">
-            <div className="w-8 h-8 rounded-full bg-green-600 text-white flex items-center justify-center font-bold flex-shrink-0">7</div>
+            <div className="w-8 h-8 rounded-full bg-green-600 text-white flex items-center justify-center font-bold flex-shrink-0">
+              7
+            </div>
             <div>
               <h3 className="font-semibold">Redirect to dashboard</h3>
-              <p className="text-sm text-gray-600">Navigate to user's default_route (based on role)</p>
+              <p className="text-sm text-gray-600">
+                Navigate to user's default_route (based on role)
+              </p>
             </div>
           </div>
         </div>

@@ -34,9 +34,7 @@ export async function listInventory(warehouseId?: string): Promise<InventoryItem
     return [];
   }
 
-  let query = supabase
-    .from('inventory')
-    .select(`
+  let query = supabase.from('inventory').select(`
       *,
       product:products(product_name, unit_price, min_stock_level),
       warehouse:warehouses(name)
@@ -60,7 +58,7 @@ export async function listInventory(warehouseId?: string): Promise<InventoryItem
 export async function updateInventoryQuantity(
   inventoryId: string,
   quantityAvailable: number,
-  quantityReserved: number
+  quantityReserved: number,
 ): Promise<InventoryItem> {
   if (isDemoMode) {
     throw new Error('Demo mode: Cannot update inventory');
@@ -71,7 +69,7 @@ export async function updateInventoryQuantity(
     .update({
       quantity_available: quantityAvailable,
       quantity_reserved: quantityReserved,
-      last_counted_at: new Date().toISOString()
+      last_counted_at: new Date().toISOString(),
     })
     .eq('id', inventoryId)
     .select()
@@ -93,10 +91,12 @@ export async function getLowStockProducts(companyId: string): Promise<any[]> {
 
   const { data, error } = await supabase
     .from('inventory')
-    .select(`
+    .select(
+      `
       *,
       product:products!inner(id, sku, product_name, min_stock_level, reorder_point)
-    `)
+    `,
+    )
     .filter('product.company_id', 'eq', companyId)
     .filter('quantity_available', 'lt', supabase.raw('products.min_stock_level'));
 

@@ -29,9 +29,9 @@ const CategoryPieChart = React.memo(({ data, colors, width, height }: CategoryPi
       </Pie>
       <Tooltip
         contentStyle={{
-          backgroundColor: "#1F2937",
-          border: "1px solid #374151",
-          borderRadius: "8px",
+          backgroundColor: '#1F2937',
+          border: '1px solid #374151',
+          borderRadius: '8px',
         }}
       />
     </PieChart>
