@@ -3,9 +3,11 @@ import { Navigate } from 'react-router-dom';
 import { useAuth } from '../../contexts/AuthContext';
 import { usePermissions } from '../../hooks/usePermissions';
 
+
 interface ProtectedRouteProps {
 	children: React.ReactNode;
-	requiredRole?: string;
+	// allow passing either a single role or an array on requiredRole
+	requiredRole?: string | string[];
 	requiredRoles?: string[];
 	requiredPermission?: string;
 }
@@ -51,7 +53,9 @@ const ProtectedRoute = ({ children, requiredRole, requiredRoles, requiredPermiss
 	if (requiredRole || requiredRoles || requiredPermission) {
 		if (permissionsLoading) return <div>Checking access…</div>;
 
-		const allowedRoles = requiredRoles ?? (requiredRole ? [requiredRole] : []);
+		const allowedRoles =
+			requiredRoles ??
+				(requiredRole ? (Array.isArray(requiredRole) ? requiredRole : [requiredRole]) : []);
 		const hasRequiredRole = allowedRoles.length === 0 || allowedRoles.some(hasRole);
 		const hasRequiredPermission = !requiredPermission || hasPermission(requiredPermission);
 

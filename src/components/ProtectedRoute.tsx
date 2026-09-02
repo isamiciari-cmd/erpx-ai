@@ -4,7 +4,8 @@ import { useAuth } from '../contexts/AuthContext';
 
 interface ProtectedRouteProps {
   children: React.ReactNode;
-  requiredRole?: string;
+  // accept either a single role string or an array of roles
+  requiredRole?: string | string[];
 }
 
 const ProtectedRoute = ({
@@ -20,9 +21,10 @@ const ProtectedRoute = ({
 
   const location = useLocation();
 
-  const [roleChecking, setRoleChecking] = useState(
-    requiredRole === 'cashier'
-  );
+  const requiredRoleIsCashier =
+    requiredRole === 'cashier' || (Array.isArray(requiredRole) && requiredRole.includes('cashier'));
+
+  const [roleChecking, setRoleChecking] = useState(requiredRoleIsCashier);
 
   const [authTimedOut, setAuthTimedOut] = useState(false);
 
@@ -128,7 +130,7 @@ const ProtectedRoute = ({
    *
    * Only users with the cashier role can access /cashier/*
    */
-  if (requiredRole === 'cashier') {
+  if (requiredRoleIsCashier) {
     if (!cashierUser) {
       return <Navigate to="/dashboard" replace />;
     }
