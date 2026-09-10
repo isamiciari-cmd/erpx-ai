@@ -1,0 +1,201 @@
+import React, { useState } from "react";
+import {
+  View,
+  Text,
+  TextInput,
+  TouchableOpacity,
+  StyleSheet,
+  SafeAreaView,
+  Alert,
+} from "react-native";
+
+export default function LoginScreen() {
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
+
+  const handleLogin = () => {
+    if (!email || !password) {
+      Alert.alert("Error", "Please enter your email and password.");
+      return;
+    }
+
+    // TODO: Connect to your API
+    console.log("Login:", { email, password });
+  };
+
+  return (
+    <SafeAreaView style={styles.container}>
+      <View style={styles.content}>
+
+        {/* Logo */}
+        <View style={styles.logoContainer}>
+          <Text style={styles.logo}>EATCOM</Text>
+          <Text style={styles.subtitle}>
+            Welcome back
+          </Text>
+        </View>
+
+        {/* Email */}
+        <View style={styles.inputGroup}>
+          <Text style={styles.label}>Email</Text>
+
+          <TextInput
+            style={styles.input}
+            placeholder="Enter your email"
+            placeholderTextColor="#999"
+            keyboardType="email-address"
+            autoCapitalize="none"
+            value={email}
+            onChangeText={setEmail}
+          />
+        </View>
+
+        {/* Password */}
+        <View style={styles.inputGroup}>
+          <Text style={styles.label}>Password</Text>
+
+          <TextInput
+            style={styles.input}
+            placeholder="Enter your password"
+            placeholderTextColor="#999"
+            secureTextEntry
+            value={password}
+            onChangeText={setPassword}
+          />
+        </View>
+
+        {/* Forgot Password */}
+        <TouchableOpacity
+          style={styles.forgotButton}
+          onPress={() => console.log("Forgot password")}
+        >
+          <Text style={styles.forgotText}>
+            Forgot Password?
+          </Text>
+        </TouchableOpacity>
+
+        {/* Login Button */}
+        <TouchableOpacity
+          style={styles.loginButton}
+          onPress={handleLogin}
+        >
+          <Text style={styles.loginText}>
+            Login
+          </Text>
+        </TouchableOpacity>
+
+        {/* Register */}
+        <View style={styles.registerContainer}>
+          <Text style={styles.registerLabel}>
+            Don't have an account?
+          </Text>
+
+          <TouchableOpacity
+            onPress={() => console.log("Register")}
+          >
+            <Text style={styles.registerText}>
+              Create Account
+            </Text>
+          </TouchableOpacity>
+        </View>
+
+      </View>
+    </SafeAreaView>
+  );
+}
+
+const styles = StyleSheet.create({
+  container: {
+    flex: 1,
+    backgroundColor: "#FFFFFF",
+  },
+
+  content: {
+    flex: 1,
+    paddingHorizontal: 28,
+    justifyContent: "center",
+  },
+
+  logoContainer: {
+    alignItems: "center",
+    marginBottom: 45,
+  },
+
+  logo: {
+    fontSize: 34,
+    fontWeight: "800",
+    color: "#111111",
+    letterSpacing: 2,
+  },
+
+  subtitle: {
+    marginTop: 8,
+    fontSize: 16,
+    color: "#777777",
+  },
+
+  inputGroup: {
+    marginBottom: 20,
+  },
+
+  label: {
+    fontSize: 14,
+    fontWeight: "600",
+    color: "#222222",
+    marginBottom: 8,
+  },
+
+  input: {
+    height: 54,
+    borderWidth: 1,
+    borderColor: "#DDDDDD",
+    borderRadius: 12,
+    paddingHorizontal: 16,
+    fontSize: 16,
+    color: "#111111",
+    backgroundColor: "#FAFAFA",
+  },
+
+  forgotButton: {
+    alignSelf: "flex-end",
+    marginBottom: 25,
+  },
+
+  forgotText: {
+    color: "#E5B800",
+    fontSize: 14,
+    fontWeight: "600",
+  },
+
+  loginButton: {
+    height: 56,
+    borderRadius: 12,
+    backgroundColor: "#111111",
+    alignItems: "center",
+    justifyContent: "center",
+  },
+
+  loginText: {
+    color: "#FFFFFF",
+    fontSize: 17,
+    fontWeight: "700",
+  },
+
+  registerContainer: {
+    flexDirection: "row",
+    justifyContent: "center",
+    marginTop: 28,
+  },
+
+  registerLabel: {
+    color: "#777777",
+    fontSize: 14,
+  },
+
+  registerText: {
+    color: "#E5B800",
+    fontSize: 14,
+    fontWeight: "700",
+    marginLeft: 5,
+  },
+});
