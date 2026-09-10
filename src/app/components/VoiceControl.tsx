@@ -1,7 +1,7 @@
 import { useEffect, useState } from 'react';
 import { motion } from 'motion/react';
 import { Mic, MicOff, Volume2 } from 'lucide-react';
-import { useNavigate } from 'react-router';
+import { useNavigate } from 'react-router-dom';
 
 export default function VoiceControl() {
   const [isListening, setIsListening] = useState(false);

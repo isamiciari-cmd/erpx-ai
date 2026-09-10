@@ -2,7 +2,7 @@ import { useState } from 'react';
 import { motion } from 'motion/react';
 import { AlertCircle, Loader2, Eye, EyeOff, CheckCircle } from 'lucide-react';
 import { updatePassword } from '../../services/authService';
-import { useNavigate } from 'react-router';
+import { useNavigate } from 'react-router-dom';
 
 export default function ResetPasswordPage() {
   const [newPassword, setNewPassword] = useState('');

@@ -1,4 +1,4 @@
-ï»¿import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { Navigate } from 'react-router-dom';
 import { useAuth } from '../../contexts/AuthContext';
 import { usePermissions } from '../../hooks/usePermissions';
@@ -40,7 +40,7 @@ const ProtectedRoute = ({
     if (authTimedOut) {
       return (
         <div>
-          <p>Still authenticating â€” something may be blocking the auth check.</p>
+          <p>Still authenticating — something may be blocking the auth check.</p>
           <button onClick={() => window.location.reload()} style={{ marginRight: 8 }}>
             Retry
           </button>
@@ -57,7 +57,7 @@ const ProtectedRoute = ({
   }
 
   if (requiredRole || requiredRoles || requiredPermission) {
-    if (permissionsLoading) return <div>Checking accessâ€¦</div>;
+    if (permissionsLoading) return <div>Checking access…</div>;
 
     const allowedRoles =
       requiredRoles ??

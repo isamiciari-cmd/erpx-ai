@@ -1,5 +1,5 @@
 import { motion } from 'motion/react';
-import { useLocation, useNavigate } from 'react-router';
+import { useLocation, useNavigate } from 'react-router-dom';
 import { CheckCircle, Mail, ArrowRight } from 'lucide-react';
 import { useEffect } from 'react';
 

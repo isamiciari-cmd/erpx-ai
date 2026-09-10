@@ -2,7 +2,7 @@ import { useState } from 'react';
 import { motion } from 'motion/react';
 import { AlertCircle, Loader2, ArrowLeft, CheckCircle } from 'lucide-react';
 import { requestPasswordReset } from '../../services/authService';
-import { useNavigate } from 'react-router';
+import { useNavigate } from 'react-router-dom';
 
 export default function ForgotPasswordPage() {
   const [email, setEmail] = useState('');
