@@ -4,7 +4,7 @@ import { Package, Plus, Search, Filter, Download, Edit, Trash2, Eye } from 'luci
 import { useToast } from '../../components/ui/Toast';
 import Modal from '../../components/ui/Modal';
 import ConfirmDialog from '../../components/ui/ConfirmDialog';
-import Button from '../../components/ui/Button';
+import Button from '../../components/ui/CustomButton';
 import EmptyState from '../../components/ui/EmptyState';
 import LoadingSpinner from '../../components/ui/LoadingSpinner';
 

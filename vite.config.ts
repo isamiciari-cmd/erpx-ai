@@ -26,7 +26,7 @@ export default defineConfig({
     rollupOptions: {
       output: {
         manualChunks: {
-          'react-vendor': ['react', 'react-dom', 'react-router'],
+          'react-vendor': ['react', 'react-dom', 'react-router-dom'],
           'ui-vendor': ['motion', 'lucide-react'],
           'radix-vendor': [
             '@radix-ui/react-accordion',
