@@ -1,4 +1,4 @@
-import { useState } from 'react';
+﻿import { useState } from 'react';
 import { motion, AnimatePresence } from 'motion/react';
 import ThemeToggle from '../components/ThemeToggle';
 import {
@@ -603,7 +603,7 @@ export default function ExecutiveDashboard() {
                 Business Dashboard
               </h1>
               <p className="text-gray-600 dark:text-gray-400 text-lg font-medium">
-                Financial Control & Operational Excellence •{' '}
+                Financial Control & Operational Excellence â€¢{' '}
                 {new Date().toLocaleDateString('en-US', {
                   month: 'long',
                   day: 'numeric',
@@ -1393,10 +1393,10 @@ function QuickActionsCard({ onCreateInvoice }: QuickActionsCardProps) {
 
       <div className="space-y-3">
         <ActionButton icon={Plus} label="Create Invoice" color="blue" onClick={onCreateInvoice} />
-        <ActionButton icon={FileCheck} label="Create Quotation" color="purple" onClick={() => alert('Create Quotation coming soon')} />
-        <ActionButton icon={QrCode} label="Generate QR Code" color="green" onClick={() => alert('Generate QR Code coming soon')} />
-        <ActionButton icon={Send} label="Send Reminder" color="orange" onClick={() => alert('Send Reminder coming soon')} />
-        <ActionButton icon={Download} label="VAT Report" color="pink" onClick={() => alert('VAT Report coming soon')} />
+        <ActionButton icon={FileCheck} label="Create Quotation" color="purple" />
+        <ActionButton icon={QrCode} label="Generate QR Code" color="green" />
+        <ActionButton icon={Send} label="Send Reminder" color="orange" />
+        <ActionButton icon={Download} label="VAT Report" color="pink" />
       </div>
     </motion.div>
   );
@@ -1482,7 +1482,6 @@ function VATSummaryCard({ vatCollected }: VATSummaryCardProps) {
         <motion.button
           whileHover={{ scale: 1.02 }}
           whileTap={{ scale: 0.98 }}
-          onClick={() => alert('VAT Report generation coming soon')}
           className="w-full mt-4 px-4 py-3 bg-gradient-to-r from-green-500 to-emerald-500 rounded-xl text-sm font-semibold text-white shadow-lg transition-all"
         >
           Generate VAT Report
@@ -1518,7 +1517,6 @@ function InvoicesTable({ invoices }: InvoicesTableProps) {
           <motion.button
             whileHover={{ scale: 1.05 }}
             whileTap={{ scale: 0.95 }}
-            onClick={() => alert('Filter coming soon')}
             className="px-4 py-2 bg-gray-800/50 border border-gray-700/50 hover:border-gray-600/50 rounded-xl text-sm font-semibold text-white flex items-center gap-2 transition-all"
           >
             <Filter size={16} />
@@ -1580,7 +1578,6 @@ function InvoicesTable({ invoices }: InvoicesTableProps) {
                     <motion.button
                       whileHover={{ scale: 1.1 }}
                       whileTap={{ scale: 0.9 }}
-                      onClick={() => alert(`View invoice ${invoice.id}`)}
                       className="w-8 h-8 rounded-lg bg-gray-800/50 hover:bg-gray-800 flex items-center justify-center text-gray-400 hover:text-white transition-all"
                     >
                       <Eye size={16} />
@@ -1588,7 +1585,6 @@ function InvoicesTable({ invoices }: InvoicesTableProps) {
                     <motion.button
                       whileHover={{ scale: 1.1 }}
                       whileTap={{ scale: 0.9 }}
-                      onClick={() => alert(`Download invoice ${invoice.id}`)}
                       className="w-8 h-8 rounded-lg bg-gray-800/50 hover:bg-gray-800 flex items-center justify-center text-gray-400 hover:text-white transition-all"
                     >
                       <Download size={16} />
@@ -1596,7 +1592,6 @@ function InvoicesTable({ invoices }: InvoicesTableProps) {
                     <motion.button
                       whileHover={{ scale: 1.1 }}
                       whileTap={{ scale: 0.9 }}
-                      onClick={() => alert(`Send invoice ${invoice.id}`)}
                       className="w-8 h-8 rounded-lg bg-gray-800/50 hover:bg-gray-800 flex items-center justify-center text-gray-400 hover:text-white transition-all"
                     >
                       <Send size={16} />
@@ -1651,7 +1646,6 @@ function BusinessModuleCard({ module, index }: BusinessModuleCardProps) {
       <motion.button
         whileHover={{ scale: 1.02 }}
         whileTap={{ scale: 0.98 }}
-        onClick={() => alert('View Details coming soon')}
         className="w-full mt-6 px-4 py-2.5 bg-gray-800/50 hover:bg-gray-800 border border-gray-700/50 hover:border-gray-600/50 rounded-xl text-sm font-semibold text-white transition-all flex items-center justify-center gap-2 group"
       >
         View Details
@@ -1714,7 +1708,6 @@ function AIInsightCard({ insight, index }: AIInsightCardProps) {
       <motion.button
         whileHover={{ scale: 1.05 }}
         whileTap={{ scale: 0.95 }}
-        onClick={() => alert(`${insight.action} - coming soon`)}
         className={`w-full px-4 py-2.5 rounded-xl text-sm font-semibold ${config.button} transition-all`}
       >
         {insight.action}
@@ -1785,7 +1778,6 @@ function ReportCard({ title, description, icon: Icon, color }: ReportCardProps) 
         <motion.button
           whileHover={{ scale: 1.05 }}
           whileTap={{ scale: 0.95 }}
-          onClick={() => alert(`${title} generation coming soon`)}
           className={`flex-1 px-4 py-2.5 bg-gradient-to-r ${config.button} rounded-xl text-sm font-semibold text-white shadow-lg transition-all`}
         >
           Generate
@@ -1793,7 +1785,6 @@ function ReportCard({ title, description, icon: Icon, color }: ReportCardProps) 
         <motion.button
           whileHover={{ scale: 1.05 }}
           whileTap={{ scale: 0.95 }}
-          onClick={() => alert('Schedule coming soon')}
           className="px-4 py-2.5 bg-gray-900/50 border border-gray-800/50 hover:border-gray-700/50 rounded-xl text-sm font-semibold text-white transition-all"
         >
           <Calendar size={16} />
@@ -1903,7 +1894,6 @@ function InvoiceBuilderModal({ onClose }: InvoiceBuilderModalProps) {
               <motion.button
                 whileHover={{ scale: 1.02 }}
                 whileTap={{ scale: 0.98 }}
-                onClick={() => alert('Add Line Item coming soon')}
                 className="mt-4 px-4 py-2 bg-gray-800/50 hover:bg-gray-800 border border-gray-700/50 rounded-lg text-sm font-semibold text-white flex items-center gap-2 transition-all"
               >
                 <Plus size={16} />
@@ -1940,7 +1930,7 @@ function InvoiceBuilderModal({ onClose }: InvoiceBuilderModalProps) {
             <motion.button
               whileHover={{ scale: 1.02 }}
               whileTap={{ scale: 0.98 }}
-              onClick={() => alert('Save as Draft coming soon')}
+              onClick={onClose}
               className="px-6 py-3 bg-gray-800/50 hover:bg-gray-800 border border-gray-700/50 rounded-xl text-sm font-semibold text-white transition-all"
             >
               Cancel
@@ -1948,7 +1938,6 @@ function InvoiceBuilderModal({ onClose }: InvoiceBuilderModalProps) {
             <motion.button
               whileHover={{ scale: 1.02 }}
               whileTap={{ scale: 0.98 }}
-              onClick={() => alert('Save as Draft coming soon')}
               className="flex-1 px-6 py-3 bg-gradient-to-r from-blue-500 to-cyan-500 rounded-xl text-sm font-semibold text-white shadow-lg transition-all flex items-center justify-center gap-2"
             >
               <FileCheck size={18} />
@@ -1957,7 +1946,6 @@ function InvoiceBuilderModal({ onClose }: InvoiceBuilderModalProps) {
             <motion.button
               whileHover={{ scale: 1.02 }}
               whileTap={{ scale: 0.98 }}
-              onClick={() => alert('Create & Send coming soon')}
               className="flex-1 px-6 py-3 bg-gradient-to-r from-green-500 to-emerald-500 rounded-xl text-sm font-semibold text-white shadow-lg transition-all flex items-center justify-center gap-2"
             >
               <Send size={18} />

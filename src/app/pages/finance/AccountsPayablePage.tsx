@@ -160,7 +160,10 @@ export default function AccountsPayablePage() {
                   </td>
                   <td className="px-6 py-4">
                     {item.status !== 'paid' && (
-                      <button className="text-sm text-blue-600 hover:text-blue-800 font-medium">
+                      <button
+                        onClick={() => alert('Make Payment coming soon')}
+                        className="text-sm text-blue-600 hover:text-blue-800 font-medium"
+                      >
                         Make Payment
                       </button>
                     )}

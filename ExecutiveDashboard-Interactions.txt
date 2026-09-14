@@ -1,0 +1,555 @@
+﻿
+  ExecutiveDashboard-Audit.txt:4:import {
+  ExecutiveDashboard-Audit.txt:5:  DollarSign,
+  ExecutiveDashboard-Audit.txt:6:  TrendingUp,
+> ExecutiveDashboard-Audit.txt:7:  Download,
+  ExecutiveDashboard-Audit.txt:8:  ChevronRight,
+  ExecutiveDashboard-Audit.txt:9:  FileText,
+  ExecutiveDashboard-Audit.txt:10:  BarChart3,
+  ExecutiveDashboard-Audit.txt:11:  PieChart,
+  ExecutiveDashboard-Audit.txt:12:  Activity,
+  ExecutiveDashboard-Audit.txt:18:  Clock,
+  ExecutiveDashboard-Audit.txt:19:  ArrowUpRight,
+  ExecutiveDashboard-Audit.txt:20:  ArrowDownRight,
+> ExecutiveDashboard-Audit.txt:21:  Calendar,
+  ExecutiveDashboard-Audit.txt:22:  Mail,
+  ExecutiveDashboard-Audit.txt:23:  FileSpreadsheet,
+  ExecutiveDashboard-Audit.txt:24:  Settings,
+  ExecutiveDashboard-Audit.txt:25:  LayoutDashboard,
+  ExecutiveDashboard-Audit.txt:26:  Wallet,
+  ExecutiveDashboard-Audit.txt:30:  Target,
+  ExecutiveDashboard-Audit.txt:31:  Zap,
+  ExecutiveDashboard-Audit.txt:32:  AlertTriangle,
+> ExecutiveDashboard-Audit.txt:33:  Send,
+  ExecutiveDashboard-Audit.txt:34:  QrCode,
+  ExecutiveDashboard-Audit.txt:35:  Plus,
+  ExecutiveDashboard-Audit.txt:36:  Eye,
+> ExecutiveDashboard-Audit.txt:37:  Filter,
+  ExecutiveDashboard-Audit.txt:38:  Search,
+  ExecutiveDashboard-Audit.txt:39:  Building2,
+  ExecutiveDashboard-Audit.txt:40:  UserCheck,
+  ExecutiveDashboard-Audit.txt:41:  Truck,
+  ExecutiveDashboard-Audit.txt:42:  Store,
+  ExecutiveDashboard-Audit.txt:78:  });
+  ExecutiveDashboard-Audit.txt:79:
+  ExecutiveDashboard-Audit.txt:80:  return last6Months.map((month, index) => {
+> ExecutiveDashboard-Audit.txt:81:    const monthInvoices = invoices.filter((inv: any) => {
+  ExecutiveDashboard-Audit.txt:82:      const invMonth = new Date(inv.issueDate).toLocaleDateString('en-US', { month: 'short' });
+  ExecutiveDashboard-Audit.txt:83:      return invMonth === month;
+  ExecutiveDashboard-Audit.txt:84:    });
+  ExecutiveDashboard-Audit.txt:85:
+> ExecutiveDashboard-Audit.txt:86:    const monthOrders = salesOrders.filter((order: any) => {
+  ExecutiveDashboard-Audit.txt:87:      const orderMonth = new Date(order.orderDate).toLocaleDateString('en-US', { month: 'short' });
+  ExecutiveDashboard-Audit.txt:88:      return orderMonth === month;
+  ExecutiveDashboard-Audit.txt:89:    });
+  ExecutiveDashboard-Audit.txt:90:
+  ExecutiveDashboard-Audit.txt:91:    const revenue = monthInvoices.reduce((sum: number, inv: any) => sum + (inv.amountPaid || 0), 0);
+  ExecutiveDashboard-Audit.txt:252:    color: 'from-purple-500 to-pink-500',
+  ExecutiveDashboard-Audit.txt:253:  },
+  ExecutiveDashboard-Audit.txt:254:  {
+> ExecutiveDashboard-Audit.txt:255:    label: 'VAT Collected',
+  ExecutiveDashboard-Audit.txt:256:    value: '$124K',
+  ExecutiveDashboard-Audit.txt:257:    change: '+8.5%',
+  ExecutiveDashboard-Audit.txt:258:    trend: 'up' as const,
+  ExecutiveDashboard-Audit.txt:259:    icon: Percent,
+  ExecutiveDashboard-Audit.txt:260:    color: 'from-indigo-500 to-blue-500',
+  ExecutiveDashboard-Audit.txt:312:    date: '2024-06-01',
+  ExecutiveDashboard-Audit.txt:313:    dueDate: '2024-06-15',
+  ExecutiveDashboard-Audit.txt:314:    amount: 12500,
+> ExecutiveDashboard-Audit.txt:315:    vat: 1875,
+  ExecutiveDashboard-Audit.txt:316:    status: 'Paid',
+  ExecutiveDashboard-Audit.txt:317:    hasQR: true,
+  ExecutiveDashboard-Audit.txt:318:  },
+  ExecutiveDashboard-Audit.txt:319:  {
+  ExecutiveDashboard-Audit.txt:320:    id: 'INV-2024-002',
+  ExecutiveDashboard-Audit.txt:322:    date: '2024-06-03',
+  ExecutiveDashboard-Audit.txt:323:    dueDate: '2024-06-17',
+  ExecutiveDashboard-Audit.txt:324:    amount: 8900,
+> ExecutiveDashboard-Audit.txt:325:    vat: 1335,
+  ExecutiveDashboard-Audit.txt:326:    status: 'Unpaid',
+  ExecutiveDashboard-Audit.txt:327:    hasQR: true,
+  ExecutiveDashboard-Audit.txt:328:  },
+  ExecutiveDashboard-Audit.txt:329:  {
+  ExecutiveDashboard-Audit.txt:330:    id: 'INV-2024-003',
+  ExecutiveDashboard-Audit.txt:332:    date: '2024-05-28',
+  ExecutiveDashboard-Audit.txt:333:    dueDate: '2024-06-11',
+  ExecutiveDashboard-Audit.txt:334:    amount: 15200,
+> ExecutiveDashboard-Audit.txt:335:    vat: 2280,
+  ExecutiveDashboard-Audit.txt:336:    status: 'Overdue',
+  ExecutiveDashboard-Audit.txt:337:    hasQR: true,
+  ExecutiveDashboard-Audit.txt:338:  },
+  ExecutiveDashboard-Audit.txt:339:  {
+  ExecutiveDashboard-Audit.txt:340:    id: 'INV-2024-004',
+  ExecutiveDashboard-Audit.txt:342:    date: '2024-06-05',
+  ExecutiveDashboard-Audit.txt:343:    dueDate: '2024-06-19',
+  ExecutiveDashboard-Audit.txt:344:    amount: 6750,
+> ExecutiveDashboard-Audit.txt:345:    vat: 1012.5,
+  ExecutiveDashboard-Audit.txt:346:    status: 'Paid',
+  ExecutiveDashboard-Audit.txt:347:    hasQR: true,
+  ExecutiveDashboard-Audit.txt:348:  },
+  ExecutiveDashboard-Audit.txt:349:  {
+  ExecutiveDashboard-Audit.txt:350:    id: 'INV-2024-005',
+  ExecutiveDashboard-Audit.txt:352:    date: '2024-06-02',
+  ExecutiveDashboard-Audit.txt:353:    dueDate: '2024-06-16',
+  ExecutiveDashboard-Audit.txt:354:    amount: 22400,
+> ExecutiveDashboard-Audit.txt:355:    vat: 3360,
+  ExecutiveDashboard-Audit.txt:356:    status: 'Unpaid',
+  ExecutiveDashboard-Audit.txt:357:    hasQR: true,
+  ExecutiveDashboard-Audit.txt:358:  },
+  ExecutiveDashboard-Audit.txt:359:];
+  ExecutiveDashboard-Audit.txt:360:
+  ExecutiveDashboard-Audit.txt:370:  {
+  ExecutiveDashboard-Audit.txt:371:    type: 'warning',
+  ExecutiveDashboard-Audit.txt:372:    title: '88 Overdue Invoices',
+> ExecutiveDashboard-Audit.txt:373:    message: '$124K in overdue payments. Send automated reminders to improve cash flow.',
+> ExecutiveDashboard-Audit.txt:374:    action: 'Send Reminders',
+  ExecutiveDashboard-Audit.txt:375:    icon: AlertTriangle,
+  ExecutiveDashboard-Audit.txt:376:  },
+  ExecutiveDashboard-Audit.txt:377:  {
+  ExecutiveDashboard-Audit.txt:378:    type: 'info',
+  ExecutiveDashboard-Audit.txt:379:    title: 'Inventory Optimization',
+  ExecutiveDashboard-Audit.txt:384:  {
+  ExecutiveDashboard-Audit.txt:385:    type: 'success',
+  ExecutiveDashboard-Audit.txt:386:    title: 'Sales Performance Strong',
+> ExecutiveDashboard-Audit.txt:387:    message: 'Top 3 products generated 45% of total revenue this month.',
+  ExecutiveDashboard-Audit.txt:388:    action: 'View Report',
+  ExecutiveDashboard-Audit.txt:389:    icon: BarChart,
+  ExecutiveDashboard-Audit.txt:390:  },
+  ExecutiveDashboard-Audit.txt:391:];
+  ExecutiveDashboard-Audit.txt:392:
+  ExecutiveDashboard-Audit.txt:452:
+  ExecutiveDashboard-Audit.txt:453:export default function ExecutiveDashboard() {
+  ExecutiveDashboard-Audit.txt:454:  const { user } = useAuth();
+> ExecutiveDashboard-Audit.txt:455:  const [downloadMenuOpen, setDownloadMenuOpen] = useState<string | null>(null);
+  ExecutiveDashboard-Audit.txt:456:  const [showInvoiceBuilder, setShowInvoiceBuilder] = useState(false);
+  ExecutiveDashboard-Audit.txt:457:
+  ExecutiveDashboard-Audit.txt:458:  // Fetch real-time data from PostgreSQL
+  ExecutiveDashboard-Audit.txt:459:  const {
+  ExecutiveDashboard-Audit.txt:460:    data: analytics,
+  ExecutiveDashboard-Audit.txt:490:  );
+  ExecutiveDashboard-Audit.txt:491:
+  ExecutiveDashboard-Audit.txt:492:  // Invoice KPIs - Real calculations
+> ExecutiveDashboard-Audit.txt:493:  const paidInvoices = invoices.filter((inv: any) => inv.status === 'PAID');
+> ExecutiveDashboard-Audit.txt:494:  const unpaidInvoices = invoices.filter((inv: any) => inv.status === 'UNPAID');
+> ExecutiveDashboard-Audit.txt:495:  const overdueInvoices = invoices.filter(
+  ExecutiveDashboard-Audit.txt:496:    (inv: any) => inv.status === 'UNPAID' && new Date(inv.dueDate) < new Date(),
+  ExecutiveDashboard-Audit.txt:497:  );
+> ExecutiveDashboard-Audit.txt:498:  const vatCollected = invoices.reduce((sum: number, inv: any) => sum + (inv.vatAmount || 0), 0);
+  ExecutiveDashboard-Audit.txt:499:
+  ExecutiveDashboard-Audit.txt:500:  // Chart data - Process from database
+  ExecutiveDashboard-Audit.txt:501:  const monthlyData = processMonthlyData(invoices, salesOrders);
+  ExecutiveDashboard-Audit.txt:502:  const invoiceStatusData = [
+  ExecutiveDashboard-Audit.txt:503:    { id: 'invoice-paid', name: 'Paid', value: paidInvoices.length, color: '#10B981' },
+  ExecutiveDashboard-Audit.txt:616:              <motion.button
+  ExecutiveDashboard-Audit.txt:617:                whileHover={{ scale: 1.05 }}
+  ExecutiveDashboard-Audit.txt:618:                whileTap={{ scale: 0.95 }}
+> ExecutiveDashboard-Audit.txt:619:                onClick={refetchAnalytics}
+  ExecutiveDashboard-Audit.txt:620:                className="flex items-center gap-2 px-4 py-2 bg-gray-900/50 hover:bg-gray-900/70 border border-gray-800/50 rounded-2xl text-white 
+font-medium transition-all"
+  ExecutiveDashboard-Audit.txt:621:              >
+  ExecutiveDashboard-Audit.txt:622:                <RefreshCw className="w-4 h-4" />
+  ExecutiveDashboard-Audit.txt:623:                Refresh
+  ExecutiveDashboard-Audit.txt:624:              </motion.button>
+  ExecutiveDashboard-Audit.txt:706:        <div className="mb-12">
+  ExecutiveDashboard-Audit.txt:707:          <SectionHeader
+  ExecutiveDashboard-Audit.txt:708:            title="Cash Flow & Financial Movement"
+> ExecutiveDashboard-Audit.txt:709:            onDownload={() => setDownloadMenuOpen('cashflow')}
+> ExecutiveDashboard-Audit.txt:710:            downloadMenuOpen={downloadMenuOpen === 'cashflow'}
+> ExecutiveDashboard-Audit.txt:711:            onCloseDownload={() => setDownloadMenuOpen(null)}
+  ExecutiveDashboard-Audit.txt:712:          />
+  ExecutiveDashboard-Audit.txt:713:
+  ExecutiveDashboard-Audit.txt:714:          <div className="grid grid-cols-1 xl:grid-cols-2 gap-6">
+  ExecutiveDashboard-Audit.txt:715:            <ChartCard title="Revenue vs Expenses" icon={TrendingUp} color="blue">
+  ExecutiveDashboard-Audit.txt:716:              <ResponsiveContainer width="100%" height={280}>
+  ExecutiveDashboard-Audit.txt:883:        <div className="mb-12">
+  ExecutiveDashboard-Audit.txt:884:          <SectionHeader
+  ExecutiveDashboard-Audit.txt:885:            title="Invoicing & E-Invoicing"
+> ExecutiveDashboard-Audit.txt:886:            subtitle="ZATCA-compliant invoicing with QR codes and VAT handling"
+> ExecutiveDashboard-Audit.txt:887:            onDownload={() => setDownloadMenuOpen('invoicing')}
+> ExecutiveDashboard-Audit.txt:888:            downloadMenuOpen={downloadMenuOpen === 'invoicing'}
+> ExecutiveDashboard-Audit.txt:889:            onCloseDownload={() => setDownloadMenuOpen(null)}
+  ExecutiveDashboard-Audit.txt:890:          />
+  ExecutiveDashboard-Audit.txt:891:
+  ExecutiveDashboard-Audit.txt:892:          {/* Invoice KPIs - Real Data */}
+  ExecutiveDashboard-Audit.txt:893:          <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-6 mb-6">
+  ExecutiveDashboard-Audit.txt:894:            <InvoiceKPICard
+  ExecutiveDashboard-Audit.txt:948:            />
+  ExecutiveDashboard-Audit.txt:949:            <InvoiceKPICard
+  ExecutiveDashboard-Audit.txt:950:              kpi={{
+> ExecutiveDashboard-Audit.txt:951:                label: 'VAT Collected',
+> ExecutiveDashboard-Audit.txt:952:                value: `$${(vatCollected / 1000).toFixed(0)}K`,
+  ExecutiveDashboard-Audit.txt:953:                change: '+8.5%',
+  ExecutiveDashboard-Audit.txt:954:                trend: 'up' as const,
+  ExecutiveDashboard-Audit.txt:955:                icon: Percent,
+  ExecutiveDashboard-Audit.txt:956:                color: 'from-indigo-500 to-blue-500',
+  ExecutiveDashboard-Audit.txt:957:              }}
+  ExecutiveDashboard-Audit.txt:962:          {/* Invoice Actions & Charts */}
+  ExecutiveDashboard-Audit.txt:963:          <div className="grid grid-cols-1 xl:grid-cols-3 gap-6 mb-6">
+  ExecutiveDashboard-Audit.txt:964:            {/* Quick Actions */}
+> ExecutiveDashboard-Audit.txt:965:            <QuickActionsCard onCreateInvoice={() => setShowInvoiceBuilder(true)} />
+  ExecutiveDashboard-Audit.txt:966:
+  ExecutiveDashboard-Audit.txt:967:            {/* Invoice Status Chart */}
+  ExecutiveDashboard-Audit.txt:968:            <ChartCard title="Invoice Status Distribution" icon={PieChart} color="blue">
+  ExecutiveDashboard-Audit.txt:969:              <ResponsiveContainer width="100%" height={240}>
+  ExecutiveDashboard-Audit.txt:970:                <RechartsPieChart>
+  ExecutiveDashboard-Audit.txt:994:              </div>
+  ExecutiveDashboard-Audit.txt:995:            </ChartCard>
+  ExecutiveDashboard-Audit.txt:996:
+> ExecutiveDashboard-Audit.txt:997:            {/* VAT Summary - Real Data */}
+> ExecutiveDashboard-Audit.txt:998:            <VATSummaryCard vatCollected={vatCollected} />
+  ExecutiveDashboard-Audit.txt:999:          </div>
+  ExecutiveDashboard-Audit.txt:1000:
+  ExecutiveDashboard-Audit.txt:1001:          {/* Recent Invoices Table - Real Data */}
+  ExecutiveDashboard-Audit.txt:1002:          <InvoicesTable
+  ExecutiveDashboard-Audit.txt:1003:            invoices={(allInvoices || []).slice(0, 10).map((inv: any) => ({
+  ExecutiveDashboard-Audit.txt:1006:              date: new Date(inv.issueDate).toISOString().split('T')[0],
+  ExecutiveDashboard-Audit.txt:1007:              dueDate: new Date(inv.dueDate).toISOString().split('T')[0],
+  ExecutiveDashboard-Audit.txt:1008:              amount: inv.totalAmount,
+> ExecutiveDashboard-Audit.txt:1009:              vat: inv.vatAmount,
+  ExecutiveDashboard-Audit.txt:1010:              status:
+  ExecutiveDashboard-Audit.txt:1011:                inv.status === 'PAID' ? 'Paid' : inv.status === 'UNPAID' ? 'Unpaid' : 'Overdue',
+  ExecutiveDashboard-Audit.txt:1012:              hasQR: !!inv.qrCode,
+  ExecutiveDashboard-Audit.txt:1013:            }))}
+  ExecutiveDashboard-Audit.txt:1014:          />
+  ExecutiveDashboard-Audit.txt:1068:                    change: '+12%',
+  ExecutiveDashboard-Audit.txt:1069:                  },
+  ExecutiveDashboard-Audit.txt:1070:                  { label: 'Profit', value: `$${(netProfit / 1000).toFixed(0)}K`, change: '+18%' },
+> ExecutiveDashboard-Audit.txt:1071:                  { label: 'VAT', value: `$${(vatCollected / 1000).toFixed(0)}K`, change: '+5%' },
+  ExecutiveDashboard-Audit.txt:1072:                ],
+  ExecutiveDashboard-Audit.txt:1073:              }}
+  ExecutiveDashboard-Audit.txt:1074:              index={2}
+  ExecutiveDashboard-Audit.txt:1075:            />
+  ExecutiveDashboard-Audit.txt:1076:            <BusinessModuleCard
+  ExecutiveDashboard-Audit.txt:1107:        <div>
+  ExecutiveDashboard-Audit.txt:1108:          <SectionHeader
+  ExecutiveDashboard-Audit.txt:1109:            title="Executive Report Center"
+> ExecutiveDashboard-Audit.txt:1110:            subtitle="Generate and schedule comprehensive business reports"
+  ExecutiveDashboard-Audit.txt:1111:          />
+  ExecutiveDashboard-Audit.txt:1112:
+  ExecutiveDashboard-Audit.txt:1113:          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+  ExecutiveDashboard-Audit.txt:1114:            <ReportCard
+  ExecutiveDashboard-Audit.txt:1115:              title="Full Business Report"
+  ExecutiveDashboard-Audit.txt:1125:            />
+  ExecutiveDashboard-Audit.txt:1126:            <ReportCard
+  ExecutiveDashboard-Audit.txt:1127:              title="Invoice Report"
+> ExecutiveDashboard-Audit.txt:1128:              description="All invoices with VAT breakdown"
+  ExecutiveDashboard-Audit.txt:1129:              icon={Receipt}
+  ExecutiveDashboard-Audit.txt:1130:              color="purple"
+  ExecutiveDashboard-Audit.txt:1131:            />
+  ExecutiveDashboard-Audit.txt:1132:            <ReportCard
+  ExecutiveDashboard-Audit.txt:1133:              title="Sales Performance"
+  ExecutiveDashboard-Audit.txt:1262:interface SectionHeaderProps {
+  ExecutiveDashboard-Audit.txt:1263:  title: string;
+  ExecutiveDashboard-Audit.txt:1264:  subtitle?: string;
+> ExecutiveDashboard-Audit.txt:1265:  onDownload?: () => void;
+> ExecutiveDashboard-Audit.txt:1266:  downloadMenuOpen?: boolean;
+> ExecutiveDashboard-Audit.txt:1267:  onCloseDownload?: () => void;
+  ExecutiveDashboard-Audit.txt:1268:}
+  ExecutiveDashboard-Audit.txt:1269:
+  ExecutiveDashboard-Audit.txt:1270:function SectionHeader({
+  ExecutiveDashboard-Audit.txt:1271:  title,
+  ExecutiveDashboard-Audit.txt:1272:  subtitle,
+> ExecutiveDashboard-Audit.txt:1273:  onDownload,
+> ExecutiveDashboard-Audit.txt:1274:  downloadMenuOpen,
+> ExecutiveDashboard-Audit.txt:1275:  onCloseDownload,
+  ExecutiveDashboard-Audit.txt:1276:}: SectionHeaderProps) {
+  ExecutiveDashboard-Audit.txt:1277:  return (
+  ExecutiveDashboard-Audit.txt:1278:    <div className="flex items-center justify-between mb-6">
+  ExecutiveDashboard-Audit.txt:1279:      <div>
+  ExecutiveDashboard-Audit.txt:1280:        <h2 className="text-3xl font-bold text-gray-900 dark:text-white mb-1">{title}</h2>
+  ExecutiveDashboard-Audit.txt:1283:        )}
+  ExecutiveDashboard-Audit.txt:1284:      </div>
+  ExecutiveDashboard-Audit.txt:1285:
+> ExecutiveDashboard-Audit.txt:1286:      {onDownload && (
+  ExecutiveDashboard-Audit.txt:1287:        <div className="relative">
+  ExecutiveDashboard-Audit.txt:1288:          <motion.button
+  ExecutiveDashboard-Audit.txt:1289:            whileHover={{ scale: 1.05 }}
+  ExecutiveDashboard-Audit.txt:1290:            whileTap={{ scale: 0.95 }}
+> ExecutiveDashboard-Audit.txt:1291:            onClick={onDownload}
+  ExecutiveDashboard-Audit.txt:1292:            className="px-5 py-2.5 bg-white dark:bg-gray-900/50 border border-gray-300 dark:border-gray-800/50 hover:border-gray-400 
+dark:hover:border-gray-700/50 rounded-xl text-sm font-semibold text-gray-900 dark:text-white flex items-center gap-2 transition-all shadow-sm dark:shadow-none"
+  ExecutiveDashboard-Audit.txt:1293:          >
+> ExecutiveDashboard-Audit.txt:1294:            <Download size={16} />
+> ExecutiveDashboard-Audit.txt:1295:            Download Report
+  ExecutiveDashboard-Audit.txt:1296:          </motion.button>
+  ExecutiveDashboard-Audit.txt:1297:
+  ExecutiveDashboard-Audit.txt:1298:          <AnimatePresence>
+> ExecutiveDashboard-Audit.txt:1299:            {downloadMenuOpen && (
+  ExecutiveDashboard-Audit.txt:1300:              <motion.div
+  ExecutiveDashboard-Audit.txt:1301:                initial={{ opacity: 0, y: -10 }}
+  ExecutiveDashboard-Audit.txt:1302:                animate={{ opacity: 1, y: 0 }}
+  ExecutiveDashboard-Audit.txt:1303:                exit={{ opacity: 0, y: -10 }}
+  ExecutiveDashboard-Audit.txt:1304:                className="absolute right-0 top-full mt-2 w-48 bg-white dark:bg-gray-900/95 backdrop-blur-xl border border-gray-200 
+dark:border-gray-800/50 rounded-2xl shadow-2xl overflow-hidden z-50"
+  ExecutiveDashboard-Audit.txt:1305:              >
+> ExecutiveDashboard-Audit.txt:1306:                <DownloadMenuItem icon={FileText} label="PDF" onClick={onCloseDownload} />
+> ExecutiveDashboard-Audit.txt:1307:                <DownloadMenuItem icon={FileSpreadsheet} label="Excel" onClick={onCloseDownload} />
+> ExecutiveDashboard-Audit.txt:1308:                <DownloadMenuItem icon={FileText} label="CSV" onClick={onCloseDownload} />
+> ExecutiveDashboard-Audit.txt:1309:                <DownloadMenuItem icon={Mail} label="Send Email" onClick={onCloseDownload} />
+  ExecutiveDashboard-Audit.txt:1310:              </motion.div>
+  ExecutiveDashboard-Audit.txt:1311:            )}
+  ExecutiveDashboard-Audit.txt:1312:          </AnimatePresence>
+  ExecutiveDashboard-Audit.txt:1313:        </div>
+  ExecutiveDashboard-Audit.txt:1314:      )}
+  ExecutiveDashboard-Audit.txt:1316:  );
+  ExecutiveDashboard-Audit.txt:1317:}
+  ExecutiveDashboard-Audit.txt:1318:
+> ExecutiveDashboard-Audit.txt:1319:// Download Menu Item
+> ExecutiveDashboard-Audit.txt:1320:interface DownloadMenuItemProps {
+  ExecutiveDashboard-Audit.txt:1321:  icon: any;
+  ExecutiveDashboard-Audit.txt:1322:  label: string;
+> ExecutiveDashboard-Audit.txt:1323:  onClick?: () => void;
+  ExecutiveDashboard-Audit.txt:1324:}
+  ExecutiveDashboard-Audit.txt:1325:
+> ExecutiveDashboard-Audit.txt:1326:function DownloadMenuItem({ icon: Icon, label, onClick }: DownloadMenuItemProps) {
+  ExecutiveDashboard-Audit.txt:1327:  return (
+  ExecutiveDashboard-Audit.txt:1328:    <motion.button
+  ExecutiveDashboard-Audit.txt:1329:      whileHover={{ x: 4 }}
+> ExecutiveDashboard-Audit.txt:1330:      onClick={onClick}
+  ExecutiveDashboard-Audit.txt:1331:      className="w-full px-4 py-3 flex items-center gap-3 text-gray-600 dark:text-gray-400 hover:bg-gray-100 dark:hover:bg-gray-800/50 
+hover:text-gray-900 dark:hover:text-white transition-all"
+  ExecutiveDashboard-Audit.txt:1332:    >
+  ExecutiveDashboard-Audit.txt:1333:      <Icon size={16} />
+  ExecutiveDashboard-Audit.txt:1334:      <span className="text-sm font-medium">{label}</span>
+  ExecutiveDashboard-Audit.txt:1335:    </motion.button>
+  ExecutiveDashboard-Audit.txt:1374:
+  ExecutiveDashboard-Audit.txt:1375:// Quick Actions Card
+  ExecutiveDashboard-Audit.txt:1376:interface QuickActionsCardProps {
+> ExecutiveDashboard-Audit.txt:1377:  onCreateInvoice: () => void;
+  ExecutiveDashboard-Audit.txt:1378:}
+  ExecutiveDashboard-Audit.txt:1379:
+> ExecutiveDashboard-Audit.txt:1380:function QuickActionsCard({ onCreateInvoice }: QuickActionsCardProps) {
+  ExecutiveDashboard-Audit.txt:1381:  return (
+  ExecutiveDashboard-Audit.txt:1382:    <motion.div
+  ExecutiveDashboard-Audit.txt:1383:      initial={{ opacity: 0, y: 20 }}
+  ExecutiveDashboard-Audit.txt:1384:      animate={{ opacity: 1, y: 0 }}
+  ExecutiveDashboard-Audit.txt:1385:      className="bg-gradient-to-br from-white/80 to-gray-50/80 dark:from-gray-900/60 dark:to-gray-900/40 backdrop-blur-xl border border-gray-200/50 
+dark:border-gray-800/50 rounded-3xl p-6 hover:border-gray-300/50 dark:hover:border-gray-700/50 transition-all shadow-lg dark:shadow-none"
+  ExecutiveDashboard-Audit.txt:1392:      </div>
+  ExecutiveDashboard-Audit.txt:1393:
+  ExecutiveDashboard-Audit.txt:1394:      <div className="space-y-3">
+> ExecutiveDashboard-Audit.txt:1395:        <ActionButton icon={Plus} label="Create Invoice" color="blue" onClick={onCreateInvoice} />
+> ExecutiveDashboard-Audit.txt:1396:        <ActionButton icon={FileCheck} label="Create Quotation" color="purple" />
+> ExecutiveDashboard-Audit.txt:1397:        <ActionButton icon={QrCode} label="Generate QR Code" color="green" />
+> ExecutiveDashboard-Audit.txt:1398:        <ActionButton icon={Send} label="Send Reminder" color="orange" />
+> ExecutiveDashboard-Audit.txt:1399:        <ActionButton icon={Download} label="VAT Report" color="pink" />
+  ExecutiveDashboard-Audit.txt:1400:      </div>
+  ExecutiveDashboard-Audit.txt:1401:    </motion.div>
+  ExecutiveDashboard-Audit.txt:1402:  );
+  ExecutiveDashboard-Audit.txt:1403:}
+  ExecutiveDashboard-Audit.txt:1404:
+  ExecutiveDashboard-Audit.txt:1407:  icon: any;
+  ExecutiveDashboard-Audit.txt:1408:  label: string;
+  ExecutiveDashboard-Audit.txt:1409:  color: string;
+> ExecutiveDashboard-Audit.txt:1410:  onClick?: () => void;
+  ExecutiveDashboard-Audit.txt:1411:}
+  ExecutiveDashboard-Audit.txt:1412:
+> ExecutiveDashboard-Audit.txt:1413:function ActionButton({ icon: Icon, label, color, onClick }: ActionButtonProps) {
+  ExecutiveDashboard-Audit.txt:1414:  const colorMap: Record<string, string> = {
+  ExecutiveDashboard-Audit.txt:1415:    blue: 'from-blue-500 to-cyan-500',
+  ExecutiveDashboard-Audit.txt:1416:    purple: 'from-purple-500 to-pink-500',
+  ExecutiveDashboard-Audit.txt:1417:    green: 'from-green-500 to-emerald-500',
+  ExecutiveDashboard-Audit.txt:1418:    orange: 'from-orange-500 to-red-500',
+  ExecutiveDashboard-Audit.txt:1423:    <motion.button
+  ExecutiveDashboard-Audit.txt:1424:      whileHover={{ scale: 1.02, x: 4 }}
+  ExecutiveDashboard-Audit.txt:1425:      whileTap={{ scale: 0.98 }}
+> ExecutiveDashboard-Audit.txt:1426:      onClick={onClick}
+  ExecutiveDashboard-Audit.txt:1427:      className="w-full px-4 py-3 bg-gray-100 dark:bg-gray-800/50 hover:bg-gray-200 dark:hover:bg-gray-800 border border-gray-300 
+dark:border-gray-700/50 hover:border-gray-400 dark:hover:border-gray-600/50 rounded-xl flex items-center gap-3 text-gray-900 dark:text-white transition-all group"
+  ExecutiveDashboard-Audit.txt:1428:    >
+  ExecutiveDashboard-Audit.txt:1429:      <div
+  ExecutiveDashboard-Audit.txt:1430:        className={`w-10 h-10 bg-gradient-to-br ${colorMap[color]} rounded-xl flex items-center justify-center shadow-lg`}
+  ExecutiveDashboard-Audit.txt:1431:      >
+  ExecutiveDashboard-Audit.txt:1437:  );
+  ExecutiveDashboard-Audit.txt:1438:}
+  ExecutiveDashboard-Audit.txt:1439:
+> ExecutiveDashboard-Audit.txt:1440:// VAT Summary Card
+> ExecutiveDashboard-Audit.txt:1441:interface VATSummaryCardProps {
+> ExecutiveDashboard-Audit.txt:1442:  vatCollected: number;
+  ExecutiveDashboard-Audit.txt:1443:}
+  ExecutiveDashboard-Audit.txt:1444:
+> ExecutiveDashboard-Audit.txt:1445:function VATSummaryCard({ vatCollected }: VATSummaryCardProps) {
+> ExecutiveDashboard-Audit.txt:1446:  const vatPayable = vatCollected * 0.7; // Simplified - should calculate from expenses
+> ExecutiveDashboard-Audit.txt:1447:  const netVat = vatCollected - vatPayable;
+  ExecutiveDashboard-Audit.txt:1448:
+  ExecutiveDashboard-Audit.txt:1449:  return (
+  ExecutiveDashboard-Audit.txt:1450:    <motion.div
+  ExecutiveDashboard-Audit.txt:1451:      initial={{ opacity: 0, y: 20 }}
+  ExecutiveDashboard-Audit.txt:1452:      animate={{ opacity: 1, y: 0 }}
+  ExecutiveDashboard-Audit.txt:1456:        <div className="w-12 h-12 bg-gradient-to-br from-green-500 to-emerald-500 rounded-2xl flex items-center justify-center shadow-lg">
+  ExecutiveDashboard-Audit.txt:1457:          <Percent className="w-6 h-6 text-white" />
+  ExecutiveDashboard-Audit.txt:1458:        </div>
+> ExecutiveDashboard-Audit.txt:1459:        <h3 className="text-xl font-bold text-gray-900 dark:text-white">VAT Summary</h3>
+  ExecutiveDashboard-Audit.txt:1460:      </div>
+  ExecutiveDashboard-Audit.txt:1461:
+  ExecutiveDashboard-Audit.txt:1462:      <div className="space-y-4">
+  ExecutiveDashboard-Audit.txt:1463:        <div className="flex items-center justify-between">
+> ExecutiveDashboard-Audit.txt:1464:          <span className="text-sm text-gray-600 dark:text-gray-400">VAT Collected</span>
+  ExecutiveDashboard-Audit.txt:1465:          <span className="text-lg font-bold text-gray-900 dark:text-white">
+> ExecutiveDashboard-Audit.txt:1466:            ${vatCollected.toLocaleString()}
+  ExecutiveDashboard-Audit.txt:1467:          </span>
+  ExecutiveDashboard-Audit.txt:1468:        </div>
+  ExecutiveDashboard-Audit.txt:1469:        <div className="flex items-center justify-between">
+> ExecutiveDashboard-Audit.txt:1470:          <span className="text-sm text-gray-600 dark:text-gray-400">VAT Payable</span>
+  ExecutiveDashboard-Audit.txt:1471:          <span className="text-lg font-bold text-gray-900 dark:text-white">
+> ExecutiveDashboard-Audit.txt:1472:            ${vatPayable.toLocaleString()}
+  ExecutiveDashboard-Audit.txt:1473:          </span>
+  ExecutiveDashboard-Audit.txt:1474:        </div>
+  ExecutiveDashboard-Audit.txt:1475:        <div className="flex items-center justify-between pt-4 border-t border-gray-300 dark:border-gray-800/50">
+> ExecutiveDashboard-Audit.txt:1476:          <span className="text-sm font-semibold text-gray-700 dark:text-gray-300">Net VAT</span>
+  ExecutiveDashboard-Audit.txt:1477:          <span className="text-xl font-bold text-green-600 dark:text-green-400">
+> ExecutiveDashboard-Audit.txt:1478:            ${netVat.toLocaleString()}
+  ExecutiveDashboard-Audit.txt:1479:          </span>
+  ExecutiveDashboard-Audit.txt:1480:        </div>
+  ExecutiveDashboard-Audit.txt:1481:
+  ExecutiveDashboard-Audit.txt:1482:        <motion.button
+  ExecutiveDashboard-Audit.txt:1483:          whileHover={{ scale: 1.02 }}
+  ExecutiveDashboard-Audit.txt:1484:          whileTap={{ scale: 0.98 }}
+  ExecutiveDashboard-Audit.txt:1485:          className="w-full mt-4 px-4 py-3 bg-gradient-to-r from-green-500 to-emerald-500 rounded-xl text-sm font-semibold text-white shadow-lg 
+transition-all"
+  ExecutiveDashboard-Audit.txt:1486:        >
+> ExecutiveDashboard-Audit.txt:1487:          Generate VAT Report
+  ExecutiveDashboard-Audit.txt:1488:        </motion.button>
+  ExecutiveDashboard-Audit.txt:1489:      </div>
+  ExecutiveDashboard-Audit.txt:1490:    </motion.div>
+  ExecutiveDashboard-Audit.txt:1491:  );
+  ExecutiveDashboard-Audit.txt:1492:}
+  ExecutiveDashboard-Audit.txt:1519:            whileTap={{ scale: 0.95 }}
+  ExecutiveDashboard-Audit.txt:1520:            className="px-4 py-2 bg-gray-800/50 border border-gray-700/50 hover:border-gray-600/50 rounded-xl text-sm font-semibold text-white flex 
+items-center gap-2 transition-all"
+  ExecutiveDashboard-Audit.txt:1521:          >
+> ExecutiveDashboard-Audit.txt:1522:            <Filter size={16} />
+> ExecutiveDashboard-Audit.txt:1523:            Filter
+  ExecutiveDashboard-Audit.txt:1524:          </motion.button>
+  ExecutiveDashboard-Audit.txt:1525:        </div>
+  ExecutiveDashboard-Audit.txt:1526:      </div>
+  ExecutiveDashboard-Audit.txt:1527:
+  ExecutiveDashboard-Audit.txt:1528:      <div className="overflow-x-auto -mx-6 px-6">
+  ExecutiveDashboard-Audit.txt:1534:              <th className="pb-3 text-left text-xs font-semibold text-gray-400">Date</th>
+  ExecutiveDashboard-Audit.txt:1535:              <th className="pb-3 text-left text-xs font-semibold text-gray-400">Due Date</th>
+  ExecutiveDashboard-Audit.txt:1536:              <th className="pb-3 text-right text-xs font-semibold text-gray-400">Amount</th>
+> ExecutiveDashboard-Audit.txt:1537:              <th className="pb-3 text-right text-xs font-semibold text-gray-400">VAT</th>
+  ExecutiveDashboard-Audit.txt:1538:              <th className="pb-3 text-left text-xs font-semibold text-gray-400">Status</th>
+  ExecutiveDashboard-Audit.txt:1539:              <th className="pb-3 text-center text-xs font-semibold text-gray-400">QR</th>
+  ExecutiveDashboard-Audit.txt:1540:              <th className="pb-3 text-right text-xs font-semibold text-gray-400">Actions</th>
+  ExecutiveDashboard-Audit.txt:1541:            </tr>
+  ExecutiveDashboard-Audit.txt:1542:          </thead>
+  ExecutiveDashboard-Audit.txt:1555:                  ${invoice.amount.toLocaleString()}
+  ExecutiveDashboard-Audit.txt:1556:                </td>
+  ExecutiveDashboard-Audit.txt:1557:                <td className="py-4 text-sm text-right text-gray-400">
+> ExecutiveDashboard-Audit.txt:1558:                  ${invoice.vat.toLocaleString()}
+  ExecutiveDashboard-Audit.txt:1559:                </td>
+  ExecutiveDashboard-Audit.txt:1560:                <td className="py-4">
+  ExecutiveDashboard-Audit.txt:1561:                  <span
+  ExecutiveDashboard-Audit.txt:1562:                    className={`inline-flex px-3 py-1 rounded-full text-xs font-semibold ${
+  ExecutiveDashboard-Audit.txt:1563:                      invoice.status === 'Paid'
+  ExecutiveDashboard-Audit.txt:1587:                      whileTap={{ scale: 0.9 }}
+  ExecutiveDashboard-Audit.txt:1588:                      className="w-8 h-8 rounded-lg bg-gray-800/50 hover:bg-gray-800 flex items-center justify-center text-gray-400 
+hover:text-white transition-all"
+  ExecutiveDashboard-Audit.txt:1589:                    >
+> ExecutiveDashboard-Audit.txt:1590:                      <Download size={16} />
+  ExecutiveDashboard-Audit.txt:1591:                    </motion.button>
+  ExecutiveDashboard-Audit.txt:1592:                    <motion.button
+  ExecutiveDashboard-Audit.txt:1593:                      whileHover={{ scale: 1.1 }}
+  ExecutiveDashboard-Audit.txt:1594:                      whileTap={{ scale: 0.9 }}
+  ExecutiveDashboard-Audit.txt:1595:                      className="w-8 h-8 rounded-lg bg-gray-800/50 hover:bg-gray-800 flex items-center justify-center text-gray-400 
+hover:text-white transition-all"
+  ExecutiveDashboard-Audit.txt:1596:                    >
+> ExecutiveDashboard-Audit.txt:1597:                      <Send size={16} />
+  ExecutiveDashboard-Audit.txt:1598:                    </motion.button>
+  ExecutiveDashboard-Audit.txt:1599:                  </div>
+  ExecutiveDashboard-Audit.txt:1600:                </td>
+  ExecutiveDashboard-Audit.txt:1601:              </motion.tr>
+  ExecutiveDashboard-Audit.txt:1602:            ))}
+  ExecutiveDashboard-Audit.txt:1780:          whileTap={{ scale: 0.95 }}
+  ExecutiveDashboard-Audit.txt:1781:          className={`flex-1 px-4 py-2.5 bg-gradient-to-r ${config.button} rounded-xl text-sm font-semibold text-white shadow-lg transition-all`}
+  ExecutiveDashboard-Audit.txt:1782:        >
+> ExecutiveDashboard-Audit.txt:1783:          Generate
+  ExecutiveDashboard-Audit.txt:1784:        </motion.button>
+  ExecutiveDashboard-Audit.txt:1785:        <motion.button
+  ExecutiveDashboard-Audit.txt:1786:          whileHover={{ scale: 1.05 }}
+  ExecutiveDashboard-Audit.txt:1787:          whileTap={{ scale: 0.95 }}
+  ExecutiveDashboard-Audit.txt:1788:          className="px-4 py-2.5 bg-gray-900/50 border border-gray-800/50 hover:border-gray-700/50 rounded-xl text-sm font-semibold text-white 
+transition-all"
+  ExecutiveDashboard-Audit.txt:1789:        >
+> ExecutiveDashboard-Audit.txt:1790:          <Calendar size={16} />
+  ExecutiveDashboard-Audit.txt:1791:        </motion.button>
+  ExecutiveDashboard-Audit.txt:1792:      </div>
+  ExecutiveDashboard-Audit.txt:1793:    </motion.div>
+  ExecutiveDashboard-Audit.txt:1794:  );
+  ExecutiveDashboard-Audit.txt:1795:}
+  ExecutiveDashboard-Audit.txt:1806:        initial={{ opacity: 0 }}
+  ExecutiveDashboard-Audit.txt:1807:        animate={{ opacity: 1 }}
+  ExecutiveDashboard-Audit.txt:1808:        exit={{ opacity: 0 }}
+> ExecutiveDashboard-Audit.txt:1809:        onClick={onClose}
+  ExecutiveDashboard-Audit.txt:1810:        className="fixed inset-0 bg-black/80 backdrop-blur-sm z-50"
+  ExecutiveDashboard-Audit.txt:1811:      />
+  ExecutiveDashboard-Audit.txt:1812:
+  ExecutiveDashboard-Audit.txt:1813:      <motion.div
+  ExecutiveDashboard-Audit.txt:1814:        initial={{ opacity: 0, scale: 0.9, y: 20 }}
+  ExecutiveDashboard-Audit.txt:1824:                <FileText className="w-6 h-6 text-white" />
+  ExecutiveDashboard-Audit.txt:1825:              </div>
+  ExecutiveDashboard-Audit.txt:1826:              <div>
+> ExecutiveDashboard-Audit.txt:1827:                <h2 className="text-2xl font-bold text-white">Create Invoice</h2>
+  ExecutiveDashboard-Audit.txt:1828:                <p className="text-sm text-gray-400">ZATCA-compliant e-invoicing</p>
+  ExecutiveDashboard-Audit.txt:1829:              </div>
+  ExecutiveDashboard-Audit.txt:1830:            </div>
+  ExecutiveDashboard-Audit.txt:1831:            <motion.button
+  ExecutiveDashboard-Audit.txt:1832:              whileHover={{ scale: 1.1 }}
+  ExecutiveDashboard-Audit.txt:1833:              whileTap={{ scale: 0.9 }}
+> ExecutiveDashboard-Audit.txt:1834:              onClick={onClose}
+  ExecutiveDashboard-Audit.txt:1835:              className="w-10 h-10 rounded-xl bg-gray-800/50 hover:bg-gray-800 flex items-center justify-center text-gray-400 hover:text-white 
+transition-all"
+  ExecutiveDashboard-Audit.txt:1836:            >
+  ExecutiveDashboard-Audit.txt:1837:              <XCircle size={20} />
+  ExecutiveDashboard-Audit.txt:1838:            </motion.button>
+  ExecutiveDashboard-Audit.txt:1839:          </div>
+  ExecutiveDashboard-Audit.txt:1908:                  <span className="text-lg font-bold text-white">$0.00</span>
+  ExecutiveDashboard-Audit.txt:1909:                </div>
+  ExecutiveDashboard-Audit.txt:1910:                <div className="flex items-center justify-between mb-2">
+> ExecutiveDashboard-Audit.txt:1911:                  <span className="text-sm text-gray-400">VAT (15%)</span>
+  ExecutiveDashboard-Audit.txt:1912:                  <span className="text-lg font-bold text-white">$0.00</span>
+  ExecutiveDashboard-Audit.txt:1913:                </div>
+  ExecutiveDashboard-Audit.txt:1914:                <div className="flex items-center justify-between pt-2 border-t border-gray-700/50">
+  ExecutiveDashboard-Audit.txt:1915:                  <span className="text-sm font-semibold text-gray-300">Total</span>
+  ExecutiveDashboard-Audit.txt:1916:                  <span className="text-2xl font-bold text-blue-400">$0.00</span>
+  ExecutiveDashboard-Audit.txt:1920:              <div className="p-4 bg-blue-500/10 border border-blue-500/30 rounded-2xl flex items-center justify-center">
+  ExecutiveDashboard-Audit.txt:1921:                <div className="text-center">
+  ExecutiveDashboard-Audit.txt:1922:                  <QrCode className="w-16 h-16 text-blue-400 mx-auto mb-2" />
+> ExecutiveDashboard-Audit.txt:1923:                  <p className="text-xs text-gray-400">QR Code will be generated</p>
+  ExecutiveDashboard-Audit.txt:1924:                </div>
+  ExecutiveDashboard-Audit.txt:1925:              </div>
+  ExecutiveDashboard-Audit.txt:1926:            </div>
+  ExecutiveDashboard-Audit.txt:1927:          </div>
+  ExecutiveDashboard-Audit.txt:1928:
+  ExecutiveDashboard-Audit.txt:1930:            <motion.button
+  ExecutiveDashboard-Audit.txt:1931:              whileHover={{ scale: 1.02 }}
+  ExecutiveDashboard-Audit.txt:1932:              whileTap={{ scale: 0.98 }}
+> ExecutiveDashboard-Audit.txt:1933:              onClick={onClose}
+  ExecutiveDashboard-Audit.txt:1934:              className="px-6 py-3 bg-gray-800/50 hover:bg-gray-800 border border-gray-700/50 rounded-xl text-sm font-semibold text-white 
+transition-all"
+  ExecutiveDashboard-Audit.txt:1935:            >
+  ExecutiveDashboard-Audit.txt:1936:              Cancel
+  ExecutiveDashboard-Audit.txt:1937:            </motion.button>
+  ExecutiveDashboard-Audit.txt:1938:            <motion.button
+  ExecutiveDashboard-Audit.txt:1941:              className="flex-1 px-6 py-3 bg-gradient-to-r from-blue-500 to-cyan-500 rounded-xl text-sm font-semibold text-white shadow-lg 
+transition-all flex items-center justify-center gap-2"
+  ExecutiveDashboard-Audit.txt:1942:            >
+  ExecutiveDashboard-Audit.txt:1943:              <FileCheck size={18} />
+> ExecutiveDashboard-Audit.txt:1944:              Save as Draft
+  ExecutiveDashboard-Audit.txt:1945:            </motion.button>
+  ExecutiveDashboard-Audit.txt:1946:            <motion.button
+  ExecutiveDashboard-Audit.txt:1947:              whileHover={{ scale: 1.02 }}
+  ExecutiveDashboard-Audit.txt:1948:              whileTap={{ scale: 0.98 }}
+  ExecutiveDashboard-Audit.txt:1949:              className="flex-1 px-6 py-3 bg-gradient-to-r from-green-500 to-emerald-500 rounded-xl text-sm font-semibold text-white shadow-lg 
+transition-all flex items-center justify-center gap-2"
+  ExecutiveDashboard-Audit.txt:1950:            >
+> ExecutiveDashboard-Audit.txt:1951:              <Send size={18} />
+> ExecutiveDashboard-Audit.txt:1952:              Create & Send
+  ExecutiveDashboard-Audit.txt:1953:            </motion.button>
+  ExecutiveDashboard-Audit.txt:1954:          </div>
+  ExecutiveDashboard-Audit.txt:1955:        </div>
+  ExecutiveDashboard-Audit.txt:1956:      </motion.div>
+  ExecutiveDashboard-Audit.txt:1957:    </>
+
+

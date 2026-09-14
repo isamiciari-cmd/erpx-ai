@@ -1,0 +1,2322 @@
+﻿[
+    {
+        "File":  "src\\app\\components\\AIAssistant.tsx",
+        "Line":  107,
+        "Code":  "onClick={() =\u003e setIsOpen(true)}"
+    },
+    {
+        "File":  "src\\app\\components\\AIAssistant.tsx",
+        "Line":  144,
+        "Code":  "onClick={() =\u003e setIsMinimized(!isMinimized)}"
+    },
+    {
+        "File":  "src\\app\\components\\AIAssistant.tsx",
+        "Line":  156,
+        "Code":  "onClick={() =\u003e setIsOpen(false)}"
+    },
+    {
+        "File":  "src\\app\\components\\AIAssistant.tsx",
+        "Line":  247,
+        "Code":  "onClick={sendMessage}"
+    },
+    {
+        "File":  "src\\app\\components\\Dashboard.tsx",
+        "Line":  159,
+        "Code":  "\u003cbutton"
+    },
+    {
+        "File":  "src\\app\\components\\Dashboard.tsx",
+        "Line":  160,
+        "Code":  "onClick={() =\u003e setSidebarCollapsed(!sidebarCollapsed)}"
+    },
+    {
+        "File":  "src\\app\\components\\Dashboard.tsx",
+        "Line":  210,
+        "Code":  "onClick={() =\u003e setActiveTab(item.id)}"
+    },
+    {
+        "File":  "src\\app\\components\\Dashboard.tsx",
+        "Line":  231,
+        "Code":  "onClick={onLogout}"
+    },
+    {
+        "File":  "src\\app\\components\\ErrorBoundary.tsx",
+        "Line":  50,
+        "Code":  "\u003cbutton"
+    },
+    {
+        "File":  "src\\app\\components\\ErrorBoundary.tsx",
+        "Line":  51,
+        "Code":  "onClick={() =\u003e window.location.reload()}"
+    },
+    {
+        "File":  "src\\app\\components\\ErrorBoundary.tsx",
+        "Line":  56,
+        "Code":  "\u003cbutton"
+    },
+    {
+        "File":  "src\\app\\components\\ErrorBoundary.tsx",
+        "Line":  57,
+        "Code":  "onClick={() =\u003e {"
+    },
+    {
+        "File":  "src\\app\\components\\ProductionLogin.tsx",
+        "Line":  191,
+        "Code":  "\u003cLink to=\"/\"\u003e"
+    },
+    {
+        "File":  "src\\app\\components\\ProductionLogin.tsx",
+        "Line":  215,
+        "Code":  "\u003cform onSubmit={handleLogin} className=\"space-y-6\"\u003e"
+    },
+    {
+        "File":  "src\\app\\components\\ProductionLogin.tsx",
+        "Line":  266,
+        "Code":  "\u003cbutton"
+    },
+    {
+        "File":  "src\\app\\components\\ProductionLogin.tsx",
+        "Line":  268,
+        "Code":  "onClick={() =\u003e setShowPassword(!showPassword)}"
+    },
+    {
+        "File":  "src\\app\\components\\ProductionLogin.tsx",
+        "Line":  291,
+        "Code":  "\u003cbutton"
+    },
+    {
+        "File":  "src\\app\\components\\ProductionLogin.tsx",
+        "Line":  293,
+        "Code":  "onClick={handleForgotPassword}"
+    },
+    {
+        "File":  "src\\app\\components\\ProtectedRoute.tsx",
+        "Line":  44,
+        "Code":  "\u003cbutton onClick={() =\u003e window.location.reload()} style={{ marginRight: 8 }}\u003e"
+    },
+    {
+        "File":  "src\\app\\components\\SmartAlerts.tsx",
+        "Line":  134,
+        "Code":  "\u003cbutton"
+    },
+    {
+        "File":  "src\\app\\components\\SmartAlerts.tsx",
+        "Line":  135,
+        "Code":  "onClick={() =\u003e setDismissedAlerts([...dismissedAlerts, alert.id])}"
+    },
+    {
+        "File":  "src\\app\\components\\SubscriptionManager.tsx",
+        "Line":  126,
+        "Code":  "onClick={() =\u003e setShowUpgrade(true)}"
+    },
+    {
+        "File":  "src\\app\\components\\SubscriptionManager.tsx",
+        "Line":  136,
+        "Code":  "onClick={handleCancel}"
+    },
+    {
+        "File":  "src\\app\\components\\SubscriptionManager.tsx",
+        "Line":  164,
+        "Code":  "onClick={handleUpgrade}"
+    },
+    {
+        "File":  "src\\app\\components\\SubscriptionManager.tsx",
+        "Line":  173,
+        "Code":  "onClick={() =\u003e setShowUpgrade(false)}"
+    },
+    {
+        "File":  "src\\app\\components\\ThemeToggle.tsx",
+        "Line":  12,
+        "Code":  "onClick={toggleTheme}"
+    },
+    {
+        "File":  "src\\app\\components\\VoiceControl.tsx",
+        "Line":  10,
+        "Code":  "const navigate = useNavigate();"
+    },
+    {
+        "File":  "src\\app\\components\\VoiceControl.tsx",
+        "Line":  58,
+        "Code":  "navigate(\u0027/\u0027);"
+    },
+    {
+        "File":  "src\\app\\components\\VoiceControl.tsx",
+        "Line":  60,
+        "Code":  "navigate(\u0027/finance/accounting\u0027);"
+    },
+    {
+        "File":  "src\\app\\components\\VoiceControl.tsx",
+        "Line":  62,
+        "Code":  "navigate(\u0027/finance/invoicing\u0027);"
+    },
+    {
+        "File":  "src\\app\\components\\VoiceControl.tsx",
+        "Line":  64,
+        "Code":  "navigate(\u0027/crm\u0027);"
+    },
+    {
+        "File":  "src\\app\\components\\VoiceControl.tsx",
+        "Line":  66,
+        "Code":  "navigate(\u0027/inventory\u0027);"
+    },
+    {
+        "File":  "src\\app\\components\\VoiceControl.tsx",
+        "Line":  68,
+        "Code":  "navigate(\u0027/finance/zatca\u0027);"
+    },
+    {
+        "File":  "src\\app\\components\\VoiceControl.tsx",
+        "Line":  70,
+        "Code":  "navigate(\u0027/admin/tenants\u0027);"
+    },
+    {
+        "File":  "src\\app\\components\\VoiceControl.tsx",
+        "Line":  95,
+        "Code":  "onClick={startListening}"
+    },
+    {
+        "File":  "src\\app\\components\\registration\\CompanyRegistrationForm.tsx",
+        "Line":  40,
+        "Code":  "const navigate = useNavigate();"
+    },
+    {
+        "File":  "src\\app\\components\\registration\\CompanyRegistrationForm.tsx",
+        "Line":  152,
+        "Code":  "navigate(\u0027/registration-success\u0027, {"
+    },
+    {
+        "File":  "src\\app\\components\\registration\\CompanyRegistrationForm.tsx",
+        "Line":  261,
+        "Code":  "\u003cbutton"
+    },
+    {
+        "File":  "src\\app\\components\\registration\\CompanyRegistrationForm.tsx",
+        "Line":  263,
+        "Code":  "onClick={handlePrevious}"
+    },
+    {
+        "File":  "src\\app\\components\\registration\\CompanyRegistrationForm.tsx",
+        "Line":  272,
+        "Code":  "\u003cbutton"
+    },
+    {
+        "File":  "src\\app\\components\\registration\\CompanyRegistrationForm.tsx",
+        "Line":  274,
+        "Code":  "onClick={() =\u003e navigate(\u0027/login\u0027)}"
+    },
+    {
+        "File":  "src\\app\\components\\registration\\CompanyRegistrationForm.tsx",
+        "Line":  283,
+        "Code":  "\u003cbutton"
+    },
+    {
+        "File":  "src\\app\\components\\registration\\CompanyRegistrationForm.tsx",
+        "Line":  285,
+        "Code":  "onClick={handleNext}"
+    },
+    {
+        "File":  "src\\app\\components\\registration\\CompanyRegistrationForm.tsx",
+        "Line":  293,
+        "Code":  "\u003cbutton"
+    },
+    {
+        "File":  "src\\app\\components\\registration\\CompanyRegistrationForm.tsx",
+        "Line":  295,
+        "Code":  "onClick={handleSubmit}"
+    },
+    {
+        "File":  "src\\app\\components\\registration\\steps\\AdminUserStep.tsx",
+        "Line":  101,
+        "Code":  "\u003cbutton"
+    },
+    {
+        "File":  "src\\app\\components\\registration\\steps\\AdminUserStep.tsx",
+        "Line":  103,
+        "Code":  "onClick={() =\u003e setShowPassword(!showPassword)}"
+    },
+    {
+        "File":  "src\\app\\components\\registration\\steps\\AdminUserStep.tsx",
+        "Line":  144,
+        "Code":  "\u003cbutton"
+    },
+    {
+        "File":  "src\\app\\components\\registration\\steps\\AdminUserStep.tsx",
+        "Line":  146,
+        "Code":  "onClick={() =\u003e setShowConfirmPassword(!showConfirmPassword)}"
+    },
+    {
+        "File":  "src\\app\\components\\registration\\steps\\SubscriptionStep.tsx",
+        "Line":  175,
+        "Code":  "onClick={() =\u003e toggleModule(module.key)}"
+    },
+    {
+        "File":  "src\\app\\components\\ui\\carousel.tsx",
+        "Line":  172,
+        "Code":  "\u003cButton"
+    },
+    {
+        "File":  "src\\app\\components\\ui\\carousel.tsx",
+        "Line":  184,
+        "Code":  "onClick={scrollPrev}"
+    },
+    {
+        "File":  "src\\app\\components\\ui\\carousel.tsx",
+        "Line":  202,
+        "Code":  "\u003cButton"
+    },
+    {
+        "File":  "src\\app\\components\\ui\\carousel.tsx",
+        "Line":  214,
+        "Code":  "onClick={scrollNext}"
+    },
+    {
+        "File":  "src\\app\\components\\ui\\ConfirmDialog.tsx",
+        "Line":  73,
+        "Code":  "onClick={onClose}"
+    },
+    {
+        "File":  "src\\app\\components\\ui\\ConfirmDialog.tsx",
+        "Line":  102,
+        "Code":  "\u003cbutton"
+    },
+    {
+        "File":  "src\\app\\components\\ui\\ConfirmDialog.tsx",
+        "Line":  103,
+        "Code":  "onClick={onClose}"
+    },
+    {
+        "File":  "src\\app\\components\\ui\\ConfirmDialog.tsx",
+        "Line":  109,
+        "Code":  "\u003cbutton"
+    },
+    {
+        "File":  "src\\app\\components\\ui\\ConfirmDialog.tsx",
+        "Line":  110,
+        "Code":  "onClick={handleConfirm}"
+    },
+    {
+        "File":  "src\\app\\components\\ui\\EmptyState.tsx",
+        "Line":  29,
+        "Code":  "\u003cButton onClick={onAction} variant=\"primary\"\u003e"
+    },
+    {
+        "File":  "src\\app\\components\\ui\\Modal.tsx",
+        "Line":  63,
+        "Code":  "onClick={onClose}"
+    },
+    {
+        "File":  "src\\app\\components\\ui\\Modal.tsx",
+        "Line":  80,
+        "Code":  "\u003cbutton"
+    },
+    {
+        "File":  "src\\app\\components\\ui\\Modal.tsx",
+        "Line":  81,
+        "Code":  "onClick={onClose}"
+    },
+    {
+        "File":  "src\\app\\components\\ui\\sidebar.tsx",
+        "Line":  246,
+        "Code":  "\u003cButton"
+    },
+    {
+        "File":  "src\\app\\components\\ui\\sidebar.tsx",
+        "Line":  252,
+        "Code":  "onClick={(event) =\u003e {"
+    },
+    {
+        "File":  "src\\app\\components\\ui\\sidebar.tsx",
+        "Line":  268,
+        "Code":  "\u003cbutton"
+    },
+    {
+        "File":  "src\\app\\components\\ui\\sidebar.tsx",
+        "Line":  273,
+        "Code":  "onClick={toggleSidebar}"
+    },
+    {
+        "File":  "src\\app\\components\\ui\\Toast.tsx",
+        "Line":  128,
+        "Code":  "\u003cbutton"
+    },
+    {
+        "File":  "src\\app\\components\\ui\\Toast.tsx",
+        "Line":  129,
+        "Code":  "onClick={onClose}"
+    },
+    {
+        "File":  "src\\app\\components\\website\\ChatbotWidget.tsx",
+        "Line":  92,
+        "Code":  "onClick={() =\u003e setIsOpen(!isOpen)}"
+    },
+    {
+        "File":  "src\\app\\components\\website\\ChatbotWidget.tsx",
+        "Line":  120,
+        "Code":  "\u003cbutton"
+    },
+    {
+        "File":  "src\\app\\components\\website\\ChatbotWidget.tsx",
+        "Line":  121,
+        "Code":  "onClick={() =\u003e setLanguage(language === \u0027en\u0027 ? \u0027ar\u0027 : \u0027en\u0027)}"
+    },
+    {
+        "File":  "src\\app\\components\\website\\ChatbotWidget.tsx",
+        "Line":  155,
+        "Code":  "\u003cbutton"
+    },
+    {
+        "File":  "src\\app\\components\\website\\ChatbotWidget.tsx",
+        "Line":  157,
+        "Code":  "onClick={() =\u003e handleQuickQuestion(q)}"
+    },
+    {
+        "File":  "src\\app\\components\\website\\ChatbotWidget.tsx",
+        "Line":  178,
+        "Code":  "\u003cbutton"
+    },
+    {
+        "File":  "src\\app\\components\\website\\ChatbotWidget.tsx",
+        "Line":  179,
+        "Code":  "onClick={handleSend}"
+    },
+    {
+        "File":  "src\\app\\components\\website\\WebsiteFooter.tsx",
+        "Line":  65,
+        "Code":  "\u003cLink"
+    },
+    {
+        "File":  "src\\app\\components\\website\\WebsiteFooter.tsx",
+        "Line":  82,
+        "Code":  "\u003cLink"
+    },
+    {
+        "File":  "src\\app\\components\\website\\WebsiteHeader.tsx",
+        "Line":  24,
+        "Code":  "\u003cLink to=\"/website\" className=\"flex items-center gap-2\"\u003e"
+    },
+    {
+        "File":  "src\\app\\components\\website\\WebsiteHeader.tsx",
+        "Line":  34,
+        "Code":  "\u003cLink"
+    },
+    {
+        "File":  "src\\app\\components\\website\\WebsiteHeader.tsx",
+        "Line":  46,
+        "Code":  "\u003cLink"
+    },
+    {
+        "File":  "src\\app\\components\\website\\WebsiteHeader.tsx",
+        "Line":  52,
+        "Code":  "\u003cLink"
+    },
+    {
+        "File":  "src\\app\\components\\website\\WebsiteHeader.tsx",
+        "Line":  61,
+        "Code":  "\u003cbutton"
+    },
+    {
+        "File":  "src\\app\\components\\website\\WebsiteHeader.tsx",
+        "Line":  62,
+        "Code":  "onClick={() =\u003e setMobileMenuOpen(!mobileMenuOpen)}"
+    },
+    {
+        "File":  "src\\app\\components\\website\\WebsiteHeader.tsx",
+        "Line":  81,
+        "Code":  "\u003cLink"
+    },
+    {
+        "File":  "src\\app\\components\\website\\WebsiteHeader.tsx",
+        "Line":  84,
+        "Code":  "onClick={() =\u003e setMobileMenuOpen(false)}"
+    },
+    {
+        "File":  "src\\app\\components\\website\\WebsiteHeader.tsx",
+        "Line":  91,
+        "Code":  "\u003cLink"
+    },
+    {
+        "File":  "src\\app\\components\\website\\WebsiteHeader.tsx",
+        "Line":  93,
+        "Code":  "onClick={() =\u003e setMobileMenuOpen(false)}"
+    },
+    {
+        "File":  "src\\app\\components\\website\\WebsiteHeader.tsx",
+        "Line":  98,
+        "Code":  "\u003cLink"
+    },
+    {
+        "File":  "src\\app\\components\\website\\WebsiteHeader.tsx",
+        "Line":  100,
+        "Code":  "onClick={() =\u003e setMobileMenuOpen(false)}"
+    },
+    {
+        "File":  "src\\app\\design-system\\components\\ResponsiveCard.tsx",
+        "Line":  78,
+        "Code":  "onClick={onClick}"
+    },
+    {
+        "File":  "src\\app\\design-system\\components\\ResponsiveCard.tsx",
+        "Line":  141,
+        "Code":  "onClick={onClick}"
+    },
+    {
+        "File":  "src\\app\\design-system\\components\\ResponsiveNav.tsx",
+        "Line":  45,
+        "Code":  "\u003cLink key={item.path} to={item.path}\u003e"
+    },
+    {
+        "File":  "src\\app\\design-system\\components\\ResponsiveNav.tsx",
+        "Line":  82,
+        "Code":  "onClick={onToggle}"
+    },
+    {
+        "File":  "src\\app\\design-system\\components\\ResponsiveNav.tsx",
+        "Line":  110,
+        "Code":  "\u003cLink key={item.path} to={item.path}\u003e"
+    },
+    {
+        "File":  "src\\app\\design-system\\components\\ResponsiveNav.tsx",
+        "Line":  146,
+        "Code":  "\u003cLink key={item.path} to={item.path}\u003e"
+    },
+    {
+        "File":  "src\\app\\design-system\\components\\ResponsiveNav.tsx",
+        "Line":  180,
+        "Code":  "onClick={() =\u003e setIsOpen(!isOpen)}"
+    },
+    {
+        "File":  "src\\app\\design-system\\components\\ResponsiveNav.tsx",
+        "Line":  196,
+        "Code":  "onClick={() =\u003e setIsOpen(false)}"
+    },
+    {
+        "File":  "src\\app\\design-system\\components\\ResponsiveNav.tsx",
+        "Line":  215,
+        "Code":  "\u003cLink key={item.path} to={item.path} onClick={() =\u003e setIsOpen(false)}\u003e"
+    },
+    {
+        "File":  "src\\app\\layout\\CashierLayout.tsx",
+        "Line":  8,
+        "Code":  "const navigate = useNavigate();"
+    },
+    {
+        "File":  "src\\app\\layout\\CashierLayout.tsx",
+        "Line":  27,
+        "Code":  "navigate(\u0027/login\u0027);"
+    },
+    {
+        "File":  "src\\app\\layout\\CashierLayout.tsx",
+        "Line":  93,
+        "Code":  "\u003cbutton"
+    },
+    {
+        "File":  "src\\app\\layout\\CashierLayout.tsx",
+        "Line":  94,
+        "Code":  "onClick={toggleShift}"
+    },
+    {
+        "File":  "src\\app\\layout\\CashierLayout.tsx",
+        "Line":  116,
+        "Code":  "\u003cbutton"
+    },
+    {
+        "File":  "src\\app\\layout\\CashierLayout.tsx",
+        "Line":  117,
+        "Code":  "onClick={handleLogout}"
+    },
+    {
+        "File":  "src\\app\\layout\\Sidebar.tsx",
+        "Line":  84,
+        "Code":  "onClick={onToggle}"
+    },
+    {
+        "File":  "src\\app\\layout\\Sidebar.tsx",
+        "Line":  126,
+        "Code":  "\u003cLink key={item.path} to={item.path}\u003e"
+    },
+    {
+        "File":  "src\\app\\layout\\Sidebar.tsx",
+        "Line":  161,
+        "Code":  "onClick={() =\u003e toggleCategory(category)}"
+    },
+    {
+        "File":  "src\\app\\layout\\Sidebar.tsx",
+        "Line":  182,
+        "Code":  "\u003cLink key={item.path} to={item.path}\u003e"
+    },
+    {
+        "File":  "src\\app\\layout\\Topbar.tsx",
+        "Line":  11,
+        "Code":  "const navigate = useNavigate();"
+    },
+    {
+        "File":  "src\\app\\layout\\Topbar.tsx",
+        "Line":  16,
+        "Code":  "navigate(\u0027/login\u0027);"
+    },
+    {
+        "File":  "src\\app\\layout\\Topbar.tsx",
+        "Line":  49,
+        "Code":  "onClick={() =\u003e setLanguage(language === \u0027EN\u0027 ? \u0027AR\u0027 : \u0027EN\u0027)}"
+    },
+    {
+        "File":  "src\\app\\layout\\Topbar.tsx",
+        "Line":  71,
+        "Code":  "onClick={() =\u003e setShowNotifications(!showNotifications)}"
+    },
+    {
+        "File":  "src\\app\\layout\\Topbar.tsx",
+        "Line":  138,
+        "Code":  "\u003cbutton className=\"w-full text-center text-sm text-blue-400 hover:text-blue-300 font-semibold transition-colors\"\u003e"
+    },
+    {
+        "File":  "src\\app\\layout\\Topbar.tsx",
+        "Line":  173,
+        "Code":  "onClick={handleLogout}"
+    },
+    {
+        "File":  "src\\app\\pages\\AutomationRulesPage.tsx",
+        "Line":  89,
+        "Code":  "onClick={runSimulation}"
+    },
+    {
+        "File":  "src\\app\\pages\\AutomationRulesPage.tsx",
+        "Line":  135,
+        "Code":  "onClick={() =\u003e toggleRule(rule.id)}"
+    },
+    {
+        "File":  "src\\app\\pages\\ChartOfAccountsPage.tsx",
+        "Line":  92,
+        "Code":  "\u003cbutton onClick={() =\u003e toggleExpand(account.id)} className=\"text-gray-400\"\u003e"
+    },
+    {
+        "File":  "src\\app\\pages\\ChartOfAccountsPage.tsx",
+        "Line":  128,
+        "Code":  "onClick={() =\u003e onDelete(account.id)}"
+    },
+    {
+        "File":  "src\\app\\pages\\ChartOfAccountsPage.tsx",
+        "Line":  200,
+        "Code":  "onClick={() =\u003e setShowForm(!showForm)}"
+    },
+    {
+        "File":  "src\\app\\pages\\ChartOfAccountsPage.tsx",
+        "Line":  265,
+        "Code":  "onClick={createAccount}"
+    },
+    {
+        "File":  "src\\app\\pages\\ChartOfAccountsPage.tsx",
+        "Line":  273,
+        "Code":  "onClick={() =\u003e setShowForm(false)}"
+    },
+    {
+        "File":  "src\\app\\pages\\ControlTowerPage.tsx",
+        "Line":  289,
+        "Code":  "onClick={() =\u003e setAutoRefresh(!autoRefresh)}"
+    },
+    {
+        "File":  "src\\app\\pages\\ControlTowerPage.tsx",
+        "Line":  396,
+        "Code":  "onClick={() =\u003e handleAction(insight)}"
+    },
+    {
+        "File":  "src\\app\\pages\\ControlTowerPage.tsx",
+        "Line":  570,
+        "Code":  "onClick={() =\u003e toggleModule(module.id)}"
+    },
+    {
+        "File":  "src\\app\\pages\\CurrencyPage.tsx",
+        "Line":  89,
+        "Code":  "onClick={fetchRates}"
+    },
+    {
+        "File":  "src\\app\\pages\\DashboardPage.tsx",
+        "Line":  326,
+        "Code":  "\u003cbutton className=\"text-xs text-gray-400 hover:text-white transition-colors\"\u003e"
+    },
+    {
+        "File":  "src\\app\\pages\\DashboardPage.tsx",
+        "Line":  329,
+        "Code":  "\u003cbutton className=\"text-xs text-blue-400 font-semibold\"\u003ePredicted\u003c/button\u003e"
+    },
+    {
+        "File":  "src\\app\\pages\\DashboardPage.tsx",
+        "Line":  622,
+        "Code":  "onClick={() =\u003e setAiChatMinimized(!aiChatMinimized)}"
+    },
+    {
+        "File":  "src\\app\\pages\\DashboardPage.tsx",
+        "Line":  630,
+        "Code":  "onClick={() =\u003e setAiChatOpen(false)}"
+    },
+    {
+        "File":  "src\\app\\pages\\DashboardPage.tsx",
+        "Line":  678,
+        "Code":  "onClick={handleSendMessage}"
+    },
+    {
+        "File":  "src\\app\\pages\\DashboardPage.tsx",
+        "Line":  698,
+        "Code":  "onClick={() =\u003e setAiChatOpen(true)}"
+    },
+    {
+        "File":  "src\\app\\pages\\DesignSystemShowcase.tsx",
+        "Line":  29,
+        "Code":  "\u003cbutton"
+    },
+    {
+        "File":  "src\\app\\pages\\DesignSystemShowcase.tsx",
+        "Line":  30,
+        "Code":  "onClick={() =\u003e setDarkMode(!darkMode)}"
+    },
+    {
+        "File":  "src\\app\\pages\\EmployeesPage.tsx",
+        "Line":  194,
+        "Code":  "onClick={() =\u003e setShowForm(!showForm)}"
+    },
+    {
+        "File":  "src\\app\\pages\\EmployeesPage.tsx",
+        "Line":  330,
+        "Code":  "onClick={createEmployee}"
+    },
+    {
+        "File":  "src\\app\\pages\\EmployeesPage.tsx",
+        "Line":  338,
+        "Code":  "onClick={() =\u003e setShowForm(false)}"
+    },
+    {
+        "File":  "src\\app\\pages\\EmployeesPage.tsx",
+        "Line":  433,
+        "Code":  "onClick={() =\u003e deleteEmployee(employee.id)}"
+    },
+    {
+        "File":  "src\\app\\pages\\ExecutiveDashboard.tsx",
+        "Line":  619,
+        "Code":  "onClick={refetchAnalytics}"
+    },
+    {
+        "File":  "src\\app\\pages\\ExecutiveDashboard.tsx",
+        "Line":  1291,
+        "Code":  "onClick={onDownload}"
+    },
+    {
+        "File":  "src\\app\\pages\\ExecutiveDashboard.tsx",
+        "Line":  1306,
+        "Code":  "\u003cDownloadMenuItem icon={FileText} label=\"PDF\" onClick={onCloseDownload} /\u003e"
+    },
+    {
+        "File":  "src\\app\\pages\\ExecutiveDashboard.tsx",
+        "Line":  1307,
+        "Code":  "\u003cDownloadMenuItem icon={FileSpreadsheet} label=\"Excel\" onClick={onCloseDownload} /\u003e"
+    },
+    {
+        "File":  "src\\app\\pages\\ExecutiveDashboard.tsx",
+        "Line":  1308,
+        "Code":  "\u003cDownloadMenuItem icon={FileText} label=\"CSV\" onClick={onCloseDownload} /\u003e"
+    },
+    {
+        "File":  "src\\app\\pages\\ExecutiveDashboard.tsx",
+        "Line":  1309,
+        "Code":  "\u003cDownloadMenuItem icon={Mail} label=\"Send Email\" onClick={onCloseDownload} /\u003e"
+    },
+    {
+        "File":  "src\\app\\pages\\ExecutiveDashboard.tsx",
+        "Line":  1330,
+        "Code":  "onClick={onClick}"
+    },
+    {
+        "File":  "src\\app\\pages\\ExecutiveDashboard.tsx",
+        "Line":  1395,
+        "Code":  "\u003cActionButton icon={Plus} label=\"Create Invoice\" color=\"blue\" onClick={onCreateInvoice} /\u003e"
+    },
+    {
+        "File":  "src\\app\\pages\\ExecutiveDashboard.tsx",
+        "Line":  1426,
+        "Code":  "onClick={onClick}"
+    },
+    {
+        "File":  "src\\app\\pages\\ExecutiveDashboard.tsx",
+        "Line":  1809,
+        "Code":  "onClick={onClose}"
+    },
+    {
+        "File":  "src\\app\\pages\\ExecutiveDashboard.tsx",
+        "Line":  1834,
+        "Code":  "onClick={onClose}"
+    },
+    {
+        "File":  "src\\app\\pages\\ExecutiveDashboard.tsx",
+        "Line":  1933,
+        "Code":  "onClick={onClose}"
+    },
+    {
+        "File":  "src\\app\\pages\\FinancePage.tsx",
+        "Line":  210,
+        "Code":  "onClick={addTransaction}"
+    },
+    {
+        "File":  "src\\app\\pages\\FinancePage.tsx",
+        "Line":  295,
+        "Code":  "onClick={() =\u003e deleteTransaction(transaction.id)}"
+    },
+    {
+        "File":  "src\\app\\pages\\FoodDeliveryDashboard.tsx",
+        "Line":  212,
+        "Code":  "onClick={() =\u003e setSelectedCategory(category)}"
+    },
+    {
+        "File":  "src\\app\\pages\\FoodDeliveryDashboard.tsx",
+        "Line":  234,
+        "Code":  "\u003cbutton className=\"text-sm font-semibold text-yellow-600 hover:text-yellow-700 flex items-center gap-1\"\u003e"
+    },
+    {
+        "File":  "src\\app\\pages\\FoodDeliveryDashboard.tsx",
+        "Line":  244,
+        "Code":  "onClick={() =\u003e console.log(\u0027Clicked:\u0027, dish.name)}"
+    },
+    {
+        "File":  "src\\app\\pages\\FoodDeliveryDashboard.tsx",
+        "Line":  256,
+        "Code":  "\u003cbutton className=\"text-sm font-semibold text-yellow-600 hover:text-yellow-700\"\u003e"
+    },
+    {
+        "File":  "src\\app\\pages\\ForgotPasswordPage.tsx",
+        "Line":  12,
+        "Code":  "const navigate = useNavigate();"
+    },
+    {
+        "File":  "src\\app\\pages\\ForgotPasswordPage.tsx",
+        "Line":  33,
+        "Code":  "navigate(\u0027/login\u0027);"
+    },
+    {
+        "File":  "src\\app\\pages\\ForgotPasswordPage.tsx",
+        "Line":  61,
+        "Code":  "\u003cbutton"
+    },
+    {
+        "File":  "src\\app\\pages\\ForgotPasswordPage.tsx",
+        "Line":  62,
+        "Code":  "onClick={() =\u003e navigate(\u0027/login\u0027)}"
+    },
+    {
+        "File":  "src\\app\\pages\\ForgotPasswordPage.tsx",
+        "Line":  81,
+        "Code":  "\u003cbutton"
+    },
+    {
+        "File":  "src\\app\\pages\\ForgotPasswordPage.tsx",
+        "Line":  82,
+        "Code":  "onClick={() =\u003e navigate(\u0027/login\u0027)}"
+    },
+    {
+        "File":  "src\\app\\pages\\ForgotPasswordPage.tsx",
+        "Line":  97,
+        "Code":  "\u003cform onSubmit={handleSubmit} className=\"space-y-6\"\u003e"
+    },
+    {
+        "File":  "src\\app\\pages\\ForgotPasswordPage.tsx",
+        "Line":  125,
+        "Code":  "\u003cbutton"
+    },
+    {
+        "File":  "src\\app\\pages\\InventoryPage.tsx",
+        "Line":  276,
+        "Code":  "\u003cbutton className=\"text-gray-400 hover:text-white\"\u003e"
+    },
+    {
+        "File":  "src\\app\\pages\\InventoryPageNew.tsx",
+        "Line":  138,
+        "Code":  "onClick={refetchInventory}"
+    },
+    {
+        "File":  "src\\app\\pages\\InventoryPageNew.tsx",
+        "Line":  155,
+        "Code":  "onClick={() =\u003e setShowAddModal(true)}"
+    },
+    {
+        "File":  "src\\app\\pages\\InventoryPageNew.tsx",
+        "Line":  315,
+        "Code":  "onClick={() =\u003e handleDeleteProduct(product.id)}"
+    },
+    {
+        "File":  "src\\app\\pages\\InvoicingPage.tsx",
+        "Line":  161,
+        "Code":  "onClick={() =\u003e setShowForm(!showForm)}"
+    },
+    {
+        "File":  "src\\app\\pages\\InvoicingPage.tsx",
+        "Line":  236,
+        "Code":  "\u003cbutton"
+    },
+    {
+        "File":  "src\\app\\pages\\InvoicingPage.tsx",
+        "Line":  237,
+        "Code":  "onClick={() =\u003e removeItem(index)}"
+    },
+    {
+        "File":  "src\\app\\pages\\InvoicingPage.tsx",
+        "Line":  247,
+        "Code":  "\u003cbutton"
+    },
+    {
+        "File":  "src\\app\\pages\\InvoicingPage.tsx",
+        "Line":  248,
+        "Code":  "onClick={addItem}"
+    },
+    {
+        "File":  "src\\app\\pages\\InvoicingPage.tsx",
+        "Line":  268,
+        "Code":  "onClick={createInvoice}"
+    },
+    {
+        "File":  "src\\app\\pages\\InvoicingPage.tsx",
+        "Line":  276,
+        "Code":  "onClick={() =\u003e setShowForm(false)}"
+    },
+    {
+        "File":  "src\\app\\pages\\InvoicingPage.tsx",
+        "Line":  356,
+        "Code":  "onClick={() =\u003e invoiceAPI.generatePDF(invoice)}"
+    },
+    {
+        "File":  "src\\app\\pages\\InvoicingPage.tsx",
+        "Line":  367,
+        "Code":  "onClick={() =\u003e updateStatus(invoice.id, \u0027paid\u0027)}"
+    },
+    {
+        "File":  "src\\app\\pages\\InvoicingPage.tsx",
+        "Line":  378,
+        "Code":  "onClick={() =\u003e deleteInvoice(invoice.id)}"
+    },
+    {
+        "File":  "src\\app\\pages\\LandingPage.tsx",
+        "Line":  327,
+        "Code":  "\u003cLink"
+    },
+    {
+        "File":  "src\\app\\pages\\LandingPage.tsx",
+        "Line":  377,
+        "Code":  "\u003cLink"
+    },
+    {
+        "File":  "src\\app\\pages\\LandingPage.tsx",
+        "Line":  392,
+        "Code":  "\u003cbutton className=\"px-8 py-4 bg-white/5 border border-white/10 rounded-xl font-bold text-lg hover:bg-white/10 transition-all backdrop-blur-sm flex items-center gap-2\"\u003e"
+    },
+    {
+        "File":  "src\\app\\pages\\LandingPage.tsx",
+        "Line":  623,
+        "Code":  "onClick={() =\u003e setActiveModule(index)}"
+    },
+    {
+        "File":  "src\\app\\pages\\LandingPage.tsx",
+        "Line":  704,
+        "Code":  "\u003cbutton"
+    },
+    {
+        "File":  "src\\app\\pages\\LandingPage.tsx",
+        "Line":  705,
+        "Code":  "onClick={() =\u003e setPricingInterval(\u0027monthly\u0027)}"
+    },
+    {
+        "File":  "src\\app\\pages\\LandingPage.tsx",
+        "Line":  714,
+        "Code":  "\u003cbutton"
+    },
+    {
+        "File":  "src\\app\\pages\\LandingPage.tsx",
+        "Line":  715,
+        "Code":  "onClick={() =\u003e setPricingInterval(\u0027yearly\u0027)}"
+    },
+    {
+        "File":  "src\\app\\pages\\LandingPage.tsx",
+        "Line":  776,
+        "Code":  "\u003cLink"
+    },
+    {
+        "File":  "src\\app\\pages\\LandingPage.tsx",
+        "Line":  1031,
+        "Code":  "\u003cbutton"
+    },
+    {
+        "File":  "src\\app\\pages\\OAuthConsentPage.tsx",
+        "Line":  6,
+        "Code":  "const navigate = useNavigate();"
+    },
+    {
+        "File":  "src\\app\\pages\\OAuthConsentPage.tsx",
+        "Line":  28,
+        "Code":  "navigate(\u0027/dashboard\u0027, { replace: true });"
+    },
+    {
+        "File":  "src\\app\\pages\\OAuthConsentPage.tsx",
+        "Line":  41,
+        "Code":  "navigate(\u0027/login\u0027, { replace: true });"
+    },
+    {
+        "File":  "src\\app\\pages\\OAuthConsentPage.tsx",
+        "Line":  89,
+        "Code":  "\u003cbutton"
+    },
+    {
+        "File":  "src\\app\\pages\\OAuthConsentPage.tsx",
+        "Line":  91,
+        "Code":  "onClick={handleApprove}"
+    },
+    {
+        "File":  "src\\app\\pages\\OAuthConsentPage.tsx",
+        "Line":  97,
+        "Code":  "\u003cbutton"
+    },
+    {
+        "File":  "src\\app\\pages\\OAuthConsentPage.tsx",
+        "Line":  99,
+        "Code":  "onClick={handleDeny}"
+    },
+    {
+        "File":  "src\\app\\pages\\PermissionsPage.tsx",
+        "Line":  198,
+        "Code":  "onClick={resetChanges}"
+    },
+    {
+        "File":  "src\\app\\pages\\PermissionsPage.tsx",
+        "Line":  207,
+        "Code":  "onClick={saveChanges}"
+    },
+    {
+        "File":  "src\\app\\pages\\PermissionsPage.tsx",
+        "Line":  229,
+        "Code":  "onClick={() =\u003e setSelectedRole(role.id)}"
+    },
+    {
+        "File":  "src\\app\\pages\\PermissionsPage.tsx",
+        "Line":  288,
+        "Code":  "onClick={() =\u003e togglePermission(module.id, perm.id)}"
+    },
+    {
+        "File":  "src\\app\\pages\\PermissionsPage.tsx",
+        "Line":  305,
+        "Code":  "\u003cbutton"
+    },
+    {
+        "File":  "src\\app\\pages\\PermissionsPage.tsx",
+        "Line":  306,
+        "Code":  "onClick={() =\u003e selectAllForModule(module.id)}"
+    },
+    {
+        "File":  "src\\app\\pages\\PermissionsPage.tsx",
+        "Line":  311,
+        "Code":  "\u003cbutton"
+    },
+    {
+        "File":  "src\\app\\pages\\PermissionsPage.tsx",
+        "Line":  312,
+        "Code":  "onClick={() =\u003e deselectAllForModule(module.id)}"
+    },
+    {
+        "File":  "src\\app\\pages\\POSPage.tsx",
+        "Line":  192,
+        "Code":  "onClick={() =\u003e setSelectedCategory(category)}"
+    },
+    {
+        "File":  "src\\app\\pages\\POSPage.tsx",
+        "Line":  212,
+        "Code":  "onClick={() =\u003e addToCart(product)}"
+    },
+    {
+        "File":  "src\\app\\pages\\POSPage.tsx",
+        "Line":  288,
+        "Code":  "\u003cbutton"
+    },
+    {
+        "File":  "src\\app\\pages\\POSPage.tsx",
+        "Line":  289,
+        "Code":  "onClick={() =\u003e removeFromCart(item.id)}"
+    },
+    {
+        "File":  "src\\app\\pages\\POSPage.tsx",
+        "Line":  297,
+        "Code":  "\u003cbutton"
+    },
+    {
+        "File":  "src\\app\\pages\\POSPage.tsx",
+        "Line":  298,
+        "Code":  "onClick={() =\u003e updateQuantity(item.id, -1)}"
+    },
+    {
+        "File":  "src\\app\\pages\\POSPage.tsx",
+        "Line":  306,
+        "Code":  "\u003cbutton"
+    },
+    {
+        "File":  "src\\app\\pages\\POSPage.tsx",
+        "Line":  307,
+        "Code":  "onClick={() =\u003e updateQuantity(item.id, 1)}"
+    },
+    {
+        "File":  "src\\app\\pages\\POSPage.tsx",
+        "Line":  363,
+        "Code":  "onClick={handleCheckout}"
+    },
+    {
+        "File":  "src\\app\\pages\\POSPage.tsx",
+        "Line":  372,
+        "Code":  "onClick={handleCheckout}"
+    },
+    {
+        "File":  "src\\app\\pages\\POSPage.tsx",
+        "Line":  382,
+        "Code":  "onClick={handleCheckout}"
+    },
+    {
+        "File":  "src\\app\\pages\\POSPage.tsx",
+        "Line":  401,
+        "Code":  "onClick={() =\u003e setShowCheckout(false)}"
+    },
+    {
+        "File":  "src\\app\\pages\\POSPage.tsx",
+        "Line":  412,
+        "Code":  "\u003cbutton"
+    },
+    {
+        "File":  "src\\app\\pages\\POSPage.tsx",
+        "Line":  413,
+        "Code":  "onClick={() =\u003e setShowCheckout(false)}"
+    },
+    {
+        "File":  "src\\app\\pages\\POSPage.tsx",
+        "Line":  440,
+        "Code":  "onClick={completeOrder}"
+    },
+    {
+        "File":  "src\\app\\pages\\PricingPage.tsx",
+        "Line":  156,
+        "Code":  "\u003cbutton"
+    },
+    {
+        "File":  "src\\app\\pages\\PricingPage.tsx",
+        "Line":  157,
+        "Code":  "onClick={() =\u003e setBillingInterval(\u0027month\u0027)}"
+    },
+    {
+        "File":  "src\\app\\pages\\PricingPage.tsx",
+        "Line":  166,
+        "Code":  "\u003cbutton"
+    },
+    {
+        "File":  "src\\app\\pages\\PricingPage.tsx",
+        "Line":  167,
+        "Code":  "onClick={() =\u003e setBillingInterval(\u0027year\u0027)}"
+    },
+    {
+        "File":  "src\\app\\pages\\PricingPage.tsx",
+        "Line":  238,
+        "Code":  "onClick={() =\u003e handleSubscribe(plan.id)}"
+    },
+    {
+        "File":  "src\\app\\pages\\PricingPage.tsx",
+        "Line":  258,
+        "Code":  "onClick={() =\u003e setShowCheckout(false)}"
+    },
+    {
+        "File":  "src\\app\\pages\\PricingPage.tsx",
+        "Line":  263,
+        "Code":  "onClick={(e) =\u003e e.stopPropagation()}"
+    },
+    {
+        "File":  "src\\app\\pages\\PricingPage.tsx",
+        "Line":  268,
+        "Code":  "\u003cbutton"
+    },
+    {
+        "File":  "src\\app\\pages\\PricingPage.tsx",
+        "Line":  269,
+        "Code":  "onClick={() =\u003e setShowCheckout(false)}"
+    },
+    {
+        "File":  "src\\app\\pages\\PricingPage.tsx",
+        "Line":  359,
+        "Code":  "onClick={processSubscription}"
+    },
+    {
+        "File":  "src\\app\\pages\\PricingPage.tsx",
+        "Line":  367,
+        "Code":  "onClick={() =\u003e setShowCheckout(false)}"
+    },
+    {
+        "File":  "src\\app\\pages\\PurchasesPage.tsx",
+        "Line":  485,
+        "Code":  "\u003cbutton className=\"flex-1 px-3 py-1.5 bg-green-500/20 hover:bg-green-500/30 text-green-400 rounded-lg text-xs font-medium transition-all flex items-center justify-center gap-1\"\u003e"
+    },
+    {
+        "File":  "src\\app\\pages\\PurchasesPage.tsx",
+        "Line":  489,
+        "Code":  "\u003cbutton className=\"flex-1 px-3 py-1.5 bg-red-500/20 hover:bg-red-500/30 text-red-400 rounded-lg text-xs font-medium transition-all flex items-center justify-center gap-1\"\u003e"
+    },
+    {
+        "File":  "src\\app\\pages\\RegistrationSuccessPage.tsx",
+        "Line":  8,
+        "Code":  "const navigate = useNavigate();"
+    },
+    {
+        "File":  "src\\app\\pages\\RegistrationSuccessPage.tsx",
+        "Line":  14,
+        "Code":  "navigate(\u0027/login\u0027);"
+    },
+    {
+        "File":  "src\\app\\pages\\RegistrationSuccessPage.tsx",
+        "Line":  130,
+        "Code":  "\u003cbutton"
+    },
+    {
+        "File":  "src\\app\\pages\\RegistrationSuccessPage.tsx",
+        "Line":  131,
+        "Code":  "onClick={() =\u003e navigate(\u0027/login\u0027)}"
+    },
+    {
+        "File":  "src\\app\\pages\\ResetPasswordPage.tsx",
+        "Line":  15,
+        "Code":  "const navigate = useNavigate();"
+    },
+    {
+        "File":  "src\\app\\pages\\ResetPasswordPage.tsx",
+        "Line":  49,
+        "Code":  "navigate(\u0027/login\u0027);"
+    },
+    {
+        "File":  "src\\app\\pages\\ResetPasswordPage.tsx",
+        "Line":  74,
+        "Code":  "\u003cbutton"
+    },
+    {
+        "File":  "src\\app\\pages\\ResetPasswordPage.tsx",
+        "Line":  75,
+        "Code":  "onClick={() =\u003e navigate(\u0027/login\u0027)}"
+    },
+    {
+        "File":  "src\\app\\pages\\ResetPasswordPage.tsx",
+        "Line":  100,
+        "Code":  "\u003cform onSubmit={handleSubmit} className=\"space-y-6\"\u003e"
+    },
+    {
+        "File":  "src\\app\\pages\\ResetPasswordPage.tsx",
+        "Line":  127,
+        "Code":  "\u003cbutton"
+    },
+    {
+        "File":  "src\\app\\pages\\ResetPasswordPage.tsx",
+        "Line":  129,
+        "Code":  "onClick={() =\u003e setShowPassword(!showPassword)}"
+    },
+    {
+        "File":  "src\\app\\pages\\ResetPasswordPage.tsx",
+        "Line":  153,
+        "Code":  "\u003cbutton"
+    },
+    {
+        "File":  "src\\app\\pages\\ResetPasswordPage.tsx",
+        "Line":  155,
+        "Code":  "onClick={() =\u003e setShowConfirmPassword(!showConfirmPassword)}"
+    },
+    {
+        "File":  "src\\app\\pages\\ResetPasswordPage.tsx",
+        "Line":  167,
+        "Code":  "\u003cbutton"
+    },
+    {
+        "File":  "src\\app\\pages\\StudioPage.tsx",
+        "Line":  294,
+        "Code":  "onClick={() =\u003e setShowBuilder(!showBuilder)}"
+    },
+    {
+        "File":  "src\\app\\pages\\StudioPage.tsx",
+        "Line":  329,
+        "Code":  "onClick={generateModuleFromAI}"
+    },
+    {
+        "File":  "src\\app\\pages\\StudioPage.tsx",
+        "Line":  399,
+        "Code":  "\u003cbutton"
+    },
+    {
+        "File":  "src\\app\\pages\\StudioPage.tsx",
+        "Line":  400,
+        "Code":  "onClick={addField}"
+    },
+    {
+        "File":  "src\\app\\pages\\StudioPage.tsx",
+        "Line":  457,
+        "Code":  "\u003cbutton"
+    },
+    {
+        "File":  "src\\app\\pages\\StudioPage.tsx",
+        "Line":  458,
+        "Code":  "onClick={() =\u003e removeField(i)}"
+    },
+    {
+        "File":  "src\\app\\pages\\StudioPage.tsx",
+        "Line":  491,
+        "Code":  "\u003cbutton"
+    },
+    {
+        "File":  "src\\app\\pages\\StudioPage.tsx",
+        "Line":  492,
+        "Code":  "onClick={addWorkflow}"
+    },
+    {
+        "File":  "src\\app\\pages\\StudioPage.tsx",
+        "Line":  525,
+        "Code":  "\u003cbutton"
+    },
+    {
+        "File":  "src\\app\\pages\\StudioPage.tsx",
+        "Line":  526,
+        "Code":  "onClick={() =\u003e removeWorkflow(i)}"
+    },
+    {
+        "File":  "src\\app\\pages\\StudioPage.tsx",
+        "Line":  565,
+        "Code":  "onClick={createModule}"
+    },
+    {
+        "File":  "src\\app\\pages\\StudioPage.tsx",
+        "Line":  573,
+        "Code":  "onClick={() =\u003e setShowBuilder(false)}"
+    },
+    {
+        "File":  "src\\app\\pages\\StudioPage.tsx",
+        "Line":  603,
+        "Code":  "onClick={() =\u003e {"
+    },
+    {
+        "File":  "src\\app\\pages\\StudioPage.tsx",
+        "Line":  614,
+        "Code":  "onClick={() =\u003e deleteModule(module.id)}"
+    },
+    {
+        "File":  "src\\app\\pages\\StudioPage.tsx",
+        "Line":  651,
+        "Code":  "onClick={() =\u003e setShowPreview(false)}"
+    },
+    {
+        "File":  "src\\app\\pages\\StudioPage.tsx",
+        "Line":  657,
+        "Code":  "onClick={(e) =\u003e e.stopPropagation()}"
+    },
+    {
+        "File":  "src\\app\\pages\\StudioPage.tsx",
+        "Line":  662,
+        "Code":  "\u003cbutton"
+    },
+    {
+        "File":  "src\\app\\pages\\StudioPage.tsx",
+        "Line":  663,
+        "Code":  "onClick={() =\u003e setShowPreview(false)}"
+    },
+    {
+        "File":  "src\\app\\pages\\SupabaseDiagnosticPage.tsx",
+        "Line":  521,
+        "Code":  "\u003cbutton"
+    },
+    {
+        "File":  "src\\app\\pages\\SupabaseDiagnosticPage.tsx",
+        "Line":  522,
+        "Code":  "onClick={runAllTests}"
+    },
+    {
+        "File":  "src\\app\\pages\\TenantManagementPage.tsx",
+        "Line":  259,
+        "Code":  "onClick={() =\u003e setShowForm(!showForm)}"
+    },
+    {
+        "File":  "src\\app\\pages\\TenantManagementPage.tsx",
+        "Line":  401,
+        "Code":  "onClick={createTenant}"
+    },
+    {
+        "File":  "src\\app\\pages\\TenantManagementPage.tsx",
+        "Line":  409,
+        "Code":  "onClick={() =\u003e setShowForm(false)}"
+    },
+    {
+        "File":  "src\\app\\pages\\TenantManagementPage.tsx",
+        "Line":  521,
+        "Code":  "onClick={() =\u003e updateTenantStatus(tenant.id, \u0027suspended\u0027)}"
+    },
+    {
+        "File":  "src\\app\\pages\\TenantManagementPage.tsx",
+        "Line":  533,
+        "Code":  "onClick={() =\u003e updateTenantStatus(tenant.id, \u0027active\u0027)}"
+    },
+    {
+        "File":  "src\\app\\pages\\TenantManagementPage.tsx",
+        "Line":  544,
+        "Code":  "onClick={() =\u003e deleteTenant(tenant.id)}"
+    },
+    {
+        "File":  "src\\app\\pages\\WebhookSimulatorPage.tsx",
+        "Line":  135,
+        "Code":  "onClick={simulateWebhook}"
+    },
+    {
+        "File":  "src\\app\\pages\\WebhookSimulatorPage.tsx",
+        "Line":  144,
+        "Code":  "onClick={clearEvents}"
+    },
+    {
+        "File":  "src\\app\\pages\\ZATCAPage.tsx",
+        "Line":  298,
+        "Code":  "onClick={() =\u003e setShowForm(!showForm)}"
+    },
+    {
+        "File":  "src\\app\\pages\\ZATCAPage.tsx",
+        "Line":  412,
+        "Code":  "onClick={createInvoice}"
+    },
+    {
+        "File":  "src\\app\\pages\\ZATCAPage.tsx",
+        "Line":  420,
+        "Code":  "onClick={() =\u003e setShowForm(false)}"
+    },
+    {
+        "File":  "src\\app\\pages\\ZATCAPage.tsx",
+        "Line":  503,
+        "Code":  "onClick={() =\u003e submitToZATCA(invoice)}"
+    },
+    {
+        "File":  "src\\app\\pages\\ZATCAPage.tsx",
+        "Line":  519,
+        "Code":  "onClick={() =\u003e setSelectedInvoice(invoice)}"
+    },
+    {
+        "File":  "src\\app\\pages\\ZATCAPage.tsx",
+        "Line":  529,
+        "Code":  "onClick={() =\u003e {"
+    },
+    {
+        "File":  "src\\app\\pages\\ZATCAPage.tsx",
+        "Line":  558,
+        "Code":  "onClick={() =\u003e setSelectedInvoice(null)}"
+    },
+    {
+        "File":  "src\\app\\pages\\ZATCAPage.tsx",
+        "Line":  563,
+        "Code":  "onClick={(e) =\u003e e.stopPropagation()}"
+    },
+    {
+        "File":  "src\\app\\pages\\ZATCAPage.tsx",
+        "Line":  568,
+        "Code":  "\u003cbutton"
+    },
+    {
+        "File":  "src\\app\\pages\\ZATCAPage.tsx",
+        "Line":  569,
+        "Code":  "onClick={() =\u003e setSelectedInvoice(null)}"
+    },
+    {
+        "File":  "src\\app\\pages\\bms\\CCTVLivePage.tsx",
+        "Line":  184,
+        "Code":  "onClick={() =\u003e setGridLayout(layout)}"
+    },
+    {
+        "File":  "src\\app\\pages\\bms\\CCTVLivePage.tsx",
+        "Line":  316,
+        "Code":  "onClick={() =\u003e setSelectedCamera(camera.id)}"
+    },
+    {
+        "File":  "src\\app\\pages\\bms\\CCTVLivePage.tsx",
+        "Line":  397,
+        "Code":  "onClick={onSelect}"
+    },
+    {
+        "File":  "src\\app\\pages\\bms\\CCTVLivePage.tsx",
+        "Line":  459,
+        "Code":  "onClick={(e) =\u003e {"
+    },
+    {
+        "File":  "src\\app\\pages\\bms\\CCTVLivePage.tsx",
+        "Line":  475,
+        "Code":  "onClick={(e) =\u003e {"
+    },
+    {
+        "File":  "src\\app\\pages\\bms\\CCTVLivePage.tsx",
+        "Line":  493,
+        "Code":  "onClick={(e) =\u003e e.stopPropagation()}"
+    },
+    {
+        "File":  "src\\app\\pages\\bms\\CCTVLivePage.tsx",
+        "Line":  502,
+        "Code":  "onClick={(e) =\u003e e.stopPropagation()}"
+    },
+    {
+        "File":  "src\\app\\pages\\cashier\\CashierPOSPage.tsx",
+        "Line":  198,
+        "Code":  "\u003cbutton className=\"px-6 py-3 bg-blue-500/20 hover:bg-blue-500/30 border border-blue-500/50 rounded-xl text-blue-400 flex items-center gap-2 transition-all\"\u003e"
+    },
+    {
+        "File":  "src\\app\\pages\\cashier\\CashierPOSPage.tsx",
+        "Line":  232,
+        "Code":  "onClick={() =\u003e addToCart(product)}"
+    },
+    {
+        "File":  "src\\app\\pages\\cashier\\CashierPOSPage.tsx",
+        "Line":  273,
+        "Code":  "\u003cbutton"
+    },
+    {
+        "File":  "src\\app\\pages\\cashier\\CashierPOSPage.tsx",
+        "Line":  274,
+        "Code":  "onClick={() =\u003e removeItem(item.id)}"
+    },
+    {
+        "File":  "src\\app\\pages\\cashier\\CashierPOSPage.tsx",
+        "Line":  283,
+        "Code":  "\u003cbutton"
+    },
+    {
+        "File":  "src\\app\\pages\\cashier\\CashierPOSPage.tsx",
+        "Line":  284,
+        "Code":  "onClick={() =\u003e updateQuantity(item.id, -1)}"
+    },
+    {
+        "File":  "src\\app\\pages\\cashier\\CashierPOSPage.tsx",
+        "Line":  292,
+        "Code":  "\u003cbutton"
+    },
+    {
+        "File":  "src\\app\\pages\\cashier\\CashierPOSPage.tsx",
+        "Line":  293,
+        "Code":  "onClick={() =\u003e updateQuantity(item.id, 1)}"
+    },
+    {
+        "File":  "src\\app\\pages\\cashier\\CashierPOSPage.tsx",
+        "Line":  327,
+        "Code":  "\u003cbutton"
+    },
+    {
+        "File":  "src\\app\\pages\\cashier\\CashierPOSPage.tsx",
+        "Line":  329,
+        "Code":  "onClick={() =\u003e setSelectedPayment(method.id)}"
+    },
+    {
+        "File":  "src\\app\\pages\\cashier\\CashierPOSPage.tsx",
+        "Line":  362,
+        "Code":  "\u003cbutton"
+    },
+    {
+        "File":  "src\\app\\pages\\cashier\\CashierPOSPage.tsx",
+        "Line":  363,
+        "Code":  "onClick={handleHoldOrder}"
+    },
+    {
+        "File":  "src\\app\\pages\\cashier\\CashierPOSPage.tsx",
+        "Line":  369,
+        "Code":  "\u003cbutton"
+    },
+    {
+        "File":  "src\\app\\pages\\cashier\\CashierPOSPage.tsx",
+        "Line":  370,
+        "Code":  "onClick={handleCancelOrder}"
+    },
+    {
+        "File":  "src\\app\\pages\\cashier\\CashierPOSPage.tsx",
+        "Line":  376,
+        "Code":  "\u003cbutton className=\"p-3 bg-gray-800 hover:bg-gray-700 border border-gray-700 rounded-lg text-white transition-all flex items-center justify-center gap-1\"\u003e"
+    },
+    {
+        "File":  "src\\app\\pages\\cashier\\CashierPOSPage.tsx",
+        "Line":  382,
+        "Code":  "\u003cbutton"
+    },
+    {
+        "File":  "src\\app\\pages\\cashier\\CashierPOSPage.tsx",
+        "Line":  383,
+        "Code":  "onClick={handleCheckout}"
+    },
+    {
+        "File":  "src\\app\\pages\\finance\\AccountsPayablePage.tsx",
+        "Line":  163,
+        "Code":  "\u003cbutton className=\"text-sm text-blue-600 hover:text-blue-800 font-medium\"\u003e"
+    },
+    {
+        "File":  "src\\app\\pages\\finance\\AccountsReceivablePage.tsx",
+        "Line":  117,
+        "Code":  "\u003cbutton className=\"flex items-center gap-2 px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700\"\u003e"
+    },
+    {
+        "File":  "src\\app\\pages\\finance\\AccountsReceivablePage.tsx",
+        "Line":  224,
+        "Code":  "\u003cbutton"
+    },
+    {
+        "File":  "src\\app\\pages\\finance\\AccountsReceivablePage.tsx",
+        "Line":  225,
+        "Code":  "onClick={() =\u003e setSelectedTab(\u0027invoices\u0027)}"
+    },
+    {
+        "File":  "src\\app\\pages\\finance\\AccountsReceivablePage.tsx",
+        "Line":  234,
+        "Code":  "\u003cbutton"
+    },
+    {
+        "File":  "src\\app\\pages\\finance\\AccountsReceivablePage.tsx",
+        "Line":  235,
+        "Code":  "onClick={() =\u003e setSelectedTab(\u0027aging\u0027)}"
+    },
+    {
+        "File":  "src\\app\\pages\\finance\\AccountsReceivablePage.tsx",
+        "Line":  244,
+        "Code":  "\u003cbutton"
+    },
+    {
+        "File":  "src\\app\\pages\\finance\\AccountsReceivablePage.tsx",
+        "Line":  245,
+        "Code":  "onClick={() =\u003e setSelectedTab(\u0027customers\u0027)}"
+    },
+    {
+        "File":  "src\\app\\pages\\finance\\AccountsReceivablePage.tsx",
+        "Line":  313,
+        "Code":  "\u003cbutton className=\"text-sm text-blue-600 hover:text-blue-800 font-medium\"\u003e"
+    },
+    {
+        "File":  "src\\app\\pages\\finance\\AccountsReceivablePage.tsx",
+        "Line":  373,
+        "Code":  "\u003cbutton className=\"text-sm text-blue-600 hover:text-blue-800 font-medium\"\u003e"
+    },
+    {
+        "File":  "src\\app\\pages\\finance\\AIFinanceAssistantPage.tsx",
+        "Line":  161,
+        "Code":  "\u003cbutton className=\"text-sm font-medium hover:underline\"\u003eView Details â†’\u003c/button\u003e"
+    },
+    {
+        "File":  "src\\app\\pages\\finance\\AIFinanceAssistantPage.tsx",
+        "Line":  234,
+        "Code":  "\u003cbutton"
+    },
+    {
+        "File":  "src\\app\\pages\\finance\\AIFinanceAssistantPage.tsx",
+        "Line":  235,
+        "Code":  "onClick={handleSendMessage}"
+    },
+    {
+        "File":  "src\\app\\pages\\finance\\BudgetManagementPage.tsx",
+        "Line":  88,
+        "Code":  "\u003cbutton className=\"flex items-center gap-2 px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700\"\u003e"
+    },
+    {
+        "File":  "src\\app\\pages\\finance\\CashBankManagementPage.tsx",
+        "Line":  167,
+        "Code":  "\u003cbutton"
+    },
+    {
+        "File":  "src\\app\\pages\\finance\\CashBankManagementPage.tsx",
+        "Line":  168,
+        "Code":  "onClick={() =\u003e setSelectedTab(\u0027overview\u0027)}"
+    },
+    {
+        "File":  "src\\app\\pages\\finance\\CashBankManagementPage.tsx",
+        "Line":  177,
+        "Code":  "\u003cbutton"
+    },
+    {
+        "File":  "src\\app\\pages\\finance\\CashBankManagementPage.tsx",
+        "Line":  178,
+        "Code":  "onClick={() =\u003e setSelectedTab(\u0027cash\u0027)}"
+    },
+    {
+        "File":  "src\\app\\pages\\finance\\CashBankManagementPage.tsx",
+        "Line":  187,
+        "Code":  "\u003cbutton"
+    },
+    {
+        "File":  "src\\app\\pages\\finance\\CashBankManagementPage.tsx",
+        "Line":  188,
+        "Code":  "onClick={() =\u003e setSelectedTab(\u0027bank\u0027)}"
+    },
+    {
+        "File":  "src\\app\\pages\\finance\\CashBankManagementPage.tsx",
+        "Line":  197,
+        "Code":  "\u003cbutton"
+    },
+    {
+        "File":  "src\\app\\pages\\finance\\CashBankManagementPage.tsx",
+        "Line":  198,
+        "Code":  "onClick={() =\u003e setSelectedTab(\u0027transactions\u0027)}"
+    },
+    {
+        "File":  "src\\app\\pages\\finance\\CashBankManagementPage.tsx",
+        "Line":  207,
+        "Code":  "\u003cbutton"
+    },
+    {
+        "File":  "src\\app\\pages\\finance\\CashBankManagementPage.tsx",
+        "Line":  208,
+        "Code":  "onClick={() =\u003e setSelectedTab(\u0027reconciliation\u0027)}"
+    },
+    {
+        "File":  "src\\app\\pages\\finance\\CashBankManagementPage.tsx",
+        "Line":  253,
+        "Code":  "\u003cbutton className=\"mt-2 text-sm text-blue-600 hover:text-blue-800 flex items-center gap-1\"\u003e"
+    },
+    {
+        "File":  "src\\app\\pages\\finance\\CashBankManagementPage.tsx",
+        "Line":  335,
+        "Code":  "\u003cbutton className=\"px-6 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700\"\u003e"
+    },
+    {
+        "File":  "src\\app\\pages\\finance\\ExpenseManagementPage.tsx",
+        "Line":  78,
+        "Code":  "\u003cbutton className=\"flex items-center gap-2 px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700\"\u003e"
+    },
+    {
+        "File":  "src\\app\\pages\\finance\\ExpenseManagementPage.tsx",
+        "Line":  110,
+        "Code":  "\u003cbutton"
+    },
+    {
+        "File":  "src\\app\\pages\\finance\\ExpenseManagementPage.tsx",
+        "Line":  111,
+        "Code":  "onClick={() =\u003e setSelectedStatus(\u0027all\u0027)}"
+    },
+    {
+        "File":  "src\\app\\pages\\finance\\ExpenseManagementPage.tsx",
+        "Line":  116,
+        "Code":  "\u003cbutton"
+    },
+    {
+        "File":  "src\\app\\pages\\finance\\ExpenseManagementPage.tsx",
+        "Line":  117,
+        "Code":  "onClick={() =\u003e setSelectedStatus(\u0027pending\u0027)}"
+    },
+    {
+        "File":  "src\\app\\pages\\finance\\ExpenseManagementPage.tsx",
+        "Line":  122,
+        "Code":  "\u003cbutton"
+    },
+    {
+        "File":  "src\\app\\pages\\finance\\ExpenseManagementPage.tsx",
+        "Line":  123,
+        "Code":  "onClick={() =\u003e setSelectedStatus(\u0027approved\u0027)}"
+    },
+    {
+        "File":  "src\\app\\pages\\finance\\ExpenseManagementPage.tsx",
+        "Line":  128,
+        "Code":  "\u003cbutton"
+    },
+    {
+        "File":  "src\\app\\pages\\finance\\ExpenseManagementPage.tsx",
+        "Line":  129,
+        "Code":  "onClick={() =\u003e setSelectedStatus(\u0027rejected\u0027)}"
+    },
+    {
+        "File":  "src\\app\\pages\\finance\\ExpenseManagementPage.tsx",
+        "Line":  192,
+        "Code":  "\u003cbutton className=\"text-green-600 hover:text-green-800\"\u003e"
+    },
+    {
+        "File":  "src\\app\\pages\\finance\\ExpenseManagementPage.tsx",
+        "Line":  195,
+        "Code":  "\u003cbutton className=\"text-red-600 hover:text-red-800\"\u003e"
+    },
+    {
+        "File":  "src\\app\\pages\\finance\\FinancialReportsPage.tsx",
+        "Line":  179,
+        "Code":  "\u003cbutton className=\"text-blue-600 hover:text-blue-800\"\u003e"
+    },
+    {
+        "File":  "src\\app\\pages\\finance\\FinancialReportsPage.tsx",
+        "Line":  197,
+        "Code":  "\u003cbutton className=\"flex items-center gap-2 px-6 py-3 bg-white text-blue-600 rounded-lg hover:bg-gray-100 font-medium\"\u003e"
+    },
+    {
+        "File":  "src\\app\\pages\\finance\\FinancialReportsPage.tsx",
+        "Line":  201,
+        "Code":  "\u003cbutton className=\"flex items-center gap-2 px-6 py-3 bg-white text-blue-600 rounded-lg hover:bg-gray-100 font-medium\"\u003e"
+    },
+    {
+        "File":  "src\\app\\pages\\finance\\FinancialReportsPage.tsx",
+        "Line":  205,
+        "Code":  "\u003cbutton className=\"flex items-center gap-2 px-6 py-3 bg-white text-blue-600 rounded-lg hover:bg-gray-100 font-medium\"\u003e"
+    },
+    {
+        "File":  "src\\app\\pages\\finance\\FixedAssetsPage.tsx",
+        "Line":  86,
+        "Code":  "\u003cbutton className=\"flex items-center gap-2 px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700\"\u003e"
+    },
+    {
+        "File":  "src\\app\\pages\\finance\\GeneralLedgerPage.tsx",
+        "Line":  98,
+        "Code":  "\u003cbutton className=\"flex items-center gap-2 px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700\"\u003e"
+    },
+    {
+        "File":  "src\\app\\pages\\finance\\JournalEntriesPage.tsx",
+        "Line":  102,
+        "Code":  "\u003cbutton"
+    },
+    {
+        "File":  "src\\app\\pages\\finance\\JournalEntriesPage.tsx",
+        "Line":  103,
+        "Code":  "onClick={() =\u003e setShowCreateModal(true)}"
+    },
+    {
+        "File":  "src\\app\\pages\\finance\\JournalEntriesPage.tsx",
+        "Line":  134,
+        "Code":  "\u003cbutton className=\"flex items-center justify-center gap-2 px-4 py-2 border border-gray-300 rounded-lg hover:bg-gray-50\"\u003e"
+    },
+    {
+        "File":  "src\\app\\pages\\finance\\JournalEntriesPage.tsx",
+        "Line":  181,
+        "Code":  "onClick={() =\u003e setSelectedEntry(entry)}"
+    },
+    {
+        "File":  "src\\app\\pages\\finance\\JournalEntriesPage.tsx",
+        "Line":  212,
+        "Code":  "\u003cbutton className=\"text-blue-600 hover:text-blue-800\"\u003e"
+    },
+    {
+        "File":  "src\\app\\pages\\finance\\JournalEntriesPage.tsx",
+        "Line":  215,
+        "Code":  "\u003cbutton className=\"text-red-600 hover:text-red-800\"\u003e"
+    },
+    {
+        "File":  "src\\app\\pages\\finance\\JournalEntriesPage.tsx",
+        "Line":  231,
+        "Code":  "onClick={() =\u003e setSelectedEntry(null)}"
+    },
+    {
+        "File":  "src\\app\\pages\\finance\\JournalEntriesPage.tsx",
+        "Line":  235,
+        "Code":  "onClick={(e) =\u003e e.stopPropagation()}"
+    },
+    {
+        "File":  "src\\app\\pages\\finance\\JournalEntriesPage.tsx",
+        "Line":  243,
+        "Code":  "\u003cbutton"
+    },
+    {
+        "File":  "src\\app\\pages\\finance\\JournalEntriesPage.tsx",
+        "Line":  244,
+        "Code":  "onClick={() =\u003e setSelectedEntry(null)}"
+    },
+    {
+        "File":  "src\\app\\pages\\finance\\JournalEntriesPage.tsx",
+        "Line":  327,
+        "Code":  "\u003cbutton className=\"flex items-center gap-2 px-4 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700\"\u003e"
+    },
+    {
+        "File":  "src\\app\\pages\\finance\\JournalEntriesPage.tsx",
+        "Line":  331,
+        "Code":  "\u003cbutton className=\"flex items-center gap-2 px-4 py-2 bg-red-600 text-white rounded-lg hover:bg-red-700\"\u003e"
+    },
+    {
+        "File":  "src\\app\\pages\\finance\\JournalEntriesPage.tsx",
+        "Line":  338,
+        "Code":  "\u003cbutton className=\"flex items-center gap-2 px-4 py-2 bg-yellow-600 text-white rounded-lg hover:bg-yellow-700\"\u003e"
+    },
+    {
+        "File":  "src\\app\\pages\\finance\\JournalEntriesPage.tsx",
+        "Line":  342,
+        "Code":  "\u003cbutton className=\"flex items-center gap-2 px-4 py-2 border border-gray-300 rounded-lg hover:bg-gray-50\"\u003e"
+    },
+    {
+        "File":  "src\\app\\pages\\finance\\JournalEntriesPage.tsx",
+        "Line":  356,
+        "Code":  "onClick={() =\u003e setShowCreateModal(false)}"
+    },
+    {
+        "File":  "src\\app\\pages\\finance\\JournalEntriesPage.tsx",
+        "Line":  360,
+        "Code":  "onClick={(e) =\u003e e.stopPropagation()}"
+    },
+    {
+        "File":  "src\\app\\pages\\finance\\JournalEntriesPage.tsx",
+        "Line":  457,
+        "Code":  "\u003cbutton"
+    },
+    {
+        "File":  "src\\app\\pages\\finance\\JournalEntriesPage.tsx",
+        "Line":  458,
+        "Code":  "onClick={addLine}"
+    },
+    {
+        "File":  "src\\app\\pages\\finance\\JournalEntriesPage.tsx",
+        "Line":  512,
+        "Code":  "\u003cbutton className=\"text-red-600 hover:text-red-800\"\u003e"
+    },
+    {
+        "File":  "src\\app\\pages\\finance\\JournalEntriesPage.tsx",
+        "Line":  539,
+        "Code":  "\u003cbutton"
+    },
+    {
+        "File":  "src\\app\\pages\\finance\\JournalEntriesPage.tsx",
+        "Line":  545,
+        "Code":  "\u003cbutton className=\"px-6 py-2 border border-gray-300 rounded-lg hover:bg-gray-50\"\u003e"
+    },
+    {
+        "File":  "src\\app\\pages\\finance\\JournalEntriesPage.tsx",
+        "Line":  548,
+        "Code":  "\u003cbutton"
+    },
+    {
+        "File":  "src\\app\\pages\\finance\\JournalEntriesPage.tsx",
+        "Line":  549,
+        "Code":  "onClick={onClose}"
+    },
+    {
+        "File":  "src\\app\\pages\\finance\\TrialBalancePage.tsx",
+        "Line":  173,
+        "Code":  "\u003cbutton className=\"flex items-center gap-2 px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700\"\u003e"
+    },
+    {
+        "File":  "src\\app\\pages\\finance\\VATTaxPage.tsx",
+        "Line":  44,
+        "Code":  "\u003cbutton className=\"flex items-center gap-2 px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700\"\u003e"
+    },
+    {
+        "File":  "src\\app\\pages\\hr\\AIHRAssistantPage.tsx",
+        "Line":  168,
+        "Code":  "\u003cbutton className=\"text-sm font-medium hover:underline\"\u003eView Details â†’\u003c/button\u003e"
+    },
+    {
+        "File":  "src\\app\\pages\\hr\\AIHRAssistantPage.tsx",
+        "Line":  251,
+        "Code":  "\u003cbutton"
+    },
+    {
+        "File":  "src\\app\\pages\\hr\\AIHRAssistantPage.tsx",
+        "Line":  252,
+        "Code":  "onClick={handleSendMessage}"
+    },
+    {
+        "File":  "src\\app\\pages\\hr\\AttendancePage.tsx",
+        "Line":  107,
+        "Code":  "\u003cbutton className=\"flex items-center gap-2 px-4 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700\"\u003e"
+    },
+    {
+        "File":  "src\\app\\pages\\hr\\AttendancePage.tsx",
+        "Line":  111,
+        "Code":  "\u003cbutton className=\"flex items-center gap-2 px-4 py-2 border border-gray-300 rounded-lg hover:bg-gray-50\"\u003e"
+    },
+    {
+        "File":  "src\\app\\pages\\hr\\AttendancePage.tsx",
+        "Line":  128,
+        "Code":  "\u003cbutton className=\"px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700\"\u003e"
+    },
+    {
+        "File":  "src\\app\\pages\\hr\\AttendancePage.tsx",
+        "Line":  254,
+        "Code":  "\u003cbutton className=\"text-blue-600 hover:text-blue-800 text-sm font-medium\"\u003e"
+    },
+    {
+        "File":  "src\\app\\pages\\hr\\EmployeeListPage.tsx",
+        "Line":  101,
+        "Code":  "\u003cbutton className=\"flex items-center gap-2 px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700\"\u003e"
+    },
+    {
+        "File":  "src\\app\\pages\\hr\\EmployeeListPage.tsx",
+        "Line":  249,
+        "Code":  "\u003cbutton className=\"text-blue-600 hover:text-blue-800\" title=\"View\"\u003e"
+    },
+    {
+        "File":  "src\\app\\pages\\hr\\EmployeeListPage.tsx",
+        "Line":  252,
+        "Code":  "\u003cbutton className=\"text-green-600 hover:text-green-800\" title=\"Edit\"\u003e"
+    },
+    {
+        "File":  "src\\app\\pages\\hr\\EmployeeListPage.tsx",
+        "Line":  255,
+        "Code":  "\u003cbutton className=\"text-red-600 hover:text-red-800\" title=\"Delete\"\u003e"
+    },
+    {
+        "File":  "src\\app\\pages\\hr\\EmployeeListPage.tsx",
+        "Line":  269,
+        "Code":  "\u003cbutton className=\"flex items-center gap-2 px-4 py-2 border border-gray-300 rounded-lg hover:bg-gray-50\"\u003e"
+    },
+    {
+        "File":  "src\\app\\pages\\hr\\HRDashboardPage.tsx",
+        "Line":  132,
+        "Code":  "\u003cbutton className=\"px-4 py-2 bg-white border border-gray-300 rounded-lg hover:bg-gray-50 text-sm font-medium\"\u003e"
+    },
+    {
+        "File":  "src\\app\\pages\\hr\\HRDashboardPage.tsx",
+        "Line":  323,
+        "Code":  "\u003cbutton className=\"text-blue-600 hover:text-blue-800 text-sm font-medium\"\u003e"
+    },
+    {
+        "File":  "src\\app\\pages\\hr\\HRReportsPage.tsx",
+        "Line":  158,
+        "Code":  "\u003cbutton className=\"text-blue-600 hover:text-blue-800\"\u003e"
+    },
+    {
+        "File":  "src\\app\\pages\\hr\\HRReportsPage.tsx",
+        "Line":  176,
+        "Code":  "\u003cbutton className=\"flex items-center gap-2 px-6 py-3 bg-white text-blue-600 rounded-lg hover:bg-gray-100 font-medium\"\u003e"
+    },
+    {
+        "File":  "src\\app\\pages\\hr\\HRReportsPage.tsx",
+        "Line":  180,
+        "Code":  "\u003cbutton className=\"flex items-center gap-2 px-6 py-3 bg-white text-blue-600 rounded-lg hover:bg-gray-100 font-medium\"\u003e"
+    },
+    {
+        "File":  "src\\app\\pages\\hr\\HRReportsPage.tsx",
+        "Line":  184,
+        "Code":  "\u003cbutton className=\"flex items-center gap-2 px-6 py-3 bg-white text-blue-600 rounded-lg hover:bg-gray-100 font-medium\"\u003e"
+    },
+    {
+        "File":  "src\\app\\pages\\hr\\LeaveManagementPage.tsx",
+        "Line":  112,
+        "Code":  "\u003cbutton className=\"flex items-center gap-2 px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700\"\u003e"
+    },
+    {
+        "File":  "src\\app\\pages\\hr\\LeaveManagementPage.tsx",
+        "Line":  184,
+        "Code":  "\u003cbutton"
+    },
+    {
+        "File":  "src\\app\\pages\\hr\\LeaveManagementPage.tsx",
+        "Line":  185,
+        "Code":  "onClick={() =\u003e setSelectedTab(\u0027requests\u0027)}"
+    },
+    {
+        "File":  "src\\app\\pages\\hr\\LeaveManagementPage.tsx",
+        "Line":  194,
+        "Code":  "\u003cbutton"
+    },
+    {
+        "File":  "src\\app\\pages\\hr\\LeaveManagementPage.tsx",
+        "Line":  195,
+        "Code":  "onClick={() =\u003e setSelectedTab(\u0027balances\u0027)}"
+    },
+    {
+        "File":  "src\\app\\pages\\hr\\LeaveManagementPage.tsx",
+        "Line":  204,
+        "Code":  "\u003cbutton"
+    },
+    {
+        "File":  "src\\app\\pages\\hr\\LeaveManagementPage.tsx",
+        "Line":  205,
+        "Code":  "onClick={() =\u003e setSelectedTab(\u0027calendar\u0027)}"
+    },
+    {
+        "File":  "src\\app\\pages\\hr\\LeaveManagementPage.tsx",
+        "Line":  273,
+        "Code":  "\u003cbutton className=\"text-green-600 hover:text-green-800\"\u003e"
+    },
+    {
+        "File":  "src\\app\\pages\\hr\\LeaveManagementPage.tsx",
+        "Line":  276,
+        "Code":  "\u003cbutton className=\"text-red-600 hover:text-red-800\"\u003e"
+    },
+    {
+        "File":  "src\\app\\pages\\hr\\PayrollPage.tsx",
+        "Line":  76,
+        "Code":  "\u003cbutton className=\"flex items-center gap-2 px-4 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700\"\u003e"
+    },
+    {
+        "File":  "src\\app\\pages\\hr\\PayrollPage.tsx",
+        "Line":  80,
+        "Code":  "\u003cbutton className=\"flex items-center gap-2 px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700\"\u003e"
+    },
+    {
+        "File":  "src\\app\\pages\\hr\\PayrollPage.tsx",
+        "Line":  189,
+        "Code":  "\u003cbutton className=\"text-blue-600 hover:text-blue-800\"\u003e"
+    },
+    {
+        "File":  "src\\app\\pages\\hr\\PayrollPage.tsx",
+        "Line":  193,
+        "Code":  "\u003cbutton className=\"text-green-600 hover:text-green-800\"\u003e"
+    },
+    {
+        "File":  "src\\app\\pages\\hr\\PayrollPage.tsx",
+        "Line":  230,
+        "Code":  "\u003cbutton className=\"px-6 py-3 bg-white text-blue-600 rounded-lg hover:bg-gray-100 font-medium\"\u003e"
+    },
+    {
+        "File":  "src\\app\\pages\\hr\\RecruitmentPage.tsx",
+        "Line":  107,
+        "Code":  "\u003cbutton className=\"flex items-center gap-2 px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700\"\u003e"
+    },
+    {
+        "File":  "src\\app\\pages\\hr\\RecruitmentPage.tsx",
+        "Line":  111,
+        "Code":  "\u003cbutton className=\"flex items-center gap-2 px-4 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700\"\u003e"
+    },
+    {
+        "File":  "src\\app\\pages\\hr\\RecruitmentPage.tsx",
+        "Line":  157,
+        "Code":  "\u003cbutton"
+    },
+    {
+        "File":  "src\\app\\pages\\hr\\RecruitmentPage.tsx",
+        "Line":  158,
+        "Code":  "onClick={() =\u003e setSelectedTab(\u0027candidates\u0027)}"
+    },
+    {
+        "File":  "src\\app\\pages\\hr\\RecruitmentPage.tsx",
+        "Line":  167,
+        "Code":  "\u003cbutton"
+    },
+    {
+        "File":  "src\\app\\pages\\hr\\RecruitmentPage.tsx",
+        "Line":  168,
+        "Code":  "onClick={() =\u003e setSelectedTab(\u0027jobs\u0027)}"
+    },
+    {
+        "File":  "src\\app\\pages\\hr\\RecruitmentPage.tsx",
+        "Line":  231,
+        "Code":  "\u003cbutton className=\"text-blue-600 hover:text-blue-800 text-sm font-medium\"\u003e"
+    },
+    {
+        "File":  "src\\app\\pages\\hr\\RecruitmentPage.tsx",
+        "Line":  234,
+        "Code":  "\u003cbutton className=\"text-green-600 hover:text-green-800 text-sm font-medium\"\u003e"
+    },
+    {
+        "File":  "src\\app\\pages\\hr\\RecruitmentPage.tsx",
+        "Line":  292,
+        "Code":  "\u003cbutton className=\"text-blue-600 hover:text-blue-800 text-sm font-medium\"\u003e"
+    },
+    {
+        "File":  "src\\app\\pages\\inventory\\InventoryManagementPage.tsx",
+        "Line":  143,
+        "Code":  "\u003cButton leftIcon={\u003cPlus className=\"w-5 h-5\" /\u003e} onClick={() =\u003e setIsAddModalOpen(true)}\u003e"
+    },
+    {
+        "File":  "src\\app\\pages\\inventory\\InventoryManagementPage.tsx",
+        "Line":  164,
+        "Code":  "\u003cButton variant=\"secondary\" leftIcon={\u003cFilter className=\"w-5 h-5\" /\u003e}\u003e"
+    },
+    {
+        "File":  "src\\app\\pages\\inventory\\InventoryManagementPage.tsx",
+        "Line":  169,
+        "Code":  "\u003cButton"
+    },
+    {
+        "File":  "src\\app\\pages\\inventory\\InventoryManagementPage.tsx",
+        "Line":  172,
+        "Code":  "onClick={handleExport}"
+    },
+    {
+        "File":  "src\\app\\pages\\inventory\\InventoryManagementPage.tsx",
+        "Line":  270,
+        "Code":  "\u003cbutton"
+    },
+    {
+        "File":  "src\\app\\pages\\inventory\\InventoryManagementPage.tsx",
+        "Line":  271,
+        "Code":  "onClick={() =\u003e {"
+    },
+    {
+        "File":  "src\\app\\pages\\inventory\\InventoryManagementPage.tsx",
+        "Line":  280,
+        "Code":  "\u003cbutton"
+    },
+    {
+        "File":  "src\\app\\pages\\inventory\\InventoryManagementPage.tsx",
+        "Line":  281,
+        "Code":  "onClick={() =\u003e {"
+    },
+    {
+        "File":  "src\\app\\pages\\inventory\\InventoryManagementPage.tsx",
+        "Line":  290,
+        "Code":  "\u003cbutton"
+    },
+    {
+        "File":  "src\\app\\pages\\inventory\\InventoryManagementPage.tsx",
+        "Line":  291,
+        "Code":  "onClick={() =\u003e {"
+    },
+    {
+        "File":  "src\\app\\pages\\inventory\\InventoryManagementPage.tsx",
+        "Line":  370,
+        "Code":  "\u003cButton variant=\"secondary\" fullWidth onClick={() =\u003e setIsAddModalOpen(false)}\u003e"
+    },
+    {
+        "File":  "src\\app\\pages\\inventory\\InventoryManagementPage.tsx",
+        "Line":  373,
+        "Code":  "\u003cButton fullWidth onClick={handleAdd} isLoading={isLoading}\u003e"
+    },
+    {
+        "File":  "src\\app\\pages\\inventory\\InventoryManagementPage.tsx",
+        "Line":  495,
+        "Code":  "\u003cButton variant=\"secondary\" fullWidth onClick={() =\u003e setIsEditModalOpen(false)}\u003e"
+    },
+    {
+        "File":  "src\\app\\pages\\inventory\\InventoryManagementPage.tsx",
+        "Line":  498,
+        "Code":  "\u003cButton fullWidth onClick={handleEdit} isLoading={isLoading}\u003e"
+    },
+    {
+        "File":  "src\\components\\EmptyState.tsx",
+        "Line":  32,
+        "Code":  "onClick={action.onClick}"
+    },
+    {
+        "File":  "src\\components\\ErrorState.tsx",
+        "Line":  25,
+        "Code":  "onClick={retry}"
+    },
+    {
+        "File":  "src\\components\\LanguageSwitcher.tsx",
+        "Line":  19,
+        "Code":  "\u003cbutton"
+    },
+    {
+        "File":  "src\\components\\LanguageSwitcher.tsx",
+        "Line":  20,
+        "Code":  "onClick={toggleLanguage}"
+    },
+    {
+        "File":  "src\\components\\LanguageSwitcher.tsx",
+        "Line":  31,
+        "Code":  "\u003cbutton"
+    },
+    {
+        "File":  "src\\components\\LanguageSwitcher.tsx",
+        "Line":  32,
+        "Code":  "onClick={toggleLanguage}"
+    },
+    {
+        "File":  "src\\components\\ProtectedRoute.tsx",
+        "Line":  98,
+        "Code":  "\u003cbutton"
+    },
+    {
+        "File":  "src\\components\\ProtectedRoute.tsx",
+        "Line":  99,
+        "Code":  "onClick={() =\u003e window.location.reload()}"
+    },
+    {
+        "File":  "src\\pages\\Login.tsx",
+        "Line":  126,
+        "Code":  "\u003cform onSubmit={handleSubmit} className=\"space-y-6\"\u003e"
+    },
+    {
+        "File":  "src\\pages\\admin\\AuditLogs.tsx",
+        "Line":  165,
+        "Code":  "\u003cbutton"
+    },
+    {
+        "File":  "src\\pages\\admin\\AuditLogs.tsx",
+        "Line":  167,
+        "Code":  "onClick={() =\u003e setFilter(f)}"
+    },
+    {
+        "File":  "src\\pages\\admin\\AuditLogs.tsx",
+        "Line":  212,
+        "Code":  "onClick={() =\u003e setSelectedLog(log)}"
+    },
+    {
+        "File":  "src\\pages\\admin\\AuditLogs.tsx",
+        "Line":  234,
+        "Code":  "\u003cbutton className=\"text-blue-600 hover:text-blue-900\"\u003eView Details â†’\u003c/button\u003e"
+    },
+    {
+        "File":  "src\\pages\\admin\\AuditLogs.tsx",
+        "Line":  255,
+        "Code":  "\u003cbutton"
+    },
+    {
+        "File":  "src\\pages\\admin\\AuditLogs.tsx",
+        "Line":  256,
+        "Code":  "onClick={() =\u003e setSelectedLog(null)}"
+    },
+    {
+        "File":  "src\\pages\\admin\\DeveloperMode.tsx",
+        "Line":  202,
+        "Code":  "\u003cbutton"
+    },
+    {
+        "File":  "src\\pages\\admin\\DeveloperMode.tsx",
+        "Line":  203,
+        "Code":  "onClick={testPermissionFunction}"
+    },
+    {
+        "File":  "src\\pages\\admin\\DeveloperMode.tsx",
+        "Line":  208,
+        "Code":  "\u003cbutton"
+    },
+    {
+        "File":  "src\\pages\\admin\\DeveloperMode.tsx",
+        "Line":  209,
+        "Code":  "onClick={testRoleFunction}"
+    },
+    {
+        "File":  "src\\pages\\admin\\DeveloperMode.tsx",
+        "Line":  214,
+        "Code":  "\u003cbutton"
+    },
+    {
+        "File":  "src\\pages\\admin\\DeveloperMode.tsx",
+        "Line":  215,
+        "Code":  "onClick={() =\u003e (window.location.href = \u0027/admin/audit-logs\u0027)}"
+    },
+    {
+        "File":  "src\\pages\\admin\\DeveloperMode.tsx",
+        "Line":  248,
+        "Code":  "\u003cbutton"
+    },
+    {
+        "File":  "src\\pages\\admin\\DeveloperMode.tsx",
+        "Line":  249,
+        "Code":  "onClick={logDeveloperAction}"
+    },
+    {
+        "File":  "src\\pages\\admin\\EmergencyAccess.tsx",
+        "Line":  222,
+        "Code":  "\u003cbutton"
+    },
+    {
+        "File":  "src\\pages\\admin\\EmergencyAccess.tsx",
+        "Line":  223,
+        "Code":  "onClick={grantEmergencyAccess}"
+    },
+    {
+        "File":  "src\\pages\\admin\\EmergencyAccess.tsx",
+        "Line":  296,
+        "Code":  "\u003cbutton"
+    },
+    {
+        "File":  "src\\pages\\admin\\EmergencyAccess.tsx",
+        "Line":  297,
+        "Code":  "onClick={() =\u003e revokeEmergencyAccess(log.id)}"
+    },
+    {
+        "File":  "src\\pages\\admin\\PermissionMatrix.tsx",
+        "Line":  133,
+        "Code":  "\u003cbutton"
+    },
+    {
+        "File":  "src\\pages\\admin\\PermissionMatrix.tsx",
+        "Line":  135,
+        "Code":  "onClick={() =\u003e setSelectedCategory(cat)}"
+    },
+    {
+        "File":  "src\\pages\\admin\\RolesPermissions.tsx",
+        "Line":  148,
+        "Code":  "\u003cbutton"
+    },
+    {
+        "File":  "src\\pages\\admin\\RolesPermissions.tsx",
+        "Line":  150,
+        "Code":  "onClick={() =\u003e setSelectedRole(role)}"
+    },
+    {
+        "File":  "src\\pages\\admin\\UserManagement.tsx",
+        "Line":  120,
+        "Code":  "\u003cbutton className=\"px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition\"\u003e"
+    },
+    {
+        "File":  "src\\pages\\admin\\UserManagement.tsx",
+        "Line":  231,
+        "Code":  "\u003cbutton className=\"text-blue-600 hover:text-blue-900\"\u003eEdit\u003c/button\u003e"
+    },
+    {
+        "File":  "src\\pages\\admin\\UserManagement.tsx",
+        "Line":  234,
+        "Code":  "\u003cbutton className=\"text-red-600 hover:text-red-900\"\u003eDelete\u003c/button\u003e"
+    }
+]

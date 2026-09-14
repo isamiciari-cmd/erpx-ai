@@ -158,7 +158,12 @@ export default function AIFinanceAssistantPage() {
               </div>
               <div className="flex items-center justify-between">
                 <span className="text-xs font-medium">Confidence: {insight.confidence}%</span>
-                <button className="text-sm font-medium hover:underline">View Details →</button>
+                <button
+                  onClick={() => alert('View Details coming soon')}
+                  className="text-sm font-medium hover:underline"
+                >
+                  View Details →
+                </button>
               </div>
             </div>
           );

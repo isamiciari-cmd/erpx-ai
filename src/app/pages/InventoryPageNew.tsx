@@ -144,6 +144,7 @@ export default function InventoryPageNew() {
           <motion.button
             whileHover={{ scale: 1.05 }}
             whileTap={{ scale: 0.95 }}
+            onClick={() => alert('Export coming soon')}
             className="flex items-center gap-2 px-4 py-2 bg-gray-800 hover:bg-gray-700 rounded-xl text-white font-medium transition-all"
           >
             <Download className="w-4 h-4" />
@@ -211,6 +212,7 @@ export default function InventoryPageNew() {
         <motion.button
           whileHover={{ scale: 1.05 }}
           whileTap={{ scale: 0.95 }}
+          onClick={() => alert('Filter coming soon')}
           className="flex items-center gap-2 px-4 py-2 bg-gray-800 hover:bg-gray-700 rounded-xl text-white font-medium"
         >
           <Filter className="w-4 h-4" />

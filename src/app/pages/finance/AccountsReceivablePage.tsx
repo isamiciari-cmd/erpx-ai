@@ -114,7 +114,10 @@ export default function AccountsReceivablePage() {
           <h1 className="text-3xl font-bold mb-2">Accounts Receivable</h1>
           <p className="text-gray-600">Track customer invoices and payments</p>
         </div>
-        <button className="flex items-center gap-2 px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700">
+        <button
+          onClick={() => alert('Export Report coming soon')}
+          className="flex items-center gap-2 px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700"
+        >
           <Download className="w-5 h-5" />
           Export Report
         </button>
@@ -310,7 +313,10 @@ export default function AccountsReceivablePage() {
                         <StatusBadge status={item.status} daysOverdue={item.daysOverdue} />
                       </td>
                       <td className="px-4 py-3">
-                        <button className="text-sm text-blue-600 hover:text-blue-800 font-medium">
+                        <button
+                          onClick={() => alert('Record Payment coming soon')}
+                          className="text-sm text-blue-600 hover:text-blue-800 font-medium"
+                        >
                           Record Payment
                         </button>
                       </td>
@@ -370,7 +376,10 @@ export default function AccountsReceivablePage() {
                         ${customer.balance.toLocaleString()}
                       </td>
                       <td className="px-4 py-3">
-                        <button className="text-sm text-blue-600 hover:text-blue-800 font-medium">
+                        <button
+                          onClick={() => alert('View Statement coming soon')}
+                          className="text-sm text-blue-600 hover:text-blue-800 font-medium"
+                        >
                           View Statement
                         </button>
                       </td>

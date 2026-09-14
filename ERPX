@@ -13,6 +13,18 @@ export default function LoginScreen() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
 
+  const handleForgotPassword = () => {
+    Alert.alert(
+      "Reset Password",
+      "A password reset link will be sent to your email.",
+      [{ text: "OK" }]
+    );
+  };
+
+  const handleRegister = () => {
+    Alert.alert("Create Account", "Registration screen coming soon.");
+  };
+
   const handleLogin = () => {
     if (!email || !password) {
       Alert.alert("Error", "Please enter your email and password.");
@@ -67,7 +79,7 @@ export default function LoginScreen() {
         {/* Forgot Password */}
         <TouchableOpacity
           style={styles.forgotButton}
-          onPress={() => console.log("Forgot password")}
+          onPress={handleForgotPassword}
         >
           <Text style={styles.forgotText}>
             Forgot Password?
@@ -90,9 +102,7 @@ export default function LoginScreen() {
             Don't have an account?
           </Text>
 
-          <TouchableOpacity
-            onPress={() => console.log("Register")}
-          >
+          <TouchableOpacity onPress={handleRegister}>
             <Text style={styles.registerText}>
               Create Account
             </Text>

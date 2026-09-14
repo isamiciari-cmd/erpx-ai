@@ -98,7 +98,10 @@ export default function EmployeeListPage() {
           <h1 className="text-3xl font-bold mb-2">Employee Management</h1>
           <p className="text-gray-600">Manage employee information and records</p>
         </div>
-        <button className="flex items-center gap-2 px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700">
+        <button
+          onClick={() => alert('Add Employee coming soon')}
+          className="flex items-center gap-2 px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700"
+        >
           <Plus className="w-5 h-5" />
           Add Employee
         </button>
@@ -246,13 +249,25 @@ export default function EmployeeListPage() {
                   </td>
                   <td className="px-6 py-4 whitespace-nowrap text-sm">
                     <div className="flex items-center gap-2">
-                      <button className="text-blue-600 hover:text-blue-800" title="View">
+                      <button
+                        onClick={() => alert('View employee coming soon')}
+                        className="text-blue-600 hover:text-blue-800"
+                        title="View"
+                      >
                         <Eye className="w-4 h-4" />
                       </button>
-                      <button className="text-green-600 hover:text-green-800" title="Edit">
+                      <button
+                        onClick={() => alert('Edit employee coming soon')}
+                        className="text-green-600 hover:text-green-800"
+                        title="Edit"
+                      >
                         <Edit className="w-4 h-4" />
                       </button>
-                      <button className="text-red-600 hover:text-red-800" title="Delete">
+                      <button
+                        onClick={() => alert('Delete employee coming soon')}
+                        className="text-red-600 hover:text-red-800"
+                        title="Delete"
+                      >
                         <Trash2 className="w-4 h-4" />
                       </button>
                     </div>
@@ -266,7 +281,10 @@ export default function EmployeeListPage() {
 
       {/* Export Button */}
       <div className="flex justify-end">
-        <button className="flex items-center gap-2 px-4 py-2 border border-gray-300 rounded-lg hover:bg-gray-50">
+        <button
+          onClick={() => alert('Export to Excel coming soon')}
+          className="flex items-center gap-2 px-4 py-2 border border-gray-300 rounded-lg hover:bg-gray-50"
+        >
           <Download className="w-5 h-5" />
           Export to Excel
         </button>

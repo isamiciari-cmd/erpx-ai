@@ -1,0 +1,163 @@
+﻿
+  DashboardPage-Audit.txt:42:
+  DashboardPage-Audit.txt:43:// Enhanced Sample Data
+  DashboardPage-Audit.txt:44:const energyData = [
+> DashboardPage-Audit.txt:45:  { time: '00:00', usage: 120, cost: 45, predicted: 125 },
+> DashboardPage-Audit.txt:46:  { time: '04:00', usage: 95, cost: 35, predicted: 98 },
+> DashboardPage-Audit.txt:47:  { time: '08:00', usage: 180, cost: 68, predicted: 175 },
+> DashboardPage-Audit.txt:48:  { time: '12:00', usage: 220, cost: 85, predicted: 225 },
+> DashboardPage-Audit.txt:49:  { time: '16:00', usage: 195, cost: 72, predicted: 190 },
+> DashboardPage-Audit.txt:50:  { time: '20:00', usage: 165, cost: 60, predicted: 170 },
+> DashboardPage-Audit.txt:51:  { time: '23:00', usage: 140, cost: 52, predicted: 142 },
+  DashboardPage-Audit.txt:52:];
+  DashboardPage-Audit.txt:53:
+  DashboardPage-Audit.txt:54:const revenueData = [
+  DashboardPage-Audit.txt:55:  { month: 'Jan', revenue: 145000, expenses: 95000, profit: 50000 },
+  DashboardPage-Audit.txt:56:  { month: 'Feb', revenue: 162000, expenses: 102000, profit: 60000 },
+  DashboardPage-Audit.txt:110:  { label: 'Response Time', value: '2.1s', change: '-12%', trend: 'up', icon: Bolt },
+  DashboardPage-Audit.txt:111:];
+  DashboardPage-Audit.txt:112:
+> DashboardPage-Audit.txt:113:export default function DashboardPage() {
+  DashboardPage-Audit.txt:114:  const { t } = useTranslation();
+  DashboardPage-Audit.txt:115:  const [aiChatOpen, setAiChatOpen] = useState(false);
+  DashboardPage-Audit.txt:116:  const [aiChatMinimized, setAiChatMinimized] = useState(false);
+  DashboardPage-Audit.txt:117:  const [chatMessages, setChatMessages] = useState([
+  DashboardPage-Audit.txt:118:    {
+  DashboardPage-Audit.txt:149:    return () => clearInterval(interval);
+  DashboardPage-Audit.txt:150:  }, []);
+  DashboardPage-Audit.txt:151:
+> DashboardPage-Audit.txt:152:  const handleSendMessage = () => {
+  DashboardPage-Audit.txt:153:    if (!chatInput.trim()) return;
+  DashboardPage-Audit.txt:154:    setChatMessages([...chatMessages, { role: 'user', content: chatInput }]);
+  DashboardPage-Audit.txt:155:    setChatInput('');
+  DashboardPage-Audit.txt:156:
+  DashboardPage-Audit.txt:157:    setTimeout(() => {
+  DashboardPage-Audit.txt:209:
+  DashboardPage-Audit.txt:210:          <select
+  DashboardPage-Audit.txt:211:            value={selectedTimeRange}
+> DashboardPage-Audit.txt:212:            onChange={(e) => setSelectedTimeRange(e.target.value)}
+  DashboardPage-Audit.txt:213:            className="px-4 py-2.5 bg-gray-800/50 border border-gray-700/50 rounded-xl text-sm text-white font-medium focus:outline-none focus:ring-2 
+focus:ring-blue-500/50 focus:border-blue-500/50 cursor-pointer hover:bg-gray-800/70 transition-all"
+  DashboardPage-Audit.txt:214:          >
+  DashboardPage-Audit.txt:215:            <option value="24h">Last 24 Hours</option>
+  DashboardPage-Audit.txt:216:            <option value="7d">Last 7 Days</option>
+  DashboardPage-Audit.txt:217:            <option value="30d">Last 30 Days</option>
+  DashboardPage-Audit.txt:224:            className="px-4 py-2.5 bg-gray-800/50 border border-gray-700/50 rounded-xl text-sm text-white font-medium hover:bg-gray-800/70 transition-all 
+flex items-center gap-2"
+  DashboardPage-Audit.txt:225:          >
+  DashboardPage-Audit.txt:226:            <Download className="w-4 h-4" />
+> DashboardPage-Audit.txt:227:            Export
+  DashboardPage-Audit.txt:228:          </motion.button>
+  DashboardPage-Audit.txt:229:
+  DashboardPage-Audit.txt:230:          <motion.button
+  DashboardPage-Audit.txt:231:            whileHover={{ scale: 1.02 }}
+  DashboardPage-Audit.txt:232:            whileTap={{ scale: 0.98 }}
+  DashboardPage-Audit.txt:233:            className="px-4 py-2.5 bg-gradient-to-r from-blue-500 to-cyan-500 rounded-xl text-sm text-white font-semibold hover:from-blue-600 
+hover:to-cyan-600 transition-all flex items-center gap-2 shadow-lg shadow-blue-500/25"
+  DashboardPage-Audit.txt:234:          >
+  DashboardPage-Audit.txt:235:            <Sparkles className="w-4 h-4" />
+> DashboardPage-Audit.txt:236:            AI Report
+  DashboardPage-Audit.txt:237:          </motion.button>
+  DashboardPage-Audit.txt:238:        </div>
+  DashboardPage-Audit.txt:239:      </div>
+  DashboardPage-Audit.txt:240:
+  DashboardPage-Audit.txt:241:      {/* Premium KPI Cards */}
+  DashboardPage-Audit.txt:323:            icon={Zap}
+  DashboardPage-Audit.txt:324:            actions={
+  DashboardPage-Audit.txt:325:              <div className="flex items-center gap-2">
+> DashboardPage-Audit.txt:326:                <button className="text-xs text-gray-400 hover:text-white transition-colors">
+  DashboardPage-Audit.txt:327:                  Auto
+  DashboardPage-Audit.txt:328:                </button>
+> DashboardPage-Audit.txt:329:                <button className="text-xs text-blue-400 font-semibold">Predicted</button>
+  DashboardPage-Audit.txt:330:              </div>
+  DashboardPage-Audit.txt:331:            }
+  DashboardPage-Audit.txt:332:          >
+  DashboardPage-Audit.txt:333:            <ResponsiveContainer width="100%" height={320}>
+  DashboardPage-Audit.txt:334:              <ComposedChart data={energyData}>
+  DashboardPage-Audit.txt:363:                />
+  DashboardPage-Audit.txt:364:                <Line
+  DashboardPage-Audit.txt:365:                  type="monotone"
+> DashboardPage-Audit.txt:366:                  dataKey="predicted"
+  DashboardPage-Audit.txt:367:                  stroke="#8B5CF6"
+  DashboardPage-Audit.txt:368:                  strokeWidth={2}
+  DashboardPage-Audit.txt:369:                  strokeDasharray="5 5"
+  DashboardPage-Audit.txt:370:                  dot={false}
+  DashboardPage-Audit.txt:371:                  name="AI Prediction"
+  DashboardPage-Audit.txt:380:                <p className="text-xl font-bold text-white">165 kWh</p>
+  DashboardPage-Audit.txt:381:              </div>
+  DashboardPage-Audit.txt:382:              <div className="text-center">
+> DashboardPage-Audit.txt:383:                <p className="text-xs text-gray-400 mb-1">Predicted Peak</p>
+  DashboardPage-Audit.txt:384:                <p className="text-xl font-bold text-purple-400">225 kWh</p>
+  DashboardPage-Audit.txt:385:              </div>
+  DashboardPage-Audit.txt:386:              <div className="text-center">
+  DashboardPage-Audit.txt:387:                <p className="text-xs text-gray-400 mb-1">Savings</p>
+  DashboardPage-Audit.txt:388:                <p className="text-xl font-bold text-green-400">$2.4K</p>
+  DashboardPage-Audit.txt:483:        <div className="space-y-8">
+  DashboardPage-Audit.txt:484:          {/* AI Recommended Actions */}
+  DashboardPage-Audit.txt:485:          <PremiumCard
+> DashboardPage-Audit.txt:486:            title="AI Recommendations"
+  DashboardPage-Audit.txt:487:            subtitle="Smart actions to optimize operations"
+  DashboardPage-Audit.txt:488:            icon={Brain}
+  DashboardPage-Audit.txt:489:            highlight
+  DashboardPage-Audit.txt:490:          >
+  DashboardPage-Audit.txt:491:            <div className="space-y-4">
+  DashboardPage-Audit.txt:553:                    whileTap={{ scale: 0.95 }}
+  DashboardPage-Audit.txt:554:                    className="w-full mt-4 px-4 py-2 bg-white/5 hover:bg-white/10 border border-white/10 rounded-xl text-xs font-semibold text-white 
+transition-all"
+  DashboardPage-Audit.txt:555:                  >
+> DashboardPage-Audit.txt:556:                    Apply Recommendation
+  DashboardPage-Audit.txt:557:                  </motion.button>
+  DashboardPage-Audit.txt:558:                </motion.div>
+  DashboardPage-Audit.txt:559:              ))}
+  DashboardPage-Audit.txt:560:            </div>
+  DashboardPage-Audit.txt:561:          </PremiumCard>
+  DashboardPage-Audit.txt:619:                    <motion.button
+  DashboardPage-Audit.txt:620:                      whileHover={{ scale: 1.1 }}
+  DashboardPage-Audit.txt:621:                      whileTap={{ scale: 0.9 }}
+> DashboardPage-Audit.txt:622:                      onClick={() => setAiChatMinimized(!aiChatMinimized)}
+  DashboardPage-Audit.txt:623:                      className="w-8 h-8 rounded-xl bg-gray-800/50 hover:bg-gray-800 flex items-center justify-center text-gray-400 hover:text-white 
+transition-all"
+  DashboardPage-Audit.txt:624:                    >
+  DashboardPage-Audit.txt:625:                      {aiChatMinimized ? <Maximize2 size={16} /> : <Minimize2 size={16} />}
+  DashboardPage-Audit.txt:626:                    </motion.button>
+  DashboardPage-Audit.txt:627:                    <motion.button
+  DashboardPage-Audit.txt:628:                      whileHover={{ scale: 1.1 }}
+  DashboardPage-Audit.txt:629:                      whileTap={{ scale: 0.9 }}
+> DashboardPage-Audit.txt:630:                      onClick={() => setAiChatOpen(false)}
+  DashboardPage-Audit.txt:631:                      className="w-8 h-8 rounded-xl bg-gray-800/50 hover:bg-red-500/20 flex items-center justify-center text-gray-400 hover:text-red-400 
+transition-all"
+  DashboardPage-Audit.txt:632:                    >
+  DashboardPage-Audit.txt:633:                      <X size={16} />
+  DashboardPage-Audit.txt:634:                    </motion.button>
+  DashboardPage-Audit.txt:635:                  </div>
+  DashboardPage-Audit.txt:667:                    <input
+  DashboardPage-Audit.txt:668:                      type="text"
+  DashboardPage-Audit.txt:669:                      value={chatInput}
+> DashboardPage-Audit.txt:670:                      onChange={(e) => setChatInput(e.target.value)}
+> DashboardPage-Audit.txt:671:                      onKeyPress={(e) => e.key === 'Enter' && handleSendMessage()}
+  DashboardPage-Audit.txt:672:                      placeholder="Ask me anything..."
+  DashboardPage-Audit.txt:673:                      className="flex-1 px-4 py-3 bg-gray-800/50 border border-gray-700/50 rounded-2xl text-white text-sm focus:outline-none focus:ring-2 
+focus:ring-blue-500/50 focus:border-blue-500/50 placeholder-gray-500"
+  DashboardPage-Audit.txt:674:                    />
+  DashboardPage-Audit.txt:675:                    <motion.button
+  DashboardPage-Audit.txt:676:                      whileHover={{ scale: 1.05 }}
+  DashboardPage-Audit.txt:677:                      whileTap={{ scale: 0.95 }}
+> DashboardPage-Audit.txt:678:                      onClick={handleSendMessage}
+  DashboardPage-Audit.txt:679:                      className="w-11 h-11 bg-gradient-to-br from-blue-500 to-purple-500 rounded-2xl flex items-center justify-center text-white 
+shadow-lg shadow-blue-500/25 hover:shadow-blue-500/40 transition-all"
+  DashboardPage-Audit.txt:680:                    >
+  DashboardPage-Audit.txt:681:                      <Send size={18} />
+  DashboardPage-Audit.txt:682:                    </motion.button>
+  DashboardPage-Audit.txt:683:                  </div>
+  DashboardPage-Audit.txt:695:          animate={{ scale: 1, rotate: 0 }}
+  DashboardPage-Audit.txt:696:          whileHover={{ scale: 1.1, y: -4 }}
+  DashboardPage-Audit.txt:697:          whileTap={{ scale: 0.95 }}
+> DashboardPage-Audit.txt:698:          onClick={() => setAiChatOpen(true)}
+  DashboardPage-Audit.txt:699:          className="fixed bottom-8 right-8 w-16 h-16 bg-gradient-to-br from-blue-500 via-purple-500 to-pink-500 rounded-2xl flex items-center 
+justify-center text-white shadow-2xl shadow-blue-500/50 hover:shadow-blue-500/70 transition-all z-50 group"
+  DashboardPage-Audit.txt:700:        >
+  DashboardPage-Audit.txt:701:          <MessageSquare size={28} className="group-hover:scale-110 transition-transform" />
+  DashboardPage-Audit.txt:702:          <motion.div
+  DashboardPage-Audit.txt:703:            animate={{ scale: [1, 1.2, 1] }}
+
+

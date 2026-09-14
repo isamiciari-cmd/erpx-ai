@@ -83,7 +83,10 @@ export default function FixedAssetsPage() {
           <h1 className="text-3xl font-bold mb-2">Fixed Assets</h1>
           <p className="text-gray-600">Manage fixed assets, depreciation, and maintenance</p>
         </div>
-        <button className="flex items-center gap-2 px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700">
+        <button
+          onClick={() => alert('Add Asset coming soon')}
+          className="flex items-center gap-2 px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700"
+        >
           <Plus className="w-5 h-5" />
           Add Asset
         </button>

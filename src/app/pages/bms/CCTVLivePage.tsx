@@ -196,6 +196,7 @@ export default function CCTVLivePage() {
           <motion.button
             whileHover={{ scale: 1.05 }}
             whileTap={{ scale: 0.95 }}
+            onClick={() => alert('Settings coming soon')}
             className="px-4 py-2.5 bg-gray-800/50 border border-gray-700/50 rounded-xl text-sm text-white font-semibold hover:bg-gray-800/70 transition-all flex items-center gap-2"
           >
             <Settings className="w-4 h-4" />

@@ -231,7 +231,10 @@ export default function FoodDeliveryDashboard() {
                   <h2 className="text-xl sm:text-2xl font-bold text-gray-900 dark:text-white">
                     Popular Dishes
                   </h2>
-                  <button className="text-sm font-semibold text-yellow-600 hover:text-yellow-700 flex items-center gap-1">
+                  <button
+                    onClick={() => alert('View all popular dishes coming soon')}
+                    className="text-sm font-semibold text-yellow-600 hover:text-yellow-700 flex items-center gap-1"
+                  >
                     View All <ChevronRight size={16} />
                   </button>
                 </div>
@@ -253,7 +256,10 @@ export default function FoodDeliveryDashboard() {
                   <h2 className="text-xl sm:text-2xl font-bold text-gray-900 dark:text-white">
                     Recent Orders
                   </h2>
-                  <button className="text-sm font-semibold text-yellow-600 hover:text-yellow-700">
+                  <button
+                    onClick={() => alert('View all orders coming soon')}
+                    className="text-sm font-semibold text-yellow-600 hover:text-yellow-700"
+                  >
                     View All
                   </button>
                 </div>

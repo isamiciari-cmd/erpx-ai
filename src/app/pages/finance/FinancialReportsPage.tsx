@@ -176,9 +176,12 @@ export default function FinancialReportsPage() {
                   >
                     <div className="flex items-start justify-between mb-3">
                       <div className="text-3xl">{report.icon}</div>
-                      <button className="text-blue-600 hover:text-blue-800">
-                        <Download className="w-5 h-5" />
-                      </button>
+                    <button
+                      onClick={() => alert('Download coming soon')}
+                      className="text-blue-600 hover:text-blue-800"
+                    >
+                      <Download className="w-5 h-5" />
+                    </button>
                     </div>
                     <h3 className="font-semibold mb-1">{report.name}</h3>
                     <p className="text-sm text-gray-600">{report.description}</p>
@@ -194,15 +197,24 @@ export default function FinancialReportsPage() {
         <h2 className="text-2xl font-bold mb-4">Financial Statement Package</h2>
         <p className="mb-6">Generate a complete set of financial statements for the period</p>
         <div className="flex flex-wrap gap-3">
-          <button className="flex items-center gap-2 px-6 py-3 bg-white text-blue-600 rounded-lg hover:bg-gray-100 font-medium">
+          <button
+            onClick={() => alert('Full Package coming soon')}
+            className="flex items-center gap-2 px-6 py-3 bg-white text-blue-600 rounded-lg hover:bg-gray-100 font-medium"
+          >
             <FileText className="w-5 h-5" />
             Full Package (PDF)
           </button>
-          <button className="flex items-center gap-2 px-6 py-3 bg-white text-blue-600 rounded-lg hover:bg-gray-100 font-medium">
+          <button
+            onClick={() => alert('Excel Export coming soon')}
+            className="flex items-center gap-2 px-6 py-3 bg-white text-blue-600 rounded-lg hover:bg-gray-100 font-medium"
+          >
             <Download className="w-5 h-5" />
             Excel Export
           </button>
-          <button className="flex items-center gap-2 px-6 py-3 bg-white text-blue-600 rounded-lg hover:bg-gray-100 font-medium">
+          <button
+            onClick={() => alert('Schedule Report coming soon')}
+            className="flex items-center gap-2 px-6 py-3 bg-white text-blue-600 rounded-lg hover:bg-gray-100 font-medium"
+          >
             <Calendar className="w-5 h-5" />
             Schedule Report
           </button>

@@ -250,10 +250,13 @@ export default function CashBankManagementPage() {
                     </div>
                     <div className="text-right">
                       <p className="text-2xl font-bold">${account.balance.toLocaleString()}</p>
-                      <button className="mt-2 text-sm text-blue-600 hover:text-blue-800 flex items-center gap-1">
-                        <RefreshCw className="w-4 h-4" />
-                        Reconcile
-                      </button>
+                    <button
+                      onClick={() => alert('Reconcile coming soon')}
+                      className="mt-2 text-sm text-blue-600 hover:text-blue-800 flex items-center gap-1"
+                    >
+                      <RefreshCw className="w-4 h-4" />
+                      Reconcile
+                    </button>
                     </div>
                   </div>
                 </div>

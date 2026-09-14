@@ -273,7 +273,10 @@ export default function InventoryPage() {
         >
           <div className="flex items-center justify-between mb-4">
             <h3 className="text-lg font-semibold text-white">Stock Value Trend</h3>
-            <button className="text-gray-400 hover:text-white">
+            <button
+              onClick={() => alert('Refresh coming soon')}
+              className="text-gray-400 hover:text-white"
+            >
               <RefreshCw className="w-4 h-4" />
             </button>
           </div>

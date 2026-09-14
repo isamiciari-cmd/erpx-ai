@@ -422,6 +422,7 @@ export default function EmployeesPage() {
                       <motion.button
                         whileHover={{ scale: 1.1 }}
                         whileTap={{ scale: 0.9 }}
+                        onClick={() => alert('Edit employee coming soon')}
                         className="p-2 hover:bg-blue-500/10 rounded-lg text-gray-400 hover:text-blue-400"
                       >
                         <Edit className="w-4 h-4" />

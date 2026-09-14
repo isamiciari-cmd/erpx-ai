@@ -117,6 +117,21 @@ export default function CashierPOSPage() {
     }
   };
 
+  const promptBarcodeInput = () => {
+    const barcode = prompt('Enter barcode:');
+    if (barcode) {
+      setBarcodeInput(barcode);
+      const product = products.find(
+        (p) => p.sku.toLowerCase() === barcode.toLowerCase(),
+      );
+      if (product) {
+        addToCart(product);
+      } else {
+        alert('Product not found');
+      }
+    }
+  };
+
   const handleCheckout = async () => {
     if (cart.length === 0) {
       alert('Cart is empty');
@@ -129,7 +144,6 @@ export default function CashierPOSPage() {
     }
 
     setIsProcessing(true);
-
     try {
       // Prepare sale items
       const saleItems: SaleItem[] = cart.map((item) => ({
@@ -195,7 +209,10 @@ export default function CashierPOSPage() {
                 className="w-full pl-12 pr-4 py-3 bg-white/5 border border-white/10 rounded-xl text-white placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-blue-500"
               />
             </div>
-            <button className="px-6 py-3 bg-blue-500/20 hover:bg-blue-500/30 border border-blue-500/50 rounded-xl text-blue-400 flex items-center gap-2 transition-all">
+            <button
+              onClick={() => promptBarcodeInput()}
+              className="px-6 py-3 bg-blue-500/20 hover:bg-blue-500/30 border border-blue-500/50 rounded-xl text-blue-400 flex items-center gap-2 transition-all"
+            >
               <Barcode className="w-5 h-5" />
               Scan
             </button>
@@ -373,7 +390,10 @@ export default function CashierPOSPage() {
               <XCircle className="w-4 h-4" />
               <span className="text-xs">Cancel</span>
             </button>
-            <button className="p-3 bg-gray-800 hover:bg-gray-700 border border-gray-700 rounded-lg text-white transition-all flex items-center justify-center gap-1">
+            <button
+              onClick={() => alert('Receipt printing...')}
+              className="p-3 bg-gray-800 hover:bg-gray-700 border border-gray-700 rounded-lg text-white transition-all flex items-center justify-center gap-1"
+            >
               <Printer className="w-4 h-4" />
               <span className="text-xs">Print</span>
             </button>

@@ -170,7 +170,10 @@ export default function TrialBalancePage() {
           <h1 className="text-3xl font-bold mb-2">Trial Balance</h1>
           <p className="text-gray-600">Verify debits and credits are balanced</p>
         </div>
-        <button className="flex items-center gap-2 px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700">
+        <button
+          onClick={() => alert('Export PDF coming soon')}
+          className="flex items-center gap-2 px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700"
+        >
           <Download className="w-5 h-5" />
           Export PDF
         </button>

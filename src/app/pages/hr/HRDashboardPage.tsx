@@ -129,7 +129,10 @@ export default function HRDashboardPage() {
                 />
                 <span className="font-medium">{alert.message}</span>
               </div>
-              <button className="px-4 py-2 bg-white border border-gray-300 rounded-lg hover:bg-gray-50 text-sm font-medium">
+              <button
+                onClick={() => alert(`${alert.action} coming soon`)}
+                className="px-4 py-2 bg-white border border-gray-300 rounded-lg hover:bg-gray-50 text-sm font-medium"
+              >
                 {alert.action}
               </button>
             </div>

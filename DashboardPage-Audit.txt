@@ -1,4 +1,4 @@
-import { useState, useEffect, useCallback } from 'react';
+﻿import { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'motion/react';
 import { useTranslation } from 'react-i18next';
 import { LanguageSwitcher } from '../../components/LanguageSwitcher';
@@ -123,7 +123,6 @@ export default function DashboardPage() {
   ]);
   const [chatInput, setChatInput] = useState('');
   const [selectedTimeRange, setSelectedTimeRange] = useState('24h');
-  const [chartMode, setChartMode] = useState<'auto' | 'predicted'>('predicted');
 
   // Real-time stats with smoother animations
   const [stats, setStats] = useState({
@@ -166,32 +165,6 @@ export default function DashboardPage() {
       ]);
     }, 1200);
   };
-
-  const handleExport = useCallback(() => {
-    console.log('[Dashboard] Export data clicked');
-  }, []);
-
-  const handleAIReport = useCallback(() => {
-    console.log('[Dashboard] AI Report clicked');
-  }, []);
-
-  const handleTimeRangeChange = useCallback((range: string) => {
-    setSelectedTimeRange(range);
-    console.log('[Dashboard] Time range changed to:', range);
-  }, []);
-
-  const handleChartModeChange = useCallback((mode: 'auto' | 'predicted') => {
-    setChartMode(mode);
-    console.log('[Dashboard] Chart mode changed to:', mode);
-  }, []);
-
-  const handleApplyRecommendation = useCallback((id: number) => {
-    console.log('[Dashboard] Apply recommendation:', id);
-  }, []);
-
-  const handleTemperatureAdjust = useCallback((zone: string, delta: number) => {
-    console.log('[Dashboard] Temperature adjust:', zone, delta > 0 ? '+' : '', delta, '°C');
-  }, []);
 
   const CustomTooltip = ({ active, payload, label }: any) => {
     if (active && payload && payload.length) {
@@ -248,7 +221,6 @@ export default function DashboardPage() {
           <motion.button
             whileHover={{ scale: 1.02 }}
             whileTap={{ scale: 0.98 }}
-            onClick={handleExport}
             className="px-4 py-2.5 bg-gray-800/50 border border-gray-700/50 rounded-xl text-sm text-white font-medium hover:bg-gray-800/70 transition-all flex items-center gap-2"
           >
             <Download className="w-4 h-4" />
@@ -258,7 +230,6 @@ export default function DashboardPage() {
           <motion.button
             whileHover={{ scale: 1.02 }}
             whileTap={{ scale: 0.98 }}
-            onClick={handleAIReport}
             className="px-4 py-2.5 bg-gradient-to-r from-blue-500 to-cyan-500 rounded-xl text-sm text-white font-semibold hover:from-blue-600 hover:to-cyan-600 transition-all flex items-center gap-2 shadow-lg shadow-blue-500/25"
           >
             <Sparkles className="w-4 h-4" />
@@ -352,18 +323,10 @@ export default function DashboardPage() {
             icon={Zap}
             actions={
               <div className="flex items-center gap-2">
-                <button
-                  className={`text-xs transition-colors ${chartMode === 'auto' ? 'text-blue-400 font-semibold' : 'text-gray-400 hover:text-white'}`}
-                  onClick={() => handleChartModeChange('auto')}
-                >
+                <button className="text-xs text-gray-400 hover:text-white transition-colors">
                   Auto
                 </button>
-                <button
-                  className={`text-xs transition-colors ${chartMode === 'predicted' ? 'text-blue-400 font-semibold' : 'text-gray-400 hover:text-white'}`}
-                  onClick={() => handleChartModeChange('predicted')}
-                >
-                  Predicted
-                </button>
+                <button className="text-xs text-blue-400 font-semibold">Predicted</button>
               </div>
             }
           >
@@ -588,7 +551,6 @@ export default function DashboardPage() {
                   <motion.button
                     whileHover={{ scale: 1.05 }}
                     whileTap={{ scale: 0.95 }}
-                    onClick={() => handleApplyRecommendation(action.id)}
                     className="w-full mt-4 px-4 py-2 bg-white/5 hover:bg-white/10 border border-white/10 rounded-xl text-xs font-semibold text-white transition-all"
                   >
                     Apply Recommendation
@@ -614,9 +576,9 @@ export default function DashboardPage() {
           {/* Quick HVAC Control */}
           <PremiumCard title="HVAC Quick Control" subtitle="Adjust temperature by zone" icon={Wind}>
             <div className="space-y-4">
-              <HVACControl zone="Floor 1 - Office" temp={22} target={23} onAdjust={handleTemperatureAdjust} />
-              <HVACControl zone="Floor 2 - Conference" temp={24} target={22} onAdjust={handleTemperatureAdjust} />
-              <HVACControl zone="Lobby" temp={21} target={21} onAdjust={handleTemperatureAdjust} />
+              <HVACControl zone="Floor 1 - Office" temp={22} target={23} />
+              <HVACControl zone="Floor 2 - Conference" temp={24} target={22} />
+              <HVACControl zone="Lobby" temp={21} target={21} />
             </div>
           </PremiumCard>
         </div>
@@ -650,7 +612,7 @@ export default function DashboardPage() {
                     </div>
                     <div>
                       <h3 className="text-white font-bold text-base">AI Assistant</h3>
-                      <p className="text-xs text-gray-400 font-medium">Online • Ready to help</p>
+                      <p className="text-xs text-gray-400 font-medium">Online â€¢ Ready to help</p>
                     </div>
                   </div>
                   <div className="flex items-center gap-2">
@@ -908,10 +870,9 @@ interface HVACControlProps {
   zone: string;
   temp: number;
   target: number;
-  onAdjust: (zone: string, delta: number) => void;
 }
 
-function HVACControl({ zone, temp, target, onAdjust }: HVACControlProps) {
+function HVACControl({ zone, temp, target }: HVACControlProps) {
   return (
     <div className="p-4 bg-gray-800/30 rounded-2xl border border-gray-700/50 hover:border-gray-600/50 transition-all">
       <div className="flex items-center justify-between mb-3">
@@ -922,14 +883,13 @@ function HVACControl({ zone, temp, target, onAdjust }: HVACControlProps) {
       </div>
       <div className="flex items-center justify-between">
         <div>
-          <p className="text-3xl font-bold text-white">{temp}°C</p>
-          <p className="text-xs text-gray-400 mt-1">Target: {target}°C</p>
+          <p className="text-3xl font-bold text-white">{temp}Â°C</p>
+          <p className="text-xs text-gray-400 mt-1">Target: {target}Â°C</p>
         </div>
         <div className="flex gap-2">
           <motion.button
             whileHover={{ scale: 1.1 }}
             whileTap={{ scale: 0.9 }}
-            onClick={() => onAdjust(zone, -1)}
             className="w-10 h-10 bg-blue-500/20 hover:bg-blue-500/30 rounded-xl flex items-center justify-center text-blue-400 font-bold text-lg transition-all"
           >
             -
@@ -937,7 +897,6 @@ function HVACControl({ zone, temp, target, onAdjust }: HVACControlProps) {
           <motion.button
             whileHover={{ scale: 1.1 }}
             whileTap={{ scale: 0.9 }}
-            onClick={() => onAdjust(zone, 1)}
             className="w-10 h-10 bg-blue-500/20 hover:bg-blue-500/30 rounded-xl flex items-center justify-center text-blue-400 font-bold text-lg transition-all"
           >
             +

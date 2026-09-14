@@ -85,7 +85,10 @@ export default function BudgetManagementPage() {
             Plan, track, and analyze budgets across departments and projects
           </p>
         </div>
-        <button className="flex items-center gap-2 px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700">
+        <button
+          onClick={() => alert('Create Budget coming soon')}
+          className="flex items-center gap-2 px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700"
+        >
           <Plus className="w-5 h-5" />
           Create Budget
         </button>

@@ -295,6 +295,7 @@ export default function PurchasesPage() {
           <motion.button
             whileHover={{ scale: 1.05 }}
             whileTap={{ scale: 0.95 }}
+            onClick={() => alert('Export coming soon')}
             className="flex items-center gap-2 px-4 py-2 bg-gray-800 hover:bg-gray-700 rounded-xl text-white font-medium transition-all"
           >
             <Download className="w-4 h-4" />
@@ -303,6 +304,7 @@ export default function PurchasesPage() {
           <motion.button
             whileHover={{ scale: 1.05 }}
             whileTap={{ scale: 0.95 }}
+            onClick={() => alert('New Request coming soon')}
             className="flex items-center gap-2 px-4 py-2 bg-gradient-to-r from-blue-500 to-purple-500 rounded-xl text-white font-semibold shadow-lg shadow-blue-500/30"
           >
             <Plus className="w-4 h-4" />
@@ -482,11 +484,17 @@ export default function PurchasesPage() {
                   <span>By: {req.requestedBy}</span>
                 </div>
                 <div className="flex gap-2">
-                  <button className="flex-1 px-3 py-1.5 bg-green-500/20 hover:bg-green-500/30 text-green-400 rounded-lg text-xs font-medium transition-all flex items-center justify-center gap-1">
+                  <button
+                    onClick={() => alert('Approve coming soon')}
+                    className="flex-1 px-3 py-1.5 bg-green-500/20 hover:bg-green-500/30 text-green-400 rounded-lg text-xs font-medium transition-all flex items-center justify-center gap-1"
+                  >
                     <CheckCircle className="w-3 h-3" />
                     Approve
                   </button>
-                  <button className="flex-1 px-3 py-1.5 bg-red-500/20 hover:bg-red-500/30 text-red-400 rounded-lg text-xs font-medium transition-all flex items-center justify-center gap-1">
+                  <button
+                    onClick={() => alert('Reject coming soon')}
+                    className="flex-1 px-3 py-1.5 bg-red-500/20 hover:bg-red-500/30 text-red-400 rounded-lg text-xs font-medium transition-all flex items-center justify-center gap-1"
+                  >
                     <XCircle className="w-3 h-3" />
                     Reject
                   </button>

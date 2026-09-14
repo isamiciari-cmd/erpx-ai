@@ -104,11 +104,17 @@ export default function RecruitmentPage() {
           <p className="text-gray-600">Manage job postings, candidates, and hiring process</p>
         </div>
         <div className="flex gap-3">
-          <button className="flex items-center gap-2 px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700">
+          <button
+            onClick={() => alert('Post New Job coming soon')}
+            className="flex items-center gap-2 px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700"
+          >
             <Plus className="w-5 h-5" />
             Post New Job
           </button>
-          <button className="flex items-center gap-2 px-4 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700">
+          <button
+            onClick={() => alert('Add Candidate coming soon')}
+            className="flex items-center gap-2 px-4 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700"
+          >
             <UserPlus className="w-5 h-5" />
             Add Candidate
           </button>

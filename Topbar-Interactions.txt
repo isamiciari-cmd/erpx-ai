@@ -1,0 +1,110 @@
+﻿
+  Topbar-Audit.txt:5:import { useNavigate } from 'react-router-dom';
+  Topbar-Audit.txt:6:
+  Topbar-Audit.txt:7:export default function Topbar() {
+> Topbar-Audit.txt:8:  const [showNotifications, setShowNotifications] = useState(false);
+  Topbar-Audit.txt:9:  const [language, setLanguage] = useState('EN');
+  Topbar-Audit.txt:10:  const { user, signOut } = useAuth();
+  Topbar-Audit.txt:11:  const navigate = useNavigate();
+  Topbar-Audit.txt:12:
+> Topbar-Audit.txt:13:  const handleLogout = async () => {
+  Topbar-Audit.txt:14:    try {
+  Topbar-Audit.txt:15:      await signOut();
+  Topbar-Audit.txt:16:      navigate('/login');
+  Topbar-Audit.txt:17:    } catch (error) {
+  Topbar-Audit.txt:18:      console.error('Logout error:', error);
+  Topbar-Audit.txt:19:    }
+  Topbar-Audit.txt:20:  };
+  Topbar-Audit.txt:21:
+> Topbar-Audit.txt:22:  const notifications = [
+  Topbar-Audit.txt:23:    { id: 1, text: 'Low stock alert: Product A', type: 'warning', time: '2m ago' },
+  Topbar-Audit.txt:24:    { id: 2, text: 'New order #1234 received', type: 'success', time: '5m ago' },
+  Topbar-Audit.txt:25:    { id: 3, text: 'AI prediction ready', type: 'info', time: '10m ago' },
+  Topbar-Audit.txt:26:  ];
+  Topbar-Audit.txt:27:
+  Topbar-Audit.txt:46:        <motion.button
+  Topbar-Audit.txt:47:          whileHover={{ scale: 1.05 }}
+  Topbar-Audit.txt:48:          whileTap={{ scale: 0.95 }}
+> Topbar-Audit.txt:49:          onClick={() => setLanguage(language === 'EN' ? 'AR' : 'EN')}
+  Topbar-Audit.txt:50:          className="flex items-center gap-2 px-4 py-2.5 hover:bg-gray-800/50 rounded-xl transition-all text-gray-300 hover:text-white border border-gray-700/50 
+hover:border-gray-600/50"
+  Topbar-Audit.txt:51:        >
+  Topbar-Audit.txt:52:          <Globe className="w-4 h-4" />
+  Topbar-Audit.txt:53:          <span className="text-sm font-semibold">{language}</span>
+  Topbar-Audit.txt:54:        </motion.button>
+  Topbar-Audit.txt:55:
+> Topbar-Audit.txt:56:        {/* AI Assistant Shortcut */}
+  Topbar-Audit.txt:57:        <motion.button
+  Topbar-Audit.txt:58:          whileHover={{ scale: 1.05 }}
+  Topbar-Audit.txt:59:          whileTap={{ scale: 0.95 }}
+  Topbar-Audit.txt:60:          className="p-3 bg-gradient-to-r from-blue-500 to-purple-500 hover:from-blue-600 hover:to-purple-600 rounded-xl transition-all shadow-lg 
+shadow-blue-500/25 hover:shadow-blue-500/40"
+> Topbar-Audit.txt:61:          title="AI Assistant"
+  Topbar-Audit.txt:62:        >
+  Topbar-Audit.txt:63:          <Sparkles className="w-5 h-5 text-white" />
+  Topbar-Audit.txt:64:        </motion.button>
+  Topbar-Audit.txt:65:
+> Topbar-Audit.txt:66:        {/* Notifications */}
+  Topbar-Audit.txt:67:        <div className="relative">
+  Topbar-Audit.txt:68:          <motion.button
+  Topbar-Audit.txt:69:            whileHover={{ scale: 1.05 }}
+  Topbar-Audit.txt:70:            whileTap={{ scale: 0.95 }}
+> Topbar-Audit.txt:71:            onClick={() => setShowNotifications(!showNotifications)}
+  Topbar-Audit.txt:72:            className="relative p-3 hover:bg-gray-800/50 rounded-xl transition-all border border-gray-700/50 hover:border-gray-600/50"
+  Topbar-Audit.txt:73:          >
+  Topbar-Audit.txt:74:            <Bell className="w-5 h-5 text-gray-400" />
+  Topbar-Audit.txt:75:            <motion.span
+  Topbar-Audit.txt:76:              initial={{ scale: 0 }}
+  Topbar-Audit.txt:77:              animate={{ scale: 1 }}
+  Topbar-Audit.txt:78:              className="absolute -top-1.5 -right-1.5 w-6 h-6 bg-gradient-to-r from-red-500 to-pink-500 rounded-full flex items-center justify-center text-xs 
+font-bold text-white shadow-lg shadow-red-500/30"
+  Topbar-Audit.txt:79:            >
+> Topbar-Audit.txt:80:              {notifications.length}
+  Topbar-Audit.txt:81:            </motion.span>
+  Topbar-Audit.txt:82:          </motion.button>
+  Topbar-Audit.txt:83:
+> Topbar-Audit.txt:84:          {/* Notifications Dropdown */}
+  Topbar-Audit.txt:85:          <AnimatePresence>
+> Topbar-Audit.txt:86:            {showNotifications && (
+  Topbar-Audit.txt:87:              <motion.div
+  Topbar-Audit.txt:88:                initial={{ opacity: 0, y: -10, scale: 0.95 }}
+  Topbar-Audit.txt:89:                animate={{ opacity: 1, y: 0, scale: 1 }}
+  Topbar-Audit.txt:90:                exit={{ opacity: 0, y: -10, scale: 0.95 }}
+  Topbar-Audit.txt:91:                transition={{ type: 'spring', damping: 20, stiffness: 300 }}
+  Topbar-Audit.txt:93:              >
+  Topbar-Audit.txt:94:                <div className="p-5 border-b border-gray-800/50 bg-gradient-to-r from-gray-800/30 to-gray-900/30">
+  Topbar-Audit.txt:95:                  <div className="flex items-center justify-between">
+> Topbar-Audit.txt:96:                    <h3 className="font-bold text-white text-lg">Notifications</h3>
+  Topbar-Audit.txt:97:                    <span className="text-xs text-gray-400 bg-gray-800/50 px-3 py-1 rounded-full font-semibold">
+> Topbar-Audit.txt:98:                      {notifications.length} new
+  Topbar-Audit.txt:99:                    </span>
+  Topbar-Audit.txt:100:                  </div>
+  Topbar-Audit.txt:101:                </div>
+  Topbar-Audit.txt:102:                <div className="max-h-96 overflow-y-auto">
+> Topbar-Audit.txt:103:                  {notifications.map((notif) => (
+  Topbar-Audit.txt:104:                    <motion.div
+  Topbar-Audit.txt:105:                      key={notif.id}
+  Topbar-Audit.txt:106:                      whileHover={{ backgroundColor: 'rgba(31, 41, 55, 0.5)' }}
+  Topbar-Audit.txt:107:                      className="p-5 border-b border-gray-800/30 cursor-pointer transition-colors"
+  Topbar-Audit.txt:108:                    >
+  Topbar-Audit.txt:135:                  ))}
+  Topbar-Audit.txt:136:                </div>
+  Topbar-Audit.txt:137:                <div className="p-4 bg-gray-800/30 border-t border-gray-800/50">
+> Topbar-Audit.txt:138:                  <button className="w-full text-center text-sm text-blue-400 hover:text-blue-300 font-semibold transition-colors">
+> Topbar-Audit.txt:139:                    View All Notifications
+  Topbar-Audit.txt:140:                  </button>
+  Topbar-Audit.txt:141:                </div>
+  Topbar-Audit.txt:142:              </motion.div>
+  Topbar-Audit.txt:143:            )}
+  Topbar-Audit.txt:144:          </AnimatePresence>
+  Topbar-Audit.txt:170:        <motion.button
+  Topbar-Audit.txt:171:          whileHover={{ scale: 1.05 }}
+  Topbar-Audit.txt:172:          whileTap={{ scale: 0.95 }}
+> Topbar-Audit.txt:173:          onClick={handleLogout}
+  Topbar-Audit.txt:174:          className="p-3 hover:bg-red-500/10 rounded-xl transition-all text-gray-400 hover:text-red-400 border border-gray-700/50 hover:border-red-500/30"
+  Topbar-Audit.txt:175:          title="Logout"
+  Topbar-Audit.txt:176:        >
+  Topbar-Audit.txt:177:          <LogOut className="w-5 h-5" />
+  Topbar-Audit.txt:178:        </motion.button>
+
+

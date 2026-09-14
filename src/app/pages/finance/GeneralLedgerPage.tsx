@@ -95,7 +95,10 @@ export default function GeneralLedgerPage() {
           <h1 className="text-3xl font-bold mb-2">General Ledger</h1>
           <p className="text-gray-600">View detailed transaction history by account</p>
         </div>
-        <button className="flex items-center gap-2 px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700">
+        <button
+          onClick={() => alert('Export Report coming soon')}
+          className="flex items-center gap-2 px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700"
+        >
           <Download className="w-5 h-5" />
           Export Report
         </button>
