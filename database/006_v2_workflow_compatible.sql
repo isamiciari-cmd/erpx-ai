@@ -292,13 +292,7 @@ USING (
     WHERE id = auth.uid()
   )
 )
-WITH CHECK (
-  company_id = (
-    SELECT company_id
-    FROM users
-    WHERE id = auth.uid()
-  )
-);
+;
 
 DROP POLICY IF EXISTS report_exports_company_access
   ON report_exports;
