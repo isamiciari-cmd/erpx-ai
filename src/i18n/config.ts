@@ -43,10 +43,6 @@ i18n.on('languageChanged', (lng) => {
       "-apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen', 'Ubuntu', 'Cantarell', 'Fira Sans', 'Droid Sans', 'Helvetica Neue', sans-serif";
   }
 
-  // Force page reload to apply all RTL changes properly
-  setTimeout(() => {
-    window.location.reload();
-  }, 100);
 });
 
 const currentLang = i18n.language;
