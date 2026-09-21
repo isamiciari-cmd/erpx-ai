@@ -115,7 +115,7 @@ export default function PricingPage() {
     await new Promise((resolve) => setTimeout(resolve, 1500));
 
     alert(
-      `🎉 Subscription successful!\n\nTenant: ${companyName}\nDomain: ${domain}.erpx.sa\nCustomer ID: ${stripeCustomerId}\n\nYou will receive an email with login credentials.`,
+      `ðŸŽ‰ Subscription successful!\n\nTenant: ${companyName}\nDomain: ${domain}.erpx.sa\nCustomer ID: ${stripeCustomerId}\n\nYou will receive an email with login credentials.`,
     );
 
     setShowCheckout(false);
@@ -269,7 +269,7 @@ export default function PricingPage() {
                 onClick={() => setShowCheckout(false)}
                 className="p-2 hover:bg-white/10 rounded-lg text-gray-400"
               >
-                ✕
+                âœ•
               </button>
             </div>
 
@@ -284,7 +284,7 @@ export default function PricingPage() {
                 <div className="text-right">
                   <p className="text-sm text-gray-400">Monthly Price</p>
                   <p className="text-2xl font-bold text-white">
-                    {plans.find((p) => p.id === selectedPlan)?.price > 0
+                    {(plans.find((p) => p.id === selectedPlan)?.price ?? 0) > 0
                       ? `${plans.find((p) => p.id === selectedPlan)?.price} SAR`
                       : 'Custom'}
                   </p>
@@ -372,7 +372,7 @@ export default function PricingPage() {
             </div>
 
             <p className="text-xs text-gray-500 text-center mt-4">
-              14-day free trial • No credit card required • Cancel anytime
+              14-day free trial â€¢ No credit card required â€¢ Cancel anytime
             </p>
           </motion.div>
         </motion.div>

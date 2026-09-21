@@ -350,7 +350,7 @@ interface StatCardProps {
   icon: any;
   label: string;
   value: string;
-  color: string;
+  color: 'blue' | 'green' | 'purple' | 'red';
 }
 
 function StatCard({ icon: Icon, label, value, color }: StatCardProps) {

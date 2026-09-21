@@ -359,7 +359,7 @@ const recentInvoices = [
 ];
 
 // AI Insights Data
-const aiInsights = [
+const aiInsights: Array<{ type: AIInsightType; title: string; message: string; action: string; icon: typeof CheckCircle }> = [
   {
     type: 'success',
     title: 'Revenue Growth Accelerating',
@@ -603,7 +603,7 @@ export default function ExecutiveDashboard() {
                 Business Dashboard
               </h1>
               <p className="text-gray-600 dark:text-gray-400 text-lg font-medium">
-                Financial Control & Operational Excellence •{' '}
+                Financial Control & Operational Excellence â€¢{' '}
                 {new Date().toLocaleDateString('en-US', {
                   month: 'long',
                   day: 'numeric',
@@ -1662,8 +1662,16 @@ function BusinessModuleCard({ module, index }: BusinessModuleCardProps) {
 }
 
 // AI Insight Card
+type AIInsightType = 'success' | 'warning' | 'info';
+
 interface AIInsightCardProps {
-  insight: (typeof aiInsights)[0];
+  insight: {
+    type: AIInsightType;
+    title: string;
+    message: string;
+    action: string;
+    icon: typeof CheckCircle;
+  };
   index: number;
 }
 

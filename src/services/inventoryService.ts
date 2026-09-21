@@ -84,7 +84,11 @@ export async function updateInventoryQuantity(
 }
 
 // Get low stock products
-export async function getLowStockProducts(companyId: string): Promise<any[]> {
+interface LowStockProduct extends InventoryItem {
+  product: Pick<Product, 'id' | 'sku' | 'product_name' | 'min_stock_level' | 'reorder_point'>;
+}
+
+export async function getLowStockProducts(companyId: string): Promise<LowStockProduct[]> {
   if (isDemoMode) {
     return [];
   }
@@ -94,16 +98,17 @@ export async function getLowStockProducts(companyId: string): Promise<any[]> {
     .select(
       `
       *,
-      product:products!inner(id, sku, product_name, min_stock_level, reorder_point)
+      product:products!inner(id, sku, product_name, min_stock_level, reorder_point, company_id)
     `,
     )
-    .filter('product.company_id', 'eq', companyId)
-    .filter('quantity_available', 'lt', supabase.raw('products.min_stock_level'));
+    .eq('product.company_id', companyId);
 
   if (error) {
     console.error('[Supabase] getLowStockProducts error:', error);
     throw error;
   }
 
-  return data || [];
+  return (data ?? []).filter(
+    (item) => item.quantity_available < item.product.min_stock_level,
+  ) as LowStockProduct[];
 }

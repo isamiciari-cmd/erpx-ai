@@ -130,7 +130,7 @@ export default function HRDashboardPage() {
                 <span className="font-medium">{alert.message}</span>
               </div>
               <button
-                onClick={() => alert(`${alert.action} coming soon`)}
+                onClick={() => window.alert(`${alert.action} coming soon`)}
                 className="px-4 py-2 bg-white border border-gray-300 rounded-lg hover:bg-gray-50 text-sm font-medium"
               >
                 {alert.action}
@@ -357,7 +357,16 @@ export default function HRDashboardPage() {
   );
 }
 
-function MetricCard({ title, value, subtitle, icon, color }: any) {
+type HRMetricCardColor = 'blue' | 'green' | 'red' | 'purple';
+type HRMetricCardProps = {
+  title: string;
+  value: string;
+  subtitle: string;
+  icon: React.ReactNode;
+  color: HRMetricCardColor;
+};
+
+function MetricCard({ title, value, subtitle, icon, color }: HRMetricCardProps) {
   const colorClasses = {
     blue: 'bg-blue-100 text-blue-600',
     green: 'bg-green-100 text-green-600',

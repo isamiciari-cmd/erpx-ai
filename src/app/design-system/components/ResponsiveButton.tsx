@@ -1,10 +1,10 @@
 import { ButtonHTMLAttributes, ReactNode } from 'react';
-import { motion } from 'motion/react';
+import { motion, type MotionProps } from 'motion/react';
 
 type ButtonVariant = 'primary' | 'secondary' | 'outline' | 'ghost' | 'danger' | 'success';
 type ButtonSize = 'sm' | 'md' | 'lg' | 'xl';
 
-interface ResponsiveButtonProps extends ButtonHTMLAttributes<HTMLButtonElement> {
+interface ResponsiveButtonProps extends Omit<ButtonHTMLAttributes<HTMLButtonElement>, keyof MotionProps> {
   variant?: ButtonVariant;
   size?: ButtonSize;
   fullWidth?: boolean;
@@ -136,7 +136,7 @@ export function ResponsiveButton({
 }
 
 // Icon Button Variant
-interface IconButtonProps extends ButtonHTMLAttributes<HTMLButtonElement> {
+interface IconButtonProps extends Omit<ButtonHTMLAttributes<HTMLButtonElement>, keyof MotionProps> {
   icon: ReactNode;
   variant?: ButtonVariant;
   size?: ButtonSize;

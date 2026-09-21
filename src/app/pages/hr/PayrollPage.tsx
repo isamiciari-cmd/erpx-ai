@@ -193,11 +193,11 @@ export default function PayrollPage() {
                   <td className="px-6 py-4">
                     <div className="flex gap-2">
                       <button className="text-blue-600 hover:text-blue-800">
-                        <FileText className="w-4 h-4" title="View Payslip" />
+                        <FileText className="w-4 h-4" />
                       </button>
                       {record.status === 'Pending' && (
                         <button className="text-green-600 hover:text-green-800">
-                          <CheckCircle className="w-4 h-4" title="Approve" />
+                          <CheckCircle className="w-4 h-4" />
                         </button>
                       )}
                     </div>

@@ -320,7 +320,18 @@ export default function FinanceDashboardPage() {
   );
 }
 
-function MetricCard({ title, value, change, trend, subtitle, icon, color }: any) {
+type MetricCardColor = 'blue' | 'purple' | 'green' | 'emerald' | 'indigo' | 'cyan' | 'teal' | 'orange';
+type MetricCardProps = {
+  title: string;
+  value: string;
+  change?: string;
+  trend?: 'up' | 'down';
+  subtitle?: string;
+  icon: React.ReactNode;
+  color: MetricCardColor;
+};
+
+function MetricCard({ title, value, change, trend, subtitle, icon, color }: MetricCardProps) {
   const colorClasses = {
     blue: 'bg-blue-100 text-blue-600',
     purple: 'bg-purple-100 text-purple-600',

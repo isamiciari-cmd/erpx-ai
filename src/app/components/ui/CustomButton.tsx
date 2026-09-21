@@ -1,8 +1,8 @@
-﻿import { ButtonHTMLAttributes, ReactNode } from 'react';
-import { motion } from 'motion/react';
+import { ButtonHTMLAttributes, ReactNode } from 'react';
+import { motion, type MotionProps } from 'motion/react';
 import { Loader2 } from 'lucide-react';
 
-interface ButtonProps extends ButtonHTMLAttributes<HTMLButtonElement> {
+interface ButtonProps extends Omit<ButtonHTMLAttributes<HTMLButtonElement>, keyof MotionProps> {
   children: ReactNode;
   variant?: 'primary' | 'secondary' | 'danger' | 'success' | 'ghost';
   size?: 'sm' | 'md' | 'lg';

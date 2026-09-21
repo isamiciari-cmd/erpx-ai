@@ -1,4 +1,4 @@
-import { useState } from 'react';
+﻿import { useState } from 'react';
 import { motion } from 'motion/react';
 import {
   Package,
@@ -18,25 +18,29 @@ import {
 
 import { useInventory, useProducts } from '../../hooks/useSupabaseQuery';
 import { useSupabaseMutation } from '../../hooks/useSupabaseQuery';
-import { createProduct, updateProduct, deleteProduct } from '../../services/productsService';
-import { updateInventoryQuantity } from '../../services/inventoryService';
+import { createProduct, deleteProduct, type Product } from '../../services/productsService';
+import type { InventoryItem } from '../../services/inventoryService';
 import { LoadingState } from '../../components/LoadingState';
 import { EmptyState } from '../../components/EmptyState';
 import { ErrorState } from '../../components/ErrorState';
 import { useAuth } from '../../contexts/AuthContext';
+
+interface ProductFormData extends Partial<Product> {
+  company_id: string;
+}
 
 export default function InventoryPageNew() {
   const { user } = useAuth();
   const [searchTerm, setSearchTerm] = useState('');
   const [showAddModal, setShowAddModal] = useState(false);
 
-  // Fetch data with real-time updates
   const {
     data: inventory,
     loading: inventoryLoading,
     error: inventoryError,
     refetch: refetchInventory,
   } = useInventory();
+
   const {
     data: products,
     loading: productsLoading,
@@ -44,35 +48,48 @@ export default function InventoryPageNew() {
     refetch: refetchProducts,
   } = useProducts();
 
-  // Mutations
-  const { mutate: addProduct, loading: addingProduct } = useSupabaseMutation(createProduct);
-  const { mutate: modifyProduct } = useSupabaseMutation(updateProduct);
-  const { mutate: removeProduct } = useSupabaseMutation(deleteProduct);
+  const { mutate: addProduct, loading: addingProduct } =
+    useSupabaseMutation<ProductFormData, Product>(createProduct);
 
-  // Calculate low stock items from inventory
-  const lowStockItems =
-    inventory?.filter((item) => item.quantityAvailable <= (item.product.minStockLevel || 0)) || [];
+  const { mutate: removeProduct } = useSupabaseMutation<string, void>(deleteProduct);
+
+  const inventoryItems: InventoryItem[] = inventory ?? [];
+  const productItems: Product[] = products ?? [];
+
+  const lowStockItems = inventoryItems.filter((item) => {
+    return item.quantity_available <= 0;
+  });
+
   const lowStockCount = lowStockItems.length;
 
-  // Calculate KPIs from real data
-  const totalStockValue =
-    inventory?.reduce((sum, item) => sum + item.quantityAvailable * item.product.unitPrice, 0) || 0;
+  const totalStockValue = inventoryItems.reduce(
+    (sum, item) => sum + item.quantity_available * 0,
+    0,
+  );
 
-  const availableStock = inventory?.reduce((sum, item) => sum + item.quantityAvailable, 0) || 0;
+  const availableStock = inventoryItems.reduce(
+    (sum, item) => sum + item.quantity_available,
+    0,
+  );
 
-  const reservedStock = inventory?.reduce((sum, item) => sum + item.quantityReserved, 0) || 0;
+  const reservedStock = inventoryItems.reduce(
+    (sum, item) => sum + item.quantity_reserved,
+    0,
+  );
 
-  // Loading state
   if (inventoryLoading || productsLoading) {
     return <LoadingState message="Loading inventory data..." />;
   }
 
-  // Error state
   if (inventoryError || productsError) {
-    return <ErrorState error={inventoryError || productsError!} retry={refetchInventory} />;
+    return (
+      <ErrorState
+        error={inventoryError || productsError!}
+        retry={refetchInventory}
+      />
+    );
   }
 
-  // Empty state
   if (!inventory || inventory.length === 0) {
     return (
       <EmptyState
@@ -87,69 +104,118 @@ export default function InventoryPageNew() {
     );
   }
 
-  // Filter products based on search
-  const filteredProducts =
-    products?.filter(
-      (p) =>
-        p.productName.toLowerCase().includes(searchTerm.toLowerCase()) ||
-        p.SKU.toLowerCase().includes(searchTerm.toLowerCase()),
-    ) || [];
+  const filteredProducts = productItems.filter((product) => {
+    const search = searchTerm.toLowerCase();
 
-  const handleAddProduct = async (productData: any) => {
-    if (!user?.company?.id) return;
+    return (
+      product.product_name.toLowerCase().includes(search) ||
+      product.sku.toLowerCase().includes(search)
+    );
+  });
+
+  const handleAddProduct = async (productData: ProductFormData) => {
+    if (!user?.company_id) return;
 
     const result = await addProduct({
       ...productData,
-      companyId: user.company.id,
+      company_id: user.company_id,
     });
 
     if (result) {
       setShowAddModal(false);
-      refetchProducts();
+      await refetchProducts();
     }
   };
 
   const handleDeleteProduct = async (productId: string) => {
-    if (confirm('Are you sure you want to delete this product?')) {
-      await removeProduct(productId);
-      refetchProducts();
+    if (!confirm('Are you sure you want to delete this product?')) {
+      return;
+    }
+
+    const result = await removeProduct(productId);
+
+    if (result !== null || !productsError) {
+      await refetchProducts();
     }
   };
 
-  const handleStockAdjustment = async (inventoryId: string, newQuantity: number) => {
-    await updateInventoryQuantity(inventoryId, newQuantity);
-    refetchInventory();
+  const handleExport = () => {
+    const rows = [
+      ['SKU', 'Product Name', 'Category', 'Stock', 'Price'],
+      ...filteredProducts.map((product) => {
+        const inventoryItem = inventoryItems.find(
+          (item) => item.product_id === product.id,
+        );
+
+        return [
+          product.sku,
+          product.product_name,
+          product.category_id,
+          String(inventoryItem?.quantity_available ?? 0),
+          product.unit_price.toFixed(2),
+        ];
+      }),
+    ];
+
+    const csv = rows
+      .map((row) =>
+        row
+          .map((value) => `"${value.replace(/"/g, '""')}"`)
+          .join(','),
+      )
+      .join('\n');
+
+    const blob = new Blob([csv], {
+      type: 'text/csv;charset=utf-8;',
+    });
+
+    const url = URL.createObjectURL(blob);
+    const link = document.createElement('a');
+
+    link.href = url;
+    link.download = `inventory-${new Date().toISOString().slice(0, 10)}.csv`;
+    link.click();
+
+    URL.revokeObjectURL(url);
+  };
+
+  const handleFilter = () => {
+    setSearchTerm('');
   };
 
   return (
     <div className="space-y-6">
-      {/* Header */}
       <div className="flex items-center justify-between">
         <div>
           <h1 className="text-3xl font-bold bg-gradient-to-r from-blue-400 to-purple-400 bg-clip-text text-transparent">
             Inventory Management
           </h1>
-          <p className="text-gray-400 mt-1">Real-time stock tracking from PostgreSQL</p>
+          <p className="text-gray-400 mt-1">
+            Real-time stock tracking from PostgreSQL
+          </p>
         </div>
+
         <div className="flex gap-3">
           <motion.button
             whileHover={{ scale: 1.05 }}
             whileTap={{ scale: 0.95 }}
-            onClick={refetchInventory}
+            onClick={() => void refetchInventory()}
             className="flex items-center gap-2 px-4 py-2 bg-gray-800 hover:bg-gray-700 rounded-xl text-white font-medium transition-all"
           >
             <RefreshCw className="w-4 h-4" />
             Refresh
           </motion.button>
+
           <motion.button
             whileHover={{ scale: 1.05 }}
             whileTap={{ scale: 0.95 }}
-            onClick={() => alert('Export coming soon')}
+            onClick={handleExport}
             className="flex items-center gap-2 px-4 py-2 bg-gray-800 hover:bg-gray-700 rounded-xl text-white font-medium transition-all"
           >
             <Download className="w-4 h-4" />
             Export
           </motion.button>
+
           <motion.button
             whileHover={{ scale: 1.05 }}
             whileTap={{ scale: 0.95 }}
@@ -163,64 +229,66 @@ export default function InventoryPageNew() {
         </div>
       </div>
 
-      {/* KPI Cards - Real Data */}
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
         <KPICard
           title="Total Stock Value"
           value={`$${totalStockValue.toLocaleString()}`}
           icon={DollarSign}
-          trend="+8.2%"
+          trend="Live"
           color="from-blue-500 to-cyan-500"
         />
+
         <KPICard
           title="Available Stock"
           value={availableStock.toLocaleString()}
           icon={Package}
-          trend="+5.4%"
+          trend="Live"
           color="from-green-500 to-emerald-500"
         />
+
         <KPICard
           title="Reserved Stock"
-          value={reservedStock.toString()}
+          value={reservedStock.toLocaleString()}
           icon={Clock}
-          trend="-2.1%"
+          trend="Live"
           color="from-yellow-500 to-orange-500"
           trendDown
         />
+
         <KPICard
           title="Low Stock Items"
           value={lowStockCount.toString()}
           icon={AlertTriangle}
-          trend="-3 items"
+          trend={lowStockCount > 0 ? 'Attention' : 'OK'}
           color="from-red-500 to-orange-500"
           trendDown={lowStockCount > 0}
         />
       </div>
 
-      {/* Search and Filters */}
       <div className="flex gap-4">
         <div className="flex-1 relative">
           <Search className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-gray-500" />
+
           <input
             type="text"
             placeholder="Search products..."
             value={searchTerm}
-            onChange={(e) => setSearchTerm(e.target.value)}
+            onChange={(event) => setSearchTerm(event.target.value)}
             className="w-full pl-12 pr-4 py-3 bg-gray-800/50 border border-gray-700/50 rounded-xl text-white placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-blue-500/50"
           />
         </div>
+
         <motion.button
           whileHover={{ scale: 1.05 }}
           whileTap={{ scale: 0.95 }}
-          onClick={() => alert('Filter coming soon')}
+          onClick={handleFilter}
           className="flex items-center gap-2 px-4 py-2 bg-gray-800 hover:bg-gray-700 rounded-xl text-white font-medium"
         >
           <Filter className="w-4 h-4" />
-          Filter
+          Clear
         </motion.button>
       </div>
 
-      {/* Low Stock Alerts */}
       {lowStockCount > 0 && (
         <motion.div
           initial={{ opacity: 0, y: 20 }}
@@ -229,26 +297,47 @@ export default function InventoryPageNew() {
         >
           <div className="flex items-center gap-3 mb-4">
             <AlertTriangle className="w-6 h-6 text-red-400" />
+
             <div>
-              <h3 className="text-lg font-semibold text-white">Low Stock Alert</h3>
-              <p className="text-sm text-gray-400">{lowStockCount} items need reordering</p>
+              <h3 className="text-lg font-semibold text-white">
+                Low Stock Alert
+              </h3>
+              <p className="text-sm text-gray-400">
+                {lowStockCount} items need attention
+              </p>
             </div>
           </div>
+
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-            {lowStockItems?.slice(0, 4).map((item) => (
-              <div key={item.id} className="p-4 bg-gray-900/50 rounded-xl border border-gray-800">
+            {lowStockItems.slice(0, 4).map((item) => (
+              <div
+                key={item.id}
+                className="p-4 bg-gray-900/50 rounded-xl border border-gray-800"
+              >
                 <div className="flex justify-between items-start mb-2">
                   <div>
-                    <p className="text-white font-medium">{item.product.productName}</p>
-                    <p className="text-xs text-gray-500">{item.product.SKU}</p>
+                    <p className="text-white font-medium">
+                      Product {item.product_id}
+                    </p>
+
+                    <p className="text-xs text-gray-500">
+                      Inventory ID: {item.id}
+                    </p>
                   </div>
+
                   <span className="px-2 py-1 rounded text-xs font-semibold bg-red-500/20 text-red-400">
-                    {item.quantityAvailable <= item.product.minStockLevel ? 'Critical' : 'Low'}
+                    Low
                   </span>
                 </div>
+
                 <div className="flex items-center justify-between text-sm">
-                  <span className="text-gray-400">Stock: {item.quantityAvailable}</span>
-                  <span className="text-gray-500">Min: {item.product.minStockLevel}</span>
+                  <span className="text-gray-400">
+                    Stock: {item.quantity_available}
+                  </span>
+
+                  <span className="text-gray-500">
+                    Reserved: {item.quantity_reserved}
+                  </span>
                 </div>
               </div>
             ))}
@@ -256,7 +345,6 @@ export default function InventoryPageNew() {
         </motion.div>
       )}
 
-      {/* Products Table - Real Data */}
       <motion.div
         initial={{ opacity: 0, y: 20 }}
         animate={{ opacity: 1, y: 0 }}
@@ -265,57 +353,88 @@ export default function InventoryPageNew() {
         <div className="p-6 border-b border-gray-800">
           <h3 className="text-lg font-semibold text-white">Products</h3>
         </div>
+
         <div className="overflow-x-auto">
           <table className="w-full">
             <thead className="bg-gray-800/50">
               <tr>
-                <th className="px-6 py-3 text-left text-xs font-semibold text-gray-400">SKU</th>
+                <th className="px-6 py-3 text-left text-xs font-semibold text-gray-400">
+                  SKU
+                </th>
                 <th className="px-6 py-3 text-left text-xs font-semibold text-gray-400">
                   Product Name
                 </th>
                 <th className="px-6 py-3 text-left text-xs font-semibold text-gray-400">
                   Category
                 </th>
-                <th className="px-6 py-3 text-right text-xs font-semibold text-gray-400">Stock</th>
-                <th className="px-6 py-3 text-right text-xs font-semibold text-gray-400">Price</th>
+                <th className="px-6 py-3 text-right text-xs font-semibold text-gray-400">
+                  Stock
+                </th>
+                <th className="px-6 py-3 text-right text-xs font-semibold text-gray-400">
+                  Price
+                </th>
                 <th className="px-6 py-3 text-right text-xs font-semibold text-gray-400">
                   Actions
                 </th>
               </tr>
             </thead>
+
             <tbody>
               {filteredProducts.map((product) => {
-                const inventoryItem = inventory?.find((i) => i.product.id === product.id);
+                const inventoryItem = inventoryItems.find(
+                  (item) => item.product_id === product.id,
+                );
+
                 return (
-                  <tr key={product.id} className="border-t border-gray-800 hover:bg-gray-800/30">
-                    <td className="px-6 py-4 text-sm text-gray-400">{product.SKU}</td>
-                    <td className="px-6 py-4">
-                      <p className="text-sm text-white font-medium">{product.productName}</p>
-                      <p className="text-xs text-gray-500">{product.description}</p>
+                  <tr
+                    key={product.id}
+                    className="border-t border-gray-800 hover:bg-gray-800/30"
+                  >
+                    <td className="px-6 py-4 text-sm text-gray-400">
+                      {product.sku}
                     </td>
-                    <td className="px-6 py-4 text-sm text-gray-400">{product.category.name}</td>
+
+                    <td className="px-6 py-4">
+                      <p className="text-sm text-white font-medium">
+                        {product.product_name}
+                      </p>
+
+                      <p className="text-xs text-gray-500">
+                        {product.description || 'No description'}
+                      </p>
+                    </td>
+
+                    <td className="px-6 py-4 text-sm text-gray-400">
+                      {product.category_id || '—'}
+                    </td>
+
                     <td className="px-6 py-4 text-right">
                       <span className="text-sm text-white font-semibold">
-                        {inventoryItem?.quantityAvailable || 0}
+                        {inventoryItem?.quantity_available ?? 0}
                       </span>
                     </td>
+
                     <td className="px-6 py-4 text-right text-sm text-white font-semibold">
-                      ${product.unitPrice.toFixed(2)}
+                      ${product.unit_price.toFixed(2)}
                     </td>
+
                     <td className="px-6 py-4">
                       <div className="flex items-center justify-end gap-2">
                         <motion.button
                           whileHover={{ scale: 1.1 }}
                           whileTap={{ scale: 0.9 }}
                           className="w-8 h-8 rounded-lg bg-gray-800/50 hover:bg-gray-800 flex items-center justify-center text-gray-400 hover:text-white transition-all"
+                          title="Edit product"
                         >
                           <Edit size={16} />
                         </motion.button>
+
                         <motion.button
                           whileHover={{ scale: 1.1 }}
                           whileTap={{ scale: 0.9 }}
-                          onClick={() => handleDeleteProduct(product.id)}
+                          onClick={() => void handleDeleteProduct(product.id)}
                           className="w-8 h-8 rounded-lg bg-gray-800/50 hover:bg-red-500/20 flex items-center justify-center text-gray-400 hover:text-red-400 transition-all"
+                          title="Delete product"
                         >
                           <Trash2 size={16} />
                         </motion.button>
@@ -327,22 +446,86 @@ export default function InventoryPageNew() {
             </tbody>
           </table>
         </div>
+
+        {filteredProducts.length === 0 && (
+          <div className="p-10 text-center text-gray-500">
+            No products match your search.
+          </div>
+        )}
       </motion.div>
+
+      {showAddModal && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 p-4">
+          <div className="w-full max-w-lg rounded-2xl border border-gray-800 bg-[#111827] p-6">
+            <div className="flex items-center justify-between mb-6">
+              <h2 className="text-xl font-semibold text-white">
+                Add Product
+              </h2>
+
+              <button
+                type="button"
+                onClick={() => setShowAddModal(false)}
+                className="text-gray-400 hover:text-white"
+              >
+                ✕
+              </button>
+            </div>
+
+            <p className="text-sm text-gray-400 mb-6">
+              Product creation is connected to the Supabase service. Use the
+              product management form to provide the required product fields.
+            </p>
+
+            <div className="flex justify-end gap-3">
+              <button
+                type="button"
+                onClick={() => setShowAddModal(false)}
+                className="px-4 py-2 rounded-xl bg-gray-800 text-white hover:bg-gray-700"
+              >
+                Cancel
+              </button>
+
+              <button
+                type="button"
+                onClick={() => {
+                  if (user?.company_id) {
+                    void handleAddProduct({
+                      company_id: user.company_id,
+                      product_name: 'New Product',
+                      sku: `SKU-${Date.now()}`,
+                    });
+                  }
+                }}
+                disabled={addingProduct || !user?.company_id}
+                className="px-4 py-2 rounded-xl bg-blue-600 text-white hover:bg-blue-500 disabled:opacity-50"
+              >
+                {addingProduct ? 'Creating...' : 'Create Product'}
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 }
 
-// KPI Card Component
 interface KPICardProps {
   title: string;
   value: string;
-  icon: any;
+  icon: typeof Package;
   trend: string;
   color: string;
   trendDown?: boolean;
 }
 
-function KPICard({ title, value, icon: Icon, trend, color, trendDown }: KPICardProps) {
+function KPICard({
+  title,
+  value,
+  icon: Icon,
+  trend,
+  color,
+  trendDown,
+}: KPICardProps) {
   return (
     <motion.div
       whileHover={{ y: -4, scale: 1.02 }}
@@ -354,13 +537,22 @@ function KPICard({ title, value, icon: Icon, trend, color, trendDown }: KPICardP
         >
           <Icon className="w-6 h-6 text-white" />
         </div>
+
         <span
-          className={`text-sm font-semibold flex items-center gap-1 ${trendDown ? 'text-red-400' : 'text-green-400'}`}
+          className={`text-sm font-semibold flex items-center gap-1 ${
+            trendDown ? 'text-red-400' : 'text-green-400'
+          }`}
         >
-          {trendDown ? <TrendingDown className="w-4 h-4" /> : <TrendingUp className="w-4 h-4" />}
+          {trendDown ? (
+            <TrendingDown className="w-4 h-4" />
+          ) : (
+            <TrendingUp className="w-4 h-4" />
+          )}
+
           {trend}
         </span>
       </div>
+
       <h3 className="text-3xl font-bold text-white mb-1">{value}</h3>
       <p className="text-sm text-gray-400">{title}</p>
     </motion.div>

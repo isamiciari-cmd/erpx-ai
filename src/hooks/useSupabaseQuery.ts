@@ -3,6 +3,90 @@ import { useAuth } from '../contexts/AuthContext';
 import { isDemoMode } from '../lib/supabase';
 
 // Mock data for demo mode
+const MOCK_PRODUCTS = [
+  {
+    id: 'demo-product-1',
+    company_id: 'demo-company',
+    category_id: 'demo-category',
+    sku: 'DEMO-001',
+    product_name: 'Product A',
+    description: 'Demo product',
+    unit_price: 120,
+    cost_price: 80,
+    vat_rate: 15,
+    min_stock_level: 20,
+    reorder_point: 30,
+    is_active: true,
+    created_at: new Date().toISOString(),
+    updated_at: new Date().toISOString(),
+  },
+  {
+    id: 'demo-product-2',
+    company_id: 'demo-company',
+    category_id: 'demo-category',
+    sku: 'DEMO-002',
+    product_name: 'Product B',
+    description: 'Demo product',
+    unit_price: 250,
+    cost_price: 170,
+    vat_rate: 15,
+    min_stock_level: 15,
+    reorder_point: 25,
+    is_active: true,
+    created_at: new Date().toISOString(),
+    updated_at: new Date().toISOString(),
+  },
+  {
+    id: 'demo-product-3',
+    company_id: 'demo-company',
+    category_id: 'demo-category',
+    sku: 'DEMO-003',
+    product_name: 'Product C',
+    description: 'Demo product',
+    unit_price: 85,
+    cost_price: 55,
+    vat_rate: 15,
+    min_stock_level: 25,
+    reorder_point: 40,
+    is_active: true,
+    created_at: new Date().toISOString(),
+    updated_at: new Date().toISOString(),
+  },
+];
+
+const MOCK_INVENTORY = [
+  {
+    id: 'demo-inventory-1',
+    product_id: 'demo-product-1',
+    warehouse_id: 'demo-warehouse',
+    quantity_available: 150,
+    quantity_reserved: 20,
+    last_counted_at: new Date().toISOString(),
+    created_at: new Date().toISOString(),
+    updated_at: new Date().toISOString(),
+  },
+  {
+    id: 'demo-inventory-2',
+    product_id: 'demo-product-2',
+    warehouse_id: 'demo-warehouse',
+    quantity_available: 80,
+    quantity_reserved: 10,
+    last_counted_at: new Date().toISOString(),
+    created_at: new Date().toISOString(),
+    updated_at: new Date().toISOString(),
+  },
+  {
+    id: 'demo-inventory-3',
+    product_id: 'demo-product-3',
+    warehouse_id: 'demo-warehouse',
+    quantity_available: 200,
+    quantity_reserved: 35,
+    last_counted_at: new Date().toISOString(),
+    created_at: new Date().toISOString(),
+    updated_at: new Date().toISOString(),
+  },
+];
+
 const MOCK_DASHBOARD_DATA = {
   invoices: [
     {
@@ -51,32 +135,7 @@ const MOCK_DASHBOARD_DATA = {
       order_date: new Date(Date.now() - 3 * 24 * 60 * 60 * 1000).toISOString(),
     },
   ],
-  inventory: [
-    {
-      quantity_available: 150,
-      quantity_reserved: 20,
-      product: {
-        product_name: 'Product A',
-        unit_price: 120,
-      },
-    },
-    {
-      quantity_available: 80,
-      quantity_reserved: 10,
-      product: {
-        product_name: 'Product B',
-        unit_price: 250,
-      },
-    },
-    {
-      quantity_available: 200,
-      quantity_reserved: 35,
-      product: {
-        product_name: 'Product C',
-        unit_price: 85,
-      },
-    },
-  ],
+  inventory: MOCK_INVENTORY,
 };
 
 interface UseSupabaseQueryOptions {
@@ -239,7 +298,7 @@ export function useProducts() {
   // Return mock data in demo mode
   if (isDemoMode) {
     return {
-      data: MOCK_DASHBOARD_DATA.inventory,
+      data: MOCK_PRODUCTS,
       loading: false,
       error: null,
       refetch: async () => {},
@@ -258,7 +317,7 @@ export function useInventory(warehouseId?: string) {
   // Return mock data in demo mode
   if (isDemoMode) {
     return {
-      data: MOCK_DASHBOARD_DATA.inventory,
+      data: MOCK_INVENTORY,
       loading: false,
       error: null,
       refetch: async () => {},

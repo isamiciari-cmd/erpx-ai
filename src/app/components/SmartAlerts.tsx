@@ -126,7 +126,7 @@ export default function SmartAlerts({ data }: SmartAlertsProps) {
                     {alert.value !== undefined && (
                       <p className="text-xs text-gray-400">
                         Value: {alert.value.toFixed(1)}
-                        {alert.type === 'spike' || alert.type === 'drop' ? '%' : ''}
+                        {alert.id === 'spike' || alert.id === 'drop' ? '%' : ''}
                       </p>
                     )}
                   </div>

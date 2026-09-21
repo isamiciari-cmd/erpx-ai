@@ -39,7 +39,7 @@ export function usePermissions(): UsePermissionsReturn {
   const [roles, setRoles] = useState<UserRole[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<Error | null>(null);
-  const emergencyTimeoutRef = useRef<NodeJS.Timeout | null>(null);
+  const emergencyTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
 
   const loadPermissionsAndRoles = async () => {
     console.log('[usePermissions] Loading permissions and roles for user:', currentUser?.id);
@@ -51,7 +51,7 @@ export function usePermissions(): UsePermissionsReturn {
 
     // Set emergency timeout
     emergencyTimeoutRef.current = setTimeout(() => {
-      console.warn('[usePermissions] ⚠️ Emergency timeout - forcing loading to false');
+      console.warn('[usePermissions] âš ï¸ Emergency timeout - forcing loading to false');
       setLoading(false);
     }, 3000);
 
@@ -79,23 +79,23 @@ export function usePermissions(): UsePermissionsReturn {
       ]);
 
       if (permissionsResult.error) {
-        console.error('[usePermissions] ❌ Permissions fetch error:', permissionsResult.error);
+        console.error('[usePermissions] âŒ Permissions fetch error:', permissionsResult.error);
         throw new Error(`Failed to fetch permissions: ${permissionsResult.error.message}`);
       }
 
       if (rolesResult.error) {
-        console.error('[usePermissions] ❌ Roles fetch error:', rolesResult.error);
+        console.error('[usePermissions] âŒ Roles fetch error:', rolesResult.error);
         throw new Error(`Failed to fetch roles: ${rolesResult.error.message}`);
       }
 
-      console.log('[usePermissions] ✓ Permissions loaded:', permissionsResult.data?.length || 0);
-      console.log('[usePermissions] ✓ Roles loaded:', rolesResult.data?.length || 0);
+      console.log('[usePermissions] âœ“ Permissions loaded:', permissionsResult.data?.length || 0);
+      console.log('[usePermissions] âœ“ Roles loaded:', rolesResult.data?.length || 0);
 
       setPermissions(permissionsResult.data || []);
       setRoles(rolesResult.data || []);
     } catch (err) {
       const error = err instanceof Error ? err : new Error('Unknown error loading permissions');
-      console.error('[usePermissions] ❌ Error loading permissions:', error);
+      console.error('[usePermissions] âŒ Error loading permissions:', error);
       setPermissions([]);
       setRoles([]);
       setError(error);
