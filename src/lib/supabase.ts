@@ -53,10 +53,22 @@ if (isDemoMode) {
   console.log('[Supabase] ✓ Supabase credentials validated');
 }
 
+// Clear legacy Supabase auth sessions from previous builds.
+// The current client uses in-memory sessions only.
+if (typeof window !== 'undefined' && supabaseUrl) {
+  try {
+    const projectRef = new URL(supabaseUrl).hostname.split('.')[0];
+    const legacyAuthKey = 'sb-' + projectRef + '-auth-token';
+    window.localStorage.removeItem(legacyAuthKey);
+  } catch {
+    // Ignore malformed/missing URL during local development.
+  }
+}
+
 // Create Supabase client
 export const supabase = hasSupabaseConfig
-  ? createClient(supabaseUrl, supabaseAnonKey)
-  : createClient('https://demo.supabase.co', 'demo-anon-key'); // Dummy client for demo mode
+  ? createClient(supabaseUrl, supabaseAnonKey, { auth: { persistSession: false, autoRefreshToken: true, detectSessionInUrl: true } })
+  : createClient('https://demo.supabase.co', 'demo-anon-key', { auth: { persistSession: false, autoRefreshToken: false, detectSessionInUrl: false } }); // Dummy client for demo mode
 
 console.log('[Supabase] ✓ Supabase client created');
 
