@@ -6,35 +6,65 @@ export interface RegistrationResponse {
   message: string;
   companyId?: string;
   userId?: string;
+  tenantId?: string;
+  branchId?: string;
+  roleId?: string;
+  requiresEmailConfirmation?: boolean;
   error?: string;
 }
 
 /**
- * Register a new company with admin user
+ * Register a new company with its first administrator.
+ *
+ * Flow:
+ * 1. Create Supabase Auth user.
+ * 2. Require an authenticated session.
+ * 3. Execute the secure database registration RPC.
+ *
+ * The database RPC creates:
+ * - Tenant
+ * - Profile
+ * - user_tenants
+ * - Company
+ * - Main Branch
+ * - ERP User
+ * - user_roles
  */
-export async function registerCompany(data: CompleteRegistration): Promise<RegistrationResponse> {
+export async function registerCompany(
+  data: CompleteRegistration
+): Promise<RegistrationResponse> {
   try {
-    // Step 1: Create auth user
-    const { data: authData, error: authError } = await supabase.auth.signUp({
-      email: data.adminUser.email,
-      password: data.adminUser.password,
-      options: {
-        data: {
-          full_name: data.adminUser.fullName,
-          job_title: data.adminUser.jobTitle,
-          mobile_number: data.adminUser.mobileNumber,
+    /*
+     * Step 1: Create Auth user
+     */
+    const { data: authData, error: authError } =
+      await supabase.auth.signUp({
+        email: data.adminUser.email,
+        password: data.adminUser.password,
+        options: {
+          data: {
+            full_name: data.adminUser.fullName,
+            job_title: data.adminUser.jobTitle,
+            mobile_number: data.adminUser.mobileNumber,
+          },
         },
-      },
-    });
+      });
 
     if (authError) {
-      if (authError.message.includes('already registered')) {
+      const message = authError.message?.toLowerCase() || '';
+
+      if (
+        message.includes('already registered') ||
+        message.includes('already exists') ||
+        message.includes('user already registered')
+      ) {
         return {
           success: false,
           message: 'This email is already registered',
           error: authError.message,
         };
       }
+
       return {
         success: false,
         message: 'Failed to create user account',
@@ -46,159 +76,162 @@ export async function registerCompany(data: CompleteRegistration): Promise<Regis
       return {
         success: false,
         message: 'Failed to create user account',
-        error: 'No user data returned',
+        error: 'No user data returned from Supabase Auth',
       };
     }
 
     const userId = authData.user.id;
 
-    // Step 2: Create company record
-    const { data: companyData, error: companyError } = await supabase
-      .from('companies')
-      .insert([
-        {
-          name: data.company.companyName,
-          legal_name: data.company.companyName,
-          tax_id: data.company.commercialRegistrationNumber,
-          currency: 'SAR',
-          timezone: 'Asia/Riyadh',
-          status: 'active',
-          settings: {
-            vat_number: data.company.vatNumber || null,
-            business_sector: data.company.businessSector,
-            company_size: data.company.companySize,
-            country: data.company.country,
-            city: data.company.city,
-            address: data.company.address,
-            website: data.company.website || null,
-          },
-        },
-      ])
-      .select()
-      .single();
+    /*
+     * Step 2: Check authentication session
+     */
+    let session = authData.session;
 
-    if (companyError) {
-      console.error('Company creation error:', companyError);
+    /*
+     * signUp() may return a user without a session when
+     * email confirmation is enabled.
+     */
+    if (!session) {
+      const { data: sessionData, error: sessionError } =
+        await supabase.auth.getSession();
+
+      if (sessionError) {
+        return {
+          success: false,
+          message: 'Unable to establish an authenticated session',
+          error: sessionError.message,
+        };
+      }
+
+      session = sessionData.session;
+    }
+
+    /*
+     * The registration RPC requires an authenticated user.
+     */
+    if (!session) {
       return {
         success: false,
-        message: 'Failed to create company record',
-        error: companyError.message,
+        message:
+          'Account created. Please confirm your email address, then sign in to complete company registration.',
+        userId,
+        requiresEmailConfirmation: true,
       };
     }
 
-    const companyId = companyData.id;
+    /*
+     * Step 3: Execute secure database registration RPC
+     */
+    const { data: registrationResult, error: registrationError } =
+      await supabase.rpc('register_company_account', {
+        p_company_name: data.company.companyName,
+        p_legal_name: data.company.companyName,
+        p_tax_id: data.company.commercialRegistrationNumber,
+        p_vat_number: data.company.vatNumber || '',
+        p_business_sector: data.company.businessSector,
+        p_company_size: data.company.companySize,
+        p_country: data.company.country,
+        p_city: data.company.city,
+        p_address: data.company.address,
+        p_website: data.company.website || '',
 
-    // Step 3: Get admin role
-    const { data: adminRole, error: roleError } = await supabase
-      .from('roles')
-      .select('id')
-      .eq('name', 'admin')
-      .eq('is_system_role', true)
-      .single();
+        /*
+         * Default branch
+         */
+        p_branch_name: 'Main Branch',
+        p_branch_code: 'MAIN',
 
-    if (roleError || !adminRole) {
-      console.error('Role fetch error:', roleError);
+        /*
+         * Subscription
+         */
+        p_subscription_plan: data.subscription.plan,
+        p_billing_cycle:
+          data.subscription.plan === 'trial'
+            ? 'trial'
+            : data.subscription.plan,
+
+        p_max_branches: data.subscription.numberOfBranches,
+        p_max_users: data.subscription.numberOfUsers,
+        p_modules: data.subscription.modules,
+
+        /*
+         * Administrator
+         */
+        p_full_name: data.adminUser.fullName,
+        p_job_title: data.adminUser.jobTitle,
+        p_mobile_number: data.adminUser.mobileNumber,
+      });
+
+    if (registrationError) {
+      console.error(
+        'Company registration RPC error:',
+        registrationError
+      );
+
       return {
         success: false,
-        message: 'Failed to assign admin role',
-        error: roleError?.message || 'Admin role not found',
+        message: 'Failed to complete company registration',
+        userId,
+        error: registrationError.message,
       };
     }
 
-    // Step 4: Create user profile
-    const { error: userError } = await supabase.from('users').insert([
-      {
-        id: userId,
-        company_id: companyId,
-        email: data.adminUser.email,
-        first_name: data.adminUser.fullName.split(' ')[0],
-        last_name: data.adminUser.fullName.split(' ').slice(1).join(' ') || '',
-        phone_number: data.adminUser.mobileNumber,
-        position: data.adminUser.jobTitle,
-        role_id: adminRole.id,
-        department: 'Management',
-        status: 'active',
-      },
-    ]);
-
-    if (userError) {
-      console.error('User profile creation error:', userError);
+    if (!registrationResult) {
       return {
         success: false,
-        message: 'Failed to create user profile',
-        error: userError.message,
+        message: 'Registration completed without a result',
+        userId,
+        error: 'RPC returned an empty result',
       };
     }
 
-    // Step 5: Create default branch
-    const { error: branchError } = await supabase.from('branches').insert([
-      {
-        company_id: companyId,
-        name: 'Main Branch',
-        code: 'MAIN',
-        city: data.company.city,
-        country: data.company.country,
-        is_headquarters: true,
-        status: 'active',
-      },
-    ]);
-
-    if (branchError) {
-      console.error('Branch creation error:', branchError);
-      // Non-critical error, continue
+    /*
+     * Step 4: Validate RPC result
+     */
+    if (!registrationResult.success) {
+      return {
+        success: false,
+        message: 'Company registration failed',
+        userId,
+        error: 'Registration RPC returned an unsuccessful result',
+      };
     }
 
-    // Step 6: Store subscription and modules in company settings
-    // Update company settings with subscription info
-    const { error: settingsUpdateError } = await supabase
-      .from('companies')
-      .update({
-        settings: {
-          ...(companyData.settings || {}),
-          subscription: {
-            plan: data.subscription.plan,
-            billing_cycle: data.subscription.plan === 'trial' ? 'trial' : data.subscription.plan,
-            max_branches: data.subscription.numberOfBranches,
-            max_users: data.subscription.numberOfUsers,
-            modules: data.subscription.modules,
-            started_at: new Date().toISOString(),
-          },
-        },
-      })
-      .eq('id', companyId);
-
-    if (settingsUpdateError) {
-      console.error('Settings update error:', settingsUpdateError);
-      // Non-critical error, continue
-    }
-
-    // Success!
     return {
       success: true,
       message: 'Company account created successfully',
-      companyId,
-      userId,
+      userId: registrationResult.user_id,
+      tenantId: registrationResult.tenant_id,
+      companyId: registrationResult.company_id,
+      branchId: registrationResult.branch_id,
+      roleId: registrationResult.role_id,
     };
-  } catch (error: any) {
+  } catch (error: unknown) {
     console.error('Registration error:', error);
+
     return {
       success: false,
       message: 'An unexpected error occurred during registration',
-      error: error.message,
+      error:
+        error instanceof Error
+          ? error.message
+          : 'Unknown registration error',
     };
   }
 }
 
 /**
- * Check if email is already registered
+ * Check whether an email already exists in the ERP users table.
  */
-export async function checkEmailExists(email: string): Promise<boolean> {
+export async function checkEmailExists(
+  email: string
+): Promise<boolean> {
   try {
     const { data, error } = await supabase
       .from('users')
       .select('email')
       .eq('email', email)
-      .single();
+      .maybeSingle();
 
     return !error && !!data;
   } catch {
@@ -207,15 +240,17 @@ export async function checkEmailExists(email: string): Promise<boolean> {
 }
 
 /**
- * Check if commercial registration number exists
+ * Check whether a commercial registration number already exists.
  */
-export async function checkCommercialRegExists(crNumber: string): Promise<boolean> {
+export async function checkCommercialRegExists(
+  crNumber: string
+): Promise<boolean> {
   try {
     const { data, error } = await supabase
       .from('companies')
       .select('tax_id')
       .eq('tax_id', crNumber)
-      .single();
+      .maybeSingle();
 
     return !error && !!data;
   } catch {

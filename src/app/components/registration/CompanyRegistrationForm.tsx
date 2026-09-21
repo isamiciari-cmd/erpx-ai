@@ -18,10 +18,12 @@ import {
   adminUserSchema,
   subscriptionSchema,
   reviewSchema,
+  completeRegistrationSchema,
   type CompanyInfo,
   type AdminUser,
   type Subscription,
   type Review,
+  type CompleteRegistration,
 } from '../../../lib/validation/registrationSchema';
 import { registerCompany } from '../../../services/companyRegistrationService';
 import CompanyInfoStep from './steps/CompanyInfoStep';
@@ -30,56 +32,82 @@ import SubscriptionStep from './steps/SubscriptionStep';
 import ReviewStep from './steps/ReviewStep';
 
 const steps = [
-  { number: 1, title: 'Company Information', icon: Building2, schema: companyInfoSchema },
-  { number: 2, title: 'Admin User', icon: User, schema: adminUserSchema },
-  { number: 3, title: 'Subscription & Modules', icon: Package, schema: subscriptionSchema },
-  { number: 4, title: 'Review & Submit', icon: FileCheck, schema: reviewSchema },
+  {
+    number: 1,
+    title: 'Company Information',
+    icon: Building2,
+  },
+  {
+    number: 2,
+    title: 'Admin User',
+    icon: User,
+  },
+  {
+    number: 3,
+    title: 'Subscription & Modules',
+    icon: Package,
+  },
+  {
+    number: 4,
+    title: 'Review & Submit',
+    icon: FileCheck,
+  },
 ];
 
 export default function CompanyRegistrationForm() {
   const navigate = useNavigate();
+
   const [currentStep, setCurrentStep] = useState(1);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
 
-  // Form data for each step
-  const [companyData, setCompanyData] = useState<Partial<CompanyInfo>>({});
-  const [adminData, setAdminData] = useState<Partial<AdminUser>>({});
-  const [subscriptionData, setSubscriptionData] = useState<Partial<Subscription>>({
-    numberOfBranches: 1,
-    numberOfUsers: 5,
-    modules: {
-      finance: true,
-      hr: false,
-      inventory: false,
-      pos: false,
-      reports: true,
-      aiAssistant: false,
-    },
-  });
-  const [reviewData, setReviewData] = useState<Partial<Review>>({
-    termsAccepted: false,
-  });
+  const [companyData, setCompanyData] =
+    useState<Partial<CompanyInfo>>({});
 
-  // Form hooks for current step
+  const [adminData, setAdminData] =
+    useState<Partial<AdminUser>>({});
+
+  const [subscriptionData, setSubscriptionData] =
+    useState<Partial<Subscription>>({
+      numberOfBranches: 1,
+      numberOfUsers: 5,
+      modules: {
+        finance: true,
+        hr: false,
+        inventory: false,
+        pos: false,
+        reports: true,
+        aiAssistant: false,
+      },
+    });
+
+  const [reviewData, setReviewData] =
+    useState<Partial<Review>>({
+      termsAccepted: false,
+    });
+
   const companyForm = useForm<CompanyInfo>({
     resolver: zodResolver(companyInfoSchema),
-    defaultValues: companyData,
+    defaultValues: companyData as CompanyInfo,
+    mode: 'onTouched',
   });
 
   const adminForm = useForm<AdminUser>({
     resolver: zodResolver(adminUserSchema),
-    defaultValues: adminData,
+    defaultValues: adminData as AdminUser,
+    mode: 'onTouched',
   });
 
   const subscriptionForm = useForm<Subscription>({
     resolver: zodResolver(subscriptionSchema),
-    defaultValues: subscriptionData,
+    defaultValues: subscriptionData as Subscription,
+    mode: 'onTouched',
   });
 
   const reviewForm = useForm<Review>({
     resolver: zodResolver(reviewSchema),
-    defaultValues: reviewData,
+    defaultValues: reviewData as Review,
+    mode: 'onTouched',
   });
 
   const getCurrentForm = () => {
@@ -98,6 +126,8 @@ export default function CompanyRegistrationForm() {
   };
 
   const handleNext = async () => {
+    setError('');
+
     const form = getCurrentForm();
     const isValid = await form.trigger();
 
@@ -105,58 +135,127 @@ export default function CompanyRegistrationForm() {
       return;
     }
 
-    // Save current step data
     if (currentStep === 1) {
-      setCompanyData(form.getValues() as CompanyInfo);
-    } else if (currentStep === 2) {
-      setAdminData(form.getValues() as AdminUser);
-    } else if (currentStep === 3) {
-      setSubscriptionData(form.getValues() as Subscription);
+      const values = companyForm.getValues();
+      setCompanyData(values);
     }
 
-    if (currentStep < 4) {
-      setCurrentStep(currentStep + 1);
+    if (currentStep === 2) {
+      const values = adminForm.getValues();
+      setAdminData(values);
+    }
+
+    if (currentStep === 3) {
+      const values = subscriptionForm.getValues();
+      setSubscriptionData(values);
+    }
+
+    if (currentStep < steps.length) {
+      setCurrentStep((step) => step + 1);
     }
   };
 
   const handlePrevious = () => {
-    if (currentStep > 1) {
-      setCurrentStep(currentStep - 1);
-    }
-  };
-
-  const handleSubmit = async () => {
-    setError('');
-    setLoading(true);
-
-    // Final validation
-    const reviewValid = await reviewForm.trigger();
-    if (!reviewValid) {
-      setLoading(false);
+    if (loading) {
       return;
     }
 
-    // Prepare complete registration data
-    const completeData = {
-      company: companyData as CompanyInfo,
-      adminUser: adminData as AdminUser,
-      subscription: subscriptionData as Subscription,
-      review: reviewForm.getValues() as Review,
+    setError('');
+
+    if (currentStep === 1) {
+      return;
+    }
+
+    if (currentStep === 2) {
+      companyForm.reset(companyData as CompanyInfo);
+    }
+
+    if (currentStep === 3) {
+      adminForm.reset(adminData as AdminUser);
+    }
+
+    if (currentStep === 4) {
+      subscriptionForm.reset(subscriptionData as Subscription);
+    }
+
+    setCurrentStep((step) => step - 1);
+  };
+
+  const handleSubmit = async () => {
+    if (loading) {
+      return;
+    }
+
+    setError('');
+
+    const reviewValid = await reviewForm.trigger();
+
+    if (!reviewValid) {
+      return;
+    }
+
+    const completeData: CompleteRegistration = {
+      company: companyForm.getValues(),
+      adminUser: adminForm.getValues(),
+      subscription: subscriptionForm.getValues(),
+      review: reviewForm.getValues(),
     };
 
-    // Submit registration
-    const result = await registerCompany(completeData);
+    const validationResult =
+      completeRegistrationSchema.safeParse(completeData);
 
-    if (result.success) {
-      // Redirect to success page or login
+    if (!validationResult.success) {
+      setError(
+        'Some registration information is incomplete or invalid. Please review your information.'
+      );
+      return;
+    }
+
+    setLoading(true);
+
+    try {
+      const result = await registerCompany(
+        validationResult.data
+      );
+
+      if (!result.success) {
+        setError(
+          result.error
+            ? `${result.message}: ${result.error}`
+            : result.message || 'Registration failed. Please try again.'
+        );
+        return;
+      }
+
+      /*
+       * Email confirmation is currently disabled in Supabase.
+       * Therefore a successful registration should already have
+       * an authenticated session and completed company setup.
+       */
       navigate('/registration-success', {
+        replace: true,
         state: {
-          email: completeData.adminUser.email,
-          companyName: completeData.company.companyName,
+          email: validationResult.data.adminUser.email,
+          companyName:
+            validationResult.data.company.companyName,
+          companyId: result.companyId,
+          tenantId: result.tenantId,
+          branchId: result.branchId,
+          userId: result.userId,
         },
       });
-    } else {
-      setError(result.message || 'Registration failed. Please try again.');
+    } catch (submitError) {
+      console.error(
+        'Registration submission error:',
+        submitError
+      );
+
+      setError(
+        submitError instanceof Error
+          ? submitError.message
+          : 'An unexpected error occurred during registration.'
+      );
+    } finally {
       setLoading(false);
     }
   };
@@ -166,21 +265,27 @@ export default function CompanyRegistrationForm() {
   return (
     <div className="min-h-screen bg-gradient-to-br from-gray-950 via-blue-950 to-gray-950 flex items-center justify-center p-4">
       <div className="w-full max-w-4xl">
-        {/* Header */}
         <motion.div
           initial={{ opacity: 0, y: -20 }}
           animate={{ opacity: 1, y: 0 }}
           className="text-center mb-8"
         >
-          <h1 className="text-4xl font-bold text-white mb-2">Register New Company</h1>
-          <p className="text-gray-400">Create your ERPX-AI enterprise account</p>
+          <h1 className="text-4xl font-bold text-white mb-2">
+            Register New Company
+          </h1>
+
+          <p className="text-gray-400">
+            Create your ERPX-AI enterprise account
+          </p>
         </motion.div>
 
-        {/* Progress Steps */}
         <div className="mb-8">
           <div className="flex items-center justify-between">
             {steps.map((step, index) => (
-              <div key={step.number} className="flex items-center flex-1">
+              <div
+                key={step.number}
+                className="flex items-center flex-1"
+              >
                 <div className="flex flex-col items-center flex-1">
                   <div
                     className={`w-12 h-12 rounded-full flex items-center justify-center border-2 transition-all ${
@@ -197,14 +302,18 @@ export default function CompanyRegistrationForm() {
                       <step.icon className="w-6 h-6 text-white" />
                     )}
                   </div>
+
                   <p className="text-xs text-gray-400 mt-2 text-center hidden sm:block">
                     {step.title}
                   </p>
                 </div>
+
                 {index < steps.length - 1 && (
                   <div
                     className={`flex-1 h-0.5 mx-2 transition-all ${
-                      currentStep > step.number ? 'bg-green-500' : 'bg-gray-700'
+                      currentStep > step.number
+                        ? 'bg-green-500'
+                        : 'bg-gray-700'
                     }`}
                   />
                 )}
@@ -213,37 +322,57 @@ export default function CompanyRegistrationForm() {
           </div>
         </div>
 
-        {/* Form Content */}
         <motion.div
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
           className="bg-gray-900/80 backdrop-blur-xl border border-gray-800 rounded-2xl p-8"
         >
-          {/* Current Step Title */}
           <div className="flex items-center gap-3 mb-6">
             <div className="w-10 h-10 bg-blue-500/20 rounded-lg flex items-center justify-center">
               <StepIcon className="w-6 h-6 text-blue-400" />
             </div>
+
             <div>
-              <h2 className="text-2xl font-bold text-white">{steps[currentStep - 1].title}</h2>
+              <h2 className="text-2xl font-bold text-white">
+                {steps[currentStep - 1].title}
+              </h2>
+
               <p className="text-sm text-gray-400">
                 Step {currentStep} of {steps.length}
               </p>
             </div>
           </div>
 
-          {/* Error Message */}
           {error && (
             <div className="mb-6 p-4 bg-red-500/10 border border-red-500/50 rounded-lg">
-              <p className="text-sm text-red-400">{error}</p>
+              <p className="text-sm text-red-400">
+                {error}
+              </p>
             </div>
           )}
 
-          {/* Step Content */}
           <AnimatePresence mode="wait">
-            {currentStep === 1 && <CompanyInfoStep form={companyForm} key="step1" />}
-            {currentStep === 2 && <AdminUserStep form={adminForm} key="step2" />}
-            {currentStep === 3 && <SubscriptionStep form={subscriptionForm} key="step3" />}
+            {currentStep === 1 && (
+              <CompanyInfoStep
+                form={companyForm}
+                key="step1"
+              />
+            )}
+
+            {currentStep === 2 && (
+              <AdminUserStep
+                form={adminForm}
+                key="step2"
+              />
+            )}
+
+            {currentStep === 3 && (
+              <SubscriptionStep
+                form={subscriptionForm}
+                key="step3"
+              />
+            )}
+
             {currentStep === 4 && (
               <ReviewStep
                 form={reviewForm}
@@ -255,7 +384,6 @@ export default function CompanyRegistrationForm() {
             )}
           </AnimatePresence>
 
-          {/* Navigation Buttons */}
           <div className="flex items-center gap-4 mt-8">
             {currentStep > 1 && (
               <button
@@ -272,14 +400,15 @@ export default function CompanyRegistrationForm() {
             <button
               type="button"
               onClick={() => navigate('/login')}
-              className="px-6 py-3 text-gray-400 hover:text-white transition-colors"
+              disabled={loading}
+              className="px-6 py-3 text-gray-400 hover:text-white transition-colors disabled:opacity-50"
             >
               Cancel
             </button>
 
             <div className="flex-1" />
 
-            {currentStep < 4 ? (
+            {currentStep < steps.length ? (
               <button
                 type="button"
                 onClick={handleNext}
@@ -296,8 +425,13 @@ export default function CompanyRegistrationForm() {
                 disabled={loading}
                 className="px-8 py-3 bg-gradient-to-r from-green-600 to-green-500 text-white rounded-lg font-semibold hover:from-green-500 hover:to-emerald-500 transition-all disabled:opacity-50 flex items-center gap-2"
               >
-                {loading && <Loader2 className="w-5 h-5 animate-spin" />}
-                {loading ? 'Creating Account...' : 'Create Company Account'}
+                {loading && (
+                  <Loader2 className="w-5 h-5 animate-spin" />
+                )}
+
+                {loading
+                  ? 'Creating Account...'
+                  : 'Create Company Account'}
               </button>
             )}
           </div>

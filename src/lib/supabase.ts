@@ -1,30 +1,33 @@
-import { createClient } from '@supabase/supabase-js';
+﻿import { createClient } from '@supabase/supabase-js';
 
 console.log('[Supabase] Initializing Supabase client...');
 
-// Supabase configuration from environment variables
 const supabaseUrl = import.meta.env.VITE_SUPABASE_URL || '';
 const supabaseAnonKey = import.meta.env.VITE_SUPABASE_ANON_KEY || '';
 
 console.log('[Supabase] Environment variables:');
+
 console.log(
   '[Supabase] VITE_SUPABASE_URL:',
-  supabaseUrl ? `✓ ${supabaseUrl.substring(0, 30)}...` : '✗ Missing',
+  supabaseUrl
+    ? 'Configured: ' + supabaseUrl.substring(0, 30) + '...'
+    : 'Missing',
 );
+
 console.log(
   '[Supabase] VITE_SUPABASE_ANON_KEY:',
-  supabaseAnonKey ? `✓ ${supabaseAnonKey.substring(0, 20)}...` : '✗ Missing',
+  supabaseAnonKey
+    ? 'Configured: ' + supabaseAnonKey.substring(0, 20) + '...'
+    : 'Missing',
 );
 
-// Check if Supabase is configured
 export const hasSupabaseConfig = Boolean(
   supabaseUrl &&
-  supabaseAnonKey &&
-  supabaseUrl !== 'your_supabase_url_here' &&
-  supabaseAnonKey !== 'your_supabase_anon_key_here',
+    supabaseAnonKey &&
+    supabaseUrl !== 'your_supabase_url_here' &&
+    supabaseAnonKey !== 'your_supabase_anon_key_here',
 );
 
-// Flag to indicate if running in demo mode (no Supabase credentials)
 export const isDemoMode = !hasSupabaseConfig;
 
 export function getDemoUser(email?: string) {
@@ -33,10 +36,15 @@ export function getDemoUser(email?: string) {
   return {
     id: 'demo-user-id',
     email: resolvedEmail,
-    app_metadata: { provider: 'demo', providers: ['demo'] },
+    app_metadata: {
+      provider: 'demo',
+      providers: ['demo'],
+    },
     user_metadata: {
       full_name: 'Demo User',
-      role: resolvedEmail.includes('cashier') ? 'cashier' : 'admin',
+      role: resolvedEmail.includes('cashier')
+        ? 'cashier'
+        : 'admin',
     },
     aud: 'authenticated',
     created_at: new Date().toISOString(),
@@ -45,34 +53,37 @@ export function getDemoUser(email?: string) {
 }
 
 if (isDemoMode) {
-  // Only show warning in development mode
   if (import.meta.env.DEV) {
-    console.warn('[Supabase] ⚠️ Running in DEMO MODE - Supabase credentials not configured');
+    console.warn(
+      '[Supabase] Running in DEMO MODE - Supabase credentials not configured',
+    );
   }
 } else {
-  console.log('[Supabase] ✓ Supabase credentials validated');
+  console.log('[Supabase] Supabase credentials validated');
 }
 
-// Clear legacy Supabase auth sessions from previous builds.
-// The current client uses in-memory sessions only.
-if (typeof window !== 'undefined' && supabaseUrl) {
-  try {
-    const projectRef = new URL(supabaseUrl).hostname.split('.')[0];
-    const legacyAuthKey = 'sb-' + projectRef + '-auth-token';
-    window.localStorage.removeItem(legacyAuthKey);
-  } catch {
-    // Ignore malformed/missing URL during local development.
-  }
-}
-
-// Create Supabase client
 export const supabase = hasSupabaseConfig
-  ? createClient(supabaseUrl, supabaseAnonKey, { auth: { persistSession: false, autoRefreshToken: true, detectSessionInUrl: true } })
-  : createClient('https://demo.supabase.co', 'demo-anon-key', { auth: { persistSession: false, autoRefreshToken: false, detectSessionInUrl: false } }); // Dummy client for demo mode
+  ? createClient(supabaseUrl, supabaseAnonKey, {
+      auth: {
+        persistSession: true,
+        autoRefreshToken: true,
+        detectSessionInUrl: true,
+      },
+    })
+  : createClient(
+      'https://demo.supabase.co',
+      'demo-anon-key',
+      {
+        auth: {
+          persistSession: false,
+          autoRefreshToken: false,
+          detectSessionInUrl: false,
+        },
+      },
+    );
 
-console.log('[Supabase] ✓ Supabase client created');
+console.log('[Supabase] Supabase client created');
 
-// Database type definitions
 export interface Database {
   public: {
     Tables: {
@@ -93,12 +104,17 @@ export interface Database {
           created_at: string;
           updated_at: string;
         };
+
         Insert: Omit<
           Database['public']['Tables']['users']['Row'],
           'id' | 'created_at' | 'updated_at'
         >;
-        Update: Partial<Database['public']['Tables']['users']['Insert']>;
+
+        Update: Partial<
+          Database['public']['Tables']['users']['Insert']
+        >;
       };
+
       companies: {
         Row: {
           id: string;
@@ -117,12 +133,17 @@ export interface Database {
           created_at: string;
           updated_at: string;
         };
+
         Insert: Omit<
           Database['public']['Tables']['companies']['Row'],
           'id' | 'created_at' | 'updated_at'
         >;
-        Update: Partial<Database['public']['Tables']['companies']['Insert']>;
+
+        Update: Partial<
+          Database['public']['Tables']['companies']['Insert']
+        >;
       };
+
       roles: {
         Row: {
           id: string;
@@ -132,9 +153,17 @@ export interface Database {
           permissions: any;
           created_at: string;
         };
-        Insert: Omit<Database['public']['Tables']['roles']['Row'], 'id' | 'created_at'>;
-        Update: Partial<Database['public']['Tables']['roles']['Insert']>;
+
+        Insert: Omit<
+          Database['public']['Tables']['roles']['Row'],
+          'id' | 'created_at'
+        >;
+
+        Update: Partial<
+          Database['public']['Tables']['roles']['Insert']
+        >;
       };
+
       customers: {
         Row: {
           id: string;
@@ -153,12 +182,17 @@ export interface Database {
           created_at: string;
           updated_at: string;
         };
+
         Insert: Omit<
           Database['public']['Tables']['customers']['Row'],
           'id' | 'created_at' | 'updated_at'
         >;
-        Update: Partial<Database['public']['Tables']['customers']['Insert']>;
+
+        Update: Partial<
+          Database['public']['Tables']['customers']['Insert']
+        >;
       };
+
       products: {
         Row: {
           id: string;
@@ -176,12 +210,17 @@ export interface Database {
           created_at: string;
           updated_at: string;
         };
+
         Insert: Omit<
           Database['public']['Tables']['products']['Row'],
           'id' | 'created_at' | 'updated_at'
         >;
-        Update: Partial<Database['public']['Tables']['products']['Insert']>;
+
+        Update: Partial<
+          Database['public']['Tables']['products']['Insert']
+        >;
       };
+
       inventory: {
         Row: {
           id: string;
@@ -193,12 +232,17 @@ export interface Database {
           created_at: string;
           updated_at: string;
         };
+
         Insert: Omit<
           Database['public']['Tables']['inventory']['Row'],
           'id' | 'created_at' | 'updated_at'
         >;
-        Update: Partial<Database['public']['Tables']['inventory']['Insert']>;
+
+        Update: Partial<
+          Database['public']['Tables']['inventory']['Insert']
+        >;
       };
+
       invoices: {
         Row: {
           id: string;
@@ -218,12 +262,17 @@ export interface Database {
           created_at: string;
           updated_at: string;
         };
+
         Insert: Omit<
           Database['public']['Tables']['invoices']['Row'],
           'id' | 'created_at' | 'updated_at'
         >;
-        Update: Partial<Database['public']['Tables']['invoices']['Insert']>;
+
+        Update: Partial<
+          Database['public']['Tables']['invoices']['Insert']
+        >;
       };
+
       sales_orders: {
         Row: {
           id: string;
@@ -237,11 +286,15 @@ export interface Database {
           created_at: string;
           updated_at: string;
         };
+
         Insert: Omit<
           Database['public']['Tables']['sales_orders']['Row'],
           'id' | 'created_at' | 'updated_at'
         >;
-        Update: Partial<Database['public']['Tables']['sales_orders']['Insert']>;
+
+        Update: Partial<
+          Database['public']['Tables']['sales_orders']['Insert']
+        >;
       };
     };
   };
