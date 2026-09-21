@@ -320,12 +320,12 @@ export default function ProductionLogin({ onLoginSuccess }: ProductionLoginProps
             className="mt-8 space-y-4"
           >
             {/* Register New Company Button */}
-            <a
-              href="/register"
+            <Link
+              to="/register"
               className="block w-full py-3 px-6 bg-gradient-to-r from-purple-600 to-purple-500 hover:from-purple-500 hover:to-pink-500 text-white rounded-lg font-semibold transition-all text-center"
             >
               {t('auth.registerNewCompany')}
-            </a>
+            </Link>
 
             <div className="flex items-center gap-4">
               <div className="flex-1 h-px bg-gray-700"></div>
