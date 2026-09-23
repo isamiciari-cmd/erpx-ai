@@ -1,4 +1,4 @@
-import { createContext, useContext, useEffect, useState } from 'react';
+import { createContext, useContext, useEffect, useRef, useState } from 'react';
 
 import type { ReactNode } from 'react';
 
@@ -83,6 +83,7 @@ interface AuthProviderProps {
 }
 
 export function AuthProvider({ children }: AuthProviderProps) {
+  const authGenerationRef = useRef(0);
   const [currentUser, setCurrentUser] = useState<SupabaseUser | null>(null);
 
   const [session, setSession] = useState<Session | null>(null);
@@ -131,7 +132,7 @@ export function AuthProvider({ children }: AuthProviderProps) {
    * IMPORTANT:
    * users.id = auth.users.id
    */
-  const loadUserProfile = async (authUser: SupabaseUser | null) => {
+  const loadUserProfile = async (authUser: SupabaseUser | null, generation = authGenerationRef.current) => {
     if (!authUser) {
       setUser(null);
       return;
@@ -154,6 +155,11 @@ export function AuthProvider({ children }: AuthProviderProps) {
         .select('*')
         .eq('id', authUser.id)
         .maybeSingle();
+
+      if (generation !== authGenerationRef.current) {
+        console.log('[AuthProvider] Ignoring stale profile result:', authUser.id);
+        return;
+      }
 
       if (error) {
         console.error('[AuthProvider] Failed to load ERPX user:', error);
@@ -287,7 +293,8 @@ export function AuthProvider({ children }: AuthProviderProps) {
         setCurrentUser(currentSession?.user ?? null);
 
         if (currentSession?.user) {
-          await loadUserProfile(currentSession.user);
+          const generation = ++authGenerationRef.current;
+          await loadUserProfile(currentSession.user, generation);
         } else {
           setUser(null);
         }
@@ -328,7 +335,8 @@ export function AuthProvider({ children }: AuthProviderProps) {
       setCurrentUser(newSession?.user ?? null);
 
       if (newSession?.user) {
-        await loadUserProfile(newSession.user);
+        const generation = ++authGenerationRef.current;
+        await loadUserProfile(newSession.user, generation);
       } else {
         setUser(null);
       }
@@ -388,6 +396,7 @@ export function AuthProvider({ children }: AuthProviderProps) {
    * Sign out.
    */
   const signOut = async () => {
+    authGenerationRef.current += 1;
     if (isDemoMode) {
       localStorage.removeItem('erpx_demo_email');
       setUser(null);
