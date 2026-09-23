@@ -3,10 +3,12 @@ import { motion, AnimatePresence } from 'motion/react';
 import { Bell, Search, LogOut, Globe, Sparkles } from 'lucide-react';
 import { useAuth } from '../../contexts/AuthContext';
 import { useNavigate } from 'react-router-dom';
+import { useTranslation } from 'react-i18next';
 
 export default function Topbar() {
-  const [showNotifications, setShowNotifications] = useState(false);
   const [language, setLanguage] = useState('EN');
+  const [showNotifications, setShowNotifications] = useState(false);
+  const { i18n } = useTranslation();
   const { user, signOut } = useAuth();
   const navigate = useNavigate();
 
@@ -54,11 +56,13 @@ export default function Topbar() {
         <motion.button
           whileHover={{ scale: 1.05 }}
           whileTap={{ scale: 0.95 }}
-          onClick={() => setLanguage(language === 'EN' ? 'AR' : 'EN')}
+          onClick={() => i18n.changeLanguage(i18n.language === 'ar' ? 'en' : 'ar')}
           className="flex items-center gap-2 px-4 py-2.5 hover:bg-gray-800/50 rounded-xl transition-all text-gray-300 hover:text-white border border-gray-700/50 hover:border-gray-600/50"
         >
           <Globe className="w-4 h-4" />
-          <span className="text-sm font-semibold">{language}</span>
+<span className="text-sm font-semibold">
+  {i18n.language === 'ar' ? 'EN' : 'AR'}
+</span>
         </motion.button>
 
         {/* AI Assistant Shortcut */}
