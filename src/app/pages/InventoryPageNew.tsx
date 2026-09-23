@@ -1,4 +1,4 @@
-﻿import { useMemo, useState } from 'react';
+import { useMemo, useState } from 'react';
 import { motion } from 'motion/react';
 import {
   Package,
@@ -427,15 +427,14 @@ export default function InventoryPageNew() {
             Export
           </motion.button>
 
-          <motion.button
-            whileHover={{ scale: 1.03 }}
-            whileTap={{ scale: 0.97 }}
+          <button
+            type="button"
             onClick={openAddModal}
-            className="flex items-center gap-2 px-4 py-2 bg-gradient-to-r from-blue-500 to-purple-500 rounded-xl text-white font-semibold shadow-lg shadow-blue-500/30"
+            className="flex items-center gap-2 px-4 py-2 bg-gradient-to-r from-blue-500 to-purple-500 rounded-xl text-white font-semibold shadow-lg shadow-blue-500/30 hover:opacity-90 transition-opacity"
           >
             <Plus className="w-4 h-4" />
             Add Product
-          </motion.button>
+          </button>
         </div>
       </div>
 
