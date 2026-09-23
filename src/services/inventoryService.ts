@@ -1,4 +1,4 @@
-import { supabase, isDemoMode } from '../lib/supabase';
+﻿import { supabase, isDemoMode } from '../lib/supabase';
 
 export interface InventoryItem {
   id: string;
@@ -6,15 +6,28 @@ export interface InventoryItem {
   warehouse_id: string;
   quantity_available: number;
   quantity_reserved: number;
+  quantity_on_order?: number;
   last_counted_at: string | null;
   created_at: string;
   updated_at: string;
+
+  product?: {
+    id?: string;
+    product_name: string;
+    unit_price: number;
+    min_stock_level: number;
+    company_id?: string;
+  };
+
+  warehouse?: {
+    name: string;
+  };
 }
 
 export interface Product {
   id: string;
   company_id: string;
-  category_id: string;
+  category_id: string | null;
   sku: string;
   product_name: string;
   description: string | null;
@@ -28,17 +41,29 @@ export interface Product {
   updated_at: string;
 }
 
-// List inventory items
-export async function listInventory(warehouseId?: string): Promise<InventoryItem[]> {
+// List inventory items for a specific company.
+export async function listInventory(
+  companyId: string,
+  warehouseId?: string,
+): Promise<InventoryItem[]> {
   if (isDemoMode) {
     return [];
   }
 
-  let query = supabase.from('inventory').select(`
+  let query = supabase
+    .from('inventory')
+    .select(`
       *,
-      product:products(product_name, unit_price, min_stock_level),
+      product:products!inner(
+        id,
+        product_name,
+        unit_price,
+        min_stock_level,
+        company_id
+      ),
       warehouse:warehouses(name)
-    `);
+    `)
+    .eq('product.company_id', companyId);
 
   if (warehouseId) {
     query = query.eq('warehouse_id', warehouseId);
@@ -51,10 +76,10 @@ export async function listInventory(warehouseId?: string): Promise<InventoryItem
     throw error;
   }
 
-  return data || [];
+  return (data ?? []) as InventoryItem[];
 }
 
-// Update inventory quantity
+// Update inventory quantity.
 export async function updateInventoryQuantity(
   inventoryId: string,
   quantityAvailable: number,
@@ -80,15 +105,24 @@ export async function updateInventoryQuantity(
     throw error;
   }
 
-  return data;
+  return data as InventoryItem;
 }
 
-// Get low stock products
+// Get low stock products for a specific company.
 interface LowStockProduct extends InventoryItem {
-  product: Pick<Product, 'id' | 'sku' | 'product_name' | 'min_stock_level' | 'reorder_point'>;
+  product: {
+    id: string;
+    company_id: string;
+    sku: string;
+    product_name: string;
+    min_stock_level: number;
+    reorder_point: number | null;
+  };
 }
 
-export async function getLowStockProducts(companyId: string): Promise<LowStockProduct[]> {
+export async function getLowStockProducts(
+  companyId: string,
+): Promise<LowStockProduct[]> {
   if (isDemoMode) {
     return [];
   }
@@ -98,7 +132,14 @@ export async function getLowStockProducts(companyId: string): Promise<LowStockPr
     .select(
       `
       *,
-      product:products!inner(id, sku, product_name, min_stock_level, reorder_point, company_id)
+      product:products!inner(
+        id,
+        sku,
+        product_name,
+        min_stock_level,
+        reorder_point,
+        company_id
+      )
     `,
     )
     .eq('product.company_id', companyId);
