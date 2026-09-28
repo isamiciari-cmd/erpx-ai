@@ -1,7 +1,20 @@
 packages:
   - '.'
+
 allowBuilds:
   '@tailwindcss/oxide': true
   esbuild: true
   protobufjs: true
   re2: true
+
+overrides:
+  vite: 6.3.5
+  glob: ^11.0.0
+  tar: ^7.5.2
+  uuid: ^10.0.0
+
+onlyBuiltDependencies: []
+
+allowedDeprecatedVersions:
+  json-ptr: 3.1.1
+  node-domexception: 1.0.0

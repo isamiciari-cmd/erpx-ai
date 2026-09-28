@@ -1,0 +1,117 @@
+/* -------------------------------------------------------------------------- */
+/* ERPX-AI V2 Application Shell                                               */
+/* -------------------------------------------------------------------------- */
+:root {
+  --app-bg: #f5f7fb;
+  --app-surface: #ffffff;
+  --app-surface-2: #f8fafc;
+  --app-text: #111827;
+  --app-muted: #667085;
+  --app-muted-2: #98a2b3;
+  --app-border: rgba(15, 23, 42, .08);
+  --app-hover: rgba(15, 23, 42, .045);
+  --app-sidebar: rgba(255,255,255,.92);
+  --brand: #eab308;
+  --brand-strong: #ca8a04;
+  --brand-soft: rgba(234,179,8,.12);
+  --app-shadow: 0 18px 50px rgba(15,23,42,.06);
+}
+
+.dark {
+  --app-bg: #0a0d12;
+  --app-surface: #11151c;
+  --app-surface-2: #151a22;
+  --app-text: #f8fafc;
+  --app-muted: #98a2b3;
+  --app-muted-2: #667085;
+  --app-border: rgba(255,255,255,.08);
+  --app-hover: rgba(255,255,255,.05);
+  --app-sidebar: rgba(13,17,23,.94);
+  --brand: #facc15;
+  --brand-strong: #eab308;
+  --brand-soft: rgba(250,204,21,.12);
+  --app-shadow: 0 18px 50px rgba(0,0,0,.20);
+}
+
+body { background: var(--app-bg); color: var(--app-text); }
+button, a, input { -webkit-tap-highlight-color: transparent; }
+
+.erpx-shell { --sidebar-width: 272px; }
+.erpx-main { min-height: 100vh; margin-left: var(--sidebar-width); transition: margin-left .22s cubic-bezier(.2,.7,.2,1); }
+.erpx-main-collapsed { margin-left: 82px; }
+.erpx-content { min-height: calc(100vh - 72px); padding: clamp(16px, 2vw, 32px); }
+.erpx-content-inner { width: min(100%, 1680px); margin: 0 auto; }
+
+.erpx-desktop-sidebar { position: fixed; inset: 0 auto 0 0; z-index: 70; width: var(--sidebar-width); transition: width .22s cubic-bezier(.2,.7,.2,1); }
+.erpx-desktop-sidebar[data-collapsed='true'] { width: 82px; }
+.erpx-sidebar { position: relative; display: flex; height: 100%; width: 100%; flex-direction: column; border-right: 1px solid var(--app-border); background: var(--app-sidebar); backdrop-filter: blur(18px); }
+.dark .erpx-sidebar { box-shadow: 20px 0 70px rgba(0,0,0,.12); }
+.erpx-brand { display: flex; align-items: center; gap: 12px; min-height: 76px; padding: 16px 18px; border-bottom: 1px solid var(--app-border); }
+.erpx-brand-mark { display: grid; place-items: center; width: 40px; height: 40px; flex: 0 0 auto; border-radius: 13px; color: #111827; background: linear-gradient(135deg, #fde047, #eab308); box-shadow: 0 10px 30px rgba(234,179,8,.18); }
+.erpx-brand-name { font-size: 14px; font-weight: 900; letter-spacing: -.02em; }
+.erpx-brand-subtitle { margin-top: 2px; color: var(--app-muted-2); font-size: 9px; font-weight: 800; letter-spacing: .13em; text-transform: uppercase; white-space: nowrap; }
+.erpx-nav { flex: 1; overflow-y: auto; padding: 14px 10px; scrollbar-width: thin; }
+.erpx-nav-section { margin-bottom: 15px; }
+.erpx-nav-section-label { display: flex; width: 100%; align-items: center; justify-content: space-between; padding: 8px 10px; color: var(--app-muted-2); font-size: 9px; font-weight: 900; letter-spacing: .17em; text-transform: uppercase; }
+.erpx-nav-item { position: relative; display: flex; min-height: 42px; align-items: center; gap: 11px; margin: 2px 0; padding: 0 11px; border-radius: 12px; color: var(--app-muted); font-size: 12px; font-weight: 700; transition: background .16s ease, color .16s ease, transform .16s ease; }
+.erpx-nav-item:hover { background: var(--app-hover); color: var(--app-text); }
+.erpx-nav-item.is-active { background: var(--brand-soft); color: var(--app-text); }
+.erpx-nav-item.is-active svg { color: var(--brand-strong); }
+.erpx-nav-active-dot { width: 5px; height: 5px; margin-left: auto; border-radius: 999px; background: var(--brand); box-shadow: 0 0 10px rgba(234,179,8,.55); }
+.erpx-sidebar-footer { padding: 13px 16px; border-top: 1px solid var(--app-border); }
+.erpx-live-dot { display: block; width: 8px; height: 8px; margin: 3px auto; border-radius: 999px; background: #22c55e; box-shadow: 0 0 14px rgba(34,197,94,.65); }
+.erpx-sidebar-toggle { position: absolute; right: -13px; top: 76px; display: grid; width: 26px; height: 26px; place-items: center; border: 1px solid var(--app-border); border-radius: 9px; background: var(--app-surface); color: var(--app-muted); box-shadow: 0 8px 24px rgba(15,23,42,.08); transition: .16s ease; }
+.erpx-sidebar-toggle:hover { color: var(--app-text); transform: scale(1.05); }
+.erpx-mobile-close, .erpx-mobile-sidebar { display: none; }
+
+.erpx-topbar { position: sticky; top: 0; z-index: 60; display: flex; min-height: 72px; align-items: center; gap: 12px; padding: 12px clamp(16px, 2vw, 30px); border-bottom: 1px solid var(--app-border); background: color-mix(in srgb, var(--app-bg) 88%, transparent); backdrop-filter: blur(18px); }
+.erpx-global-search { display: flex; min-width: 0; flex: 1; max-width: 720px; align-items: center; gap: 10px; height: 44px; padding: 0 12px; border: 1px solid var(--app-border); border-radius: 13px; background: var(--app-surface); color: var(--app-muted); box-shadow: 0 6px 24px rgba(15,23,42,.025); }
+.erpx-global-search:focus-within { border-color: rgba(234,179,8,.42); box-shadow: 0 0 0 3px var(--brand-soft); }
+.erpx-global-search input { min-width: 0; flex: 1; border: 0; outline: 0; background: transparent; color: var(--app-text); font-size: 13px; }
+.erpx-global-search input::placeholder { color: var(--app-muted-2); }
+.erpx-shortcut { display: inline-flex; align-items: center; gap: 3px; padding: 3px 7px; border: 1px solid var(--app-border); border-radius: 6px; color: var(--app-muted-2); font-size: 10px; }
+.erpx-topbar-actions { display: flex; align-items: center; gap: 7px; margin-left: auto; }
+.erpx-icon-button { position: relative; display: grid; width: 40px; height: 40px; place-items: center; border: 1px solid var(--app-border); border-radius: 11px; background: var(--app-surface); color: var(--app-muted); transition: .16s ease; }
+.erpx-icon-button:hover { color: var(--app-text); background: var(--app-hover); transform: translateY(-1px); }
+.erpx-ai-button { border-color: transparent; color: #111827; background: linear-gradient(135deg, #fde047, #eab308); box-shadow: 0 8px 24px rgba(234,179,8,.16); }
+.erpx-notification-dot { position: absolute; right: 9px; top: 8px; width: 6px; height: 6px; border: 1px solid var(--app-surface); border-radius: 50%; background: #ef4444; }
+.erpx-user-chip { align-items: center; gap: 9px; max-width: 220px; padding-left: 9px; border-left: 1px solid var(--app-border); }
+.erpx-avatar { display: grid; width: 36px; height: 36px; flex: 0 0 auto; place-items: center; border-radius: 11px; color: #111827; background: linear-gradient(135deg, #fde047, #f59e0b); font-size: 12px; font-weight: 900; }
+.erpx-popover { position: absolute; top: calc(100% + 10px); padding: 8px; border: 1px solid var(--app-border); border-radius: 16px; background: var(--app-surface); color: var(--app-text); box-shadow: var(--app-shadow); }
+.erpx-command-overlay { position: fixed; inset: 0; z-index: 200; display: grid; place-items: start center; padding: 11vh 16px 20px; background: rgba(15,23,42,.30); backdrop-filter: blur(8px); }
+.erpx-command { width: min(620px, 100%); overflow: hidden; border: 1px solid var(--app-border); border-radius: 20px; background: var(--app-surface); color: var(--app-text); box-shadow: 0 30px 100px rgba(15,23,42,.24); }
+.erpx-mobile-menu { display: none; width: 40px; height: 40px; place-items: center; border: 1px solid var(--app-border); border-radius: 11px; background: var(--app-surface); color: var(--app-muted); }
+
+@media (max-width: 1023px) {
+  .erpx-desktop-sidebar { display: none; }
+  .erpx-main, .erpx-main-collapsed { margin-left: 0; }
+  .erpx-mobile-menu { display: grid; }
+  .erpx-mobile-sidebar { position: fixed; inset: 0 auto 0 0; z-index: 210; display: block; width: min(300px, 86vw); }
+  .erpx-mobile-sidebar .erpx-sidebar { box-shadow: 20px 0 60px rgba(0,0,0,.18); }
+  .erpx-mobile-sidebar .erpx-sidebar-toggle { display: none; }
+  .erpx-mobile-close { display: grid; width: 34px; height: 34px; margin-left: auto; place-items: center; border: 1px solid var(--app-border); border-radius: 10px; color: var(--app-muted); }
+  .erpx-mobile-backdrop { position: fixed; inset: 0; z-index: 205; border: 0; background: rgba(15,23,42,.42); backdrop-filter: blur(3px); }
+}
+
+@media (max-width: 640px) {
+  .erpx-content { padding: 12px; padding-bottom: 78px; }
+  .erpx-topbar { min-height: 64px; padding: 10px 12px; }
+  .erpx-global-search { height: 42px; }
+  .erpx-global-search input { font-size: 12px; }
+  .erpx-shortcut { display: none; }
+  .erpx-user-chip { display: none; }
+  .erpx-topbar-actions { gap: 5px; }
+  .erpx-icon-button { width: 38px; height: 38px; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after { scroll-behavior: auto !important; transition-duration: .01ms !important; animation-duration: .01ms !important; animation-iteration-count: 1 !important; }
+}
+
+.erpx-mobile-bottom-nav { display: none; }
+@media (max-width: 640px) {
+  .erpx-mobile-bottom-nav { position: fixed; left: 10px; right: 10px; bottom: 10px; z-index: 90; display: grid; grid-template-columns: repeat(4, 1fr); gap: 4px; padding: 6px; border: 1px solid var(--app-border); border-radius: 17px; background: color-mix(in srgb, var(--app-surface) 92%, transparent); backdrop-filter: blur(20px); box-shadow: 0 16px 50px rgba(15,23,42,.16); }
+  .erpx-mobile-bottom-nav a { display: flex; min-height: 52px; flex-direction: column; align-items: center; justify-content: center; gap: 3px; border-radius: 12px; color: var(--app-muted); font-size: 9px; font-weight: 800; }
+  .erpx-mobile-bottom-nav a.is-active { color: var(--app-text); background: var(--brand-soft); }
+  .erpx-mobile-bottom-nav a.is-active svg { color: var(--brand-strong); }
+}

@@ -115,6 +115,7 @@ interface LowStockProduct extends InventoryItem {
     company_id: string;
     sku: string;
     product_name: string;
+    unit_price: number;
     min_stock_level: number;
     reorder_point: number | null;
   };
@@ -133,13 +134,14 @@ export async function getLowStockProducts(
       `
       *,
       product:products!inner(
-        id,
-        sku,
-        product_name,
-        min_stock_level,
-        reorder_point,
-        company_id
-      )
+  id,
+  sku,
+  product_name,
+  unit_price,
+  min_stock_level,
+  reorder_point,
+  company_id
+)
     `,
     )
     .eq('product.company_id', companyId);

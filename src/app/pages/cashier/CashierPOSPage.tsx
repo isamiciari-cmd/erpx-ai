@@ -1,4 +1,4 @@
-import { useState } from 'react';
+﻿import { useState } from 'react';
 import {
   Search,
   Barcode,
@@ -19,7 +19,7 @@ import { motion } from 'motion/react';
 import { useAuth } from '../../../contexts/AuthContext';
 import { useRealtimeTable } from '../../../hooks/useRealtimeTable';
 import { Product } from '../../../services/productsService';
-import { createSale, Sale, SaleItem } from '../../../services/salesService';
+import { completePOSSale, createSale, getCurrentShift, Sale, SaleItem } from '../../../services/salesService';
 
 interface CartItem {
   id: string;
@@ -132,55 +132,95 @@ export default function CashierPOSPage() {
     }
   };
 
-  const handleCheckout = async () => {
+  const ensureCurrentShift = async () => {
+    if (!user?.company_id || !user?.branch_id || !user?.id) {
+      throw new Error('Company, branch, or cashier information is missing');
+    }
+
+    const shift = await getCurrentShift(
+      user.company_id,
+      user.branch_id,
+      user.id,
+    );
+
+    if (!shift) {
+      throw new Error('No open shift found. Please open a shift first.');
+    }
+
+    return shift;
+  };
+const handleCheckout = async () => {
     if (cart.length === 0) {
       alert('Cart is empty');
       return;
     }
 
-    if (!user?.id || !user?.company_id || !user?.branch_id) {
-      alert('User information not available');
+    if (!user?.company_id || !user?.branch_id || !user?.id) {
+      alert('User company, branch, or cashier information is missing');
+      return;
+    }
+
+    if (selectedPayment === 'split') {
+      alert('Split payment is not available yet');
       return;
     }
 
     setIsProcessing(true);
+
     try {
-      // Prepare sale items
+      const shift = await ensureCurrentShift();
+
       const saleItems: SaleItem[] = cart.map((item) => ({
         product_id: item.id,
         product_name: item.name,
         quantity: item.quantity,
         unit_price: item.price,
         discount_percentage: item.discount,
+        discount_amount: item.price * item.quantity * (item.discount / 100),
         subtotal: item.price * item.quantity,
         total: item.price * item.quantity * (1 - item.discount / 100),
+        vat_rate: 15,
       }));
 
-      // Create sale
-      const sale: Omit<Sale, 'id' | 'created_at' | 'updated_at' | 'sale_number'> = {
+      console.log('[POS] Checkout payload JSON:', JSON.stringify({
         company_id: user.company_id,
         branch_id: user.branch_id,
         cashier_id: user.id,
-        sale_date: new Date().toISOString(),
-        payment_method: selectedPayment as any,
-        subtotal,
+        shift_id: shift.id,
+        payment_method: selectedPayment,
         discount_amount: totalDiscount,
-        vat_amount: 0, // TODO: Calculate VAT
-        total_amount: total,
-        amount_paid: total,
-        change_amount: 0,
         items: saleItems,
-        status: 'completed',
-      };
+      }, null, 2));
 
-      await createSale(sale);
+      const result = await completePOSSale({
+        company_id: user.company_id,
+        branch_id: user.branch_id,
+        cashier_id: user.id,
+        shift_id: shift.id,
+        customer_id: null,
+        payment_method: selectedPayment as
+          | 'cash'
+          | 'card'
+          | 'mada'
+          | 'apple_pay'
+          | 'bank_transfer',
+        items: saleItems,
+        discount_amount: totalDiscount,
+        notes: null,
+      });
 
-      alert(`Payment successful! Total: ${total.toFixed(2)} SAR`);
+      alert(
+        `Sale completed successfully\n\nSale: ${result.sale_number}\nInvoice: ${result.invoice_number}\nTotal: ${result.total_amount.toFixed(2)} SAR`,
+      );
+
       setCart([]);
-      setSelectedPayment('cash');
     } catch (error) {
-      console.error('Error processing payment:', error);
-      alert('Failed to process payment. Please try again.');
+      console.error('[POS] Checkout failed:', error);
+      alert(
+        error instanceof Error
+          ? `Checkout failed: ${error.message}`
+          : 'Checkout failed',
+      );
     } finally {
       setIsProcessing(false);
     }
@@ -250,7 +290,7 @@ export default function CashierPOSPage() {
                   className="p-4 bg-gray-900 hover:bg-gray-800 border border-gray-800 hover:border-blue-500/50 rounded-xl text-left transition-all"
                 >
                   <div className="aspect-square bg-gray-800 rounded-lg mb-3 flex items-center justify-center">
-                    <span className="text-4xl text-gray-600">📦</span>
+                    <span className="text-4xl text-gray-600">≡ƒôª</span>
                   </div>
                   <h3 className="font-semibold text-white mb-1">{product.product_name}</h3>
                   <p className="text-blue-400 font-bold text-lg">
@@ -412,3 +452,8 @@ export default function CashierPOSPage() {
     </div>
   );
 }
+
+
+
+
+

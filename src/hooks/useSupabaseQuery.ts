@@ -1,57 +1,92 @@
 import { useState, useEffect, useCallback } from 'react';
 import { useAuth } from '../contexts/AuthContext';
 import { isDemoMode } from '../lib/supabase';
+import type { Product } from '../services/productsService';
 
 // Mock data for demo mode
-const MOCK_PRODUCTS = [
+
+const MOCK_PRODUCTS: Product[] = [
   {
-    id: 'demo-product-1',
-    company_id: 'demo-company',
-    category_id: 'demo-category',
-    sku: 'DEMO-001',
-    product_name: 'Product A',
-    description: 'Demo product',
-    unit_price: 120,
-    cost_price: 80,
-    vat_rate: 15,
-    min_stock_level: 20,
-    reorder_point: 30,
-    is_active: true,
-    created_at: new Date().toISOString(),
-    updated_at: new Date().toISOString(),
-  },
+  id: 'demo-product-1',
+  company_id: 'demo-company',
+  item_code: 'ITEM-001',
+  category_id: 'demo-category',
+  sku: 'DEMO-001',
+  barcode: null,
+  product_name: 'Product A',
+  description: 'Demo product',
+  unit_of_measure: 'PCS',
+  product_type: 'GOODS',
+  tracking_method: 'NONE',
+  unit_price: 120,
+  cost_price: 80,
+  vat_rate: 15,
+  min_stock_level: 20,
+  max_stock_level: null,
+  reorder_point: 30,
+  track_inventory: true,
+  is_active: true,
+  images: [],
+  attributes: {},
+  created_by: null,
+  updated_by: null,
+  created_at: new Date().toISOString(),
+  updated_at: new Date().toISOString(),
+},
   {
-    id: 'demo-product-2',
-    company_id: 'demo-company',
-    category_id: 'demo-category',
-    sku: 'DEMO-002',
-    product_name: 'Product B',
-    description: 'Demo product',
-    unit_price: 250,
-    cost_price: 170,
-    vat_rate: 15,
-    min_stock_level: 15,
-    reorder_point: 25,
-    is_active: true,
-    created_at: new Date().toISOString(),
-    updated_at: new Date().toISOString(),
-  },
-  {
-    id: 'demo-product-3',
-    company_id: 'demo-company',
-    category_id: 'demo-category',
-    sku: 'DEMO-003',
-    product_name: 'Product C',
-    description: 'Demo product',
-    unit_price: 85,
-    cost_price: 55,
-    vat_rate: 15,
-    min_stock_level: 25,
-    reorder_point: 40,
-    is_active: true,
-    created_at: new Date().toISOString(),
-    updated_at: new Date().toISOString(),
-  },
+  id: 'demo-product-2',
+  company_id: 'demo-company',
+  item_code: 'ITEM-002',
+  category_id: 'demo-category',
+  sku: 'DEMO-002',
+  barcode: null,
+  product_name: 'Product B',
+  description: 'Demo product',
+  unit_of_measure: 'PCS',
+  product_type: 'GOODS',
+  tracking_method: 'NONE',
+  unit_price: 250,
+  cost_price: 170,
+  vat_rate: 15,
+  min_stock_level: 15,
+  max_stock_level: null,
+  reorder_point: 25,
+  track_inventory: true,
+  is_active: true,
+  images: [],
+  attributes: {},
+  created_by: null,
+  updated_by: null,
+  created_at: new Date().toISOString(),
+  updated_at: new Date().toISOString(),
+},
+{
+  id: 'demo-product-3',
+  company_id: 'demo-company',
+  item_code: 'ITEM-003',
+  category_id: 'demo-category',
+  sku: 'DEMO-003',
+  barcode: null,
+  product_name: 'Product C',
+  description: 'Demo product',
+  unit_of_measure: 'PCS',
+  product_type: 'GOODS',
+  tracking_method: 'NONE',
+  unit_price: 85,
+  cost_price: 55,
+  vat_rate: 15,
+  min_stock_level: 25,
+  max_stock_level: null,
+  reorder_point: 40,
+  track_inventory: true,
+  is_active: true,
+  images: [],
+  attributes: {},
+  created_by: null,
+  updated_by: null,
+  created_at: new Date().toISOString(),
+  updated_at: new Date().toISOString(),
+},
 ];
 
 const MOCK_INVENTORY = [
@@ -313,6 +348,7 @@ export function useProducts() {
 
 export function useInventory(warehouseId?: string) {
   const { user } = useAuth();
+  const companyId = user?.company_id;
 
   // Return mock data in demo mode
   if (isDemoMode) {
@@ -324,10 +360,13 @@ export function useInventory(warehouseId?: string) {
     };
   }
 
-  return useSupabaseQuery(() => inventoryService.listInventory(warehouseId), {
+return useSupabaseQuery(
+  () => inventoryService.listInventory(companyId!, warehouseId),
+  {
     refreshInterval: 10000,
-    enabled: !!user,
-  });
+    enabled: !!companyId,
+  },
+);
 }
 
 export function useInvoices(status?: string) {

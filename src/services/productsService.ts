@@ -1,4 +1,4 @@
-﻿import { supabase, isDemoMode } from '../lib/supabase';
+import { supabase, isDemoMode } from '../lib/supabase';
 
 export type ProductType = 'GOODS' | 'SERVICE' | 'ASSET';
 export type TrackingMethod = 'NONE' | 'BATCH' | 'SERIAL';
@@ -126,7 +126,7 @@ export async function getProduct(productId: string): Promise<Product | null> {
 // item_code is intentionally NOT supplied here.
 // PostgreSQL generates it through the database trigger.
 export async function createProduct(
-  productData: CreateProductInput | Partial<Product>,
+  productData: CreateProductInput,
 ): Promise<Product> {
   if (isDemoMode) {
     throw new Error('Demo mode: Cannot create products');
@@ -371,3 +371,4 @@ export async function getProductsWithStock(
     } as Product;
   });
 }
+

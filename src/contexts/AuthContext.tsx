@@ -1,4 +1,4 @@
-import { createContext, useContext, useEffect, useRef, useState } from 'react';
+﻿import { createContext, useContext, useEffect, useRef, useState } from 'react';
 
 import type { ReactNode } from 'react';
 
@@ -26,45 +26,7 @@ interface AuthContextType {
   isCashier: () => Promise<boolean>;
 }
 
-const DEV_ERPX_DASHBOARD_OVERRIDE_USER_ID = 'b54274f7-7550-4200-84c5-33e143f2ee62';
-const DEV_ERPX_DASHBOARD_OVERRIDE_USER_EMAIL = 'i.sami.ciari@erpx-ai.net';
 
-const isDevErpxDashboardOverrideUser = (authUser: SupabaseUser | null | undefined) => {
-  const viteEnv =
-    typeof import.meta !== 'undefined' && 'env' in import.meta
-      ? (import.meta as any).env
-      : undefined;
-
-  if (!viteEnv?.DEV || !authUser?.id || !authUser?.email) {
-    return false;
-  }
-
-  return (
-    authUser.id === DEV_ERPX_DASHBOARD_OVERRIDE_USER_ID &&
-    authUser.email.toLowerCase() === DEV_ERPX_DASHBOARD_OVERRIDE_USER_EMAIL.toLowerCase()
-  );
-};
-
-const createDevErpxDashboardOverrideUser = (authUser: SupabaseUser): User => {
-  console.log('[DEV ONLY] ERPX dashboard override enabled for i.sami.ciari@erpx-ai.net');
-
-  return {
-    id: authUser.id,
-    email: authUser.email ?? DEV_ERPX_DASHBOARD_OVERRIDE_USER_EMAIL,
-    first_name: 'Sami',
-    last_name: 'Ciari',
-    role_id: 'dev-override-admin-role',
-    company_id: 'dev-override-company',
-    branch_id: 'dev-override-branch',
-    department: 'Operations',
-    position: 'Administrator',
-    phone_number: null,
-    avatar_url: null,
-    status: 'active',
-    created_at: new Date().toISOString(),
-    updated_at: new Date().toISOString(),
-  } as User;
-};
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
 
@@ -84,7 +46,9 @@ interface AuthProviderProps {
 
 export function AuthProvider({ children }: AuthProviderProps) {
   const authGenerationRef = useRef(0);
-  const [currentUser, setCurrentUser] = useState<SupabaseUser | null>(null);
+
+  const [currentUser, setCurrentUser] =
+    useState<SupabaseUser | null>(null);
 
   const [session, setSession] = useState<Session | null>(null);
 
@@ -94,6 +58,7 @@ export function AuthProvider({ children }: AuthProviderProps) {
 
   const setDemoSession = (email: string) => {
     const demoUser = getDemoUser(email);
+
     const demoProfile = {
       id: demoUser.id,
       email: demoUser.email,
@@ -112,6 +77,7 @@ export function AuthProvider({ children }: AuthProviderProps) {
     } as User;
 
     localStorage.setItem('erpx_demo_email', email);
+
     setSession({
       access_token: 'demo-access-token',
       refresh_token: 'demo-refresh-token',
@@ -122,6 +88,7 @@ export function AuthProvider({ children }: AuthProviderProps) {
       provider_token: null,
       provider_refresh_token: null,
     } as Session);
+
     setCurrentUser(demoUser as SupabaseUser);
     setUser(demoProfile);
   };
@@ -132,103 +99,116 @@ export function AuthProvider({ children }: AuthProviderProps) {
    * IMPORTANT:
    * users.id = auth.users.id
    */
-  const loadUserProfile = async (authUser: SupabaseUser | null, generation = authGenerationRef.current) => {
-    if (!authUser) {
+  const loadUserProfile = async (
+  authUser: SupabaseUser | null,
+  generation = authGenerationRef.current,
+) => {
+  if (!authUser) {
+    setUser(null);
+    return;
+  }
+
+  try {
+    console.log(
+      '[AuthProvider] Loading ERPX user:',
+      authUser.id,
+    );
+
+    /*
+     * First load the user record only.
+     *
+     * We intentionally do NOT load roles,
+     * companies or branches here.
+     *
+     * This avoids PostgREST relationship errors
+     * while authentication is initialized.
+     */
+    const { data, error } = await supabase
+      .from('users')
+      .select('*')
+      .eq('id', authUser.id)
+      .maybeSingle();
+
+    if (generation !== authGenerationRef.current) {
+      console.log(
+        '[AuthProvider] Ignoring stale profile result:',
+        authUser.id,
+      );
+      return;
+    }
+
+    if (error) {
+      console.error(
+        '[AuthProvider] Failed to load ERPX user:',
+        error,
+      );
+
       setUser(null);
       return;
     }
 
-    try {
-      console.log('[AuthProvider] Loading ERPX user:', authUser.id);
+    if (!data) {
+      console.warn(
+        '[AuthProvider] No ERPX user profile found:',
+        authUser.id,
+      );
 
-      /*
-       * First load the user record only.
-       *
-       * We intentionally do NOT load roles,
-       * companies or branches here.
-       *
-       * This avoids PostgREST relationship errors
-       * while authentication is initialized.
-       */
-      const { data, error } = await supabase
-        .from('users')
-        .select('*')
-        .eq('id', authUser.id)
-        .maybeSingle();
+      setUser(null);
+      return;
+    }
 
-      if (generation !== authGenerationRef.current) {
-        console.log('[AuthProvider] Ignoring stale profile result:', authUser.id);
-        return;
-      }
+    const profileIsMissingRole = !data.role_id;
 
-      if (error) {
-        console.error('[AuthProvider] Failed to load ERPX user:', error);
+    const profileIsMissingTenant =
+      !data.company_id || !data.branch_id;
 
-        if (isDevErpxDashboardOverrideUser(authUser)) {
-          console.warn(
-            '[AuthProvider] DEV ERPX dashboard override used because profile query failed for',
-            authUser.email,
-          );
+    const profileIsInactive =
+      data.status &&
+      String(data.status).toLowerCase() !== 'active';
 
-          const fallbackUser = createDevErpxDashboardOverrideUser(authUser);
-          setUser(fallbackUser);
-          return;
-        }
+    if (
+      profileIsMissingRole ||
+      profileIsMissingTenant ||
+      profileIsInactive
+    ) {
+      console.warn(
+        '[AuthProvider] ERPX user profile is incomplete or inactive:',
+        {
+          id: data.id,
+          email: data.email,
+          role_id: data.role_id,
+          company_id: data.company_id,
+          branch_id: data.branch_id,
+          status: data.status,
+        },
+      );
 
-        setUser(null);
-        return;
-      }
+      setUser(null);
+      return;
+    }
 
-      if (!data) {
-        console.warn('[AuthProvider] No ERPX user profile found:', authUser.id);
-
-        if (isDevErpxDashboardOverrideUser(authUser)) {
-          console.warn(
-            '[AuthProvider] DEV ERPX dashboard override used because the ERPX profile was missing for',
-            authUser.email,
-          );
-
-          const fallbackUser = createDevErpxDashboardOverrideUser(authUser);
-          setUser(fallbackUser);
-          return;
-        }
-
-        setUser(null);
-        return;
-      }
-
-      const profileIsMissingRole = !data.role_id;
-      const profileIsMissingTenant = !data.company_id || !data.branch_id;
-      const profileIsInactive = data.status && String(data.status).toLowerCase() !== 'active';
-
-      if (profileIsMissingRole || profileIsMissingTenant || profileIsInactive) {
-        if (isDevErpxDashboardOverrideUser(authUser)) {
-          const fallbackUser = createDevErpxDashboardOverrideUser(authUser);
-          setUser(fallbackUser);
-          return;
-        }
-
-        setUser(null);
-        return;
-      }
-
-      console.log('[AuthProvider] ERPX user loaded:', {
+    console.log(
+      '[AuthProvider] ERPX user loaded:',
+      {
         id: data.id,
         email: data.email,
         company_id: data.company_id,
         branch_id: data.branch_id,
         role_id: data.role_id,
         status: data.status,
-      });
+      },
+    );
 
-      setUser(data as User);
-    } catch (error) {
-      console.error('[AuthProvider] Unexpected profile error:', error);
+    setUser(data as User);
+  } catch (error) {
+    console.error(
+      '[AuthProvider] Unexpected profile error:',
+      error,
+    );
 
-      setUser(null);
-    }
-  };
-
+    setUser(null);
+  }
+};
   /**
    * Initialize authentication.
    */
@@ -240,30 +220,45 @@ export function AuthProvider({ children }: AuthProviderProps) {
       // Fail-safe: ensure we don't stay in loading state forever
       initTimeout = setTimeout(() => {
         if (mounted) {
-          console.warn('[AuthProvider] ⚠️ Initialization timeout - forcing loading=false');
+          console.warn(
+            '[AuthProvider] âš ï¸ Initialization timeout - forcing loading=false',
+          );
+
           setLoading(false);
         }
       }, 6000);
 
-      console.log('[AuthProvider] initializeAuth - checking Supabase session');
+      console.log(
+        '[AuthProvider] initializeAuth - checking Supabase session',
+      );
+
       try {
-        console.log('[AuthProvider] Initializing authentication...');
+        console.log(
+          '[AuthProvider] Initializing authentication...',
+        );
 
         if (isDemoMode) {
-          const storedEmail = localStorage.getItem('erpx_demo_email');
+          const storedEmail =
+            localStorage.getItem('erpx_demo_email');
 
           if (storedEmail) {
             setDemoSession(storedEmail);
           }
 
           if (mounted) {
-            setLoading(false);
-          }
+  if (initTimeout) {
+    clearTimeout(initTimeout);
+    initTimeout = null;
+  }
+
+  setLoading(false);
+}
 
           return;
         }
 
-        const { data, error } = await supabase.auth.getSession();
+        const { data, error } =
+          await supabase.auth.getSession();
 
         console.log('[AuthProvider] getSession result', {
           hasSession: !!data.session,
@@ -272,29 +267,32 @@ export function AuthProvider({ children }: AuthProviderProps) {
           error: error?.message ?? null,
         });
 
-        if (!mounted) {
-          return;
-        }
+        if (mounted) {
+  if (initTimeout) {
+    clearTimeout(initTimeout);
+    initTimeout = null;
+  }
 
-        if (error) {
-          console.error('[AuthProvider] getSession error:', error);
-
-          setSession(null);
-          setCurrentUser(null);
-          setUser(null);
-          setLoading(false);
-
-          return;
-        }
+  setSession(null);
+  setCurrentUser(null);
+  setUser(null);
+  setLoading(false);
+}
 
         const currentSession = data.session;
 
         setSession(currentSession);
+
         setCurrentUser(currentSession?.user ?? null);
 
         if (currentSession?.user) {
-          const generation = ++authGenerationRef.current;
-          await loadUserProfile(currentSession.user, generation);
+          const generation =
+            ++authGenerationRef.current;
+
+          await loadUserProfile(
+            currentSession.user,
+            generation,
+          );
         } else {
           setUser(null);
         }
@@ -303,7 +301,10 @@ export function AuthProvider({ children }: AuthProviderProps) {
           setLoading(false);
         }
       } catch (error) {
-        console.error('[AuthProvider] Authentication initialization failed:', error);
+        console.error(
+          '[AuthProvider] Authentication initialization failed:',
+          error,
+        );
 
         if (mounted) {
           setSession(null);
@@ -318,37 +319,93 @@ export function AuthProvider({ children }: AuthProviderProps) {
 
     /**
      * Listen for Supabase authentication changes.
+     *
+     * IMPORTANT:
+     * Do NOT make this callback async and do NOT await
+     * another Supabase operation directly inside it.
+     *
+     * Supabase Auth may hold its internal Web Lock while
+     * processing the auth event. Calling loadUserProfile()
+     * directly from the callback can cause the profile query
+     * to wait for the same lock.
+     *
+     * We therefore defer profile loading until the callback
+     * has completely returned.
      */
-    const { data: authListener } = supabase.auth.onAuthStateChange(async (_event, newSession) => {
-      if (!mounted) {
-        return;
-      }
+    const { data: authListener } =
+      supabase.auth.onAuthStateChange(
+        (_event, newSession) => {
+          if (!mounted) {
+            return;
+          }
 
-      console.log('[AuthProvider] Auth state changed:', _event, {
-        hasSession: !!newSession,
-        userId: newSession?.user?.id ?? null,
-        email: newSession?.user?.email ?? null,
-      });
+          console.log(
+            '[AuthProvider] Auth state changed:',
+            _event,
+            {
+              hasSession: !!newSession,
+              userId: newSession?.user?.id ?? null,
+              email: newSession?.user?.email ?? null,
+            },
+          );
 
-      setSession(newSession);
+          setSession(newSession);
 
-      setCurrentUser(newSession?.user ?? null);
+          setCurrentUser(
+            newSession?.user ?? null,
+          );
 
-      if (newSession?.user) {
-        const generation = ++authGenerationRef.current;
-        await loadUserProfile(newSession.user, generation);
-      } else {
-        setUser(null);
-      }
+          if (!newSession?.user) {
+            setUser(null);
+            setLoading(false);
+            return;
+          }
 
-      if (mounted) {
-        setLoading(false);
-      }
-    });
+          /*
+           * Defer the ERPX profile query until the
+           * Supabase Auth callback has returned.
+           */
+          const authUser = newSession.user;
+
+          const generation =
+            ++authGenerationRef.current;
+
+          setTimeout(() => {
+            if (!mounted) {
+              return;
+            }
+
+            loadUserProfile(
+              authUser,
+              generation,
+            )
+              .catch((error) => {
+                console.error(
+                  '[AuthProvider] Deferred profile loading failed:',
+                  error,
+                );
+
+                if (mounted) {
+                  setUser(null);
+                  setLoading(false);
+                }
+              })
+              .finally(() => {
+                if (mounted) {
+                  setLoading(false);
+                }
+              });
+          }, 0);
+        },
+      );
 
     return () => {
       mounted = false;
-      if (initTimeout) clearTimeout(initTimeout);
+
+      if (initTimeout) {
+        clearTimeout(initTimeout);
+      }
+
       authListener.subscription.unsubscribe();
     };
   }, []);
@@ -356,16 +413,23 @@ export function AuthProvider({ children }: AuthProviderProps) {
   /**
    * Sign in.
    */
-  const signIn = async (email: string, password: string) => {
+  const signIn = async (
+    email: string,
+    password: string,
+  ) => {
     if (isDemoMode) {
-      setDemoSession(email.trim() || 'admin@erpx-ai.com');
+      setDemoSession(
+        email.trim() || 'admin@erpx-ai.com',
+      );
+
       return;
     }
 
-    const { error } = await supabase.auth.signInWithPassword({
-      email,
-      password,
-    });
+    const { error } =
+      await supabase.auth.signInWithPassword({
+        email,
+        password,
+      });
 
     if (error) {
       throw error;
@@ -375,20 +439,31 @@ export function AuthProvider({ children }: AuthProviderProps) {
   /**
    * Sign up.
    */
-  const signUp = async (email: string, password: string, userData: any) => {
-    const { data, error } = await supabase.auth.signUp({
-      email,
-      password,
-    });
+  const signUp = async (
+    email: string,
+    password: string,
+    userData: any,
+  ) => {
+    const { data, error } =
+      await supabase.auth.signUp({
+        email,
+        password,
+      });
 
     if (error) {
       throw error;
     }
 
     if (data.user) {
-      console.log('[AuthProvider] Supabase user created:', data.user.id);
+      console.log(
+        '[AuthProvider] Supabase user created:',
+        data.user.id,
+      );
 
-      console.log('[AuthProvider] Registration data:', userData);
+      console.log(
+        '[AuthProvider] Registration data:',
+        userData,
+      );
     }
   };
 
@@ -397,15 +472,21 @@ export function AuthProvider({ children }: AuthProviderProps) {
    */
   const signOut = async () => {
     authGenerationRef.current += 1;
+
     if (isDemoMode) {
-      localStorage.removeItem('erpx_demo_email');
+      localStorage.removeItem(
+        'erpx_demo_email',
+      );
+
       setUser(null);
       setCurrentUser(null);
       setSession(null);
+
       return;
     }
 
-    const { error } = await supabase.auth.signOut();
+    const { error } =
+      await supabase.auth.signOut();
 
     if (error) {
       throw error;
@@ -419,17 +500,19 @@ export function AuthProvider({ children }: AuthProviderProps) {
   /**
    * Permission check.
    */
-  const hasPermission = async (permission: string): Promise<boolean> => {
+  const hasPermission = async (
+    permission: string,
+  ): Promise<boolean> => {
     if (!currentUser) {
       return false;
     }
 
-    if (isDevErpxDashboardOverrideUser(currentUser)) {
-      return true;
-    }
+
 
     if (isDemoMode) {
-      const email = currentUser.email || '';
+      const email =
+        currentUser.email || '';
+
       return (
         email.includes('admin') ||
         email.includes('developer') ||
@@ -439,20 +522,30 @@ export function AuthProvider({ children }: AuthProviderProps) {
     }
 
     try {
-      const { data, error } = await supabase.rpc('has_permission', {
-        p_user_id: currentUser.id,
-        p_permission_key: permission,
-      });
+      const { data, error } =
+        await supabase.rpc(
+          'has_permission',
+          {
+            p_user_id: currentUser.id,
+            p_permission_key: permission,
+          },
+        );
 
       if (error) {
-        console.error('[AuthProvider] Permission error:', error);
+        console.error(
+          '[AuthProvider] Permission error:',
+          error,
+        );
 
         return false;
       }
 
       return data === true;
     } catch (error) {
-      console.error('[AuthProvider] Permission check failed:', error);
+      console.error(
+        '[AuthProvider] Permission check failed:',
+        error,
+      );
 
       return false;
     }
@@ -466,39 +559,63 @@ export function AuthProvider({ children }: AuthProviderProps) {
       return false;
     }
 
-    if (isDevErpxDashboardOverrideUser(currentUser)) {
-      return true;
-    }
+    
 
     if (isDemoMode) {
-      const email = currentUser.email || '';
-      return email.includes('admin') || email.includes('developer');
+      const email =
+        currentUser.email || '';
+
+      return (
+        email.includes('admin') ||
+        email.includes('developer')
+      );
     }
 
     try {
-      const [adminResult, superAdminResult] = await Promise.all([
-        supabase.rpc('has_role', {
-          p_user_id: currentUser.id,
-          p_role_name: 'admin',
-        }),
+      const [
+  adminResult,
+  superAdminResult,
+] = await Promise.all([
+  supabase.rpc(
+    'has_role',
+    {
+      target_user: currentUser.id,
+      role_name: 'admin',
+    },
+  ),
 
-        supabase.rpc('has_role', {
-          p_user_id: currentUser.id,
-          p_role_name: 'super_admin',
-        }),
-      ]);
+  supabase.rpc(
+    'has_role',
+    {
+      target_user: currentUser.id,
+      role_name: 'super_admin',
+    },
+  ),
+]);
 
       if (adminResult.error) {
-        console.error('[AuthProvider] Admin role error:', adminResult.error);
+        console.error(
+          '[AuthProvider] Admin role error:',
+          adminResult.error,
+        );
       }
 
       if (superAdminResult.error) {
-        console.error('[AuthProvider] Super admin role error:', superAdminResult.error);
+        console.error(
+          '[AuthProvider] Super admin role error:',
+          superAdminResult.error,
+        );
       }
 
-      return adminResult.data === true || superAdminResult.data === true;
+      return (
+        adminResult.data === true ||
+        superAdminResult.data === true
+      );
     } catch (error) {
-      console.error('[AuthProvider] Admin check failed:', error);
+      console.error(
+        '[AuthProvider] Admin check failed:',
+        error,
+      );
 
       return false;
     }
@@ -512,81 +629,111 @@ export function AuthProvider({ children }: AuthProviderProps) {
       return false;
     }
 
-    if (isDevErpxDashboardOverrideUser(currentUser)) {
-      return true;
-    }
+    
 
     if (isDemoMode) {
-      const email = currentUser.email || '';
-      return email.includes('manager') || email.includes('admin') || email.includes('developer');
-    }
-
-    try {
-      const [managerResult, adminResult, superAdminResult] = await Promise.all([
-        supabase.rpc('has_role', {
-          p_user_id: currentUser.id,
-          p_role_name: 'manager',
-        }),
-
-        supabase.rpc('has_role', {
-          p_user_id: currentUser.id,
-          p_role_name: 'admin',
-        }),
-
-        supabase.rpc('has_role', {
-          p_user_id: currentUser.id,
-          p_role_name: 'super_admin',
-        }),
-      ]);
+      const email =
+        currentUser.email || '';
 
       return (
-        managerResult.data === true || adminResult.data === true || superAdminResult.data === true
+        email.includes('manager') ||
+        email.includes('admin') ||
+        email.includes('developer')
       );
-    } catch (error) {
-      console.error('[AuthProvider] Manager check failed:', error);
-
-      return false;
-    }
-  };
-
-  /**
-   * Check Cashier.
-   */
-  const isCashier = async (): Promise<boolean> => {
-    if (!currentUser) {
-      return false;
-    }
-
-    if (isDevErpxDashboardOverrideUser(currentUser)) {
-      return false;
-    }
-
-    if (isDemoMode) {
-      const email = currentUser.email || '';
-      return email.includes('cashier');
     }
 
     try {
-      const { data, error } = await supabase.rpc('has_role', {
-        p_user_id: currentUser.id,
-        p_role_name: 'cashier',
-      });
+      const [
+        managerResult,
+        adminResult,
+        superAdminResult,
+      ] = await Promise.all([
+        supabase.rpc(
+         'has_role',
+{
+  target_user: currentUser.id,
+  role_name: 'manager',
+},
+),
 
-      if (error) {
-        console.error('[AuthProvider] Cashier role error:', error);
+supabase.rpc(
+  'has_role',
+  {
+    target_user: currentUser.id,
+    role_name: 'admin',
+  },
+),
 
-        return false;
-      }
+supabase.rpc(
+  'has_role',
+  {
+    target_user: currentUser.id,
+    role_name: 'super_admin',
+  },
+),
+]);
 
-      return data === true;
-    } catch (error) {
-      console.error('[AuthProvider] Cashier check failed:', error);
+return (
+  managerResult.data === true ||
+  adminResult.data === true ||
+  superAdminResult.data === true
+);
+} catch (error) {
+  console.error(
+    '[AuthProvider] Manager check failed:',
+    error,
+  );
+
+  return false;
+}
+};
+
+/**
+ * Check Cashier.
+ */
+const isCashier = async (): Promise<boolean> => {
+  if (!currentUser) {
+    return false;
+  }
+
+  if (isDemoMode) {
+    const email =
+      currentUser.email || '';
+
+    return email.includes('cashier');
+  }
+
+  try {
+    const { data, error } =
+      await supabase.rpc(
+        'has_role',
+        {
+          target_user: currentUser.id,
+          role_name: 'cashier',
+        },
+      );
+
+    if (error) {
+      console.error(
+        '[AuthProvider] Cashier role error:',
+        error,
+      );
 
       return false;
     }
-  };
 
-  const value: AuthContextType = {
+    return data === true;
+  } catch (error) {
+    console.error(
+      '[AuthProvider] Cashier check failed:',
+      error,
+    );
+
+    return false;
+  }
+};
+
+const value: AuthContextType = { 
     currentUser,
     session,
     user,
@@ -602,5 +749,14 @@ export function AuthProvider({ children }: AuthProviderProps) {
     isCashier,
   };
 
-  return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>;
+  return (
+    <AuthContext.Provider value={value}>
+      {children}
+    </AuthContext.Provider>
+  );
 }
+
+
+
+
+

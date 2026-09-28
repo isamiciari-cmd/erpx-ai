@@ -41,3 +41,5 @@ coverage/
 *.tmp
 .cache/
 node_modules
+.vercel
+.env*.local
