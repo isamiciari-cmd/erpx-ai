@@ -1594,10 +1594,12 @@ IS 'Base64 encoded electronic invoice QR payload';
 COMMENT ON COLUMN public.invoices.xml_content
 IS 'Generated electronic invoice XML snapshot';
 
+
 -- SOURCE: database/006_v2_workflow_compatible.sql
 -- ERPX-AI V2 Compatible Workflow Migration
 -- Purchase Requests + Goods Receipts + Inventory Movements + Report Audit
 -- Designed for the existing Supabase Cloud schema.
+
 -- ============================================================
 -- 1. PURCHASE REQUESTS
 -- ============================================================
@@ -2211,4 +2213,5 @@ REVOKE ALL ON FUNCTION create_inventory_movement(
 GRANT EXECUTE ON FUNCTION create_inventory_movement(
   UUID, UUID, VARCHAR, NUMERIC, VARCHAR, UUID, UUID, UUID, VARCHAR, UUID, TEXT, UUID
 ) TO authenticated;
+
 COMMIT;

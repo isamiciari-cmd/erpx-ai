@@ -18,6 +18,7 @@ jobs:
       - run: pnpm install --frozen-lockfile
       - run: pnpm exec tsc --noEmit
       - run: pnpm test
+      - run: node --test database/build-migrations.test.mjs
       - run: node database/build-migrations.mjs --check
       - run: npm install --prefix database/tests --no-audit --no-fund
       - run: node database/tests/transactions.mjs
