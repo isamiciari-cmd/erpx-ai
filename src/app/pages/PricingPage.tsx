@@ -100,30 +100,8 @@ export default function PricingPage() {
       return;
     }
 
-    // Simulate Stripe customer creation
-    const stripeCustomerId = `cus_${Math.random().toString(36).substring(7)}`;
-    const stripeSubscriptionId = `sub_${Math.random().toString(36).substring(7)}`;
-
-    console.log('Creating subscription:', {
-      plan: plans.find((p) => p.id === selectedPlan),
-      customer: { companyName, email, phone, domain },
-      stripeCustomerId,
-      stripeSubscriptionId,
-    });
-
-    // Simulate API call
-    await new Promise((resolve) => setTimeout(resolve, 1500));
-
-    alert(
-      `ðŸŽ‰ Subscription successful!\n\nTenant: ${companyName}\nDomain: ${domain}.erpx.sa\nCustomer ID: ${stripeCustomerId}\n\nYou will receive an email with login credentials.`,
-    );
-
-    setShowCheckout(false);
-    setCompanyName('');
-    setEmail('');
-    setPhone('');
-    setDomain('');
-    setSelectedPlan(null);
+    // Account registration does not imply a paid subscription or a provider charge.
+    window.location.assign(`/register?plan=${encodeURIComponent(selectedPlan)}`);
   };
 
   return (
@@ -359,7 +337,7 @@ export default function PricingPage() {
                 onClick={processSubscription}
                 className="flex-1 px-6 py-3 bg-gradient-to-r from-blue-600 to-cyan-600 text-white rounded-xl font-medium"
               >
-                Complete Subscription
+                Continue to registration
               </motion.button>
               <motion.button
                 whileHover={{ scale: 1.02 }}

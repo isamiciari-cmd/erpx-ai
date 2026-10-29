@@ -1,5 +1,7 @@
 # ERPX-AI Database Architecture
 
+> The installation guidance below is historical. For the current authoritative migration order, secure onboarding, local SQL checks and fresh-versus-existing deployment instructions, use [DEPLOYMENT_CURRENT.md](DEPLOYMENT_CURRENT.md). Do not run the historical schema/seed/RBAC alternatives together.
+
 ## Overview
 
 This directory contains the complete PostgreSQL database schema for ERPX-AI, a multi-tenant enterprise resource planning system built on Supabase.

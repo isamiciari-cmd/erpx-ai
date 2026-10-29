@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import { motion } from 'motion/react';
-import { Link } from 'react-router-dom';
+import { Link, Navigate, useNavigate } from 'react-router-dom';
 import {
   BarChart3,
   TrendingUp,
@@ -14,6 +14,7 @@ import {
 import { useTranslation } from 'react-i18next';
 import { LanguageSwitcher } from '../../components/LanguageSwitcher';
 import { supabase, isDemoMode, hasSupabaseConfig } from '../../lib/supabase';
+import { useAuth } from '../../contexts/AuthContext';
 
 interface ProductionLoginProps {
   onLoginSuccess?: () => void;
@@ -21,11 +22,12 @@ interface ProductionLoginProps {
 
 export default function ProductionLogin({ onLoginSuccess }: ProductionLoginProps) {
   const { t } = useTranslation();
+  const { signIn, currentUser, loading: authLoading } = useAuth();
+  const navigate = useNavigate();
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
-  const [rememberMe, setRememberMe] = useState(false);
   const [showPassword, setShowPassword] = useState(false);
-  const [error, setError] = useState('');
+  const [error, setError] = useState(!hasSupabaseConfig && !isDemoMode ? 'إعدادات الاتصال بقاعدة البيانات غير مكتملة. تواصل مع مسؤول النظام.' : '');
   const [isSubmitting, setIsSubmitting] = useState(false);
 
   const handleLogin = async (e: React.FormEvent) => {
@@ -41,53 +43,12 @@ export default function ProductionLogin({ onLoginSuccess }: ProductionLoginProps
       return;
     }
 
-    if (isDemoMode && !hasSupabaseConfig) {
-      const demoEmail = email.trim() || 'admin@erpx-ai.com';
-      const demoPassword = password.trim() || '@12345';
-
-      localStorage.setItem('erpx_demo_email', demoEmail);
-      localStorage.setItem('erpx_demo_password', demoPassword);
-      console.log('[Login] Demo mode fallback active. Redirecting to /dashboard');
-      window.location.href = '/dashboard';
-      return;
-    }
-
     setIsSubmitting(true);
 
     try {
-      const trimmedEmail = email.trim();
-      console.log('[Login] Attempting sign-in', {
-        email: trimmedEmail,
-        hasSupabaseConfig,
-        isDemoMode,
-        authUrl: import.meta.env.VITE_SUPABASE_URL,
-      });
-
-      const { data, error } = await supabase.auth.signInWithPassword({
-        email: trimmedEmail,
-        password,
-      });
-
-      console.log('[Login] signInWithPassword result', {
-        user: data?.user?.id ?? null,
-        error: error?.message ?? null,
-      });
-
-      if (error) {
-        console.error('[Login] Sign in failed:', error);
-        setError(error.message || 'Invalid email or password.');
-        return;
-      }
-
-      if (!data.user) {
-        console.error('[Login] Auth succeeded but no user returned from Supabase.', data);
-        setError('Authentication succeeded but no user was returned.');
-        return;
-      }
-
-      localStorage.setItem('erpx_demo_email', data.user.email || trimmedEmail);
-      console.log('[Login] Redirecting to /dashboard with user', data.user.id);
-      window.location.href = '/dashboard';
+      await signIn(email.trim(), password);
+      onLoginSuccess?.();
+      navigate('/dashboard', { replace: true });
     } catch (err) {
       console.error('[Login] Unexpected sign-in error:', err);
       setError(err instanceof Error ? err.message : 'Unable to sign in. Please try again.');
@@ -98,6 +59,10 @@ export default function ProductionLogin({ onLoginSuccess }: ProductionLoginProps
 
   const handleForgotPassword = async () => {
     try {
+      if (!hasSupabaseConfig || isDemoMode) {
+        alert('استعادة كلمة المرور تحتاج اتصالاً مهيأً بقاعدة البيانات.');
+        return;
+      }
       if (!email) {
         alert(t('auth.enterEmailFirst'));
         return;
@@ -118,6 +83,9 @@ export default function ProductionLogin({ onLoginSuccess }: ProductionLoginProps
       alert('Failed to send reset password email');
     }
   };
+
+  if (authLoading) return <div role="status" className="min-h-screen bg-black text-white p-8">جارٍ التحقق من الهوية…</div>;
+  if (currentUser) return <Navigate to="/dashboard" replace />;
 
   return (
     <div className="h-screen flex bg-black">
@@ -212,6 +180,7 @@ export default function ProductionLogin({ onLoginSuccess }: ProductionLoginProps
             <p className="text-gray-500">{t('auth.enterCredentials')}</p>
           </motion.div>
 
+          {isDemoMode && <p className="mb-4 text-sm text-amber-400" role="status">وضع تجريبي محلي: لا يمثل اتصالاً بقاعدة بيانات الإنتاج.</p>}
           <form onSubmit={handleLogin} className="space-y-6">
             {error && (
               <motion.div
@@ -279,15 +248,6 @@ export default function ProductionLogin({ onLoginSuccess }: ProductionLoginProps
               transition={{ delay: 0.6, duration: 0.6 }}
               className="flex items-center justify-between"
             >
-              <label className="flex items-center gap-2 cursor-pointer">
-                <input
-                  type="checkbox"
-                  checked={rememberMe}
-                  onChange={(e) => setRememberMe(e.target.checked)}
-                  className="w-4 h-4 bg-white/5 border border-white/10 rounded focus:ring-2 focus:ring-blue-500 text-blue-500"
-                />
-                <span className="text-sm text-gray-400">{t('auth.rememberMe')}</span>
-              </label>
               <button
                 type="button"
                 onClick={handleForgotPassword}
@@ -302,7 +262,7 @@ export default function ProductionLogin({ onLoginSuccess }: ProductionLoginProps
               animate={{ opacity: 1, y: 0 }}
               transition={{ delay: 0.7, duration: 0.6 }}
               type="submit"
-              disabled={isSubmitting}
+              disabled={isSubmitting || (!hasSupabaseConfig && !isDemoMode)}
               className="relative w-full py-3 bg-gradient-to-r from-blue-600 to-blue-500 text-white rounded-lg font-medium overflow-hidden group disabled:opacity-70 disabled:cursor-not-allowed"
             >
               <div className="absolute inset-0 bg-gradient-to-r from-blue-500 to-cyan-500 opacity-0 group-hover:opacity-100 transition-opacity" />

@@ -1,88 +1,43 @@
-﻿import { createClient } from '@supabase/supabase-js';
+import { createClient, type User } from '@supabase/supabase-js';
+import { isDevBypassEnabled } from './devMode';
+import { demoRole } from './authAccess';
 
-console.log('[Supabase] Initializing Supabase client...');
-
-const supabaseUrl = import.meta.env.VITE_SUPABASE_URL || '';
-const supabaseAnonKey = import.meta.env.VITE_SUPABASE_ANON_KEY || '';
-
-console.log('[Supabase] Environment variables:');
-
-console.log(
-  '[Supabase] VITE_SUPABASE_URL:',
-  supabaseUrl
-    ? 'Configured: ' + supabaseUrl.substring(0, 30) + '...'
-    : 'Missing',
-);
-
-console.log(
-  '[Supabase] VITE_SUPABASE_ANON_KEY:',
-  supabaseAnonKey
-    ? 'Configured: ' + supabaseAnonKey.substring(0, 20) + '...'
-    : 'Missing',
-);
+const supabaseUrl = (import.meta.env.VITE_SUPABASE_URL || '').trim();
+const supabaseAnonKey = (import.meta.env.VITE_SUPABASE_ANON_KEY || '').trim();
 
 export const hasSupabaseConfig = Boolean(
-  supabaseUrl &&
-    supabaseAnonKey &&
-    supabaseUrl !== 'your_supabase_url_here' &&
-    supabaseAnonKey !== 'your_supabase_anon_key_here',
+  supabaseUrl && supabaseAnonKey
+  && !supabaseUrl.includes('your_supabase')
+  && !supabaseAnonKey.includes('your_supabase'),
 );
 
-export const isDemoMode = !hasSupabaseConfig;
+// Missing configuration must never silently create a production admin session.
+export const isDemoMode = !hasSupabaseConfig && isDevBypassEnabled();
 
-export function getDemoUser(email?: string) {
-  const resolvedEmail = email || 'admin@erpx-ai.com';
-
+export function getDemoUser(email = 'employee@localhost'): User {
+  const resolvedEmail = email.trim().toLowerCase();
   return {
-    id: 'demo-user-id',
+    id: 'demo-' + demoRole(resolvedEmail),
     email: resolvedEmail,
-    app_metadata: {
-      provider: 'demo',
-      providers: ['demo'],
-    },
-    user_metadata: {
-      full_name: 'Demo User',
-      role: resolvedEmail.includes('cashier')
-        ? 'cashier'
-        : 'admin',
-    },
+    app_metadata: { provider: 'demo', providers: ['demo'] },
+    user_metadata: { full_name: 'Local Demo User', role: demoRole(resolvedEmail) },
     aud: 'authenticated',
     created_at: new Date().toISOString(),
     role: 'authenticated',
-  } as any;
+  };
 }
 
-if (isDemoMode) {
-  if (import.meta.env.DEV) {
-    console.warn(
-      '[Supabase] Running in DEMO MODE - Supabase credentials not configured',
-    );
-  }
-} else {
-  console.log('[Supabase] Supabase credentials validated');
-}
-
-export const supabase = hasSupabaseConfig
-  ? createClient(supabaseUrl, supabaseAnonKey, {
-      auth: {
-        persistSession: true,
-        autoRefreshToken: true,
-        detectSessionInUrl: true,
-      },
-    })
-  : createClient(
-      'https://demo.supabase.co',
-      'demo-anon-key',
-      {
-        auth: {
-          persistSession: false,
-          autoRefreshToken: false,
-          detectSessionInUrl: false,
-        },
-      },
-    );
-
-console.log('[Supabase] Supabase client created');
+export const supabase = createClient(
+  hasSupabaseConfig ? supabaseUrl : 'http://127.0.0.1:9',
+  hasSupabaseConfig ? supabaseAnonKey : 'unconfigured-public-key',
+  {
+    auth: {
+      persistSession: hasSupabaseConfig,
+      autoRefreshToken: hasSupabaseConfig,
+      detectSessionInUrl: hasSupabaseConfig,
+    },
+  },
+);
 
 export interface Database {
   public: {

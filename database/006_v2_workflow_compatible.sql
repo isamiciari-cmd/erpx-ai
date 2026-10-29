@@ -354,7 +354,7 @@ BEGIN
     RAISE EXCEPTION 'Unsupported movement type: %', p_movement_type;
   END IF;
 
-  IF p_quantity IS NULL OR p_quantity <= 0 OR p_quantity <> TRUNC(p_quantity) THEN
+  IF p_quantity IS NULL OR p_quantity::text IN ('NaN','Infinity','-Infinity') OR p_quantity <= 0 OR p_quantity > 1000000 OR p_quantity <> TRUNC(p_quantity) THEN
     RAISE EXCEPTION 'Inventory movement quantity must be a positive whole number';
   END IF;
 
@@ -369,7 +369,7 @@ BEGIN
   FROM users
   WHERE id = auth.uid();
 
-  IF v_user_company_id IS NULL OR v_user_company_id <> p_company_id THEN
+  IF v_user_company_id IS NULL OR v_user_company_id <> p_company_id OR NOT public.user_has_permission('inventory') THEN
     RAISE EXCEPTION 'Company access denied';
   END IF;
 
@@ -464,7 +464,7 @@ BEGIN
 
   ELSIF v_type = 'OUT' THEN
 
-    SELECT quantity_available
+    SELECT quantity_available - COALESCE(quantity_reserved,0)
     INTO v_current_quantity
     FROM inventory
     WHERE product_id = p_product_id
@@ -518,7 +518,7 @@ BEGIN
 
   ELSIF v_type = 'TRANSFER' THEN
 
-    SELECT quantity_available
+    SELECT quantity_available - COALESCE(quantity_reserved,0)
     INTO v_current_quantity
     FROM inventory
     WHERE product_id = p_product_id

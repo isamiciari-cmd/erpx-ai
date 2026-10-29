@@ -1,86 +1,88 @@
-import React from 'react';
+import React, { lazy, Suspense } from 'react';
 import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom';
 import { ToastProvider } from './components/ui/Toast';
 import { ThemeProvider } from './context/ThemeContext';
 import { AuthProvider } from '../contexts/AuthContext';
 import '../i18n/config';
 import { ErrorBoundary } from './components/ErrorBoundary';
-import ProductionLogin from './components/ProductionLogin';
+const ProductionLogin = lazy(() => import('./components/ProductionLogin'));
 import ProtectedRoute from '../components/ProtectedRoute';
-import ForgotPasswordPage from './pages/ForgotPasswordPage';
-import ResetPasswordPage from './pages/ResetPasswordPage';
+const ForgotPasswordPage = lazy(() => import('./pages/ForgotPasswordPage'));
+const ResetPasswordPage = lazy(() => import('./pages/ResetPasswordPage'));
 import MainLayout from './layout/MainLayout';
 import CashierLayout from './layout/CashierLayout';
-import AuthenticationDocsPage from './pages/AuthenticationDocsPage';
-import DashboardPage from './pages/DashboardPage';
-import InvoicingPage from './pages/InvoicingPage';
-import ChartOfAccountsPage from './pages/ChartOfAccountsPage';
-import CurrencyPage from './pages/CurrencyPage';
-import ZATCAPage from './pages/ZATCAPage';
-import TenantManagementPage from './pages/TenantManagementPage';
-import POSPage from './pages/POSPage';
-import InventoryPage from './pages/InventoryPage';
-import InventoryManagementPage from './pages/inventory/InventoryManagementPage';
-import StudioPage from './pages/StudioPage';
-import SaaSMetricsPage from './pages/SaaSMetricsPage';
-import WebhookSimulatorPage from './pages/WebhookSimulatorPage';
-import UsageTrackingPage from './pages/UsageTrackingPage';
-import ControlTowerPage from './pages/ControlTowerPage';
-import AutomationRulesPage from './pages/AutomationRulesPage';
-import PermissionsPage from './pages/PermissionsPage';
-import SupabaseDiagnosticPage from './pages/SupabaseDiagnosticPage';
-import CompanyRegistrationForm from './components/registration/CompanyRegistrationForm';
-import RegistrationSuccessPage from './pages/RegistrationSuccessPage';
-import OAuthConsentPage from './pages/OAuthConsentPage';
-import SalesPage from './pages/SalesPage';
-import PurchasesPage from './pages/PurchasesPage';
-import GenericPage from './pages/GenericPage';
+const AuthenticationDocsPage = lazy(() => import('./pages/AuthenticationDocsPage'));
+const DashboardPage = lazy(() => import('./pages/DashboardPage'));
+const InvoicingPage = lazy(() => import('./pages/InvoicingPage'));
+const ChartOfAccountsPage = lazy(() => import('./pages/ChartOfAccountsPage'));
+const CurrencyPage = lazy(() => import('./pages/CurrencyPage'));
+const ZATCAPage = lazy(() => import('./pages/ZATCAPage'));
+const TenantManagementPage = lazy(() => import('./pages/TenantManagementPage'));
+const POSPage = lazy(() => import('./pages/POSPage'));
+const InventoryPage = lazy(() => import('./pages/InventoryPage'));
+const InventoryManagementPage = lazy(() => import('./pages/inventory/InventoryManagementPage'));
+const StudioPage = lazy(() => import('./pages/StudioPage'));
+const SaaSMetricsPage = lazy(() => import('./pages/SaaSMetricsPage'));
+const WebhookSimulatorPage = lazy(() => import('./pages/WebhookSimulatorPage'));
+const UsageTrackingPage = lazy(() => import('./pages/UsageTrackingPage'));
+const ControlTowerPage = lazy(() => import('./pages/ControlTowerPage'));
+const AutomationRulesPage = lazy(() => import('./pages/AutomationRulesPage'));
+const PermissionsPage = lazy(() => import('./pages/PermissionsPage'));
+const SupabaseDiagnosticPage = lazy(() => import('./pages/SupabaseDiagnosticPage'));
+const CompanyRegistrationForm = lazy(() => import('./components/registration/CompanyRegistrationForm'));
+const RegistrationSuccessPage = lazy(() => import('./pages/RegistrationSuccessPage'));
+const OAuthConsentPage = lazy(() => import('./pages/OAuthConsentPage'));
+const SalesPage = lazy(() => import('./pages/SalesPage'));
+const PurchasesPage = lazy(() => import('./pages/PurchasesPage'));
+const GenericPage = lazy(() => import('./pages/GenericPage'));
 
 // Finance Module Pages
-import FinanceDashboardPage from './pages/finance/FinanceDashboardPage';
-import JournalEntriesPage from './pages/finance/JournalEntriesPage';
-import GeneralLedgerPage from './pages/finance/GeneralLedgerPage';
-import TrialBalancePage from './pages/finance/TrialBalancePage';
-import AccountsReceivablePage from './pages/finance/AccountsReceivablePage';
-import AccountsPayablePage from './pages/finance/AccountsPayablePage';
-import CashBankManagementPage from './pages/finance/CashBankManagementPage';
-import BudgetManagementPage from './pages/finance/BudgetManagementPage';
-import ExpenseManagementPage from './pages/finance/ExpenseManagementPage';
-import FixedAssetsPage from './pages/finance/FixedAssetsPage';
-import VATTaxPage from './pages/finance/VATTaxPage';
-import FinancialReportsPage from './pages/finance/FinancialReportsPage';
-import AIFinanceAssistantPage from './pages/finance/AIFinanceAssistantPage';
+const FinanceDashboardPage = lazy(() => import('./pages/finance/FinanceDashboardPage'));
+const JournalEntriesPage = lazy(() => import('./pages/finance/JournalEntriesPage'));
+const GeneralLedgerPage = lazy(() => import('./pages/finance/GeneralLedgerPage'));
+const TrialBalancePage = lazy(() => import('./pages/finance/TrialBalancePage'));
+const AccountsReceivablePage = lazy(() => import('./pages/finance/AccountsReceivablePage'));
+const AccountsPayablePage = lazy(() => import('./pages/finance/AccountsPayablePage'));
+const CashBankManagementPage = lazy(() => import('./pages/finance/CashBankManagementPage'));
+const BudgetManagementPage = lazy(() => import('./pages/finance/BudgetManagementPage'));
+const ExpenseManagementPage = lazy(() => import('./pages/finance/ExpenseManagementPage'));
+const FixedAssetsPage = lazy(() => import('./pages/finance/FixedAssetsPage'));
+const VATTaxPage = lazy(() => import('./pages/finance/VATTaxPage'));
+const FinancialReportsPage = lazy(() => import('./pages/finance/FinancialReportsPage'));
+const AIFinanceAssistantPage = lazy(() => import('./pages/finance/AIFinanceAssistantPage'));
 
 // Design System & Food Delivery
-import DesignSystemShowcase from './pages/DesignSystemShowcase';
-import FoodDeliveryDashboard from './pages/FoodDeliveryDashboard';
-import ExecutiveDashboard from './pages/ExecutiveDashboard';
+const DesignSystemShowcase = lazy(() => import('./pages/DesignSystemShowcase'));
+const FoodDeliveryDashboard = lazy(() => import('./pages/FoodDeliveryDashboard'));
+const ExecutiveDashboard = lazy(() => import('./pages/ExecutiveDashboard'));
 
 // Landing Page
-import LandingPage from './pages/LandingPage';
+const LandingPage = lazy(() => import('./pages/LandingPage'));
 
 // HR Module Pages
-import HRDashboardPage from './pages/hr/HRDashboardPage';
-import EmployeeListPage from './pages/hr/EmployeeListPage';
-import AttendancePage from './pages/hr/AttendancePage';
-import LeaveManagementPage from './pages/hr/LeaveManagementPage';
-import PayrollPage from './pages/hr/PayrollPage';
-import RecruitmentPage from './pages/hr/RecruitmentPage';
-import HRReportsPage from './pages/hr/HRReportsPage';
-import AIHRAssistantPage from './pages/hr/AIHRAssistantPage';
+const HRDashboardPage = lazy(() => import('./pages/hr/HRDashboardPage'));
+const EmployeeListPage = lazy(() => import('./pages/hr/EmployeeListPage'));
+const AttendancePage = lazy(() => import('./pages/hr/AttendancePage'));
+const LeaveManagementPage = lazy(() => import('./pages/hr/LeaveManagementPage'));
+const PayrollPage = lazy(() => import('./pages/hr/PayrollPage'));
+const RecruitmentPage = lazy(() => import('./pages/hr/RecruitmentPage'));
+const HRReportsPage = lazy(() => import('./pages/hr/HRReportsPage'));
+const AIHRAssistantPage = lazy(() => import('./pages/hr/AIHRAssistantPage'));
 
 // Cashier Module Pages
-import CashierPOSPage from './pages/cashier/CashierPOSPage';
+const CashierPOSPage = lazy(() => import('./pages/cashier/CashierPOSPage'));
 
 // RBAC Admin Pages
-import {
-  UserManagement,
-  RolesPermissions,
-  PermissionMatrix,
-  AuditLogs,
-  DeveloperMode,
-  EmergencyAccess,
-} from '../pages/admin';
+const UserManagement = lazy(() => import('../pages/admin/UserManagement').then(m => ({ default: m.UserManagement })));
+const RolesPermissions = lazy(() => import('../pages/admin/RolesPermissions').then(m => ({ default: m.RolesPermissions })));
+const PermissionMatrix = lazy(() => import('../pages/admin/PermissionMatrix').then(m => ({ default: m.PermissionMatrix })));
+const AuditLogs = lazy(() => import('../pages/admin/AuditLogs').then(m => ({ default: m.AuditLogs })));
+const DeveloperMode = lazy(() => import('../pages/admin/DeveloperMode').then(m => ({ default: m.DeveloperMode })));
+const EmergencyAccess = lazy(() => import('../pages/admin/EmergencyAccess').then(m => ({ default: m.EmergencyAccess })));
+
+const EnergyPage = lazy(() => import('./pages/bms/EnergyPage'));
+const CCTVLivePage = lazy(() => import('./pages/bms/CCTVLivePage'));
+const AIWorkspacePage = lazy(() => import('./pages/AIWorkspacePage'));
 
 export default function App() {
   const adminRoles = ['owner', 'developer', 'super_admin', 'admin'];
@@ -91,6 +93,7 @@ export default function App() {
         <ThemeProvider>
           <ToastProvider>
             <BrowserRouter>
+              <Suspense fallback={<div role="status" className="p-8">Loading page?</div>}>
               <Routes>
                 {/* Public Routes - No Authentication Required */}
                 <Route path="/" element={<LandingPage />} />
@@ -149,6 +152,7 @@ export default function App() {
                   <Route path="finance/reports" element={<FinancialReportsPage />} />
                   <Route path="finance/ai-assistant" element={<AIFinanceAssistantPage />} />
                   <Route path="finance/accounting" element={<ChartOfAccountsPage />} />
+                  <Route path="reports" element={<FinancialReportsPage />} />
                   <Route path="finance/invoicing" element={<InvoicingPage />} />
                   <Route path="finance/currency" element={<CurrencyPage />} />
                   <Route path="finance/zatca" element={<ZATCAPage />} />
@@ -228,6 +232,8 @@ export default function App() {
 
                   {/* Design System & Demo Pages */}
                   <Route path="design-system" element={<DesignSystemShowcase />} />
+                  <Route path="bms/energy" element={<EnergyPage />} />
+                  <Route path="bms/cctv" element={<CCTVLivePage />} />
                   <Route path="food-delivery" element={<FoodDeliveryDashboard />} />
                   <Route path="executive" element={<ExecutiveDashboard />} />
 
@@ -235,28 +241,19 @@ export default function App() {
                   <Route
                     path="ai/predictions"
                     element={
-                      <GenericPage
-                        title="AI Predictions"
-                        description="AI-powered forecasting and predictive analytics"
-                      />
+                      <AIWorkspacePage title="AI Predictions" />
                     }
                   />
                   <Route
                     path="ai/recommendations"
                     element={
-                      <GenericPage
-                        title="AI Recommendations"
-                        description="Intelligent recommendations and insights"
-                      />
+                      <AIWorkspacePage title="AI Recommendations" />
                     }
                   />
                   <Route
                     path="ai/alerts"
                     element={
-                      <GenericPage
-                        title="AI Alerts"
-                        description="Smart alerts and anomaly detection"
-                      />
+                      <AIWorkspacePage title="AI Alerts" />
                     }
                   />
 
@@ -264,10 +261,10 @@ export default function App() {
                   <Route
                     path="system/users"
                     element={
-                      <GenericPage title="Users" description="User management and access control" />
+                      <ProtectedRoute requiredRole={adminRoles}><UserManagement /></ProtectedRoute>
                     }
                   />
-                  <Route path="system/permissions" element={<PermissionsPage />} />
+                  <Route path="system/permissions" element={<ProtectedRoute requiredRole={adminRoles}><PermissionsPage /></ProtectedRoute>} />
 
                   {/* Admin */}
                   <Route
@@ -388,10 +385,7 @@ export default function App() {
                   <Route
                     path="settings"
                     element={
-                      <GenericPage
-                        title="Settings"
-                        description="System configuration and preferences"
-                      />
+                      <ProtectedRoute requiredRole={adminRoles}><TenantManagementPage /></ProtectedRoute>
                     }
                   />
                 </Route>
@@ -399,6 +393,7 @@ export default function App() {
                 {/* Redirect unknown to root */}
                 <Route path="*" element={<Navigate to="/" replace />} />
               </Routes>
+              </Suspense>
             </BrowserRouter>
           </ToastProvider>
         </ThemeProvider>

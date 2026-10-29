@@ -1,762 +1,220 @@
-﻿import { createContext, useContext, useEffect, useRef, useState } from 'react';
-
+import { createContext, useCallback, useContext, useEffect, useMemo, useRef, useState } from 'react';
 import type { ReactNode } from 'react';
+import type { User as SupabaseUser, Session } from '@supabase/supabase-js';
+import { supabase, isDemoMode, getDemoUser, hasSupabaseConfig } from '../lib/supabase';
+import { demoRole, legacyPermissions, roleFromName, withAuthTimeout, type Permission, type UserRole } from '../lib/authAccess';
+import { readAccessSnapshot } from '../lib/authSession';
+import type { UserWithDetails as User } from '../services/usersService';
 
-import { User as SupabaseUser, Session } from '@supabase/supabase-js';
-
-import { supabase, isDemoMode, getDemoUser } from '../lib/supabase';
-import { UserWithDetails as User } from '../services/usersService';
-
-interface AuthContextType {
+interface AuthState {
   currentUser: SupabaseUser | null;
   session: Session | null;
   user: User | null;
+  roles: UserRole[];
+  permissions: Permission[];
   loading: boolean;
+  accessError: Error | null;
+}
 
+interface AuthContextType extends AuthState {
   signIn: (email: string, password: string) => Promise<void>;
-
-  signUp: (email: string, password: string, userData: any) => Promise<void>;
-
+  signUp: (email: string, password: string, userData: unknown) => Promise<void>;
   signOut: () => Promise<void>;
-
+  refreshAccess: () => Promise<void>;
+  canAccessTenant: (tenantId: string) => Promise<boolean>;
   hasPermission: (permission: string) => Promise<boolean>;
-
   isAdmin: () => Promise<boolean>;
   isManager: () => Promise<boolean>;
   isCashier: () => Promise<boolean>;
 }
 
-
-
+const emptyState: AuthState = {
+  currentUser: null, session: null, user: null, roles: [], permissions: [], loading: false, accessError: null,
+};
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
+const configError = () => new Error('Supabase is not configured. Set VITE_SUPABASE_URL and VITE_SUPABASE_ANON_KEY, then rebuild the application.');
 
 export function useAuth() {
   const context = useContext(AuthContext);
-
-  if (!context) {
-    throw new Error('useAuth must be used within an AuthProvider');
-  }
-
+  if (!context) throw new Error('useAuth must be used within an AuthProvider');
   return context;
 }
 
-interface AuthProviderProps {
-  children: ReactNode;
-}
-
-export function AuthProvider({ children }: AuthProviderProps) {
-  const authGenerationRef = useRef(0);
-
-  const [currentUser, setCurrentUser] =
-    useState<SupabaseUser | null>(null);
-
-  const [session, setSession] = useState<Session | null>(null);
-
-  const [user, setUser] = useState<User | null>(null);
-
-  const [loading, setLoading] = useState(true);
-
-  const setDemoSession = (email: string) => {
-    const demoUser = getDemoUser(email);
-
-    const demoProfile = {
-      id: demoUser.id,
-      email: demoUser.email,
-      first_name: 'Demo',
-      last_name: 'User',
-      role_id: email.includes('cashier') ? 'cashier-role' : 'admin-role',
-      company_id: 'demo-company',
-      branch_id: 'demo-branch',
-      department: 'Operations',
-      position: email.includes('cashier') ? 'Cashier' : 'Admin',
-      phone_number: null,
-      avatar_url: null,
-      status: 'active',
-      created_at: new Date().toISOString(),
-      updated_at: new Date().toISOString(),
-    } as User;
-
-    localStorage.setItem('erpx_demo_email', email);
-
-    setSession({
-      access_token: 'demo-access-token',
-      refresh_token: 'demo-refresh-token',
-      expires_in: 3600,
-      expires_at: Math.floor(Date.now() / 1000) + 3600,
-      token_type: 'bearer',
-      user: demoUser,
-      provider_token: null,
-      provider_refresh_token: null,
-    } as Session);
-
-    setCurrentUser(demoUser as SupabaseUser);
-    setUser(demoProfile);
+function demoState(email: string): AuthState {
+  const identity = getDemoUser(email);
+  const roleName = demoRole(email);
+  const role = roleFromName(roleName);
+  const grants = ['admin', 'developer', 'owner', 'super_admin'].includes(roleName)
+    ? { all: true }
+    : roleName === 'cashier' ? { pos: true } : roleName === 'manager'
+      ? { finance: true, inventory: true, sales: true, purchases: true, hr: true, reports: true }
+      : { read: true };
+  const now = new Date().toISOString();
+  const user = {
+    id: identity.id, email: identity.email, first_name: 'Demo', last_name: 'User',
+    role_id: roleName + '-role', company_id: 'demo-company', branch_id: 'demo-branch',
+    department: 'Operations', position: role.display_name, phone_number: null, avatar_url: null,
+    status: 'active', created_at: now, updated_at: now,
+    role: { id: roleName + '-role', name: roleName, display_name: role.display_name, permissions: grants },
+    company: { id: 'demo-company', name: 'Local Demo', currency: 'SAR' },
+    branch: { id: 'demo-branch', name: 'Local Demo' },
+  } as User;
+  return {
+    currentUser: identity,
+    session: { access_token: 'local-demo', refresh_token: '', expires_in: 3600, token_type: 'bearer', user: identity },
+    user, roles: [role], permissions: legacyPermissions(grants), loading: false, accessError: null,
   };
-
-  /**
-   * Load ERPX user profile.
-   *
-   * IMPORTANT:
-   * users.id = auth.users.id
-   */
-  const loadUserProfile = async (
-  authUser: SupabaseUser | null,
-  generation = authGenerationRef.current,
-) => {
-  if (!authUser) {
-    setUser(null);
-    return;
-  }
-
-  try {
-    console.log(
-      '[AuthProvider] Loading ERPX user:',
-      authUser.id,
-    );
-
-    /*
-     * First load the user record only.
-     *
-     * We intentionally do NOT load roles,
-     * companies or branches here.
-     *
-     * This avoids PostgREST relationship errors
-     * while authentication is initialized.
-     */
-    const { data, error } = await supabase
-      .from('users')
-      .select('*')
-      .eq('id', authUser.id)
-      .maybeSingle();
-
-    if (generation !== authGenerationRef.current) {
-      console.log(
-        '[AuthProvider] Ignoring stale profile result:',
-        authUser.id,
-      );
-      return;
-    }
-
-    if (error) {
-      console.error(
-        '[AuthProvider] Failed to load ERPX user:',
-        error,
-      );
-
-      setUser(null);
-      return;
-    }
-
-    if (!data) {
-      console.warn(
-        '[AuthProvider] No ERPX user profile found:',
-        authUser.id,
-      );
-
-      setUser(null);
-      return;
-    }
-
-    const profileIsMissingRole = !data.role_id;
-
-    const profileIsMissingTenant =
-      !data.company_id || !data.branch_id;
-
-    const profileIsInactive =
-      data.status &&
-      String(data.status).toLowerCase() !== 'active';
-
-    if (
-      profileIsMissingRole ||
-      profileIsMissingTenant ||
-      profileIsInactive
-    ) {
-      console.warn(
-        '[AuthProvider] ERPX user profile is incomplete or inactive:',
-        {
-          id: data.id,
-          email: data.email,
-          role_id: data.role_id,
-          company_id: data.company_id,
-          branch_id: data.branch_id,
-          status: data.status,
-        },
-      );
-
-      setUser(null);
-      return;
-    }
-
-    console.log(
-      '[AuthProvider] ERPX user loaded:',
-      {
-        id: data.id,
-        email: data.email,
-        company_id: data.company_id,
-        branch_id: data.branch_id,
-        role_id: data.role_id,
-        status: data.status,
-      },
-    );
-
-    setUser(data as User);
-  } catch (error) {
-    console.error(
-      '[AuthProvider] Unexpected profile error:',
-      error,
-    );
-
-    setUser(null);
-  }
-};
-  /**
-   * Initialize authentication.
-   */
-  useEffect(() => {
-    let mounted = true;
-    let initTimeout: ReturnType<typeof setTimeout> | null = null;
-
-    const initializeAuth = async () => {
-      // Fail-safe: ensure we don't stay in loading state forever
-      initTimeout = setTimeout(() => {
-        if (mounted) {
-          console.warn(
-            '[AuthProvider] âš ï¸ Initialization timeout - forcing loading=false',
-          );
-
-          setLoading(false);
-        }
-      }, 6000);
-
-      console.log(
-        '[AuthProvider] initializeAuth - checking Supabase session',
-      );
-
-      try {
-        console.log(
-          '[AuthProvider] Initializing authentication...',
-        );
-
-        if (isDemoMode) {
-          const storedEmail =
-            localStorage.getItem('erpx_demo_email');
-
-          if (storedEmail) {
-            setDemoSession(storedEmail);
-          }
-
-          if (mounted) {
-  if (initTimeout) {
-    clearTimeout(initTimeout);
-    initTimeout = null;
-  }
-
-  setLoading(false);
 }
 
-          return;
-        }
+export function AuthProvider({ children }: { children: ReactNode }) {
+  const [state, setState] = useState<AuthState>({ ...emptyState, loading: true });
+  const stateRef = useRef(state);
+  stateRef.current = state;
+  const generationRef = useRef(0);
+  const mountedRef = useRef(false);
 
-        const { data, error } =
-          await supabase.auth.getSession();
-
-        console.log('[AuthProvider] getSession result', {
-          hasSession: !!data.session,
-          userId: data.session?.user?.id ?? null,
-          email: data.session?.user?.email ?? null,
-          error: error?.message ?? null,
-        });
-
-        if (mounted) {
-  if (initTimeout) {
-    clearTimeout(initTimeout);
-    initTimeout = null;
-  }
-
-  setSession(null);
-  setCurrentUser(null);
-  setUser(null);
-  setLoading(false);
-}
-
-        const currentSession = data.session;
-
-        setSession(currentSession);
-
-        setCurrentUser(currentSession?.user ?? null);
-
-        if (currentSession?.user) {
-          const generation =
-            ++authGenerationRef.current;
-
-          await loadUserProfile(
-            currentSession.user,
-            generation,
-          );
-        } else {
-          setUser(null);
-        }
-
-        if (mounted) {
-          setLoading(false);
-        }
-      } catch (error) {
-        console.error(
-          '[AuthProvider] Authentication initialization failed:',
-          error,
-        );
-
-        if (mounted) {
-          setSession(null);
-          setCurrentUser(null);
-          setUser(null);
-          setLoading(false);
-        }
-      }
+  const applySession = useCallback(async (nextSession: Session | null) => {
+    const generation = ++generationRef.current;
+    const pending: AuthState = {
+      ...emptyState, session: nextSession, currentUser: nextSession?.user ?? null, loading: !!nextSession,
     };
-
-    initializeAuth();
-
-    /**
-     * Listen for Supabase authentication changes.
-     *
-     * IMPORTANT:
-     * Do NOT make this callback async and do NOT await
-     * another Supabase operation directly inside it.
-     *
-     * Supabase Auth may hold its internal Web Lock while
-     * processing the auth event. Calling loadUserProfile()
-     * directly from the callback can cause the profile query
-     * to wait for the same lock.
-     *
-     * We therefore defer profile loading until the callback
-     * has completely returned.
-     */
-    const { data: authListener } =
-      supabase.auth.onAuthStateChange(
-        (_event, newSession) => {
-          if (!mounted) {
-            return;
-          }
-
-          console.log(
-            '[AuthProvider] Auth state changed:',
-            _event,
-            {
-              hasSession: !!newSession,
-              userId: newSession?.user?.id ?? null,
-              email: newSession?.user?.email ?? null,
-            },
-          );
-
-          setSession(newSession);
-
-          setCurrentUser(
-            newSession?.user ?? null,
-          );
-
-          if (!newSession?.user) {
-            setUser(null);
-            setLoading(false);
-            return;
-          }
-
-          /*
-           * Defer the ERPX profile query until the
-           * Supabase Auth callback has returned.
-           */
-          const authUser = newSession.user;
-
-          const generation =
-            ++authGenerationRef.current;
-
-          setTimeout(() => {
-            if (!mounted) {
-              return;
-            }
-
-            loadUserProfile(
-              authUser,
-              generation,
-            )
-              .catch((error) => {
-                console.error(
-                  '[AuthProvider] Deferred profile loading failed:',
-                  error,
-                );
-
-                if (mounted) {
-                  setUser(null);
-                  setLoading(false);
-                }
-              })
-              .finally(() => {
-                if (mounted) {
-                  setLoading(false);
-                }
-              });
-          }, 0);
-        },
-      );
-
-    return () => {
-      mounted = false;
-
-      if (initTimeout) {
-        clearTimeout(initTimeout);
-      }
-
-      authListener.subscription.unsubscribe();
-    };
+    // Clear the previous identity's privileges before fetching the next profile.
+    stateRef.current = pending;
+    if (mountedRef.current) setState(pending);
+    if (!nextSession) return;
+    try {
+      const access = await withAuthTimeout(readAccessSnapshot(supabase, nextSession.user.id));
+      if (!mountedRef.current || generation !== generationRef.current) return;
+      const resolved = { ...pending, ...access, loading: false };
+      stateRef.current = resolved;
+      setState(resolved);
+    } catch (cause) {
+      if (!mountedRef.current || generation !== generationRef.current) return;
+      const failed = { ...pending, loading: false, accessError: cause instanceof Error ? cause : new Error('Unable to verify access.') };
+      stateRef.current = failed;
+      setState(failed);
+    }
   }, []);
 
-  /**
-   * Sign in.
-   */
-  const signIn = async (
-    email: string,
-    password: string,
-  ) => {
+  useEffect(() => {
+    let disposed = false;
+    mountedRef.current = true;
+    // Older login implementations stored plaintext passwords. Always remove them.
+    localStorage.removeItem('erpx_demo_password');
     if (isDemoMode) {
-      setDemoSession(
-        email.trim() || 'admin@erpx-ai.com',
-      );
+      const email = localStorage.getItem('erpx_demo_email');
+      const next = email ? demoState(email) : emptyState;
+      stateRef.current = next;
+      setState(next);
+      return () => { disposed = true; mountedRef.current = false; generationRef.current++; };
+    }
+    localStorage.removeItem('erpx_demo_email');
+    if (!hasSupabaseConfig) {
+      setState({ ...emptyState, accessError: configError() });
+      return () => { disposed = true; mountedRef.current = false; generationRef.current++; };
+    }
 
+    let authEventReceived = false;
+    const { data: listener } = supabase.auth.onAuthStateChange((_event, nextSession) => {
+      if (disposed || !mountedRef.current) return;
+      authEventReceived = true;
+      // Immediately revoke old access. Do not await Supabase work inside its auth callback lock.
+      const pending = { ...emptyState, session: nextSession, currentUser: nextSession?.user ?? null, loading: !!nextSession };
+      stateRef.current = pending;
+      generationRef.current++;
+      if (mountedRef.current) setState(pending);
+      const eventGeneration = generationRef.current;
+      setTimeout(() => {
+        if (!disposed && mountedRef.current && eventGeneration === generationRef.current) void applySession(nextSession);
+      }, 0);
+    });
+    void withAuthTimeout(supabase.auth.getSession()).then(({ data, error }) => {
+      if (disposed || !mountedRef.current || authEventReceived) return;
+      if (error) throw error;
+      return applySession(data.session);
+    }).catch((cause) => {
+      if (disposed || !mountedRef.current || authEventReceived) return;
+      setState({ ...emptyState, accessError: cause instanceof Error ? cause : new Error('Unable to initialize authentication.') });
+    });
+    return () => {
+      disposed = true;
+      mountedRef.current = false;
+      generationRef.current++;
+      listener.subscription.unsubscribe();
+    };
+  }, [applySession]);
+
+  const signIn = useCallback(async (email: string, password: string) => {
+    if (isDemoMode) {
+      const next = demoState(email.trim().toLowerCase());
+      generationRef.current++;
+      localStorage.setItem('erpx_demo_email', email.trim().toLowerCase());
+      stateRef.current = next;
+      setState(next);
       return;
     }
+    if (!hasSupabaseConfig) throw configError();
+    const { data, error } = await withAuthTimeout(supabase.auth.signInWithPassword({ email: email.trim(), password }));
+    if (error) throw error;
+    if (!data.session) throw new Error('Sign-in did not create an authenticated session.');
+    await applySession(data.session);
+  }, [applySession]);
 
-    const { error } =
-      await supabase.auth.signInWithPassword({
-        email,
-        password,
-      });
+  const signUp = useCallback(async (email: string, password: string, _userData: unknown) => {
+    if (!hasSupabaseConfig || isDemoMode) throw configError();
+    // Authorization and company assignment are provisioned by a trusted server, never user metadata.
+    const { error } = await withAuthTimeout(supabase.auth.signUp({ email: email.trim(), password }));
+    if (error) throw error;
+  }, []);
 
-    if (error) {
-      throw error;
-    }
-  };
+  const signOut = useCallback(async () => {
+    generationRef.current++;
+    stateRef.current = emptyState;
+    setState(emptyState);
+    localStorage.removeItem('erpx_demo_email');
+    localStorage.removeItem('erpx_demo_password');
+    if (isDemoMode || !hasSupabaseConfig) return;
+    const { error } = await withAuthTimeout(supabase.auth.signOut());
+    if (error) throw error;
+  }, []);
 
-  /**
-   * Sign up.
-   */
-  const signUp = async (
-    email: string,
-    password: string,
-    userData: any,
-  ) => {
-    const { data, error } =
-      await supabase.auth.signUp({
-        email,
-        password,
-      });
+  const refreshAccess = useCallback(async () => {
+    if (isDemoMode) return;
+    if (!hasSupabaseConfig) throw configError();
+    await applySession(stateRef.current.session);
+  }, [applySession]);
 
-    if (error) {
-      throw error;
-    }
-
-    if (data.user) {
-      console.log(
-        '[AuthProvider] Supabase user created:',
-        data.user.id,
-      );
-
-      console.log(
-        '[AuthProvider] Registration data:',
-        userData,
-      );
-    }
-  };
-
-  /**
-   * Sign out.
-   */
-  const signOut = async () => {
-    authGenerationRef.current += 1;
-
-    if (isDemoMode) {
-      localStorage.removeItem(
-        'erpx_demo_email',
-      );
-
-      setUser(null);
-      setCurrentUser(null);
-      setSession(null);
-
-      return;
-    }
-
-    const { error } =
-      await supabase.auth.signOut();
-
-    if (error) {
-      throw error;
-    }
-
-    setUser(null);
-    setCurrentUser(null);
-    setSession(null);
-  };
-
-  /**
-   * Permission check.
-   */
-  const hasPermission = async (
-    permission: string,
-  ): Promise<boolean> => {
-    if (!currentUser) {
-      return false;
-    }
-
-
-
-    if (isDemoMode) {
-      const email =
-        currentUser.email || '';
-
-      return (
-        email.includes('admin') ||
-        email.includes('developer') ||
-        email.includes('manager') ||
-        permission === 'view_dashboard'
-      );
-    }
-
+  const canAccessTenant = useCallback(async (tenantId: string): Promise<boolean> => {
+    const before = stateRef.current;
+    if (!before.currentUser || !before.user || before.loading || before.accessError || !tenantId) return false;
+    if (isDemoMode) return tenantId === before.user.company_id;
+    const generation = generationRef.current;
     try {
-      const { data, error } =
-        await supabase.rpc(
-          'has_permission',
-          {
-            p_user_id: currentUser.id,
-            p_permission_key: permission,
-          },
-        );
+      const { data, error } = await withAuthTimeout(supabase.rpc('can_access_tenant', {
+        p_user_id: before.currentUser.id, p_tenant_id: tenantId,
+      }));
+      // Canonical installations use company IDs; do not substitute after a denial or failure.
+      if (isMissingTenantRpc(error)) return generation === generationRef.current && tenantId === before.user.company_id;
+      return generation === generationRef.current && !error && data === true;
+    } catch { return false; }
+  }, []);
 
-      if (error) {
-        console.error(
-          '[AuthProvider] Permission error:',
-          error,
-        );
+  const value = useMemo<AuthContextType>(() => {
+    const ready = !state.loading && !state.accessError && !!state.user;
+    const hasRole = (names: string[]) => ready && state.roles.some((role) => names.includes(role.role_name));
+    return {
+      ...state, signIn, signUp, signOut, refreshAccess, canAccessTenant,
+      hasPermission: async (key) => ready && state.permissions.some((permission) => permission.permission_key === key),
+      isAdmin: async () => hasRole(['owner', 'developer', 'super_admin', 'admin']),
+      isManager: async () => hasRole(['owner', 'developer', 'super_admin', 'admin', 'manager']),
+      isCashier: async () => hasRole(['cashier']),
+    };
+  }, [state, signIn, signUp, signOut, refreshAccess, canAccessTenant]);
 
-        return false;
-      }
-
-      return data === true;
-    } catch (error) {
-      console.error(
-        '[AuthProvider] Permission check failed:',
-        error,
-      );
-
-      return false;
-    }
-  };
-
-  /**
-   * Check Admin.
-   */
-  const isAdmin = async (): Promise<boolean> => {
-    if (!currentUser) {
-      return false;
-    }
-
-    
-
-    if (isDemoMode) {
-      const email =
-        currentUser.email || '';
-
-      return (
-        email.includes('admin') ||
-        email.includes('developer')
-      );
-    }
-
-    try {
-      const [
-  adminResult,
-  superAdminResult,
-] = await Promise.all([
-  supabase.rpc(
-    'has_role',
-    {
-      target_user: currentUser.id,
-      role_name: 'admin',
-    },
-  ),
-
-  supabase.rpc(
-    'has_role',
-    {
-      target_user: currentUser.id,
-      role_name: 'super_admin',
-    },
-  ),
-]);
-
-      if (adminResult.error) {
-        console.error(
-          '[AuthProvider] Admin role error:',
-          adminResult.error,
-        );
-      }
-
-      if (superAdminResult.error) {
-        console.error(
-          '[AuthProvider] Super admin role error:',
-          superAdminResult.error,
-        );
-      }
-
-      return (
-        adminResult.data === true ||
-        superAdminResult.data === true
-      );
-    } catch (error) {
-      console.error(
-        '[AuthProvider] Admin check failed:',
-        error,
-      );
-
-      return false;
-    }
-  };
-
-  /**
-   * Check Manager.
-   */
-  const isManager = async (): Promise<boolean> => {
-    if (!currentUser) {
-      return false;
-    }
-
-    
-
-    if (isDemoMode) {
-      const email =
-        currentUser.email || '';
-
-      return (
-        email.includes('manager') ||
-        email.includes('admin') ||
-        email.includes('developer')
-      );
-    }
-
-    try {
-      const [
-        managerResult,
-        adminResult,
-        superAdminResult,
-      ] = await Promise.all([
-        supabase.rpc(
-         'has_role',
-{
-  target_user: currentUser.id,
-  role_name: 'manager',
-},
-),
-
-supabase.rpc(
-  'has_role',
-  {
-    target_user: currentUser.id,
-    role_name: 'admin',
-  },
-),
-
-supabase.rpc(
-  'has_role',
-  {
-    target_user: currentUser.id,
-    role_name: 'super_admin',
-  },
-),
-]);
-
-return (
-  managerResult.data === true ||
-  adminResult.data === true ||
-  superAdminResult.data === true
-);
-} catch (error) {
-  console.error(
-    '[AuthProvider] Manager check failed:',
-    error,
-  );
-
-  return false;
-}
-};
-
-/**
- * Check Cashier.
- */
-const isCashier = async (): Promise<boolean> => {
-  if (!currentUser) {
-    return false;
-  }
-
-  if (isDemoMode) {
-    const email =
-      currentUser.email || '';
-
-    return email.includes('cashier');
-  }
-
-  try {
-    const { data, error } =
-      await supabase.rpc(
-        'has_role',
-        {
-          target_user: currentUser.id,
-          role_name: 'cashier',
-        },
-      );
-
-    if (error) {
-      console.error(
-        '[AuthProvider] Cashier role error:',
-        error,
-      );
-
-      return false;
-    }
-
-    return data === true;
-  } catch (error) {
-    console.error(
-      '[AuthProvider] Cashier check failed:',
-      error,
-    );
-
-    return false;
-  }
-};
-
-const value: AuthContextType = { 
-    currentUser,
-    session,
-    user,
-    loading,
-
-    signIn,
-    signUp,
-    signOut,
-
-    hasPermission,
-    isAdmin,
-    isManager,
-    isCashier,
-  };
-
-  return (
-    <AuthContext.Provider value={value}>
-      {children}
-    </AuthContext.Provider>
-  );
+  return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>;
 }
 
-
-
-
+function isMissingTenantRpc(error: { code?: string } | null): boolean {
+  return error?.code === 'PGRST202' || error?.code === '42883';
+}
 

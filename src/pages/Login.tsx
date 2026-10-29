@@ -1,11 +1,11 @@
 import { useState } from 'react';
-import { Navigate } from 'react-router-dom';
+import { Navigate, useNavigate } from 'react-router-dom';
 import { motion } from 'motion/react';
 import { LogIn, Mail, Lock, AlertCircle } from 'lucide-react';
 import { useTranslation } from 'react-i18next';
 import { LanguageSwitcher } from '../components/LanguageSwitcher';
 import { useAuth } from '../contexts/AuthContext';
-import { supabase, isDemoMode, hasSupabaseConfig } from '../lib/supabase';
+import { isDemoMode, hasSupabaseConfig } from '../lib/supabase';
 
 export default function Login() {
   const { t } = useTranslation();
@@ -24,9 +24,11 @@ export default function Login() {
 
 function LoginForm() {
   const { t } = useTranslation();
+  const { signIn } = useAuth();
+  const navigate = useNavigate();
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
-  const [error, setError] = useState('');
+  const [error, setError] = useState(!hasSupabaseConfig && !isDemoMode ? 'إعدادات الاتصال بقاعدة البيانات غير مكتملة. تواصل مع مسؤول النظام.' : '');
   const [isSubmitting, setIsSubmitting] = useState(false);
 
   const handleSubmit = async (e: React.FormEvent) => {
@@ -42,34 +44,11 @@ function LoginForm() {
       return;
     }
 
-    if (isDemoMode && !hasSupabaseConfig) {
-      localStorage.setItem('erpx_demo_email', email.trim());
-      localStorage.setItem('erpx_demo_password', password);
-      window.location.href = '/dashboard';
-      return;
-    }
-
     setIsSubmitting(true);
 
     try {
-      const { data, error } = await supabase.auth.signInWithPassword({
-        email: email.trim(),
-        password,
-      });
-
-      if (error) {
-        console.error('[Login] Sign in failed:', error);
-        setError(error.message || 'Invalid email or password.');
-        return;
-      }
-
-      if (!data.user) {
-        setError('Authentication succeeded but no user was returned.');
-        return;
-      }
-
-      localStorage.setItem('erpx_demo_email', data.user.email || email.trim());
-      window.location.href = '/dashboard';
+      await signIn(email.trim(), password);
+      navigate('/dashboard', { replace: true });
     } catch (err) {
       console.error('[Login] Unexpected login error:', err);
       setError(err instanceof Error ? err.message : 'Unable to sign in. Please try again.');
@@ -180,6 +159,7 @@ function LoginForm() {
             {/* Submit Button */}
             <motion.button
               type="submit"
+              disabled={isSubmitting || (!hasSupabaseConfig && !isDemoMode)}
               whileHover={{ scale: 1.02 }}
               whileTap={{ scale: 0.98 }}
               className="w-full py-3 bg-gradient-to-r from-blue-500 to-purple-500 rounded-xl font-semibold text-white shadow-lg shadow-blue-500/30 hover:shadow-blue-500/50 transition-all flex items-center justify-center gap-2"
@@ -189,8 +169,8 @@ function LoginForm() {
             </motion.button>
           </form>
 
-          {/* Demo Credentials */}
-          <div className="mt-8 p-4 bg-blue-500/10 border border-blue-500/30 rounded-xl">
+          {/* Local development demo only */}
+          {isDemoMode && <div className="mt-8 p-4 bg-blue-500/10 border border-blue-500/30 rounded-xl">
             <p className="text-xs text-gray-400 mb-2 text-center font-semibold">
               {t('auth.demoCredentials')}
             </p>
@@ -199,7 +179,7 @@ function LoginForm() {
               <p>{t('users.manager')}: manager@erpxai.com / manager123</p>
               <p>{t('users.employee')}: employee@erpxai.com / employee123</p>
             </div>
-          </div>
+          </div>}
         </div>
 
         {/* Footer */}

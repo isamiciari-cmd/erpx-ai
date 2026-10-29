@@ -6,7 +6,7 @@
 
 ## Project Structure
 - **Frontend**: React + TypeScript + Vite at `C:\Users\LENOVO\erpx-ai\`
-- **Mobile**: React Native (Expo) at `C:\Users\LENOVO\erpx-ai\ERPX\`
+- **Mobile**: `ERPX` is a legacy source file in this checkout, not an installable Expo project. Do not claim mobile builds are validated.
 
 ## Key Files Modified (Button Fixes)
 All buttons across the system have been verified and fixed with proper onClick handlers:
@@ -39,7 +39,10 @@ pnpm run dev
 ```
 
 ## Notes
-- No tsconfig.json in root - TypeScript compilation not available
+- `tsconfig.json` exists. Run `pnpm run typecheck` to validate types.
 - Use `pnpm run build` to validate changes compile
 - Project uses motion/react for animations
-- All motion.button and button elements now have onClick handlers
+- A click handler alone does not establish a working feature. Verify saved state, authorization, failure states and relevant database transactions.
+- Canonical database migrations live in `supabase/migrations/`. Historical SQL files must not be applied indiscriminately to an existing database.
+- Demo auth requires `VITE_DEMO_MODE=true` in a local Vite development session; production must fail closed without a real connection.
+- Preserve all pre-existing user changes. Never report cloud deployment or external certification without actual evidence.

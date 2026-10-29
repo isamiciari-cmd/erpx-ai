@@ -1,99 +1,95 @@
-import { useState, useRef, useEffect } from 'react';
+import { useState, useRef, useEffect, type KeyboardEvent } from 'react';
+import { useTranslation } from 'react-i18next';
 import { motion, AnimatePresence } from 'motion/react';
-import { Bot, Send, User, Sparkles, X, Minimize2, Maximize2 } from 'lucide-react';
+import { Bot, Send, User, X, Minimize2, Maximize2 } from 'lucide-react';
+import { useAuth } from '../../contexts/AuthContext';
+import { useBusinessAssistantStatus } from '../../hooks/useBusinessAssistantStatus';
+import {
+  askBusinessAssistantReply,
+  businessAssistantErrorMessage,
+} from '../../services/aiGatewayService';
+import BusinessAssistantStatus from './erp/BusinessAssistantStatus';
 
 interface Message {
   role: 'user' | 'assistant';
   content: string;
   timestamp: Date;
+  model?: string | null;
 }
 
 export default function AIAssistant() {
-  const [messages, setMessages] = useState<Message[]>([
-    {
-      role: 'assistant',
-      content:
-        "Hello! I'm your AI assistant. I can help you with analytics, predictions, and business insights. Try asking me about your sales trends or revenue forecast!",
-      timestamp: new Date(),
-    },
-  ]);
+  const { i18n } = useTranslation();
+  const ar = (i18n.resolvedLanguage || i18n.language).startsWith('ar');
+  const { user } = useAuth();
+  const [messages, setMessages] = useState<Message[]>([]);
   const [input, setInput] = useState('');
+  const [error, setError] = useState<unknown>(null);
   const [isLoading, setIsLoading] = useState(false);
   const [isOpen, setIsOpen] = useState(false);
   const [isMinimized, setIsMinimized] = useState(false);
+  const status = useBusinessAssistantStatus(isOpen);
   const messagesEndRef = useRef<HTMLDivElement>(null);
-
-  const scrollToBottom = () => {
-    messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
-  };
+  const generation = useRef(0);
 
   useEffect(() => {
-    scrollToBottom();
-  }, [messages]);
+    messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
+  }, [messages, error]);
 
-  const generateAIResponse = async (userMessage: string): Promise<string> => {
-    // Simulate API call - in production, call your backend AI endpoint
-    await new Promise((resolve) => setTimeout(resolve, 1000));
+  useEffect(() => {
+    const open = () => {
+      setIsOpen(true);
+      setIsMinimized(false);
+    };
+    window.addEventListener('erpx:open-ai', open);
+    return () => window.removeEventListener('erpx:open-ai', open);
+  }, []);
 
-    const lowerMsg = userMessage.toLowerCase();
-
-    // Smart responses based on keywords
-    if (lowerMsg.includes('sales') || lowerMsg.includes('revenue')) {
-      return 'Based on your current sales data, I see a positive trend with 12.5% growth. Your revenue is projected to reach SAR 145,000 next month. The strongest performing category is Finance module with 45% of total sales.';
-    } else if (lowerMsg.includes('predict') || lowerMsg.includes('forecast')) {
-      return 'My predictive model shows:\n• Next week revenue: SAR 132,500 (+6.4%)\n• Customer growth: +85 new customers\n• Order volume: 1,450 orders expected\n• Best day: Thursday (historically 23% above average)';
-    } else if (lowerMsg.includes('help') || lowerMsg.includes('what can you do')) {
-      return 'I can help you with:\n✓ Sales & revenue analysis\n✓ Predictive forecasting\n✓ Customer insights\n✓ Inventory optimization\n✓ Financial reports\n✓ Performance recommendations\n\nJust ask me anything about your business data!';
-    } else if (lowerMsg.includes('customer')) {
-      return 'Customer analysis shows:\n• Total active customers: 892 (+15.3%)\n• Average order value: SAR 140\n• Top customer segment: Small businesses (42%)\n• Retention rate: 87%\n• Recommendation: Focus on customer segment targeting';
-    } else if (lowerMsg.includes('inventory')) {
-      return 'Inventory insights:\n• Low stock alerts: 12 items\n• Overstock items: 8 items\n• Optimal reorder point reached for 23 items\n• Predicted shortage next week: Office supplies category\n• Recommendation: Restock high-demand items';
-    } else if (lowerMsg.includes('recommendation') || lowerMsg.includes('suggest')) {
-      return 'Based on your current performance:\n\n🎯 Top Recommendations:\n1. Increase marketing budget by 15% - high ROI potential\n2. Launch loyalty program - 67% customer interest\n3. Optimize pricing for top 5 products\n4. Expand to 2 new market segments\n5. Automate invoice follow-ups (save 8hrs/week)';
-    } else {
-      return `I understand you're asking about "${userMessage}". While I can provide general insights, I specialize in analyzing your business data. Try asking me about sales trends, revenue forecasts, customer analytics, or business recommendations!`;
-    }
-  };
+  useEffect(() => {
+    generation.current++;
+    setMessages([]);
+    setInput('');
+    setError(null);
+    setIsLoading(false);
+    return () => {
+      generation.current++;
+    };
+  }, [user?.id, user?.company_id]);
 
   const sendMessage = async () => {
-    if (!input.trim()) return;
-
-    const userMessage: Message = {
-      role: 'user',
-      content: input,
-      timestamp: new Date(),
-    };
-
-    setMessages((prev) => [...prev, userMessage]);
+    const question = input.trim();
+    if (!question || isLoading) return;
+    const request = ++generation.current;
+    setMessages((previous) => [
+      ...previous,
+      { role: 'user', content: question, timestamp: new Date() },
+    ]);
     setInput('');
+    setError(null);
     setIsLoading(true);
-
     try {
-      const aiResponse = await generateAIResponse(input);
-
-      const assistantMessage: Message = {
-        role: 'assistant',
-        content: aiResponse,
-        timestamp: new Date(),
-      };
-
-      setMessages((prev) => [...prev, assistantMessage]);
-    } catch (error) {
-      const errorMessage: Message = {
-        role: 'assistant',
-        content: "I apologize, but I'm having trouble processing your request. Please try again.",
-        timestamp: new Date(),
-      };
-      setMessages((prev) => [...prev, errorMessage]);
+      const answer = await askBusinessAssistantReply(question);
+      if (request !== generation.current) return;
+      setMessages((previous) => [
+        ...previous,
+        {
+          role: 'assistant',
+          content: answer.message,
+          timestamp: new Date(answer.generatedAt),
+          model: answer.model,
+        },
+      ]);
+      void status.refresh();
+    } catch (cause) {
+      if (request === generation.current) setError(cause);
     } finally {
-      setIsLoading(false);
+      if (request === generation.current) setIsLoading(false);
     }
   };
 
-  const handleKeyPress = (e: React.KeyboardEvent) => {
-    if (e.key === 'Enter' && !e.shiftKey) {
-      e.preventDefault();
-      sendMessage();
+  const handleKeyDown = (event: KeyboardEvent<HTMLInputElement>) => {
+    if (event.key === 'Enter' && !event.shiftKey && !event.nativeEvent.isComposing) {
+      event.preventDefault();
+      void sendMessage();
     }
   };
 
@@ -105,157 +101,160 @@ export default function AIAssistant() {
         whileHover={{ scale: 1.1 }}
         whileTap={{ scale: 0.9 }}
         onClick={() => setIsOpen(true)}
+        aria-label={ar ? 'فتح المساعد الذكي' : 'Open AI assistant'}
         className="fixed bottom-8 left-8 w-16 h-16 bg-gradient-to-r from-purple-500 to-pink-500 rounded-full shadow-2xl flex items-center justify-center z-50 hover:shadow-purple-500/50 transition-all"
       >
         <Bot className="w-8 h-8 text-white" />
-        <span className="absolute -top-1 -right-1 w-4 h-4 bg-green-500 border-2 border-gray-950 rounded-full animate-pulse" />
       </motion.button>
     );
   }
 
   return (
     <motion.div
+      dir={ar ? 'rtl' : 'ltr'}
       initial={{ opacity: 0, scale: 0.9, y: 20 }}
       animate={{ opacity: 1, scale: 1, y: 0 }}
       exit={{ opacity: 0, scale: 0.9, y: 20 }}
-      className={`fixed ${
-        isMinimized ? 'bottom-8 left-8 w-80' : 'bottom-8 left-8 w-[450px]'
-      } bg-gradient-to-br from-gray-900 to-gray-950 border border-purple-500/30 rounded-2xl shadow-2xl z-50 overflow-hidden transition-all`}
+      className={`fixed ${isMinimized ? 'bottom-8 left-4 w-80 max-w-[calc(100vw-2rem)]' : 'bottom-8 left-4 w-[450px] max-w-[calc(100vw-2rem)]'} bg-gradient-to-br from-gray-900 to-gray-950 border border-purple-500/30 rounded-2xl shadow-2xl z-50 overflow-hidden text-white`}
     >
-      {/* Header */}
-      <div className="bg-gradient-to-r from-purple-600 to-pink-600 p-4 flex items-center justify-between">
-        <div className="flex items-center gap-3">
-          <div className="w-10 h-10 bg-white/20 rounded-full flex items-center justify-center">
-            <Bot className="w-6 h-6 text-white" />
-          </div>
-          <div>
-            <h3 className="text-white font-bold">AI Assistant</h3>
-            <div className="flex items-center gap-2">
-              <span className="w-2 h-2 bg-green-400 rounded-full animate-pulse" />
-              <p className="text-xs text-white/80">Online</p>
-            </div>
-          </div>
+      <div className="bg-gradient-to-r from-purple-600 to-pink-600 p-4 flex items-center justify-between gap-3">
+        <div className="flex min-w-0 items-center gap-3">
+          <Bot className="w-7 h-7 shrink-0" />
+          <h3 className="font-bold">{ar ? 'المساعد الذكي' : 'AI assistant'}</h3>
         </div>
-
-        <div className="flex items-center gap-2">
-          <motion.button
-            whileHover={{ scale: 1.1 }}
-            whileTap={{ scale: 0.9 }}
+        <div className="flex items-center gap-1">
+          <button
+            type="button"
             onClick={() => setIsMinimized(!isMinimized)}
-            className="p-2 hover:bg-white/10 rounded-lg transition-all"
+            aria-label={
+              isMinimized
+                ? ar
+                  ? 'توسيع المساعد'
+                  : 'Expand assistant'
+                : ar
+                  ? 'تصغير المساعد'
+                  : 'Minimize assistant'
+            }
+            className="p-2 hover:bg-white/10 rounded-lg"
           >
-            {isMinimized ? (
-              <Maximize2 className="w-4 h-4 text-white" />
-            ) : (
-              <Minimize2 className="w-4 h-4 text-white" />
-            )}
-          </motion.button>
-          <motion.button
-            whileHover={{ scale: 1.1 }}
-            whileTap={{ scale: 0.9 }}
+            {isMinimized ? <Maximize2 className="w-4 h-4" /> : <Minimize2 className="w-4 h-4" />}
+          </button>
+          <button
+            type="button"
             onClick={() => setIsOpen(false)}
-            className="p-2 hover:bg-white/10 rounded-lg transition-all"
+            aria-label={ar ? 'إغلاق المساعد' : 'Close assistant'}
+            className="p-2 hover:bg-white/10 rounded-lg"
           >
-            <X className="w-4 h-4 text-white" />
-          </motion.button>
+            <X className="w-4 h-4" />
+          </button>
         </div>
       </div>
-
       {!isMinimized && (
         <>
-          {/* Messages */}
-          <div className="h-96 overflow-y-auto p-4 space-y-4 bg-gray-950/50">
+          <div className="border-b border-white/10 p-4">
+            <BusinessAssistantStatus {...status} compact />
+          </div>
+          <div
+            className="max-h-[45vh] min-h-48 overflow-y-auto p-4 space-y-4 bg-gray-950/50"
+            role="log"
+            aria-label={ar ? 'محادثة المساعد' : 'Assistant conversation'}
+            aria-live="polite"
+          >
+            {!messages.length && (
+              <p className="text-sm text-gray-300">
+                {ar
+                  ? 'اسأل عن ملخص فواتير الشركة المصرّح لك بقراءتها. تظهر هنا إجابات النموذج الفعلية بعد إرسال السؤال.'
+                  : 'Ask about company invoice summaries you are authorized to read. Actual model answers appear here after you send a question.'}
+              </p>
+            )}
             <AnimatePresence>
-              {messages.map((message, i) => (
+              {messages.map((message, index) => (
                 <motion.div
-                  key={i}
+                  key={index}
                   initial={{ opacity: 0, y: 10 }}
                   animate={{ opacity: 1, y: 0 }}
-                  className={`flex gap-3 ${
-                    message.role === 'user' ? 'justify-end' : 'justify-start'
-                  }`}
+                  className={`flex gap-3 ${message.role === 'user' ? 'justify-end' : 'justify-start'}`}
                 >
                   {message.role === 'assistant' && (
-                    <div className="w-8 h-8 bg-gradient-to-br from-purple-500 to-pink-500 rounded-full flex items-center justify-center flex-shrink-0">
-                      <Bot className="w-5 h-5 text-white" />
-                    </div>
+                    <Bot
+                      aria-label={ar ? 'إجابة النموذج' : 'Model answer'}
+                      className="w-6 h-6 shrink-0 text-purple-300"
+                    />
                   )}
-
                   <div
-                    className={`max-w-[75%] rounded-2xl px-4 py-3 ${
-                      message.role === 'user'
-                        ? 'bg-gradient-to-r from-blue-600 to-cyan-600 text-white'
-                        : 'bg-white/5 backdrop-blur-xl border border-white/10 text-white'
-                    }`}
+                    className={`min-w-0 max-w-[80%] rounded-2xl px-4 py-3 ${message.role === 'user' ? 'bg-blue-700' : 'bg-white/5 border border-white/10'}`}
                   >
-                    <p className="text-sm whitespace-pre-line">{message.content}</p>
-                    <p className="text-xs opacity-50 mt-1">
-                      {message.timestamp.toLocaleTimeString([], {
+                    <p className="text-sm whitespace-pre-wrap break-words">{message.content}</p>
+                    <p className="text-xs opacity-60 mt-2">
+                      {message.model && (
+                        <>
+                          <span dir="ltr">{message.model}</span> ·{' '}
+                        </>
+                      )}
+                      {message.timestamp.toLocaleTimeString(ar ? 'ar-SA' : 'en-US', {
                         hour: '2-digit',
                         minute: '2-digit',
                       })}
                     </p>
                   </div>
-
                   {message.role === 'user' && (
-                    <div className="w-8 h-8 bg-gradient-to-br from-blue-500 to-cyan-500 rounded-full flex items-center justify-center flex-shrink-0">
-                      <User className="w-5 h-5 text-white" />
-                    </div>
+                    <User
+                      aria-label={ar ? 'سؤالك' : 'Your question'}
+                      className="w-6 h-6 shrink-0 text-blue-300"
+                    />
                   )}
                 </motion.div>
               ))}
             </AnimatePresence>
-
             {isLoading && (
-              <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="flex gap-3">
-                <div className="w-8 h-8 bg-gradient-to-br from-purple-500 to-pink-500 rounded-full flex items-center justify-center">
-                  <Bot className="w-5 h-5 text-white" />
-                </div>
-                <div className="bg-white/5 backdrop-blur-xl border border-white/10 rounded-2xl px-4 py-3">
-                  <div className="flex gap-1">
-                    <span className="w-2 h-2 bg-purple-400 rounded-full animate-bounce" />
-                    <span
-                      className="w-2 h-2 bg-purple-400 rounded-full animate-bounce"
-                      style={{ animationDelay: '0.1s' }}
-                    />
-                    <span
-                      className="w-2 h-2 bg-purple-400 rounded-full animate-bounce"
-                      style={{ animationDelay: '0.2s' }}
-                    />
-                  </div>
-                </div>
-              </motion.div>
+              <p className="text-sm text-purple-300" role="status">
+                {ar ? 'جارٍ إعداد الإجابة…' : 'Generating answer…'}
+              </p>
             )}
-
+            {error != null && (
+              <p
+                className="rounded-lg border border-amber-400/30 p-3 text-sm text-amber-300"
+                role="alert"
+              >
+                {businessAssistantErrorMessage(error, ar ? 'ar' : 'en')}
+              </p>
+            )}
             <div ref={messagesEndRef} />
           </div>
-
-          {/* Input */}
-          <div className="p-4 bg-gray-900/50 border-t border-white/10">
+          <div className="p-4 border-t border-white/10">
             <div className="flex gap-2">
               <input
                 type="text"
+                aria-label={ar ? 'سؤالك للمساعد' : 'Your question for the assistant'}
+                maxLength={4000}
                 value={input}
-                onChange={(e) => setInput(e.target.value)}
-                onKeyPress={handleKeyPress}
-                placeholder="Ask me anything..."
-                className="flex-1 px-4 py-3 bg-white/5 border border-white/10 rounded-xl text-white placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-purple-500 transition-all"
+                onChange={(event) => setInput(event.target.value)}
+                onKeyDown={handleKeyDown}
+                placeholder={ar ? 'اكتب سؤالك…' : 'Type your question…'}
+                className="min-w-0 flex-1 px-4 py-3 bg-white/5 border border-white/10 rounded-xl placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-purple-500"
               />
-              <motion.button
-                whileHover={{ scale: 1.05 }}
-                whileTap={{ scale: 0.95 }}
-                onClick={sendMessage}
+              <button
+                type="button"
+                onClick={() => void sendMessage()}
                 disabled={!input.trim() || isLoading}
-                className="px-4 py-3 bg-gradient-to-r from-purple-600 to-pink-600 text-white rounded-xl hover:shadow-lg hover:shadow-purple-500/30 transition-all disabled:opacity-50 disabled:cursor-not-allowed"
+                aria-label={ar ? 'إرسال السؤال' : 'Send question'}
+                className="px-4 py-3 bg-purple-600 rounded-xl disabled:opacity-50"
               >
                 <Send className="w-5 h-5" />
-              </motion.button>
+              </button>
             </div>
-
-            <p className="text-xs text-gray-500 mt-2 flex items-center gap-1">
-              <Sparkles className="w-3 h-3" />
-              Powered by AI - Ask about analytics, forecasts, or recommendations
+            <p className="text-xs text-gray-400 mt-3">
+              {ar
+                ? 'للقراءة فقط؛ لا يُعدّل السجلات ولا يُنفّذ مدفوعات. راجع الإجابات قبل اتخاذ القرار.'
+                : 'Read-only; no record changes or payments. Review answers before making decisions.'}
             </p>
+            {status.status?.provider === 'ollama' && (
+              <p className="text-xs text-gray-400 mt-1">
+                {ar
+                  ? 'أبقِ جهاز النموذج المحلي مشغّلاً ومتصلاً.'
+                  : 'Keep the local model device powered on and connected.'}
+              </p>
+            )}
           </div>
         </>
       )}

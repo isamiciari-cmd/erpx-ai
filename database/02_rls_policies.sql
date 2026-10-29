@@ -34,7 +34,7 @@ $$ LANGUAGE sql SECURITY DEFINER;
 -- Helper function to check if user has permission
 CREATE OR REPLACE FUNCTION user_has_permission(perm TEXT)
 RETURNS BOOLEAN AS $$
-  SELECT 
+  SELECT
     CASE
       WHEN (SELECT (r.permissions->>'all')::boolean FROM users u JOIN roles r ON u.role_id = r.id WHERE u.id = auth.uid()) THEN true
       WHEN (SELECT (r.permissions->>perm)::boolean FROM users u JOIN roles r ON u.role_id = r.id WHERE u.id = auth.uid()) THEN true

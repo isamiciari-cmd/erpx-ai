@@ -1,57 +1,23 @@
-/**
- * Developer Mode Utilities
- *
- * Provides secure authentication bypass for development and testing.
- * Automatically disabled on production domain.
- */
-
-const PRODUCTION_DOMAINS = ['erpx-ai.com', 'www.erpx-ai.com', 'app.erpx-ai.com'];
-
-/**
- * Check if the current environment allows dev authentication bypass
- */
-export function isDevBypassEnabled(): boolean {
-  // Check environment variable
-  const devBypassEnv = import.meta.env.VITE_DEV_AUTH_BYPASS === 'true';
-
-  if (!devBypassEnv) {
-    return false;
-  }
-
-  // Security check: Disable on production domain
-  const currentDomain = window.location.hostname;
-  const isProductionDomain = PRODUCTION_DOMAINS.some((domain) => currentDomain.includes(domain));
-
-  if (isProductionDomain) {
-    console.warn('🔒 Dev bypass disabled: Running on production domain');
-    return false;
-  }
-
-  // Enable on localhost or staging
-  const isLocalhost = currentDomain === 'localhost' || currentDomain === '127.0.0.1';
-  const isStaging = currentDomain.includes('staging') || currentDomain.includes('dev');
-
-  if (isLocalhost || isStaging) {
-    console.log('🔓 Dev bypass enabled: Development environment detected');
-    return true;
-  }
-
-  return false;
+/** Development authentication is available only in an explicit local dev build. */
+export function isLocalDevelopmentHost(hostname: string): boolean {
+  return ['localhost', '127.0.0.1', '::1', '[::1]'].includes(hostname.toLowerCase());
 }
 
-/**
- * Get the current environment type
- */
+export function allowsLocalDemo(devBuild: boolean, enabled: unknown, hostname: string): boolean {
+  return devBuild && enabled === 'true' && isLocalDevelopmentHost(hostname);
+}
+
+export function isDevBypassEnabled(): boolean {
+  return allowsLocalDemo(
+    import.meta.env.DEV,
+    import.meta.env.VITE_DEMO_MODE,
+    typeof window === 'undefined' ? '' : window.location.hostname,
+  );
+}
+
 export function getEnvironmentType(): 'production' | 'staging' | 'development' {
-  const currentDomain = window.location.hostname;
-
-  if (PRODUCTION_DOMAINS.some((domain) => currentDomain.includes(domain))) {
-    return 'production';
+  if (import.meta.env.DEV && typeof window !== 'undefined' && isLocalDevelopmentHost(window.location.hostname)) {
+    return 'development';
   }
-
-  if (currentDomain.includes('staging')) {
-    return 'staging';
-  }
-
-  return 'development';
+  return 'production';
 }

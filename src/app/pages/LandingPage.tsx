@@ -390,7 +390,7 @@ export default function LandingPage() {
               </a>
 
               <button
-                onClick={() => alert('Video player coming soon')}
+                onClick={() => document.getElementById('product-preview')?.scrollIntoView({ behavior: 'smooth', block: 'center' })}
                 className="px-8 py-4 bg-white/5 border border-white/10 rounded-xl font-bold text-lg hover:bg-white/10 transition-all backdrop-blur-sm flex items-center gap-2"
               >
                 <Play className="w-5 h-5" />
@@ -400,7 +400,7 @@ export default function LandingPage() {
           </motion.div>
 
           {/* Floating Dashboard Preview */}
-          <motion.div
+          <motion.div id="product-preview"
             initial={{ opacity: 0, y: 50 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 1, delay: 0.3 }}

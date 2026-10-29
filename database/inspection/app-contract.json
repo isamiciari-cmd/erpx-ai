@@ -1,0 +1,1513 @@
+{
+  "format": "erpx_app_contract_v1",
+  "scope": "Offline inspection of current frontend/services; expectations are not a live schema assertion or a migration.",
+  "schema": "public",
+  "generated_at": "2026-10-26T16:48:21.123Z",
+  "table_requirement_levels": {
+    "core": "Required for current business/auth screens",
+    "registration": "Required to complete company registration",
+    "conditional_rbac": "Conditional enterprise RBAC; paired legacy fallback documented",
+    "platform_admin": "Required only for optional owner/developer pages",
+    "retained_service": "Referenced by retained helpers; review reachability",
+    "optional_tenants": "Explicitly missing RPC has narrowly defined company-ID fallback"
+  },
+  "identity": {
+    "canonical": "public.users.id = auth.users.id",
+    "tenant_key": "public.users.company_id",
+    "required_profile_fields": [
+      "id",
+      "company_id",
+      "role_id",
+      "status"
+    ],
+    "active_profile_status": "active",
+    "role_assignment": "Server-owned users.role_id; never trust auth.user_metadata for authorization",
+    "auth_id": "Optional legacy column; no active or retained user-profile lookup requires it."
+  },
+  "tables": [
+    {
+      "name": "companies",
+      "requirement": "core",
+      "columns": [
+        "id",
+        "name",
+        "legal_name",
+        "tax_id",
+        "currency",
+        "timezone",
+        "status"
+      ],
+      "sources": [
+        "src/app/pages/TenantManagementPage.tsx",
+        "src/services/companyRegistrationService.ts",
+        "supabase/functions/manage-users/index.ts"
+      ],
+      "rls_required": true
+    },
+    {
+      "name": "users",
+      "requirement": "core",
+      "columns": [
+        "id",
+        "email",
+        "first_name",
+        "last_name",
+        "role_id",
+        "company_id",
+        "branch_id",
+        "department",
+        "position",
+        "phone_number",
+        "avatar_url",
+        "status",
+        "created_at",
+        "updated_at"
+      ],
+      "sources": [
+        "src/lib/authSession.ts",
+        "src/services/usersService.ts",
+        "src/services/adminDirectoryService.ts"
+      ],
+      "rls_required": true,
+      "identity": "id equals auth.users.id; active authentication and usersService.getCurrentUser both use this primary key. Legacy auth_id is optional and is not queried.",
+      "optional_columns": [
+        "auth_id"
+      ]
+    },
+    {
+      "name": "roles",
+      "requirement": "core",
+      "columns": [
+        "id",
+        "name"
+      ],
+      "sources": [
+        "src/lib/authSession.ts",
+        "src/services/adminDirectoryService.ts"
+      ],
+      "rls_required": true,
+      "optional_columns": [
+        "display_name",
+        "company_id",
+        "permissions",
+        "level",
+        "status",
+        "is_system_role"
+      ],
+      "notes": "Role JSON permissions are required for the supported legacy authentication fallback only when BOTH authorization RPCs are explicitly missing. The directory merges trusted JSON grants with relational mappings; only an explicitly missing mapping relation permits JSON-only display. Canonical business RPCs additionally use roles.company_id; verify their deployed implementation."
+    },
+    {
+      "name": "branches",
+      "requirement": "core",
+      "columns": [
+        "id",
+        "company_id",
+        "name",
+        "status"
+      ],
+      "sources": [
+        "src/services/adminDirectoryService.ts",
+        "src/services/usersService.ts",
+        "supabase/functions/manage-users/index.ts"
+      ],
+      "rls_required": true
+    },
+    {
+      "name": "customers",
+      "requirement": "core",
+      "columns": [
+        "id",
+        "company_id",
+        "customer_code",
+        "company_name",
+        "contact_name",
+        "email",
+        "phone",
+        "address",
+        "city",
+        "country",
+        "credit_limit",
+        "payment_terms",
+        "status",
+        "created_at",
+        "updated_at"
+      ],
+      "sources": [
+        "src/services/customersService.ts",
+        "src/services/invoicesService.ts",
+        "src/services/dashboardService.ts"
+      ],
+      "rls_required": true,
+      "optional_columns": [
+        "contact_person",
+        "phone_number"
+      ],
+      "compatibility_aliases": {
+        "contact_person": "contact_name",
+        "phone_number": "phone"
+      },
+      "notes": "Reads normalize canonical contact_name/phone into optional UI contact_person/phone_number aliases; writes send canonical columns only. Alias storage columns are not required. String/number/null payment_terms are preserved without coercing live varchar labels."
+    },
+    {
+      "name": "products",
+      "requirement": "core",
+      "columns": [
+        "id",
+        "company_id",
+        "item_code",
+        "sku",
+        "barcode",
+        "product_name",
+        "description",
+        "category_id",
+        "unit_of_measure",
+        "product_type",
+        "tracking_method",
+        "unit_price",
+        "cost_price",
+        "vat_rate",
+        "min_stock_level",
+        "max_stock_level",
+        "reorder_point",
+        "track_inventory",
+        "is_active",
+        "images",
+        "attributes",
+        "created_by",
+        "updated_by",
+        "created_at",
+        "updated_at"
+      ],
+      "sources": [
+        "src/services/productsService.ts",
+        "src/services/businessInventoryService.ts",
+        "src/app/pages/InventoryManagementPage.tsx",
+        "src/app/pages/cashier/CashierPOSPage.tsx"
+      ],
+      "rls_required": true,
+      "calculated_not_columns": [
+        "stock"
+      ],
+      "notes": "stock is calculated from inventory; item_code is generated by the database and omitted from create/update payloads."
+    },
+    {
+      "name": "inventory",
+      "requirement": "core",
+      "columns": [
+        "id",
+        "product_id",
+        "warehouse_id",
+        "quantity_available",
+        "quantity_reserved",
+        "quantity_on_order",
+        "last_counted_at",
+        "created_at",
+        "updated_at"
+      ],
+      "sources": [
+        "src/services/inventoryService.ts",
+        "src/services/businessInventoryService.ts",
+        "src/services/productsService.ts"
+      ],
+      "rls_required": true,
+      "notes": "Company scope is reached through inventory.product_id -> products.company_id; there is no frontend requirement for inventory.company_id."
+    },
+    {
+      "name": "warehouses",
+      "requirement": "core",
+      "columns": [
+        "id",
+        "company_id",
+        "name",
+        "branch_id",
+        "is_active"
+      ],
+      "sources": [
+        "src/services/businessInventoryService.ts",
+        "src/services/inventoryService.ts"
+      ],
+      "rls_required": true
+    },
+    {
+      "name": "sales",
+      "requirement": "core",
+      "columns": [
+        "id",
+        "company_id",
+        "branch_id",
+        "cashier_id",
+        "shift_id",
+        "customer_id",
+        "invoice_id",
+        "sale_number",
+        "sale_date",
+        "payment_method",
+        "subtotal",
+        "discount_amount",
+        "vat_amount",
+        "total_amount",
+        "amount_paid",
+        "change_amount",
+        "items",
+        "status",
+        "notes",
+        "created_at",
+        "updated_at"
+      ],
+      "sources": [
+        "src/services/salesService.ts",
+        "src/domain/ai/aiToolExecutor.ts"
+      ],
+      "rls_required": true,
+      "json_columns": {
+        "items": "SaleItem[]"
+      },
+      "notes": "The checkout RPC receives product IDs, whole quantities and discount percentages only; catalog prices/taxes are server-owned."
+    },
+    {
+      "name": "shifts",
+      "requirement": "core",
+      "columns": [
+        "id",
+        "company_id",
+        "branch_id",
+        "cashier_id",
+        "shift_number",
+        "opened_at",
+        "closed_at",
+        "opening_cash",
+        "closing_cash",
+        "expected_cash",
+        "cash_difference",
+        "total_sales",
+        "total_refunds",
+        "status",
+        "notes",
+        "created_at",
+        "updated_at"
+      ],
+      "sources": [
+        "src/services/salesService.ts"
+      ],
+      "rls_required": true
+    },
+    {
+      "name": "payments",
+      "requirement": "core",
+      "columns": [
+        "id",
+        "company_id",
+        "branch_id",
+        "customer_id",
+        "invoice_id",
+        "sales_order_id",
+        "sale_id",
+        "payment_number",
+        "payment_date",
+        "payment_method",
+        "amount",
+        "currency_code",
+        "reference_number",
+        "gateway",
+        "gateway_transaction_id",
+        "status",
+        "notes",
+        "created_by",
+        "created_at"
+      ],
+      "sources": [
+        "src/services/salesService.ts",
+        "src/services/businessReceivablesService.ts"
+      ],
+      "rls_required": true,
+      "notes": "Current settlement UI calls record_invoice_payment; retained markInvoiceAsPaid/createPayment functions perform direct inserts and must not be granted a bypass around atomic receipt accounting."
+    },
+    {
+      "name": "invoices",
+      "requirement": "core",
+      "columns": [
+        "id",
+        "uuid",
+        "company_id",
+        "branch_id",
+        "customer_id",
+        "sales_order_id",
+        "invoice_number",
+        "issue_date",
+        "issue_time",
+        "supply_date",
+        "due_date",
+        "reference_number",
+        "currency_code",
+        "tax_currency_code",
+        "invoice_type_code",
+        "invoice_subtype",
+        "subtotal",
+        "discount_amount",
+        "vat_amount",
+        "total_amount",
+        "taxable_amount",
+        "tax_exclusive_amount",
+        "tax_inclusive_amount",
+        "allowance_total_amount",
+        "charge_total_amount",
+        "amount_paid",
+        "amount_due",
+        "payable_amount",
+        "payment_status",
+        "status",
+        "previous_invoice_hash",
+        "invoice_hash",
+        "document_hash",
+        "cryptographic_stamp",
+        "clearance_status",
+        "reporting_status",
+        "zatca_uuid",
+        "submission_id",
+        "zatca_environment",
+        "qr_code",
+        "qr_code_base64",
+        "xml_content",
+        "last_submitted_at",
+        "last_response_at",
+        "last_error_code",
+        "last_error_message",
+        "notes",
+        "created_by",
+        "created_at",
+        "updated_at"
+      ],
+      "sources": [
+        "src/services/invoicesService.ts",
+        "src/services/invoiceDraftService.ts",
+        "src/services/businessReceivablesService.ts",
+        "src/app/pages/finance/VATTaxPage.tsx"
+      ],
+      "rls_required": true
+    },
+    {
+      "name": "invoice_lines",
+      "requirement": "core",
+      "columns": [
+        "id",
+        "invoice_id",
+        "product_id",
+        "description",
+        "quantity",
+        "unit_price",
+        "discount_amount",
+        "vat_rate",
+        "vat_amount",
+        "line_total",
+        "line_number"
+      ],
+      "sources": [
+        "src/services/invoicesService.ts",
+        "src/app/pages/InvoicingPage.tsx",
+        "supabase/migrations/20261022000200_transactional_sales.sql"
+      ],
+      "rls_required": true,
+      "notes": "getInvoice embeds lines(*). Listed line amount fields are also required by the currently implemented issue/draft RPCs; line_total excludes VAT after discounts."
+    },
+    {
+      "name": "chart_of_accounts",
+      "requirement": "core",
+      "columns": [
+        "id",
+        "company_id",
+        "account_code",
+        "account_name",
+        "account_type",
+        "is_active"
+      ],
+      "sources": [
+        "src/services/businessRecordsService.ts",
+        "src/app/pages/ChartOfAccountsPage.tsx"
+      ],
+      "rls_required": true
+    },
+    {
+      "name": "journal_entries",
+      "requirement": "core",
+      "columns": [
+        "id",
+        "company_id",
+        "entry_number",
+        "entry_date",
+        "description",
+        "status"
+      ],
+      "sources": [
+        "src/services/businessRecordsService.ts"
+      ],
+      "rls_required": true
+    },
+    {
+      "name": "journal_entry_lines",
+      "requirement": "core",
+      "columns": [
+        "journal_entry_id",
+        "account_id",
+        "debit_amount",
+        "credit_amount"
+      ],
+      "sources": [
+        "src/services/businessRecordsService.ts"
+      ],
+      "rls_required": true
+    },
+    {
+      "name": "business_records",
+      "requirement": "core",
+      "columns": [
+        "id",
+        "company_id",
+        "module",
+        "title",
+        "reference",
+        "status",
+        "record_date",
+        "amount",
+        "data",
+        "version",
+        "created_by",
+        "created_at",
+        "updated_at"
+      ],
+      "sources": [
+        "src/services/businessRecordsService.ts",
+        "src/app/components/erp/BusinessModulePages.tsx",
+        "src/app/pages/GenericPage.tsx"
+      ],
+      "rls_required": true,
+      "json_columns": {
+        "data": "Module-specific payload; field keys are NOT table columns"
+      },
+      "notes": "These records currently back HR, budgets, payable/expense/asset workflows and generic modules. Existing legacy native module tables are not automatically imported or synchronized."
+    },
+    {
+      "name": "business_record_events",
+      "requirement": "core",
+      "columns": [
+        "id",
+        "company_id",
+        "record_id",
+        "action",
+        "old_status",
+        "new_status",
+        "actor_id",
+        "created_at"
+      ],
+      "sources": [
+        "src/services/businessRecordsService.ts",
+        "src/app/pages/UsageTrackingPage.tsx"
+      ],
+      "rls_required": true
+    },
+    {
+      "name": "sales_orders",
+      "requirement": "retained_service",
+      "columns": [
+        "id",
+        "company_id",
+        "order_date"
+      ],
+      "sources": [
+        "src/services/dashboardService.ts",
+        "src/services/invoicesService.ts"
+      ],
+      "rls_required": true,
+      "notes": "Needed by retained dashboard analytics and the getInvoice sales_order relationship; no current order editor was identified."
+    },
+    {
+      "name": "role_permissions",
+      "requirement": "conditional_rbac",
+      "columns": [
+        "role_id",
+        "permission_id"
+      ],
+      "sources": [
+        "src/services/adminDirectoryService.ts"
+      ],
+      "rls_required": true,
+      "notes": "Directory display unions relational mappings with JSON grants. A missing mapping relation may fall back to a valid JSON object, while permission/network/other errors propagate."
+    },
+    {
+      "name": "permissions",
+      "requirement": "conditional_rbac",
+      "columns": [
+        "id",
+        "permission_key",
+        "category"
+      ],
+      "sources": [
+        "src/services/adminDirectoryService.ts",
+        "src/pages/admin/DeveloperMode.tsx"
+      ],
+      "rls_required": true,
+      "accepted_column_aliases": {
+        "permission_key": [
+          "key"
+        ]
+      },
+      "optional_columns": [
+        "permission_name",
+        "key",
+        "name",
+        "description"
+      ],
+      "notes": "Directory reads permission_key and accepts older key catalogs through wildcard embedding. permission_name/name labels are optional; if absent, the permission key is used as the label. Legacy aliases and label columns are never separately required."
+    },
+    {
+      "name": "audit_logs",
+      "requirement": "platform_admin",
+      "columns": [
+        "id",
+        "company_id",
+        "user_id",
+        "action",
+        "entity_type",
+        "entity_id",
+        "old_values",
+        "new_values",
+        "ip_address",
+        "user_agent",
+        "created_at"
+      ],
+      "sources": [
+        "src/pages/admin/AuditLogs.tsx",
+        "supabase/functions/manage-users/index.ts"
+      ],
+      "rls_required": true,
+      "notes": "Admin audit page maps company_id/entity_type/entity_id/old_values/new_values to display aliases tenant_id/table_name/record_id/old_data/new_data; aliases are not storage columns."
+    },
+    {
+      "name": "profiles",
+      "requirement": "platform_admin",
+      "columns": [
+        "id",
+        "email",
+        "full_name"
+      ],
+      "sources": [
+        "src/pages/admin/EmergencyAccess.tsx",
+        "src/pages/admin/DeveloperMode.tsx"
+      ],
+      "rls_required": true,
+      "notes": "Optional platform pages read profiles. This does not replace the canonical public.users identity used by authentication."
+    },
+    {
+      "name": "developer_access_logs",
+      "requirement": "platform_admin",
+      "columns": [
+        "id",
+        "user_id",
+        "action",
+        "details",
+        "ip_address",
+        "created_at"
+      ],
+      "sources": [
+        "src/pages/admin/DeveloperMode.tsx"
+      ],
+      "rls_required": true
+    },
+    {
+      "name": "emergency_access_logs",
+      "requirement": "platform_admin",
+      "columns": [
+        "id",
+        "user_id",
+        "reason",
+        "granted_at",
+        "expires_at",
+        "revoked_at",
+        "revoked_by",
+        "is_active"
+      ],
+      "sources": [
+        "src/pages/admin/EmergencyAccess.tsx"
+      ],
+      "rls_required": true
+    }
+  ],
+  "functions": [
+    {
+      "name": "complete_pos_sale",
+      "requirement": "core",
+      "arguments": [
+        "p_company_id",
+        "p_branch_id",
+        "p_cashier_id",
+        "p_shift_id",
+        "p_payment_method",
+        "p_customer_id",
+        "p_items",
+        "p_discount_amount",
+        "p_notes",
+        "p_warehouse_id",
+        "p_idempotency_key"
+      ],
+      "returns": {
+        "kind": "json_object",
+        "fields": [
+          "success",
+          "sale_id",
+          "sale_number",
+          "invoice_id",
+          "invoice_number",
+          "payment_id",
+          "payment_number",
+          "customer_id",
+          "subtotal",
+          "discount_amount",
+          "taxable_amount",
+          "vat_amount",
+          "total_amount",
+          "journal_entry_id",
+          "items"
+        ]
+      },
+      "sources": [
+        "src/services/salesService.ts"
+      ],
+      "json_arguments": {
+        "p_items": [
+          "product_id",
+          "quantity",
+          "discount_percentage"
+        ]
+      },
+      "idempotency": "p_idempotency_key UUID reused after uncertain response"
+    },
+    {
+      "name": "close_pos_shift",
+      "requirement": "core",
+      "arguments": [
+        "p_shift_id",
+        "p_closing_cash"
+      ],
+      "returns": {
+        "kind": "row",
+        "fields": [
+          "id",
+          "company_id",
+          "branch_id",
+          "cashier_id",
+          "shift_number",
+          "opened_at",
+          "closed_at",
+          "opening_cash",
+          "closing_cash",
+          "expected_cash",
+          "cash_difference",
+          "total_sales",
+          "total_refunds",
+          "status",
+          "notes",
+          "created_at",
+          "updated_at"
+        ]
+      },
+      "sources": [
+        "src/services/salesService.ts"
+      ]
+    },
+    {
+      "name": "save_invoice_draft",
+      "requirement": "core",
+      "arguments": [
+        "p_company_id",
+        "p_customer_id",
+        "p_items",
+        "p_due_date",
+        "p_notes",
+        "p_request_id"
+      ],
+      "returns": {
+        "kind": "json_object",
+        "fields": [
+          "success",
+          "invoice_id",
+          "invoice_number",
+          "total_amount"
+        ]
+      },
+      "sources": [
+        "src/services/invoiceDraftService.ts"
+      ],
+      "json_arguments": {
+        "p_items": [
+          "product_id",
+          "quantity",
+          "discount_percentage"
+        ]
+      }
+    },
+    {
+      "name": "issue_invoice",
+      "requirement": "core",
+      "arguments": [
+        "p_invoice_id"
+      ],
+      "returns": {
+        "kind": "json_object",
+        "fields": [
+          "id",
+          "uuid",
+          "company_id",
+          "branch_id",
+          "customer_id",
+          "sales_order_id",
+          "invoice_number",
+          "issue_date",
+          "issue_time",
+          "supply_date",
+          "due_date",
+          "reference_number",
+          "currency_code",
+          "tax_currency_code",
+          "invoice_type_code",
+          "invoice_subtype",
+          "subtotal",
+          "discount_amount",
+          "vat_amount",
+          "total_amount",
+          "taxable_amount",
+          "tax_exclusive_amount",
+          "tax_inclusive_amount",
+          "allowance_total_amount",
+          "charge_total_amount",
+          "amount_paid",
+          "amount_due",
+          "payable_amount",
+          "payment_status",
+          "status",
+          "previous_invoice_hash",
+          "invoice_hash",
+          "document_hash",
+          "cryptographic_stamp",
+          "clearance_status",
+          "reporting_status",
+          "zatca_uuid",
+          "submission_id",
+          "zatca_environment",
+          "qr_code",
+          "qr_code_base64",
+          "xml_content",
+          "last_submitted_at",
+          "last_response_at",
+          "last_error_code",
+          "last_error_message",
+          "notes",
+          "created_by",
+          "created_at",
+          "updated_at"
+        ]
+      },
+      "sources": [
+        "src/services/businessReceivablesService.ts"
+      ]
+    },
+    {
+      "name": "record_invoice_payment",
+      "requirement": "core",
+      "arguments": [
+        "p_invoice_id",
+        "p_amount",
+        "p_method",
+        "p_reference",
+        "p_request_id"
+      ],
+      "returns": {
+        "kind": "json_object",
+        "fields": [
+          "id",
+          "uuid",
+          "company_id",
+          "branch_id",
+          "customer_id",
+          "sales_order_id",
+          "invoice_number",
+          "issue_date",
+          "issue_time",
+          "supply_date",
+          "due_date",
+          "reference_number",
+          "currency_code",
+          "tax_currency_code",
+          "invoice_type_code",
+          "invoice_subtype",
+          "subtotal",
+          "discount_amount",
+          "vat_amount",
+          "total_amount",
+          "taxable_amount",
+          "tax_exclusive_amount",
+          "tax_inclusive_amount",
+          "allowance_total_amount",
+          "charge_total_amount",
+          "amount_paid",
+          "amount_due",
+          "payable_amount",
+          "payment_status",
+          "status",
+          "previous_invoice_hash",
+          "invoice_hash",
+          "document_hash",
+          "cryptographic_stamp",
+          "clearance_status",
+          "reporting_status",
+          "zatca_uuid",
+          "submission_id",
+          "zatca_environment",
+          "qr_code",
+          "qr_code_base64",
+          "xml_content",
+          "last_submitted_at",
+          "last_response_at",
+          "last_error_code",
+          "last_error_message",
+          "notes",
+          "created_by",
+          "created_at",
+          "updated_at"
+        ]
+      },
+      "sources": [
+        "src/services/businessReceivablesService.ts"
+      ]
+    },
+    {
+      "name": "receive_stock",
+      "requirement": "core",
+      "arguments": [
+        "p_company_id",
+        "p_product_id",
+        "p_warehouse_id",
+        "p_quantity",
+        "p_reference",
+        "p_request_id"
+      ],
+      "returns": {
+        "kind": "uuid"
+      },
+      "sources": [
+        "src/services/businessInventoryService.ts"
+      ]
+    },
+    {
+      "name": "save_business_record",
+      "requirement": "core",
+      "arguments": [
+        "p_company_id",
+        "p_id",
+        "p_expected_version",
+        "p_record"
+      ],
+      "returns": {
+        "kind": "json_object",
+        "fields": [
+          "id",
+          "company_id",
+          "module",
+          "title",
+          "reference",
+          "status",
+          "record_date",
+          "amount",
+          "data",
+          "version",
+          "created_by",
+          "created_at",
+          "updated_at"
+        ]
+      },
+      "sources": [
+        "src/services/businessRecordsService.ts"
+      ],
+      "json_arguments": {
+        "p_record": [
+          "module",
+          "title",
+          "reference",
+          "record_date",
+          "amount",
+          "data",
+          "status"
+        ]
+      },
+      "concurrency": "p_expected_version is required for updates; finalized records are immutable"
+    },
+    {
+      "name": "save_business_account",
+      "requirement": "core",
+      "arguments": [
+        "p_company_id",
+        "p_id",
+        "p_code",
+        "p_name",
+        "p_type",
+        "p_active"
+      ],
+      "returns": {
+        "kind": "json_object",
+        "fields": [
+          "id",
+          "company_id",
+          "account_code",
+          "account_name",
+          "account_type",
+          "is_active"
+        ]
+      },
+      "sources": [
+        "src/services/businessRecordsService.ts"
+      ]
+    },
+    {
+      "name": "update_company_settings",
+      "requirement": "core",
+      "arguments": [
+        "p_company_id",
+        "p_name",
+        "p_legal_name",
+        "p_tax_id",
+        "p_currency",
+        "p_timezone"
+      ],
+      "returns": {
+        "kind": "ignored_by_client"
+      },
+      "sources": [
+        "src/app/pages/TenantManagementPage.tsx"
+      ]
+    },
+    {
+      "name": "register_company_account",
+      "requirement": "registration",
+      "arguments": [
+        "p_company_name",
+        "p_legal_name",
+        "p_tax_id",
+        "p_vat_number",
+        "p_business_sector",
+        "p_company_size",
+        "p_country",
+        "p_city",
+        "p_address",
+        "p_website",
+        "p_branch_name",
+        "p_branch_code",
+        "p_subscription_plan",
+        "p_billing_cycle",
+        "p_max_branches",
+        "p_max_users",
+        "p_modules",
+        "p_full_name",
+        "p_job_title",
+        "p_mobile_number"
+      ],
+      "returns": {
+        "kind": "json_object",
+        "fields": [
+          "success",
+          "user_id",
+          "tenant_id",
+          "company_id",
+          "branch_id",
+          "role_id"
+        ]
+      },
+      "sources": [
+        "src/services/companyRegistrationService.ts"
+      ],
+      "notes": "Invoked only after Auth returns an authenticated session; it must bind the newly created ERP profile to auth.uid(). Parameter names do not imply identically named table columns."
+    },
+    {
+      "name": "get_user_roles",
+      "requirement": "conditional_rbac",
+      "arguments": [
+        "p_user_id"
+      ],
+      "returns": {
+        "kind": "rows",
+        "fields": [
+          "role_name",
+          "display_name",
+          "level"
+        ]
+      },
+      "sources": [
+        "src/lib/authSession.ts",
+        "src/pages/admin/DeveloperMode.tsx"
+      ],
+      "paired_with": "get_user_permissions"
+    },
+    {
+      "name": "get_user_permissions",
+      "requirement": "conditional_rbac",
+      "arguments": [
+        "p_user_id"
+      ],
+      "returns": {
+        "kind": "rows",
+        "fields": [
+          "permission_key",
+          "permission_name",
+          "category"
+        ]
+      },
+      "sources": [
+        "src/lib/authSession.ts",
+        "src/pages/admin/DeveloperMode.tsx"
+      ],
+      "paired_with": "get_user_roles"
+    },
+    {
+      "name": "can_access_tenant",
+      "requirement": "optional_tenants",
+      "arguments": [
+        "p_user_id",
+        "p_tenant_id"
+      ],
+      "returns": {
+        "kind": "boolean"
+      },
+      "sources": [
+        "src/contexts/AuthContext.tsx"
+      ],
+      "notes": "Only an explicitly missing RPC permits fallback to tenantId === profile.company_id; false/network/permission errors never grant fallback access."
+    },
+    {
+      "name": "log_developer_access",
+      "requirement": "platform_admin",
+      "arguments": [
+        "p_action",
+        "p_details"
+      ],
+      "returns": {
+        "kind": "ignored_by_client"
+      },
+      "sources": [
+        "src/pages/admin/DeveloperMode.tsx"
+      ]
+    },
+    {
+      "name": "grant_emergency_access",
+      "requirement": "platform_admin",
+      "arguments": [
+        "p_user_id",
+        "p_reason",
+        "p_duration_hours"
+      ],
+      "returns": {
+        "kind": "ignored_by_client"
+      },
+      "sources": [
+        "src/pages/admin/EmergencyAccess.tsx"
+      ]
+    },
+    {
+      "name": "revoke_emergency_access",
+      "requirement": "platform_admin",
+      "arguments": [
+        "p_access_id"
+      ],
+      "returns": {
+        "kind": "ignored_by_client"
+      },
+      "sources": [
+        "src/pages/admin/EmergencyAccess.tsx"
+      ]
+    }
+  ],
+  "relationships": [
+    {
+      "table": "users",
+      "column": "role_id",
+      "referenced_table": "roles",
+      "referenced_column": "id",
+      "schema": "public",
+      "reason": "PostgREST embedded select relationship"
+    },
+    {
+      "table": "users",
+      "column": "company_id",
+      "referenced_table": "companies",
+      "referenced_column": "id",
+      "schema": "public",
+      "reason": "PostgREST embedded select relationship"
+    },
+    {
+      "table": "users",
+      "column": "branch_id",
+      "referenced_table": "branches",
+      "referenced_column": "id",
+      "schema": "public",
+      "reason": "PostgREST embedded select relationship"
+    },
+    {
+      "table": "invoices",
+      "column": "customer_id",
+      "referenced_table": "customers",
+      "referenced_column": "id",
+      "schema": "public",
+      "reason": "PostgREST embedded select relationship"
+    },
+    {
+      "table": "invoices",
+      "column": "sales_order_id",
+      "referenced_table": "sales_orders",
+      "referenced_column": "id",
+      "schema": "public",
+      "reason": "PostgREST embedded select relationship"
+    },
+    {
+      "table": "invoice_lines",
+      "column": "invoice_id",
+      "referenced_table": "invoices",
+      "referenced_column": "id",
+      "schema": "public",
+      "reason": "PostgREST embedded select relationship"
+    },
+    {
+      "table": "inventory",
+      "column": "product_id",
+      "referenced_table": "products",
+      "referenced_column": "id",
+      "schema": "public",
+      "reason": "PostgREST embedded select relationship"
+    },
+    {
+      "table": "inventory",
+      "column": "warehouse_id",
+      "referenced_table": "warehouses",
+      "referenced_column": "id",
+      "schema": "public",
+      "reason": "PostgREST embedded select relationship"
+    },
+    {
+      "table": "journal_entry_lines",
+      "column": "journal_entry_id",
+      "referenced_table": "journal_entries",
+      "referenced_column": "id",
+      "schema": "public",
+      "reason": "PostgREST embedded select relationship"
+    },
+    {
+      "table": "journal_entry_lines",
+      "column": "account_id",
+      "referenced_table": "chart_of_accounts",
+      "referenced_column": "id",
+      "schema": "public",
+      "reason": "PostgREST embedded select relationship"
+    }
+  ],
+  "business_modules": {
+    "table": "business_records",
+    "discriminator": "module",
+    "payload_column": "data",
+    "modules": [
+      "camera_connections",
+      "company_preferences",
+      "crm",
+      "currency_rates",
+      "delivery_orders",
+      "energy_readings",
+      "field_service",
+      "finance_assets",
+      "finance_budgets",
+      "finance_expenses",
+      "finance_journal",
+      "finance_payables",
+      "helpdesk",
+      "hr_attendance",
+      "hr_employees",
+      "hr_leave",
+      "hr_payroll",
+      "hr_recruitment",
+      "integration_cases",
+      "material_plans",
+      "product_lifecycle",
+      "projects",
+      "purchases_requests",
+      "review_rules",
+      "review_tasks",
+      "studio_definitions",
+      "subscriptions",
+      "timesheets"
+    ],
+    "dynamic_module_pattern": "custom_<studio definition UUID with hyphens removed>",
+    "journal_line_fields": [
+      "account_id",
+      "account_code",
+      "account_name",
+      "debit",
+      "credit"
+    ],
+    "module_payloads": {
+      "finance_journal": {
+        "keys": [
+          "lines",
+          "notes"
+        ],
+        "line_keys": [
+          "account_id",
+          "account_code",
+          "account_name",
+          "debit",
+          "credit"
+        ],
+        "native_effect": "posted records create canonical journal_entries/journal_entry_lines"
+      },
+      "finance_budgets": {
+        "keys": [
+          "department",
+          "start_date",
+          "end_date",
+          "notes"
+        ]
+      },
+      "finance_payables": {
+        "keys": [
+          "supplier_name",
+          "supplier_invoice",
+          "due_date",
+          "payment_reference",
+          "notes"
+        ],
+        "native_effect": "workflow only; accounting journal is separate"
+      },
+      "finance_expenses": {
+        "keys": [
+          "category",
+          "claimant",
+          "receipt_reference",
+          "payment_reference",
+          "notes"
+        ],
+        "native_effect": "workflow only; accounting journal is separate"
+      },
+      "finance_assets": {
+        "keys": [
+          "asset_code",
+          "location",
+          "useful_life_months",
+          "residual_value",
+          "custodian",
+          "notes"
+        ]
+      },
+      "hr_employees": {
+        "keys": [
+          "email",
+          "phone",
+          "department",
+          "position",
+          "employment_type",
+          "notes"
+        ],
+        "builtin_semantics": {
+          "reference": "employee code",
+          "record_date": "hire date",
+          "amount": "monthly base salary"
+        }
+      },
+      "hr_attendance": {
+        "keys": [
+          "employee_id",
+          "check_in",
+          "check_out",
+          "notes"
+        ],
+        "references": {
+          "employee_id": "business_records.id where module=hr_employees in same company"
+        }
+      },
+      "hr_leave": {
+        "keys": [
+          "employee_id",
+          "leave_type",
+          "start_date",
+          "end_date",
+          "notes"
+        ],
+        "references": {
+          "employee_id": "business_records.id where module=hr_employees in same company"
+        }
+      },
+      "hr_payroll": {
+        "keys": [
+          "employee_id",
+          "pay_period",
+          "base_salary",
+          "allowances",
+          "deductions",
+          "payment_reference",
+          "notes"
+        ],
+        "references": {
+          "employee_id": "business_records.id where module=hr_employees in same company"
+        },
+        "builtin_semantics": {
+          "amount": "server-computed net pay"
+        },
+        "native_effect": "workflow only; accounting journal is separate"
+      },
+      "hr_recruitment": {
+        "keys": [
+          "record_type",
+          "position",
+          "department",
+          "email",
+          "interview_date",
+          "notes"
+        ]
+      },
+      "purchases_requests": {
+        "keys": [
+          "supplier_name",
+          "requested_by",
+          "items_description",
+          "needed_by",
+          "notes"
+        ]
+      }
+    },
+    "native_storage_not_auto_synchronized": [
+      "employees",
+      "payroll",
+      "attendance",
+      "leaves",
+      "budgets",
+      "expenses",
+      "purchase_orders",
+      "fixed_assets"
+    ],
+    "notes": "Module payload keys are JSON fields, not missing SQL columns. Posting finance_journal writes the canonical native journal_entries/journal_entry_lines ledger."
+  },
+  "edge_functions": [
+    {
+      "name": "manage-users",
+      "sources": [
+        "src/services/adminDirectoryService.ts"
+      ],
+      "request": "POST JSON action invite/update, roleId, branchId, firstName, lastName, status; invite adds email, update adds targetId",
+      "response_fields": [
+        "ok",
+        "message",
+        "audit_warning"
+      ],
+      "notes": "Requires server service-role configuration and active company administrator; no privileged browser credential."
+    },
+    {
+      "name": "ai/chat",
+      "sources": [
+        "src/services/aiGatewayService.ts"
+      ],
+      "request": {
+        "message": "string"
+      },
+      "response_fields": [
+        "ok",
+        "message",
+        "error"
+      ]
+    },
+    {
+      "name": "zatca/submit",
+      "sources": [
+        "src/app/pages/ZATCAPage.tsx"
+      ],
+      "request": {
+        "invoiceId": "uuid"
+      },
+      "response_fields": [
+        "ok",
+        "error"
+      ],
+      "notes": "Provider endpoint, credentials and actual government acceptance are separate runtime checks."
+    }
+  ],
+  "source_mismatches": [
+    {
+      "id": "json_business_vs_native_modules",
+      "severity": "high",
+      "source": "src/app/components/erp/BusinessModulePages.tsx",
+      "finding": "Current HR employee/payroll/attendance/leave screens and several finance workflows use business_records.module/data, not legacy employees/payroll/attendance/leaves/budgets tables.",
+      "action": "Existing native records will not appear automatically. Plan an explicit reviewed import or application mapping; preserve IDs, tenant scope and employee_id references."
+    },
+    {
+      "id": "retained_direct_finance_writers",
+      "severity": "high",
+      "source": "src/services/invoicesService.ts",
+      "finding": "Retained createInvoice/updateInvoice/markInvoiceAsPaid and salesService.createPayment functions perform direct table writes; current accounting UI uses atomic RPCs instead.",
+      "action": "Do not loosen RLS/grants to make unused direct writers bypass accounting/stock validation. Confirm call reachability before removing or adapting them."
+    }
+  ],
+  "compatibility_resolutions": [
+    {
+      "id": "canonical_user_identity",
+      "source": "src/services/usersService.ts",
+      "behavior": "Profile lookup uses users.id = Auth UUID; a nullable legacy auth_id is not needed."
+    },
+    {
+      "id": "customer_contact_normalization",
+      "source": "src/services/customersService.ts",
+      "behavior": "Customer reads expose aliases while writes use existing contact_name/phone only. Explicit clears and payment_terms strings are preserved; conflicting aliases are rejected."
+    },
+    {
+      "id": "permission_catalog_normalization",
+      "source": "src/services/adminDirectoryService.ts",
+      "behavior": "Permission display deduplicates trusted JSON and relational grants. It accepts permission_key and optional older key/name aliases; absent labels default to the permission key."
+    }
+  ],
+  "source_sha256": {
+    "src/app/components/erp/BusinessModulePages.tsx": "545986d92e328d1bc632e41cdf3c3b2b8a436543ffd5b08d583da442a155acb7",
+    "src/app/pages/AutomationRulesPage.tsx": "54e9197ffc1ad4548494c68f77c47320ed853d7d36cf9d1befafad25a8dc9569",
+    "src/app/pages/ChartOfAccountsPage.tsx": "5a63a48a63ba4f7bb99c637f509620da78fac683c41ca1679872ff7ef951cf04",
+    "src/app/pages/CurrencyPage.tsx": "aa84c14737ecfc0437b537db5c4a9618881a8c80f527fe7fd6776c13af23e821",
+    "src/app/pages/FoodDeliveryDashboard.tsx": "621a50293392f50cef52b8afba01f22a5fc1be28d04d76a5a68fb86b795474e0",
+    "src/app/pages/GenericPage.tsx": "c4a2123eae1de1ba526152b8ce26ef7aabc3a797ae30612ac3f05651b85abadc",
+    "src/app/pages/InventoryManagementPage.tsx": "6b268dddcb5dde0d0fa6650edb57e15a53571528bb1c34b2af0f9c5473d3181b",
+    "src/app/pages/InvoicingPage.tsx": "c908c5806324e4e45619963fb9d10ea7ae50720a9f99727843a0d8622d20fc19",
+    "src/app/pages/StudioPage.tsx": "3514dc1d07b6f0e311ae0f7c72f94d80dc8e718d1e297217e0f33a51e10803ef",
+    "src/app/pages/TenantManagementPage.tsx": "c729787abff0f6b9c625c7aa3d5b91a869546f5b21756d80353819ca427a522d",
+    "src/app/pages/UsageTrackingPage.tsx": "8d0a978e836e30e78f77f0d3f372c92aae7555ea99b721de2b9fa8a637b1afd4",
+    "src/app/pages/WebhookSimulatorPage.tsx": "0af906b9740166af444290c12390b55b39096060d9448fcd047faabb4edf92eb",
+    "src/app/pages/bms/CCTVLivePage.tsx": "3fdd8fa70e53334efe5a8b6fedcc929226378a8d6995a99beae01e2968c7a0ee",
+    "src/app/pages/bms/EnergyPage.tsx": "0fb58bf89f2a39ac0ebbffa4346b87ed2232664a739975ae341fc7ff9cd9b1f4",
+    "src/app/pages/cashier/CashierPOSPage.tsx": "ec2f2224eb760ad2aad5a5291c14564205ef48620bf36c34db2941707b33d65a",
+    "src/app/pages/finance/VATTaxPage.tsx": "4bcd941840073e68f8c85430cbdc8c511adf1893d8c9b2bcade457eea20ba3dd",
+    "src/contexts/AuthContext.tsx": "a5420d55c95eae96084b6d0b8970b0f918c453fda0f675dd88874051fc2d8135",
+    "src/domain/ai/aiToolExecutor.ts": "aecba2917c1848a736cb1d69373a6366da37b5eccc87dbfc206c8f2c3c19f3ee",
+    "src/lib/authAccess.ts": "e43c0abf225809223bfae37bf6f9040bbd5ed46b1f87353d5c235363bf50ff48",
+    "src/lib/authSession.ts": "00cb353357277fbb2ae938b10e07239772a9e4c0b8fc156aba1be5e42b3afe3d",
+    "src/pages/admin/AuditLogs.tsx": "c20eb2361428de053fa9df3ad73de280a0001a9579122b7d0d35f4a25558ec58",
+    "src/pages/admin/DeveloperMode.tsx": "d831ac0f9ab87bf1ee070c5c9ddafb88e47bba2a1662016d7e52b76a443ad47e",
+    "src/pages/admin/EmergencyAccess.tsx": "0ba498e01efe106c81e3fafb9e5a384137c2caa88d49cca56d3f61b298c7ee4b",
+    "src/services/adminDirectoryService.ts": "5ea9309690f362cd94fc25bd8609bdf65bc602beabf9819bc93ccc77d52293b7",
+    "src/services/businessInventoryService.ts": "d1d3486aad2becdfe845dbf7d2b3f5f9c2f6549fcce4c54e2ee824c6383477a5",
+    "src/services/businessReceivablesService.ts": "5567f380e8719eada63a2762a811078337136b0078f28eb65d75d58f1c3d2f1e",
+    "src/services/businessRecordsService.ts": "52560c56becd4f925c0f23cc7f1c6272afa60df59c66266e3454e40620e1fa97",
+    "src/services/businessRules.ts": "b5949b53c2f4ce2ef68ac05d0859bb4c9c20079d7b725cd7555026fb4cb72cc8",
+    "src/services/companyRegistrationService.ts": "7ed7b4a344d127005a09827f692919fc5c1a012957afaf33d3c744f9e95a6ae5",
+    "src/services/customersService.ts": "0eed06b81fbfb60280e600d4c88299a8b7ed7fca24c4f159068588fdb51fd750",
+    "src/services/dashboardService.ts": "1720f23dc72838a581dafdad3c8eed935d64c82e28815fa177f848d9888879f2",
+    "src/services/inventoryService.ts": "4a30a2566fea50daace07f4d7ce3c915484a8b7d89bc5d514eb54f88638b9c76",
+    "src/services/invoiceDraftService.ts": "62c1825a197e4edf143e8a3ce42fa7b3c7b929dc99d9ef546faedd9ac179bcf9",
+    "src/services/invoicesService.ts": "6552912b65e602eeac7bec4481ca51e125d2acd7c12197a332ae8d4dc2bfb4c8",
+    "src/services/productsService.ts": "ecff993a41c3c9158b25681bc05f20ee53a862995dcd7c6bba2c8716165e6eab",
+    "src/services/salesService.ts": "1234278fd6aae91b3c005e15a6d90bc42df132cdbd4b4de5e5ead476a845e886",
+    "src/services/usersService.ts": "4060355251b7b754bd845b848c291a4e9e5b94aecc0cf1bf8308abed6c5d9ccf",
+    "supabase/functions/manage-users/index.ts": "a35500833aa5b6aff82ce65cc31e2c6411f5f71248edae6c73a97d52bec2ac77",
+    "supabase/migrations/20261022000200_transactional_sales.sql": "2007a491abef674ce0ae400b078e205cbdc732364523303f10203c7df663bf7d"
+  },
+  "validation_limits": [
+    "Metadata alone cannot prove RLS isolation or grant safety; authenticated acceptance tests remain required.",
+    "JSON/JSONB RPC return fields and module payload semantics require runtime tests; PostgreSQL return type alone cannot prove them.",
+    "Do not apply clean-install migrations, create aliases or change production data based only on a missing-column report.",
+    "No database connection, user rows, credentials or customer data were read to build this artifact."
+  ]
+}

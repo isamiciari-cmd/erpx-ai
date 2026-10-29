@@ -227,11 +227,8 @@ export default function CompanyRegistrationForm() {
         return;
       }
 
-      /*
-       * Email confirmation is currently disabled in Supabase.
-       * Therefore a successful registration should already have
-       * an authenticated session and completed company setup.
-       */
+      // Success means the authenticated company bootstrap RPC has completed.
+      // Email-confirmation-only responses remain on this form with instructions.
       navigate('/registration-success', {
         replace: true,
         state: {

@@ -1,14 +1,14 @@
 {
-  "buildCommand": "rm -rf node_modules/.cache && pnpm build",
+  "$schema": "https://openapi.vercel.sh/vercel.json",
+  "buildCommand": "pnpm run build",
   "outputDirectory": "dist",
   "installCommand": "pnpm install --frozen-lockfile",
-  "framework": null,
-  "cleanUrls": true,
+  "framework": "vite",
   "trailingSlash": false,
   "rewrites": [
     {
       "source": "/(.*)",
-      "destination": "/index"
+      "destination": "/index.html"
     }
   ],
   "headers": [
@@ -21,12 +21,5 @@
         }
       ]
     }
-  ],
-  "env": {
-    "VITE_SUPABASE_URL": "https://svxmlejmhlocsjjtftxd.supabase.co",
-    "VITE_SUPABASE_ANON_KEY": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InN2eG1sZWptaGxvY3NqanRmdHhkIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzgxOTA2NDgsImV4cCI6MjA5Mzc2NjY0OH0.MlCFyiXpldP4aG0__AJywIeLyVjhzzC3gE6cZgSILhk",
-    "ENABLE_EXPERIMENTAL_COREPACK": "0",
-    "VERCEL_FORCE_NO_BUILD_CACHE": "1",
-    "NODE_ENV": "production"
-  }
+  ]
 }

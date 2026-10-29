@@ -1,15 +1,55 @@
-import { useState, useCallback } from 'react';
-import { motion, AnimatePresence } from 'motion/react';
-import { Bell, Search, LogOut, Globe, Sparkles } from 'lucide-react';
-import { useAuth } from '../../contexts/AuthContext';
+import { listInvoices } from '../../services/invoicesService';
+﻿import {
+  FormEvent,
+  useEffect,
+  useRef,
+  useState,
+} from 'react';
+import { AnimatePresence, motion } from 'motion/react';
+import {
+  Bell,
+  Command,
+  Globe,
+  LogOut,
+  Menu,
+  Moon,
+  Search,
+  Sparkles,
+  Sun,
+  X,
+} from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
+import { useAuth } from '../../contexts/AuthContext';
+import { useTheme } from '../context/ThemeContext';
 
-export default function Topbar() {
-  const [language, setLanguage] = useState('EN');
-  const [showNotifications, setShowNotifications] = useState(false);
+type Props = {
+  onMenu: () => void;
+};
+
+const commands = [
+  { label: 'Dashboard', path: '/dashboard' },
+  { label: 'Sales', path: '/sales' },
+  { label: 'Inventory', path: '/inventory' },
+  { label: 'Purchases', path: '/purchase' },
+  { label: 'Finance', path: '/finance/accounting' },
+  { label: 'HR', path: '/hr/employees' },
+  { label: 'Reports', path: '/reports' },
+  { label: 'AI Recommendations', path: '/ai/recommendations' },
+  { label: 'AI Alerts', path: '/ai/alerts' },
+];
+
+export default function Topbar({ onMenu }: Props) {
+  const [showNotifications, setShowNotifications] =
+    useState(false);
+  const [commandOpen, setCommandOpen] = useState(false);
+  const [search, setSearch] = useState('');
+
+  const commandRef = useRef<HTMLInputElement>(null);
+
   const { i18n } = useTranslation();
   const { user, signOut } = useAuth();
+  const { theme, toggleTheme } = useTheme();
   const navigate = useNavigate();
 
   const handleLogout = async () => {
@@ -21,178 +61,390 @@ export default function Topbar() {
     }
   };
 
-  const handleAIAssistant = useCallback(() => {
-    console.log('[Topbar] AI Assistant opened');
+  useEffect(() => {
+    const handleKeyboard = (event: KeyboardEvent) => {
+      if ((event.ctrlKey || event.metaKey) && event.key === 'k') {
+        event.preventDefault();
+        setCommandOpen(true);
+      }
+
+      if (event.key === 'Escape') {
+        setCommandOpen(false);
+        setShowNotifications(false);
+      }
+    };
+
+    window.addEventListener('keydown', handleKeyboard);
+
+    return () =>
+      window.removeEventListener('keydown', handleKeyboard);
   }, []);
 
-  const handleViewAllNotifications = useCallback(() => {
-    console.log('[Topbar] View all notifications clicked');
-  }, []);
+  useEffect(() => {
+    if (commandOpen) {
+      window.setTimeout(() => {
+        commandRef.current?.focus();
+      }, 50);
+    }
+  }, [commandOpen]);
 
-  const notifications = [
-    { id: 1, text: 'Low stock alert: Product A', type: 'warning', time: '2m ago' },
-    { id: 2, text: 'New order #1234 received', type: 'success', time: '5m ago' },
-    { id: 3, text: 'AI prediction ready', type: 'info', time: '10m ago' },
-  ];
+  const filteredCommands = commands.filter((command) =>
+    command.label.toLowerCase().includes(search.toLowerCase()),
+  );
+
+  const handleSearch = (event: FormEvent) => {
+    event.preventDefault();
+
+    const value = search.trim();
+
+    if (!value) {
+      setCommandOpen(true);
+      return;
+    }
+
+    const match = commands.find((command) =>
+      command.label.toLowerCase().includes(value.toLowerCase()),
+    );
+
+    if (match) {
+      navigate(match.path);
+      setSearch('');
+      setCommandOpen(false);
+    } else {
+      setCommandOpen(true);
+    }
+  };
+
+  const [notifications, setNotifications] = useState<{id:string;text:string;time:string}[]>([]);
+  const [notificationError, setNotificationError] = useState('');
+  const [notificationsLoading, setNotificationsLoading] = useState(false);
+  useEffect(() => {
+    let active = true;
+    setNotifications([]); setNotificationError('');
+    if (!showNotifications || !user?.company_id) { setNotificationsLoading(false); return; }
+    setNotificationsLoading(true);
+    void listInvoices(user.company_id).then(invoices => {
+      if (!active) return;
+      const today = new Date().toISOString().slice(0,10);
+      setNotifications(invoices.filter(invoice => !['draft','cancelled','void','refunded'].includes(invoice.status.toLowerCase()) && Number(invoice.total_amount) > Number(invoice.amount_paid) && invoice.due_date < today)
+        .sort((a,b) => a.due_date.localeCompare(b.due_date)).slice(0,10)
+        .map(invoice => ({ id:invoice.id,text:`Overdue invoice ${invoice.invoice_number}`,time:`Due ${invoice.due_date}` })));
+    }).catch(error => { if (active) setNotificationError(error instanceof Error ? error.message : 'Notifications unavailable.'); })
+      .finally(() => { if (active) setNotificationsLoading(false); });
+    return () => { active = false; };
+  }, [showNotifications, user?.company_id]);
+
+  const firstName =
+    user?.first_name ||
+    user?.email?.charAt(0).toUpperCase() ||
+    'U';
+
+  const displayName =
+    user?.first_name && user?.last_name
+      ? `${user.first_name} ${user.last_name}`
+      : user?.email || 'User';
+
+  const role =
+    user?.role?.display_name ||
+    user?.role?.name ||
+    'User';
 
   return (
-    <div className="bg-gray-900/80 backdrop-blur-2xl border-b border-gray-800/50 px-8 py-4 flex items-center justify-between sticky top-0 z-40">
-      {/* AI Smart Search */}
-      <div className="flex-1 max-w-2xl">
-        <div className="relative group">
-          <Search className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-gray-400 group-hover:text-blue-400 transition-colors" />
-          <Sparkles className="absolute right-4 top-1/2 -translate-y-1/2 w-5 h-5 text-purple-400 animate-pulse" />
-          <input
-            type="text"
-            placeholder="Ask AI anything... Try: 'Show energy usage trends' or 'Generate financial report'"
-            className="w-full pl-12 pr-12 py-3.5 bg-gray-800/50 border border-gray-700/50 rounded-2xl text-white placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-blue-500/50 focus:border-blue-500/50 transition-all text-sm hover:bg-gray-800/70 font-medium"
-          />
-        </div>
-      </div>
-
-      {/* Right Section */}
-      <div className="flex items-center gap-4 ml-8">
-        {/* Language Toggle */}
-        <motion.button
-          whileHover={{ scale: 1.05 }}
-          whileTap={{ scale: 0.95 }}
-          onClick={() => i18n.changeLanguage(i18n.language === 'ar' ? 'en' : 'ar')}
-          className="flex items-center gap-2 px-4 py-2.5 hover:bg-gray-800/50 rounded-xl transition-all text-gray-300 hover:text-white border border-gray-700/50 hover:border-gray-600/50"
-        >
-          <Globe className="w-4 h-4" />
-<span className="text-sm font-semibold">
-  {i18n.language === 'ar' ? 'EN' : 'AR'}
-</span>
-        </motion.button>
-
-        {/* AI Assistant Shortcut */}
-        <motion.button
-          whileHover={{ scale: 1.05 }}
-          whileTap={{ scale: 0.95 }}
-          onClick={handleAIAssistant}
-          className="p-3 bg-gradient-to-r from-blue-500 to-purple-500 hover:from-blue-600 hover:to-purple-600 rounded-xl transition-all shadow-lg shadow-blue-500/25 hover:shadow-blue-500/40"
-          title="AI Assistant"
-        >
-          <Sparkles className="w-5 h-5 text-white" />
-        </motion.button>
-
-        {/* Notifications */}
-        <div className="relative">
-          <motion.button
-            whileHover={{ scale: 1.05 }}
-            whileTap={{ scale: 0.95 }}
-            onClick={() => setShowNotifications(!showNotifications)}
-            className="relative p-3 hover:bg-gray-800/50 rounded-xl transition-all border border-gray-700/50 hover:border-gray-600/50"
+    <>
+      <header className="sticky top-0 z-40 border-b border-[var(--app-border)] bg-[color:var(--app-surface)]/90 backdrop-blur-xl">
+        <div className="flex min-h-[72px] items-center gap-3 px-3 sm:px-5 lg:px-7">
+          <button
+            type="button"
+            onClick={onMenu}
+            className="grid h-10 w-10 shrink-0 place-items-center rounded-xl border border-[var(--app-border)] bg-[var(--app-surface-2)] text-[var(--app-muted)] transition hover:text-[var(--app-text)] lg:hidden"
+            aria-label="Open navigation"
           >
-            <Bell className="w-5 h-5 text-gray-400" />
-            <motion.span
-              initial={{ scale: 0 }}
-              animate={{ scale: 1 }}
-              className="absolute -top-1.5 -right-1.5 w-6 h-6 bg-gradient-to-r from-red-500 to-pink-500 rounded-full flex items-center justify-center text-xs font-bold text-white shadow-lg shadow-red-500/30"
-            >
-              {notifications.length}
-            </motion.span>
-          </motion.button>
+            <Menu size={19} />
+          </button>
 
-          {/* Notifications Dropdown */}
-          <AnimatePresence>
-            {showNotifications && (
-              <motion.div
-                initial={{ opacity: 0, y: -10, scale: 0.95 }}
-                animate={{ opacity: 1, y: 0, scale: 1 }}
-                exit={{ opacity: 0, y: -10, scale: 0.95 }}
-                transition={{ type: 'spring', damping: 20, stiffness: 300 }}
-                className="absolute right-0 mt-3 w-96 bg-gray-900/95 backdrop-blur-2xl border border-gray-700/50 rounded-2xl shadow-2xl overflow-hidden"
+          <form
+            onSubmit={handleSearch}
+            className="min-w-0 flex-1"
+          >
+            <div className="relative max-w-3xl">
+              <Search
+                size={18}
+                className="absolute left-4 top-1/2 -translate-y-1/2 text-[var(--app-muted)]"
+              />
+
+              <input
+                value={search}
+                onChange={(event) => setSearch(event.target.value)}
+                onFocus={() => setCommandOpen(true)}
+                placeholder="Search ERPX-AI..."
+                className="h-11 w-full rounded-xl border border-[var(--app-border)] bg-[var(--app-surface-2)] pl-11 pr-24 text-sm font-medium text-[var(--app-text)] outline-none transition placeholder:text-[var(--app-muted-2)] focus:border-[var(--app-accent)] focus:ring-2 focus:ring-[var(--app-accent-soft)]"
+              />
+
+              <div className="pointer-events-none absolute right-3 top-1/2 hidden -translate-y-1/2 items-center gap-1 rounded-lg border border-[var(--app-border)] bg-[var(--app-surface)] px-2 py-1 text-[10px] font-bold text-[var(--app-muted)] sm:flex">
+                <Command size={11} />
+                K
+              </div>
+            </div>
+          </form>
+
+          <div className="flex shrink-0 items-center gap-1.5">
+            <button
+              type="button"
+              onClick={() =>
+                i18n.changeLanguage(
+                  i18n.language === 'ar' ? 'en' : 'ar',
+                )
+              }
+              className="hidden h-10 items-center gap-2 rounded-xl border border-[var(--app-border)] bg-[var(--app-surface-2)] px-3 text-[var(--app-muted)] transition hover:text-[var(--app-text)] sm:flex"
+              title="Change language"
+            >
+              <Globe size={16} />
+              <span className="text-xs font-bold">
+                {i18n.language === 'ar' ? 'EN' : 'AR'}
+              </span>
+            </button>
+
+            <button
+              type="button"
+              onClick={toggleTheme}
+              className="grid h-10 w-10 place-items-center rounded-xl border border-[var(--app-border)] bg-[var(--app-surface-2)] text-[var(--app-muted)] transition hover:text-[var(--app-text)]"
+              title={
+                theme === 'dark'
+                  ? 'Switch to light mode'
+                  : 'Switch to dark mode'
+              }
+            >
+              {theme === 'dark' ? (
+                <Sun size={17} />
+              ) : (
+                <Moon size={17} />
+              )}
+            </button>
+
+            <button
+              type="button"
+              onClick={() =>
+                window.dispatchEvent(new Event('erpx:open-ai'))
+              }
+              className="hidden h-10 w-10 place-items-center rounded-xl bg-[var(--app-accent)] text-slate-900 shadow-lg shadow-yellow-500/10 transition hover:scale-105 sm:grid"
+              title="AI Assistant"
+            >
+              <Sparkles size={17} />
+            </button>
+
+            <div className="relative">
+              <button
+                type="button"
+                onClick={() =>
+                  setShowNotifications((value) => !value)
+                }
+                className="relative grid h-10 w-10 place-items-center rounded-xl border border-[var(--app-border)] bg-[var(--app-surface-2)] text-[var(--app-muted)] transition hover:text-[var(--app-text)]"
+                aria-label="Notifications"
               >
-                <div className="p-5 border-b border-gray-800/50 bg-gradient-to-r from-gray-800/30 to-gray-900/30">
-                  <div className="flex items-center justify-between">
-                    <h3 className="font-bold text-white text-lg">Notifications</h3>
-                    <span className="text-xs text-gray-400 bg-gray-800/50 px-3 py-1 rounded-full font-semibold">
-                      {notifications.length} new
-                    </span>
-                  </div>
-                </div>
-                <div className="max-h-96 overflow-y-auto">
-                  {notifications.map((notif) => (
-                    <motion.div
-                      key={notif.id}
-                      whileHover={{ backgroundColor: 'rgba(31, 41, 55, 0.5)' }}
-                      className="p-5 border-b border-gray-800/30 cursor-pointer transition-colors"
-                    >
-                      <div className="flex items-start gap-4">
-                        <div
-                          className={`w-10 h-10 rounded-xl flex items-center justify-center ${
-                            notif.type === 'warning'
-                              ? 'bg-yellow-500/20'
-                              : notif.type === 'success'
-                                ? 'bg-green-500/20'
-                                : 'bg-blue-500/20'
-                          }`}
-                        >
-                          <div
-                            className={`w-2.5 h-2.5 rounded-full ${
-                              notif.type === 'warning'
-                                ? 'bg-yellow-400'
-                                : notif.type === 'success'
-                                  ? 'bg-green-400'
-                                  : 'bg-blue-400'
-                            }`}
-                          />
+                <Bell size={17} />
+
+                {notifications.length > 0 && (
+                  <span className="absolute right-1 top-1 grid min-h-4 min-w-4 place-items-center rounded-full bg-red-500 px-1 text-[8px] font-bold text-white">
+                    {notifications.length}
+                  </span>
+                )}
+              </button>
+
+              <AnimatePresence>
+                {showNotifications && (
+                  <motion.div
+                    initial={{
+                      opacity: 0,
+                      y: -8,
+                      scale: 0.98,
+                    }}
+                    animate={{
+                      opacity: 1,
+                      y: 0,
+                      scale: 1,
+                    }}
+                    exit={{
+                      opacity: 0,
+                      y: -8,
+                      scale: 0.98,
+                    }}
+                    className="absolute right-0 mt-3 w-[min(360px,calc(100vw-24px))] overflow-hidden rounded-2xl border border-[var(--app-border)] bg-[var(--app-surface)] shadow-2xl"
+                  >
+                    <div className="flex items-center justify-between border-b border-[var(--app-border)] px-4 py-4">
+                      <div>
+                        <div className="text-sm font-bold text-[var(--app-text)]">
+                          Notifications
                         </div>
-                        <div className="flex-1">
-                          <p className="text-sm text-white font-medium mb-1">{notif.text}</p>
-                          <p className="text-xs text-gray-500 font-medium">{notif.time}</p>
+                        <div className="mt-0.5 text-[11px] text-[var(--app-muted)]">
+                          Overdue invoice reminders
                         </div>
                       </div>
-                    </motion.div>
-                  ))}
-                </div>
-                <div className="p-4 bg-gray-800/30 border-t border-gray-800/50">
-                  <button
-                    onClick={handleViewAllNotifications}
-                    className="w-full text-center text-sm text-blue-400 hover:text-blue-300 font-semibold transition-colors"
-                  >
-                    View All Notifications
-                  </button>
-                </div>
-              </motion.div>
-            )}
-          </AnimatePresence>
-        </div>
 
-        {/* User Profile */}
-        <div className="flex items-center gap-4 pl-4 ml-4 border-l border-gray-700/50">
-          <div className="relative">
-            <div className="w-11 h-11 bg-gradient-to-br from-blue-500 via-purple-500 to-pink-500 rounded-2xl flex items-center justify-center shadow-lg shadow-blue-500/25">
-              <span className="text-white font-bold text-base">
-                {user?.first_name?.charAt(0) || user?.email?.charAt(0).toUpperCase() || 'U'}
-              </span>
+                      <span className="rounded-full bg-[var(--app-accent-soft)] px-2 py-1 text-[10px] font-bold text-[var(--app-text)]">
+                        {notifications.length} new
+                      </span>
+                    </div>
+
+                    <div className="max-h-80 overflow-y-auto">
+                      {notificationsLoading && <p role="status" className="p-4">Loading?</p>}
+                      {notificationError && <p role="alert" className="p-4">{notificationError}</p>}
+                      {!notificationsLoading && !notificationError && !notifications.length && <p className="p-4">No overdue invoices.</p>}
+                      {notifications.map((notification) => (
+                        <button
+                          type="button"
+                          key={notification.id}
+                          onClick={() => { setShowNotifications(false); navigate('/finance/accounts-receivable'); }}
+                          className="flex w-full gap-3 border-b border-[var(--app-border)] px-4 py-4 text-left transition hover:bg-[var(--app-surface-2)]"
+                        >
+                          <span className="mt-1 h-2 w-2 shrink-0 rounded-full bg-[var(--app-accent)]" />
+
+                          <span className="min-w-0">
+                            <span className="block text-sm font-semibold text-[var(--app-text)]">
+                              {notification.text}
+                            </span>
+
+                            <span className="mt-1 block text-[11px] text-[var(--app-muted)]">
+                              {notification.time}
+                            </span>
+                          </span>
+                        </button>
+                      ))}
+                    </div>
+
+                    <button
+                      type="button"
+                      onClick={() => { setShowNotifications(false); navigate('/finance/accounts-receivable'); }}
+                      className="w-full px-4 py-3 text-center text-xs font-bold text-[var(--app-muted)] transition hover:text-[var(--app-text)]"
+                    >
+                      View all receivables
+                    </button>
+                  </motion.div>
+                )}
+              </AnimatePresence>
             </div>
-            <div className="absolute -bottom-0.5 -right-0.5 w-3.5 h-3.5 bg-green-400 border-2 border-gray-900 rounded-full" />
-          </div>
-          <div className="hidden lg:block">
-            <p className="text-sm font-semibold text-white">
-              {user?.first_name && user?.last_name
-                ? `${user.first_name} ${user.last_name}`
-                : user?.email || 'User'}
-            </p>
-            <p className="text-xs text-gray-400 font-medium">
-              {user?.role?.display_name || user?.role?.name || 'User'}
-            </p>
+
+            <div className="hidden h-8 w-px bg-[var(--app-border)] md:block" />
+
+            <div className="hidden items-center gap-3 md:flex">
+              <div className="grid h-10 w-10 place-items-center rounded-xl bg-[var(--app-accent)] font-extrabold text-slate-900">
+                {firstName.charAt(0).toUpperCase()}
+              </div>
+
+              <div className="max-w-[150px]">
+                <div className="truncate text-xs font-bold text-[var(--app-text)]">
+                  {displayName}
+                </div>
+                <div className="truncate text-[10px] font-medium text-[var(--app-muted)]">
+                  {role}
+                </div>
+              </div>
+            </div>
+
+            <button
+              type="button"
+              onClick={handleLogout}
+              className="grid h-10 w-10 place-items-center rounded-xl border border-[var(--app-border)] bg-[var(--app-surface-2)] text-[var(--app-muted)] transition hover:border-red-500/30 hover:bg-red-500/10 hover:text-red-500"
+              title="Logout"
+              aria-label="Logout"
+            >
+              <LogOut size={17} />
+            </button>
           </div>
         </div>
+      </header>
 
-        {/* Logout */}
-        <motion.button
-          whileHover={{ scale: 1.05 }}
-          whileTap={{ scale: 0.95 }}
-          onClick={handleLogout}
-          className="p-3 hover:bg-red-500/10 rounded-xl transition-all text-gray-400 hover:text-red-400 border border-gray-700/50 hover:border-red-500/30"
-          title="Logout"
-        >
-          <LogOut className="w-5 h-5" />
-        </motion.button>
-      </div>
-    </div>
+      <AnimatePresence>
+        {commandOpen && (
+          <>
+            <motion.button
+              type="button"
+              className="fixed inset-0 z-[80] bg-black/40 backdrop-blur-sm"
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              exit={{ opacity: 0 }}
+              onClick={() => setCommandOpen(false)}
+              aria-label="Close command palette"
+            />
+
+            <motion.div
+              initial={{
+                opacity: 0,
+                y: -16,
+                scale: 0.98,
+              }}
+              animate={{
+                opacity: 1,
+                y: 0,
+                scale: 1,
+              }}
+              exit={{
+                opacity: 0,
+                y: -16,
+                scale: 0.98,
+              }}
+              className="fixed left-1/2 top-[12vh] z-[90] w-[min(680px,calc(100vw-24px))] -translate-x-1/2 overflow-hidden rounded-2xl border border-[var(--app-border)] bg-[var(--app-surface)] shadow-2xl"
+            >
+              <div className="flex items-center gap-3 border-b border-[var(--app-border)] px-4">
+                <Search
+                  size={18}
+                  className="text-[var(--app-muted)]"
+                />
+
+                <input
+                  ref={commandRef}
+                  value={search}
+                  onChange={(event) =>
+                    setSearch(event.target.value)
+                  }
+                  placeholder="Search pages, modules and actions..."
+                  className="h-14 min-w-0 flex-1 bg-transparent text-sm font-medium text-[var(--app-text)] outline-none placeholder:text-[var(--app-muted-2)]"
+                />
+
+                <button
+                  type="button"
+                  onClick={() => {
+                    setSearch('');
+                    setCommandOpen(false);
+                  }}
+                  className="grid h-8 w-8 place-items-center rounded-lg text-[var(--app-muted)] hover:bg-[var(--app-surface-2)]"
+                  aria-label="Close"
+                >
+                  <X size={16} />
+                </button>
+              </div>
+
+              <div className="max-h-[55vh] overflow-y-auto p-2">
+                {filteredCommands.length > 0 ? (
+                  filteredCommands.map((command) => (
+                    <button
+                      type="button"
+                      key={command.path}
+                      onClick={() => {
+                        navigate(command.path);
+                        setSearch('');
+                        setCommandOpen(false);
+                      }}
+                      className="flex w-full items-center justify-between rounded-xl px-4 py-3 text-left transition hover:bg-[var(--app-surface-2)]"
+                    >
+                      <span className="text-sm font-semibold text-[var(--app-text)]">
+                        {command.label}
+                      </span>
+
+                      <span className="text-[10px] font-medium text-[var(--app-muted)]">
+                        {command.path}
+                      </span>
+                    </button>
+                  ))
+                ) : (
+                  <div className="px-4 py-10 text-center text-sm text-[var(--app-muted)]">
+                    No matching page found.
+                  </div>
+                )}
+              </div>
+            </motion.div>
+          </>
+        )}
+      </AnimatePresence>
+    </>
   );
 }

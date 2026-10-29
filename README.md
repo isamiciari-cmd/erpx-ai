@@ -1,3 +1,7 @@
+> Current implementation and deployment limits: see [Implementation status](docs/IMPLEMENTATION_STATUS.md). Historical completion claims below are not release certification. Run `pnpm run typecheck`, `pnpm test`, `pnpm run build` and `pnpm run test:browser`. Canonical SQL is in `supabase/migrations/`.
+
+> The existing linked Supabase project was upgraded on 2026-10-26 using the [separate existing-project deployment](database/upgrades/20261026-existing-project/README.md). The current database has 51 public tables; `manage-users` is deployed. Do not push the fresh baseline onto this project. On 2026-10-29, the authenticated local Qwen3/Ollama assistant was connected and tested through the published site; it requires this computer and its temporary gateway to remain online. Paid model use is disabled. See [AI operation](docs/AI_ARCHITECTURE.md). ZATCA credentials/signing and production email acceptance remain separate setup work.
+
 # ERPX - Enterprise Resource Planning System
 
 **Complete Multi-Tenant SaaS ERP Platform with AI-Powered Automation**

@@ -1,135 +1,32 @@
-# 🚀 EASIEST DEPLOYMENT METHOD - No GitHub Needed!
+# Deploy ERPX-AI
 
-## Deploy to Vercel in 3 Simple Steps
+Use the complete working tree at `C:\Users\LENOVO\erpx-ai`. The application is a Vite React SPA on Vercel with Supabase Auth, PostgreSQL and separately deployed Edge Functions.
 
-### **Option 1: Deploy via Vercel CLI (Recommended)**
+The linked Vercel project is `code` (`prj_Xca6Agc2dDe9aRbA8CQ6EN913eG4`) in team `team_0FRlTvxOjZpXO6nIsgV0l5E1`, with root directory `.`. Verify the destination before publishing; linking another project does not move its database or Auth configuration.
 
-Since you're working in a cloud environment, use this method:
+1. Install the lockfile dependencies and validate the release:
 
-**1. Install Vercel CLI on YOUR LOCAL COMPUTER:**
+   ```powershell
+   pnpm install --frozen-lockfile
+   pnpm run typecheck
+   pnpm test
+   pnpm run build
+   ```
 
-```bash
-npm install -g vercel
-```
+2. Verify the build embeds the intended public `VITE_SUPABASE_URL` and `VITE_SUPABASE_ANON_KEY`. The existing Vercel variables are Sensitive/Secret, so API read-back and pulls mask their values; a blank download does not prove the stored value is empty. The audited prebuilt release uses validated known public values from `.env` when those remote values are withheld, then verifies the compiled connection and scans the output. Keep `SUPABASE_ACCESS_TOKEN`, service-role keys, Vercel tokens and provider credentials out of every `VITE_*` variable. `vercel.json` contains no credential or environment overrides. See [Vercel's write-only variable behavior](https://vercel.com/docs/environment-variables/sensitive-environment-variables).
 
-**2. Download this project to your computer**
+3. Use authenticated Vercel CLI access to publish to the verified project:
 
-- Ask your Figma Make administrator how to export/download the project
-- Or manually recreate the key files (see below)
+   ```powershell
+   pnpm exec vercel --prod
+   ```
 
-**3. Deploy:**
+   For an already prepared Vercel Build Output API artifact, use `pnpm exec vercel deploy --prebuilt --prod`. A plain `dist` folder is not a Build Output API artifact: it also needs the Vercel output configuration, SPA routing and headers. Keep the output static directory limited to audited `dist` files.
 
-```bash
-cd path/to/your/project
-vercel login
-vercel --prod
-```
+4. Open the returned production URL. Refresh `/login` and a nested application route, check that JavaScript and CSS load with their proper content types, sign in with an authorized real account, then verify role boundaries and the business workflow. The SPA fallback can return HTML for unknown paths, so HTTP 200 alone is not a health check.
 
----
+`.vercelignore` limits source uploads to web build inputs and excludes local environment files, server functions, database backups, inspection files and test fixtures. It does not remove a secret already compiled into JavaScript; inspect the production artifact before uploading it.
 
-### **Option 2: Manual Upload to Vercel**
+Run `node scripts/check-deployment-safety.mjs` to repeat the 28 upload path checks, source deployment configuration checks and static artifact pattern scan. Use `--artifact .vercel/output/static` to scan a prepared release. This check reads no environment files; the private release preparer also compares actual credential values against the output.
 
-**Step 1: Create these files on your local computer:**
-
-Create a folder called `erpx-ai` and add these files:
-
-**File: `package.json`**
-
-```json
-{
-  "name": "erpx-ai",
-  "version": "1.0.0",
-  "type": "module",
-  "scripts": {
-    "dev": "vite",
-    "build": "vite build",
-    "preview": "vite preview"
-  },
-  "dependencies": {
-    "@supabase/supabase-js": "^2.105.4",
-    "react": "18.3.1",
-    "react-dom": "18.3.1",
-    "react-router": "7.13.0",
-    "lucide-react": "0.487.0",
-    "recharts": "2.15.2",
-    "motion": "12.23.24"
-  },
-  "devDependencies": {
-    "@vitejs/plugin-react": "4.7.0",
-    "@tailwindcss/vite": "4.1.12",
-    "tailwindcss": "4.1.12",
-    "vite": "6.3.5"
-  }
-}
-```
-
-**File: `vercel.json`**
-
-```json
-{
-  "buildCommand": "npm run build",
-  "outputDirectory": "dist",
-  "framework": "vite",
-  "rewrites": [{ "source": "/(.*)", "destination": "/index.html" }],
-  "env": {
-    "VITE_SUPABASE_URL": "https://svxmlejmhlocsjjtftxd.supabase.co",
-    "VITE_SUPABASE_ANON_KEY": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InN2eG1sZWptaGxvY3NqanRmdHhkIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzgxOTA2NDgsImV4cCI6MjA5Mzc2NjY0OH0.MlCFyiXpldP4aG0__AJywIeLyVjhzzC3gE6cZgSILhk"
-  }
-}
-```
-
-**Step 2: Go to Vercel**
-
-1. https://vercel.com/new
-2. Drag and drop your `erpx-ai` folder
-3. Click Deploy
-
----
-
-### **Option 3: Use Pre-built Files (FASTEST)**
-
-I've already built your app! Just deploy the `/dist` folder:
-
-1. Download ONLY the `/dist` folder from this project
-2. Go to: https://vercel.com/new
-3. Upload the `dist` folder
-4. Vercel will detect it's a static site
-5. Click Deploy
-6. Done!
-
----
-
-## 🔗 After Deployment - Connect GoDaddy Domain
-
-Once deployed (any method above), Vercel will give you a URL like:
-`https://erpx-ai-xxx.vercel.app`
-
-**To connect your GoDaddy domain:**
-
-1. In Vercel → Project → Settings → Domains
-2. Add your domain
-3. Copy the DNS records Vercel provides
-4. Go to GoDaddy → DNS Settings
-5. Add those DNS records
-6. Wait 10-30 minutes
-7. Done! Your domain now points to your app with SSL!
-
----
-
-## 🆘 Still Stuck?
-
-**Alternative: Deploy to Netlify (also free and easy)**
-
-1. Go to: https://app.netlify.com/drop
-2. Drag and drop your project folder OR the `/dist` folder
-3. Instant deployment!
-4. Connect your GoDaddy domain the same way as Vercel
-
----
-
-## 📧 Contact
-
-If you need the full source code emailed to you or need help:
-
-- Check if Figma Make has an export/download feature
-- Contact Figma Make support for project export options
+Website publishing does not apply database migrations or deploy Supabase functions. The existing database has already received a separately reviewed upgrade; do not run the fresh installation baseline over it. See [database/DEPLOYMENT_CURRENT.md](database/DEPLOYMENT_CURRENT.md) and [docs/DEPLOYMENT.md](docs/DEPLOYMENT.md) for the current database, Auth origin, Edge Function and rollback procedures.

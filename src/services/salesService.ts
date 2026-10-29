@@ -117,6 +117,9 @@ export interface CompletePOSSaleInput {
   items: SaleItem[];
   discount_amount?: number;
   notes?: string | null;
+  /** Reuse this UUID when retrying an uncertain checkout response. */
+  idempotency_key?: string;
+  warehouse_id?: string | null;
 }
 
 export interface CompletePOSSaleResult {
@@ -133,6 +136,48 @@ export interface CompletePOSSaleResult {
   taxable_amount: number;
   vat_amount: number;
   total_amount: number;
+  journal_entry_id?: string;
+  items?: SaleItem[];
+}
+
+const checkoutKeys = new Map<string, string>();
+const inFlightCheckouts = new Map<string, Promise<CompletePOSSaleResult>>();
+
+function checkoutPayload(input: CompletePOSSaleInput) {
+  if (!input.company_id || !input.branch_id || !input.cashier_id || !input.shift_id) {
+    throw new Error('Company, branch, cashier and an open shift are required');
+  }
+  if (!Array.isArray(input.items) || input.items.length === 0 || input.items.length > 500) {
+    throw new Error('A sale requires 1 to 500 products');
+  }
+  const seen = new Set<string>();
+  for (const item of input.items) {
+    if (!item.product_id || seen.has(item.product_id)) throw new Error('Combine duplicate product lines before checkout');
+    seen.add(item.product_id);
+    if (!Number.isSafeInteger(item.quantity) || item.quantity <= 0 || item.quantity > 1_000_000) {
+      throw new Error('Quantity must be a positive whole number');
+    }
+    if (!Number.isFinite(item.discount_percentage) || item.discount_percentage < 0 || item.discount_percentage > 100) {
+      throw new Error('Line discount must be between 0 and 100');
+    }
+  }
+  const discount = input.discount_amount ?? 0;
+  if (!Number.isFinite(discount) || discount < 0 || Math.abs(discount * 100 - Math.round(discount * 100)) > 1e-7) {
+    throw new Error('Document discount must be a nonnegative monetary amount');
+  }
+  return {
+    p_company_id: input.company_id,
+    p_branch_id: input.branch_id,
+    p_cashier_id: input.cashier_id,
+    p_shift_id: input.shift_id,
+    p_payment_method: input.payment_method,
+    p_customer_id: input.customer_id ?? null,
+    // Send intent only. The database reads catalog prices and taxes itself.
+    p_items: input.items.map(item => ({ product_id: item.product_id, quantity: item.quantity, discount_percentage: item.discount_percentage })),
+    p_discount_amount: discount,
+    p_notes: input.notes ?? null,
+    p_warehouse_id: input.warehouse_id ?? null,
+  };
 }
 
 export async function completePOSSale(
@@ -142,28 +187,27 @@ export async function completePOSSale(
     throw new Error('Demo mode: Cannot complete POS sales');
   }
 
-  const { data, error } = await supabase.rpc('complete_pos_sale', {
-    p_company_id: input.company_id,
-    p_branch_id: input.branch_id,
-    p_cashier_id: input.cashier_id,
-    p_shift_id: input.shift_id ?? null,
-    p_payment_method: input.payment_method,
-    p_customer_id: input.customer_id ?? null,
-    p_items: input.items,
-    p_discount_amount: input.discount_amount ?? 0,
-    p_notes: input.notes ?? null,
-  });
-
-  if (error) {
-    console.error('[Supabase] completePOSSale error:', { message: error?.message, details: error?.details, hint: error?.hint, code: error?.code });
-    throw error;
-  }
-
-  if (!data || data.success !== true) {
-    throw new Error('POS transaction failed');
-  }
-
-  return data as CompletePOSSaleResult;
+  const payload = checkoutPayload(input);
+  const fingerprint = JSON.stringify({ ...payload, explicitKey: input.idempotency_key });
+  const pending = inFlightCheckouts.get(fingerprint);
+  if (pending) return pending;
+  const requestKey = input.idempotency_key ?? checkoutKeys.get(fingerprint) ?? crypto.randomUUID();
+  checkoutKeys.set(fingerprint, requestKey);
+  const request = (async () => {
+    const { data, error } = await supabase.rpc('complete_pos_sale', { ...payload, p_idempotency_key: requestKey });
+    if (error) {
+      if (error.code === 'PGRST202' || error.code === '42883') {
+        throw new Error('The transactional POS migration has not been deployed to this database');
+      }
+      throw error;
+    }
+    if (!data || data.success !== true) throw new Error('POS transaction failed');
+    checkoutKeys.delete(fingerprint);
+    return data as CompletePOSSaleResult;
+  })();
+  inFlightCheckouts.set(fingerprint, request);
+  try { return await request; }
+  finally { inFlightCheckouts.delete(fingerprint); }
 }
 
 export async function createSale(
@@ -302,12 +346,14 @@ export async function deleteSale(saleId: string): Promise<void> {
     throw new Error('Demo mode: Cannot delete sales');
   }
 
-  const { error } = await supabase
+  const { data, error } = await supabase
     .from('sales')
     .delete()
-    .eq('id', saleId);
+    .eq('id', saleId)
+    .select('id');
 
   if (error) throw error;
+  if (!data?.length) throw new Error('This draft is unavailable or was resumed on another terminal');
 }
 
 export async function openShift(
@@ -358,46 +404,9 @@ export async function closeShift(
     throw new Error('Demo mode: Cannot close shifts');
   }
 
-  const { data: shift, error: shiftError } = await supabase
-    .from('shifts')
-    .select('*')
-    .eq('id', shiftId)
-    .single();
-
-  if (shiftError) throw shiftError;
-
-  const { data: sales, error: salesError } = await supabase
-    .from('sales')
-    .select('total_amount')
-    .eq('shift_id', shiftId)
-    .eq('status', 'completed');
-
-  if (salesError) throw salesError;
-
-  const totalSales = (sales ?? []).reduce(
-    (sum, row) => sum + Number(row.total_amount ?? 0),
-    0,
-  );
-
-  const expectedCash = Number(shift.opening_cash ?? 0) + totalSales;
-  const cashDifference = closingCash - expectedCash;
-
-  const { data, error } = await supabase
-    .from('shifts')
-    .update({
-      closed_at: new Date().toISOString(),
-      closing_cash: closingCash,
-      expected_cash: expectedCash,
-      cash_difference: cashDifference,
-      total_sales: totalSales,
-      status: 'closed',
-    })
-    .eq('id', shiftId)
-    .select()
-    .single();
-
+  if (!Number.isFinite(closingCash) || closingCash < 0) throw new Error('Closing cash must be a nonnegative amount');
+  const { data, error } = await supabase.rpc('close_pos_shift', { p_shift_id: shiftId, p_closing_cash: closingCash });
   if (error) throw error;
-
   return data as Shift;
 }
 

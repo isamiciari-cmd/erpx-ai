@@ -1,0 +1,40 @@
+# Upload only the files needed for the web build. Server code, database exports,
+# credentials, local inspection artifacts and reports never belong in this app.
+/*
+!/.vercelignore
+!/vercel.json
+!/package.json
+!/pnpm-lock.yaml
+!/pnpm-workspace.yaml
+!/.npmrc
+!/.pnpmrc
+!/.pnpmfile.cjs
+!/.pnpm-preinstall.mjs
+!/index.html
+!/vite.config.ts
+!/tsconfig.json
+!/postcss.config.mjs
+!/default_shadcn_theme.css
+!/src/
+!/public/
+!/utils/
+
+# Defense in depth inside otherwise included directories.
+**/.env
+**/.env.*
+**/*.local
+**/*.pem
+**/*.key
+**/*.p12
+**/*.pfx
+**/*.dpapi
+**/*.dump
+**/*.backup
+**/*.bak
+**/*.map
+**/node_modules/
+**/__tests__/
+**/__fixtures__/
+**/fixtures/
+**/*.test.*
+**/*.spec.*

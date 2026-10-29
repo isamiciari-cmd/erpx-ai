@@ -143,27 +143,17 @@ export async function listInvoices(
 ): Promise<Invoice[]> {
   if (isDemoMode) return [];
 
-  let query = supabase
-    .from('invoices')
-    .select(`
-      *,
-      customer:customers(*)
-    `)
-    .eq('company_id', companyId)
-    .order('issue_date', { ascending: false });
-
-  if (status) {
-    query = query.eq('status', status);
+  const invoices: Invoice[] = [];
+  for (let offset = 0; ; offset += 500) {
+    let query = supabase.from('invoices').select('*, customer:customers(*)').eq('company_id', companyId).order('issue_date', { ascending: false }).order('id').range(offset, offset + 499);
+    if (status) query = query.eq('status', status);
+    const { data, error } = await query;
+    if (error) throw new Error(error.message);
+    const page = (data ?? []) as Invoice[];
+    invoices.push(...page);
+    if (page.length < 500) break;
   }
-
-  const { data, error } = await query;
-
-  if (error) {
-    console.error('[Supabase] listInvoices error:', error);
-    throw error;
-  }
-
-  return (data ?? []) as Invoice[];
+  return invoices;
 }
 
 export async function getInvoice(

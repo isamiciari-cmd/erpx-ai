@@ -1,0 +1,2 @@
+-- Intentionally empty: provision a real company and its first administrator
+-- through the authenticated onboarding workflow. Never seed shared passwords.

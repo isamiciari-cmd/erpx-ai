@@ -1,310 +1,77 @@
-# ERPX-AI Deployment Guide
+# Production deployment
 
-Complete guide for deploying ERPX-AI to production on Vercel with Supabase backend.
+ERPX-AI deploys its React/Vite website to Vercel. Supabase provides Auth, PostgreSQL and Edge Functions. Deploying the website changes browser assets only; database upgrades, server functions and provider secrets have their own release steps.
 
-## Prerequisites
+## Destination and build
 
-- Node.js 18+ installed
-- pnpm installed (`npm install -g pnpm`)
-- Supabase account and project
-- Vercel account
-- GitHub account
+The local Vercel repository link identifies project `code`, ID `prj_Xca6Agc2dDe9aRbA8CQ6EN913eG4`, team `team_0FRlTvxOjZpXO6nIsgV0l5E1`, root directory `.`. Confirm the authenticated account has access to this destination before publishing. Do not create a second project just because local authentication expires.
 
-## Quick Start
+Use the package manager declared in `package.json` and the committed lockfile:
 
-### 1. Clone and Install
-
-```bash
-git clone https://github.com/isamiciari-cmd/erpx-ai.git
-cd erpx-ai
-pnpm install
+```powershell
+pnpm install --frozen-lockfile
+pnpm run typecheck
+pnpm test
+pnpm run build
 ```
 
-### 2. Configure Environment
+CI validation is defined in [`.github/workflows/validate.yml`](../.github/workflows/validate.yml), including SQL and browser security regressions. Check required validation results before publishing; Vercel's `build` command alone does not run that workflow.
 
-```bash
-cp .env.example .env
+On the observed Windows Node 24.20.0 environment, a build through plain process pipes sometimes completed Vite output and then failed during Node/libuv handle teardown. The same command succeeded in a terminal/PTY. Treat the failing exit code as a failed command; do not add `exit 0`, suppress errors or assume partially generated assets are a validated release.
+
+## Browser and server configuration
+
+The browser build uses `VITE_SUPABASE_URL` and `VITE_SUPABASE_ANON_KEY` from the linked Vercel project's Production environment. Verify the actual values are nonempty and identify the intended project; checking variable names alone is insufficient. `vercel.json` contains no credential or environment values. Rebuild after a public environment change because Vite substitutes these values into JavaScript at build time. [Vite environment documentation](https://vite.dev/guide/env-and-mode)
+
+The existing Vercel records for these two public variables are classified as Sensitive/Secret and target Production and Preview together. Vercel deliberately withholds such values from API read-back and environment pulls; an empty downloaded value does not establish that the stored value is empty. For local prebuilt releases, the release preparer validates the known public values from `.env` against the fixed Supabase project and the resulting bundle. Do not replace valid local public configuration with a masked downloaded value. Secret-to-Config conversion requires recreating the selected records, so do not change their classification as an incidental deployment fix. [Vercel Config and Secret behavior](https://vercel.com/docs/environment-variables/sensitive-environment-variables)
+
+`node scripts/reconcile-vercel-public-env.mjs` performs only read-only API diagnosis through authenticated Vercel CLI access and prints metadata plus comparison booleans. `--prepare` additionally writes local PATCH bodies containing only the two validated public values, preserving their existing type and Production/Preview targets. It never executes those writes. The report explicitly distinguishes hidden values from a proven mismatch; it cannot prove equality for write-only values.
+
+All `VITE_*` values are public. Keep Management API tokens, Vercel credentials, database passwords, service-role keys, AI provider keys, payment credentials and ZATCA credentials in their server environment. `.env.server.local` is a private local tooling file; the frontend never imports it.
+
+The production demo switch must remain disabled. Demo access is restricted to explicit local development and cannot supply real hosted Auth users or company permissions. Use real authorized accounts for acceptance checks.
+
+`.vercelignore` uploads only web build inputs. It excludes environment files, `.tmp` inspections/backups, database scripts, server functions, reports, source tests and fixture directories. Vite's `dist` output must contain only the intended static assets. Scan the built files as well as the source upload; exclusions cannot undo an embedded secret. See [Vercel upload exclusions](https://vercel.com/docs/deployments/vercel-ignore).
+
+`node scripts/check-deployment-safety.mjs` verifies 13 excluded paths, 15 required web build inputs, the deployment routing/configuration and the current `dist` artifact. Add `--artifact .vercel/output/static` to scan prepared output. It reads no environment files and prints only findings by filename/category and aggregate counts. Its credential pattern scan complements the private release preparer's comparisons against actual secret values; neither scan should be described as proof against every possible transformed secret.
+
+## Publish
+
+With authorized Vercel access and the destination verified:
+
+```powershell
+pnpm exec vercel --prod
 ```
 
-Edit `.env` and add your Supabase credentials:
+For a release prepared through the Vercel Build Output API, use:
 
-```env
-VITE_SUPABASE_URL=https://your-project.supabase.co
-VITE_SUPABASE_ANON_KEY=your-anon-key
+```powershell
+pnpm exec vercel deploy --prebuilt --prod
 ```
 
-### 3. Set Up Database
+An audited prebuilt release contains static files under `.vercel/output/static` and routing/headers in `.vercel/output/config.json`. Preserve the SPA fallback and HTML revalidation when preparing that configuration; `vercel.json` source-build settings do not automatically configure a manually assembled artifact.
 
-1. Go to Supabase Dashboard → SQL Editor
-2. Run these scripts in order:
-   - `database/01_schema.sql` - Core database schema
-   - `database/02_rls_policies.sql` - Row Level Security
-   - `database/03_seed_data.sql` - Initial data
-   - `database/04_additional_setup.sql` - Users and roles
+The repository's pinned release preparer requires the reviewed current production ID for rollback evidence: `node scripts/prepare-production-release.mjs --previous-production-id <current-deployment-id>`. It builds, validates the public connection, scans actual local private credential values against the output, and packages only the static build plus a release marker. Use a PTY for the build on this Windows/Node environment and require a successful process exit before deployment. Verify the production marker/files with `scripts/verify-production-release.mjs` and `scripts/verify-all-production-assets.mjs` after publishing.
 
-### 4. Test Locally
+The source configuration uses the Vite preset, `pnpm run build`, output directory `dist`, a fallback to `/index.html`, and `Cache-Control: public, max-age=0, must-revalidate`. This supports refreshed nested routes and avoids retaining stale HTML across releases. Source upload exclusions and static-only prebuilt packaging protect local files; the unsupported `public` configuration property is omitted. [Vercel Vite SPA configuration](https://vercel.com/docs/frameworks/frontend/vite)
 
-```bash
-pnpm dev
-```
+## Database and Edge Functions
 
-Visit http://localhost:5173
+Use [database/DEPLOYMENT_CURRENT.md](../database/DEPLOYMENT_CURRENT.md). The existing linked database received the separately reviewed upgrade; the canonical fresh-install migrations must not be replayed over that schema. Do not run historical Firebase, RBAC, repair or demo-user scripts as a deployment shortcut.
 
-**Test Credentials:**
+The deployed `manage-users` function requires a verified JWT, a canonical active administrator, same-company role/branch references and a fixed `APP_SITE_URL`. Its existing configured origin is `https://code-isamiciari-5169s-projects.vercel.app`. If the production hostname changes, review the server secret and Supabase Auth URL configuration together before invitations or password resets. A function deployment does not automatically configure AI, payments, SMTP or ZATCA providers. See [implementation status](IMPLEMENTATION_STATUS.md) for service limitations.
 
-- Admin: `admin-1@erpx-ai.com` / `@12345@`
-- Cashier: `cashier@erpx-ai.com` / `Aa12141312@`
+Set Supabase Auth Site URL to the verified production origin and allow the exact callback/reset/invitation URLs used by that deployment. Add only intentional development/preview origins; a wildcard covering every `*.vercel.app` site trusts unrelated deployments.
 
-### 5. Deploy to Vercel
+## Verify on the actual URL
 
-#### Option A: Vercel CLI
+1. Open `/`, `/login` and a refreshed nested route. Confirm the React page renders and the JS/CSS responses have correct content types. An arbitrary `/health` URL is not an API health endpoint; the SPA fallback can return HTML for it.
+2. Sign in with a real active account. Check the correct company and permissions; another company's data and administrator pages must stay inaccessible to unauthorized roles.
+3. Run the agreed production workflow using identified test records: real inventory receipt, cashier shift, stock-limited checkout with a stable retry key, invoice/journal/payment verification and shift reconciliation as applicable. Record created document IDs and resulting balances. An operator-confirmed card method is not evidence of payment-gateway capture.
+4. Test invitations/email, AI and ZATCA only when their services are configured and the specific operation is authorized. Website availability alone does not demonstrate these external integrations.
 
-```bash
-pnpm build                    # Test build locally
-pnpm exec vercel             # Deploy to preview
-pnpm exec vercel --prod      # Deploy to production
-```
+Inspect browser errors, Vercel deployment logs and Supabase logs when a check fails. Do not publish raw session tokens, credentials, exported personal rows or private backups in reports.
 
-#### Option B: GitHub Integration
+## Rollback
 
-1. Push code to GitHub:
-
-   ```bash
-   git push origin main
-   ```
-
-2. Import project in Vercel:
-   - Go to https://vercel.com/new
-   - Import `isamiciari-cmd/erpx-ai`
-   - Configure environment variables
-   - Deploy
-
-## Environment Variables
-
-### Required for Production
-
-```env
-VITE_SUPABASE_URL=https://svxmlejmhlocsjjtftxd.supabase.co
-VITE_SUPABASE_ANON_KEY=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...
-```
-
-Add these in Vercel:
-
-- Dashboard → Settings → Environment Variables
-- Add for: Production, Preview, Development
-
-## Database Setup
-
-### Initial Setup
-
-1. **Create Supabase Project**
-   - Go to https://supabase.com/dashboard
-   - Click "New project"
-   - Choose name, password, region
-   - Wait for initialization (~2 minutes)
-
-2. **Get Credentials**
-   - Settings → API
-   - Copy Project URL
-   - Copy anon/public key
-
-3. **Run Migrations**
-
-```sql
--- 1. Core schema (tables, indexes)
-\i database/01_schema.sql
-
--- 2. Security policies
-\i database/02_rls_policies.sql
-
--- 3. Seed data (companies, roles, branches)
-\i database/03_seed_data.sql
-
--- 4. Additional setup (admin, cashier users)
-\i database/04_additional_setup.sql
-```
-
-### Enable Realtime
-
-1. Supabase Dashboard → Database → Replication
-2. Enable Realtime for these tables:
-   - ✅ products
-   - ✅ sales
-   - ✅ shifts
-   - ✅ inventory
-   - ✅ invoices
-   - ✅ users
-   - ✅ customers
-
-## Vercel Configuration
-
-### Build Settings
-
-```json
-{
-  "framework": "vite",
-  "buildCommand": "pnpm build",
-  "outputDirectory": "dist",
-  "installCommand": "pnpm install"
-}
-```
-
-### Domain Setup
-
-1. Vercel Dashboard → Your Project → Settings → Domains
-2. Add custom domain: `erpx-ai.com`
-3. Configure DNS (provided by Vercel)
-4. Enable automatic HTTPS
-
-### Authentication URLs
-
-Configure in Supabase Dashboard → Authentication → URL Configuration:
-
-**Site URL:** `https://erpx-ai.com`
-
-**Redirect URLs:**
-
-```
-https://erpx-ai.com/**
-https://*.vercel.app/**
-http://localhost:5173/**
-```
-
-## Continuous Deployment
-
-### Automatic Deployment
-
-Once connected to GitHub:
-
-1. Push to `main` branch
-2. Vercel auto-deploys
-3. Preview deployments for PRs
-4. Production deployment on merge
-
-### Deployment Workflow
-
-```mermaid
-graph LR
-    A[Push to GitHub] --> B[Vercel Build]
-    B --> C{Tests Pass?}
-    C -->|Yes| D[Deploy]
-    C -->|No| E[Fail Build]
-    D --> F[Health Check]
-    F -->|Success| G[Live]
-    F -->|Fail| H[Rollback]
-```
-
-## Monitoring
-
-### Health Checks
-
-```bash
-# Check deployment status
-curl https://erpx-ai.com/health
-
-# Check Supabase connection
-curl https://svxmlejmhlocsjjtftxd.supabase.co/rest/v1/
-```
-
-### Error Tracking
-
-- Vercel Dashboard → Logs
-- Browser console (F12)
-- Supabase Dashboard → Logs → Postgres/Realtime
-
-## Troubleshooting
-
-See [docs/troubleshooting/COMMON_ISSUES.md](troubleshooting/COMMON_ISSUES.md)
-
-### Quick Fixes
-
-**"Failed to fetch" error:**
-
-```bash
-# 1. Check environment variables in Vercel
-# 2. Verify Supabase project is active
-# 3. Check Supabase URL configuration
-```
-
-**Build fails:**
-
-```bash
-# Test build locally first
-pnpm build
-
-# Check build logs in Vercel
-```
-
-**Database connection issues:**
-
-```bash
-# Verify RLS policies are correct
-# Check user permissions
-# Enable Realtime for required tables
-```
-
-## Rollback Procedure
-
-### Immediate Rollback
-
-1. Vercel Dashboard → Deployments
-2. Find last working deployment
-3. Click "⋮" → "Promote to Production"
-
-### Database Rollback
-
-```bash
-# Backup before changes
-pg_dump > backup_before_migration.sql
-
-# Rollback migration
-\i database/rollback_scripts/rollback_xxx.sql
-```
-
-## Performance Optimization
-
-### Recommended Settings
-
-```typescript
-// vite.config.ts
-build: {
-  rollupOptions: {
-    output: {
-      manualChunks: {
-        'react-vendor': ['react', 'react-dom'],
-        'ui-vendor': ['motion', 'lucide-react'],
-        'supabase': ['@supabase/supabase-js'],
-      }
-    }
-  },
-  chunkSizeWarningLimit: 1000
-}
-```
-
-### CDN Configuration
-
-Enable on Vercel:
-
-- Edge Network
-- Automatic Static Optimization
-- Image Optimization
-
-## Security Checklist
-
-- [ ] Environment variables not in source code
-- [ ] RLS policies enabled on all tables
-- [ ] HTTPS enforced
-- [ ] Content Security Policy configured
-- [ ] Regular security audits (`pnpm audit`)
-- [ ] Secrets rotation schedule
-- [ ] Access logs monitored
-
-## Support
-
-- **Documentation:** [docs/](../docs/)
-- **Issues:** https://github.com/isamiciari-cmd/erpx-ai/issues
-- **Supabase Support:** https://supabase.com/support
-
----
-
-**Built with Vite + React + Supabase + Vercel**
+Record the previous production deployment before promotion. If the website release fails, restore that verified deployment through Vercel and repeat the affected checks. A frontend rollback does not reverse database or provider changes. Preserve posted financial documents and use a reviewed forward fix or a separately rehearsed restore for database failures; never replay a guessed rollback script over production data.

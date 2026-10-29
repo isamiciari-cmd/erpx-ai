@@ -12,7 +12,7 @@ export default function ChatbotWidget() {
   const [messages, setMessages] = useState<Message[]>([
     {
       role: 'assistant',
-      text: "Hello! I'm the ERPX-AI Assistant. How can I help you today? 👋\n\nمرحباً! أنا مساعد ERPX-AI. كيف يمكنني مساعدتك اليوم؟",
+      text: "Hello! I'm the ERPX Product Guide. How can I help you today? 👋\n\nمرحباً! أنا مساعد ERPX-AI. كيف يمكنني مساعدتك اليوم؟",
     },
   ]);
   const [input, setInput] = useState('');
@@ -27,18 +27,10 @@ export default function ChatbotWidget() {
     'HR module',
   ];
 
-  const handleSend = () => {
-    if (!input.trim()) return;
-
-    const userMessage: Message = { role: 'user', text: input };
-    setMessages((prev) => [...prev, userMessage]);
-
-    // Simulate AI response
-    setTimeout(() => {
-      const response = getAIResponse(input);
-      setMessages((prev) => [...prev, { role: 'assistant', text: response }]);
-    }, 1000);
-
+  const handleSend = (question = input) => {
+    const text = question.trim();
+    if (!text) return;
+    setMessages(prev => [...prev, { role: 'user', text }, { role: 'assistant', text: getAIResponse(text) }]);
     setInput('');
   };
 
@@ -77,8 +69,7 @@ export default function ChatbotWidget() {
   };
 
   const handleQuickQuestion = (question: string) => {
-    setInput(question);
-    setTimeout(() => handleSend(), 100);
+    handleSend(question);
   };
 
   return (
@@ -112,8 +103,8 @@ export default function ChatbotWidget() {
                   <Sparkles className="w-5 h-5 text-white" />
                 </div>
                 <div>
-                  <h3 className="font-semibold text-white">ERPX-AI Assistant</h3>
-                  <p className="text-xs text-blue-100">Online • Powered by AI</p>
+                  <h3 className="font-semibold text-white">ERPX Product Guide</h3>
+                  <p className="text-xs text-blue-100">Online • Product FAQ</p>
                 </div>
               </div>
               <div className="flex gap-2">
@@ -176,7 +167,7 @@ export default function ChatbotWidget() {
                   className="flex-1 px-4 py-2 bg-white/5 border border-white/10 rounded-lg text-white placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-blue-500 text-sm"
                 />
                 <button
-                  onClick={handleSend}
+                  onClick={() => handleSend()}
                   className="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors"
                 >
                   <Send className="w-4 h-4" />

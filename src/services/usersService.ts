@@ -35,7 +35,8 @@ export interface UserWithDetails extends User {
   };
 }
 
-// Get current user by auth ID
+// The ERP profile primary key references auth.users.id. The legacy nullable
+// auth_id column is not the identity used by authentication or tenant policies.
 export async function getCurrentUser(authId: string): Promise<UserWithDetails | null> {
   if (isDemoMode) {
     return null;
@@ -51,7 +52,7 @@ export async function getCurrentUser(authId: string): Promise<UserWithDetails | 
       branch:branches(id, name)
     `,
     )
-    .eq('auth_id', authId)
+    .eq('id', authId)
     .single();
 
   if (error) {

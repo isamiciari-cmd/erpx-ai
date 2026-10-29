@@ -37,16 +37,21 @@ export async function registerCompany(
     /*
      * Step 1: Create Auth user
      */
-    const { data: authData, error: authError } =
-      await supabase.auth.signUp({
+    const { data: existing, error: existingError } = await supabase.auth.getSession();
+    if (existingError) throw existingError;
+    // Email confirmation may leave an authenticated identity without an ERP profile.
+    // Resume only that same identity; never attach a request to another logged-in user.
+    if (existing.session && existing.session.user.email?.toLowerCase() !== data.adminUser.email.trim().toLowerCase()) {
+      return { success: false, message: 'Sign out before registering a company for a different email address.' };
+    }
+    const { data: authData, error: authError } = existing.session
+      ? { data: { user: existing.session.user, session: existing.session }, error: null }
+      : await supabase.auth.signUp({
         email: data.adminUser.email,
         password: data.adminUser.password,
         options: {
-          data: {
-            full_name: data.adminUser.fullName,
-            job_title: data.adminUser.jobTitle,
-            mobile_number: data.adminUser.mobileNumber,
-          },
+          emailRedirectTo: `${window.location.origin}/register`,
+          data: { full_name: data.adminUser.fullName, job_title: data.adminUser.jobTitle, mobile_number: data.adminUser.mobileNumber },
         },
       });
 

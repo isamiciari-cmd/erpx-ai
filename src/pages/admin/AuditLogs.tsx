@@ -2,6 +2,7 @@ import { useState, useEffect } from 'react';
 import { supabase } from '../../lib/supabase';
 import { RequirePermission } from '../../components/auth';
 import { usePermissions } from '../../hooks/usePermissions';
+import { useAuth } from '../../contexts/AuthContext';
 
 interface AuditLog {
   id: string;
@@ -22,6 +23,7 @@ interface AuditLog {
 type LogFilter = 'all' | 'users' | 'tenants' | 'finance' | 'hr' | 'inventory' | 'sales';
 
 export function AuditLogs() {
+  const { user } = useAuth();
   const { isOwner, isDeveloper } = usePermissions();
   const [logs, setLogs] = useState<AuditLog[]>([]);
   const [loading, setLoading] = useState(true);
@@ -32,7 +34,7 @@ export function AuditLogs() {
 
   useEffect(() => {
     loadAuditLogs();
-  }, [filter]);
+  }, [filter, user?.company_id]);
 
   const loadAuditLogs = async () => {
     try {
@@ -42,11 +44,12 @@ export function AuditLogs() {
       let query = supabase
         .from('audit_logs')
         .select('*')
+        .eq('company_id', user?.company_id ?? '')
         .order('created_at', { ascending: false })
         .limit(100);
 
       if (filter !== 'all') {
-        query = query.ilike('table_name', `%${filter}%`);
+        query = query.ilike('entity_type', `%${filter}%`);
       }
 
       const { data, error: logsError } = await query;
@@ -57,28 +60,24 @@ export function AuditLogs() {
       const enrichedLogs = await Promise.all(
         (data || []).map(async (log) => {
           let user_email = 'System';
-          let tenant_name = 'N/A';
+          const tenant_name = user?.company?.name || user?.company_id || '';
 
           if (log.user_id) {
             const { data: profile } = await supabase
-              .from('profiles')
+              .from('users')
               .select('email')
               .eq('id', log.user_id)
               .single();
             if (profile) user_email = profile.email;
           }
 
-          if (log.tenant_id) {
-            const { data: tenant } = await supabase
-              .from('tenants')
-              .select('name')
-              .eq('id', log.tenant_id)
-              .single();
-            if (tenant) tenant_name = tenant.name;
-          }
-
           return {
             ...log,
+            tenant_id: log.company_id,
+            table_name: log.entity_type,
+            record_id: log.entity_id,
+            old_data: log.old_values,
+            new_data: log.new_values,
             user_email,
             tenant_name,
           };
