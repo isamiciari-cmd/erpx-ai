@@ -10,7 +10,88 @@ The fixed reviewed production origin is
 source review before execution. No project or credentials are accepted as CLI
 arguments.
 
-## Provision
+## Staging-only last-unit race
+
+Use a separate hosted Supabase project with the current schema and a fresh,
+dedicated company whose name starts with `ERPX RELEASE ACCEPTANCE `. Use one
+active branch, a warehouse assigned to it, one administrator and two distinct
+ordinary cashiers with POS permission assigned to that branch. Use a new
+synthetic company for each run. The runner retains the test product, shifts
+and transaction records for verification, including on failure.
+
+Save a private copy of this example as `.tmp/staging/last-unit.private.json`.
+Replace the example values locally. Supply a publishable key or a project-scoped
+anon key and the three ordinary Auth accounts. The runner requires an ignored
+configuration under `.tmp/`, verifies the expected project against the
+canonical hosted origin and refuses the current ERPX-AI project before sign-in.
+
+```json
+{
+  "expectedProjectRef": "abcdefghijklmnopqrst",
+  "supabaseUrl": "https://abcdefghijklmnopqrst.supabase.co",
+  "supabaseAnonKey": "sb_publishable_REPLACE_LOCALLY",
+  "allowStagingWrites": true,
+  "companyName": "ERPX RELEASE ACCEPTANCE Last unit",
+  "companyId": "00000000-0000-4000-8000-000000000001",
+  "branchId": "00000000-0000-4000-8000-000000000002",
+  "warehouseId": "00000000-0000-4000-8000-000000000003",
+  "admin": {
+    "userId": "00000000-0000-4000-8000-000000000004",
+    "email": "admin@example.test",
+    "password": "REPLACE_LOCALLY"
+  },
+  "cashiers": [
+    {
+      "userId": "00000000-0000-4000-8000-000000000005",
+      "email": "cashier-one@example.test",
+      "password": "REPLACE_LOCALLY"
+    },
+    {
+      "userId": "00000000-0000-4000-8000-000000000006",
+      "email": "cashier-two@example.test",
+      "password": "REPLACE_LOCALLY"
+    }
+  ]
+}
+```
+
+From the repository root in PowerShell:
+
+```powershell
+node.exe scripts/last-unit-race.mjs --config .tmp/staging/last-unit.private.json
+```
+
+This runner sends two direct `complete_pos_sale` RPC calls in parallel. It
+compares company-scoped counts before and after and verifies the winning
+sale's payment, stock movement and posted journal. A pass proves the RPC
+result and database effects. If a staging UI is available, use a separate fresh
+fixture to verify the visible cashier rejection on `/cashier/pos` using two
+independent browser contexts connected to the same staging project.
+
+## Explicit QA on the current project
+
+Run these commands only for authorized synthetic acceptance on the pinned
+project. The provisioner uses the existing onboarding flow and creates separate
+marked companies and four Auth identities per receipt. Each company has an
+administrator, an accountant and two cashiers. The original fixture path remains
+separate. Keep both QA receipts private under `.tmp/release-acceptance/`.
+
+```powershell
+python scripts/provision-live-fixture.py --apply-qa race
+node.exe scripts/last-unit-race.mjs --config .tmp/release-acceptance/qa-race.private.json --allow-current-project-qa
+python scripts/provision-live-fixture.py --apply-qa workflow
+node.exe scripts/live-workflow.mjs --config .tmp/release-acceptance/qa-workflow.private.json --base-url https://code-isamiciari-5169s-projects.vercel.app --drop-committed-replies
+```
+
+The race runner refuses the current project by default. With the explicit flag
+it verifies the project, company and Auth ownership markers, branch, warehouse,
+roles and empty transaction baseline before writing. After the RPC race, it
+checks the cashier message on the local app. The workflow uses a second clean
+company, checks isolation against the first and drops the successful sale and
+first receipt responses before the user-facing retry. Both scripts retain the
+synthetic transactions. Inspect the report and fixture state before any retry.
+
+## Provision the original live fixture
 
 ```powershell
 python scripts/provision-live-fixture.py --plan

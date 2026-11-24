@@ -3,60 +3,50 @@ import { initReactI18next } from 'react-i18next';
 import LanguageDetector from 'i18next-browser-languagedetector';
 import en from './en.json';
 import ar from './ar.json';
+import { workspaceResources } from './workspace';
+import { operationsResources } from './operations';
+import { financeResources } from './finance';
+import { administrationResources } from './administration';
+import { finalReviewArabic } from './finalReview';
 
-const resources = {
-  en: { translation: en },
-  ar: { translation: ar },
+const applyLanguage = (language: string) => {
+  const ar = language.startsWith('ar');
+  document.documentElement.lang = ar ? 'ar' : 'en';
+  document.documentElement.dir = ar ? 'rtl' : 'ltr';
+  document.body.dir = ar ? 'rtl' : 'ltr';
+  document.documentElement.style.removeProperty('font-family');
+  document.body.style.removeProperty('font-family');
+  localStorage.setItem('language', ar ? 'ar' : 'en');
 };
-
 i18n
   .use(LanguageDetector)
   .use(initReactI18next)
   .init({
-    resources,
+    resources: {
+      en: {
+        translation: en,
+        workspace: workspaceResources.en,
+        operations: operationsResources.en,
+        finance: financeResources.en,
+        administration: administrationResources.en,
+        finalReview: {},
+      },
+      ar: {
+        translation: ar,
+        workspace: workspaceResources.ar,
+        operations: operationsResources.ar,
+        finance: financeResources.ar,
+        administration: administrationResources.ar,
+        finalReview: finalReviewArabic,
+      },
+    },
     fallbackLng: 'en',
+    supportedLngs: ['en', 'ar'],
+    nonExplicitSupportedLngs: true,
     lng: localStorage.getItem('language') || undefined,
-    detection: {
-      order: ['localStorage', 'navigator'],
-      caches: ['localStorage'],
-    },
-    interpolation: {
-      escapeValue: false,
-    },
+    detection: { order: ['localStorage', 'navigator'], caches: ['localStorage'] },
+    interpolation: { escapeValue: false },
   });
-
-i18n.on('languageChanged', (lng) => {
-  localStorage.setItem('language', lng);
-  document.documentElement.lang = lng;
-  document.documentElement.dir = lng === 'ar' ? 'rtl' : 'ltr';
-  document.body.dir = lng === 'ar' ? 'rtl' : 'ltr';
-
-  // Apply font family based on language
-  if (lng === 'ar') {
-    document.documentElement.style.fontFamily =
-      "'IBM Plex Sans Arabic', 'Cairo', 'Tajawal', sans-serif";
-    document.body.style.fontFamily = "'IBM Plex Sans Arabic', 'Cairo', 'Tajawal', sans-serif";
-  } else {
-    document.documentElement.style.fontFamily =
-      "-apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen', 'Ubuntu', 'Cantarell', 'Fira Sans', 'Droid Sans', 'Helvetica Neue', sans-serif";
-    document.body.style.fontFamily =
-      "-apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen', 'Ubuntu', 'Cantarell', 'Fira Sans', 'Droid Sans', 'Helvetica Neue', sans-serif";
-  }
-
-});
-
-const currentLang = i18n.language;
-document.documentElement.lang = currentLang;
-document.documentElement.dir = currentLang === 'ar' ? 'rtl' : 'ltr';
-document.body.dir = currentLang === 'ar' ? 'rtl' : 'ltr';
-
-// Apply font family based on language
-if (currentLang === 'ar') {
-  document.documentElement.style.fontFamily =
-    "'IBM Plex Sans Arabic', 'Cairo', 'Tajawal', sans-serif";
-} else {
-  document.documentElement.style.fontFamily =
-    "-apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen', 'Ubuntu', 'Cantarell', 'Fira Sans', 'Droid Sans', 'Helvetica Neue', sans-serif";
-}
-
+i18n.on('languageChanged', applyLanguage);
+applyLanguage(i18n.resolvedLanguage || i18n.language || 'en');
 export default i18n;

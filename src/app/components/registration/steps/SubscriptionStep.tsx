@@ -1,3 +1,4 @@
+import { useLocalizedCopy } from '@/i18n/localizedCopy';
 import { motion } from 'motion/react';
 import { UseFormReturn } from 'react-hook-form';
 import { Check } from 'lucide-react';
@@ -7,7 +8,7 @@ interface SubscriptionStepProps {
   form: UseFormReturn<Subscription>;
 }
 
-const modules = [
+export const registrationModules = [
   {
     key: 'finance' as const,
     label: 'Finance & Accounting',
@@ -33,6 +34,7 @@ const modules = [
 ];
 
 export default function SubscriptionStep({ form }: SubscriptionStepProps) {
+  const copy = useLocalizedCopy();
   const {
     register,
     formState: { errors },
@@ -57,7 +59,7 @@ export default function SubscriptionStep({ form }: SubscriptionStepProps) {
       {/* Plan Selection */}
       <div>
         <label className="block text-sm text-gray-400 mb-4">
-          Select Plan <span className="text-red-400">*</span>
+          {copy("Select Plan")} <span className="text-red-400">*</span>
         </label>
         <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
           <label
@@ -69,9 +71,9 @@ export default function SubscriptionStep({ form }: SubscriptionStepProps) {
           >
             <input type="radio" {...register('plan')} value="trial" className="sr-only" />
             <div className="text-center">
-              <h3 className="text-lg font-bold text-white mb-1">Trial</h3>
-              <p className="text-2xl font-bold text-blue-400 mb-2">FREE</p>
-              <p className="text-xs text-gray-400">30 days</p>
+              <h3 className="text-lg font-bold text-white mb-1">{copy("Trial")}</h3>
+              <p className="text-2xl font-bold text-blue-400 mb-2">{copy("FREE")}</p>
+              <p className="text-xs text-gray-400">{copy("30 days")}</p>
             </div>
             {selectedPlan === 'trial' && (
               <div className="absolute top-3 right-3 w-6 h-6 bg-blue-500 rounded-full flex items-center justify-center">
@@ -89,9 +91,9 @@ export default function SubscriptionStep({ form }: SubscriptionStepProps) {
           >
             <input type="radio" {...register('plan')} value="monthly" className="sr-only" />
             <div className="text-center">
-              <h3 className="text-lg font-bold text-white mb-1">Monthly</h3>
+              <h3 className="text-lg font-bold text-white mb-1">{copy("Monthly")}</h3>
               <p className="text-2xl font-bold text-green-400 mb-2">$99</p>
-              <p className="text-xs text-gray-400">per month</p>
+              <p className="text-xs text-gray-400">{copy("per month")}</p>
             </div>
             {selectedPlan === 'monthly' && (
               <div className="absolute top-3 right-3 w-6 h-6 bg-blue-500 rounded-full flex items-center justify-center">
@@ -109,9 +111,9 @@ export default function SubscriptionStep({ form }: SubscriptionStepProps) {
           >
             <input type="radio" {...register('plan')} value="yearly" className="sr-only" />
             <div className="text-center">
-              <h3 className="text-lg font-bold text-white mb-1">Yearly</h3>
+              <h3 className="text-lg font-bold text-white mb-1">{copy("Yearly")}</h3>
               <p className="text-2xl font-bold text-purple-400 mb-2">$999</p>
-              <p className="text-xs text-gray-400">per year (save 16%)</p>
+              <p className="text-xs text-gray-400">{copy("per year (save 16%)")}</p>
             </div>
             {selectedPlan === 'yearly' && (
               <div className="absolute top-3 right-3 w-6 h-6 bg-blue-500 rounded-full flex items-center justify-center">
@@ -120,14 +122,14 @@ export default function SubscriptionStep({ form }: SubscriptionStepProps) {
             )}
           </label>
         </div>
-        {errors.plan && <p className="text-red-400 text-sm mt-2">{errors.plan.message}</p>}
+        {errors.plan && <p className="text-red-400 text-sm mt-2">{copy(errors.plan.message)}</p>}
       </div>
 
       {/* Number of Branches & Users */}
       <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
         <div>
           <label className="block text-sm text-gray-400 mb-2">
-            Number of Branches <span className="text-red-400">*</span>
+            {copy("Number of Branches")} <span className="text-red-400">*</span>
           </label>
           <input
             {...register('numberOfBranches', { valueAsNumber: true })}
@@ -137,13 +139,13 @@ export default function SubscriptionStep({ form }: SubscriptionStepProps) {
             placeholder="1"
           />
           {errors.numberOfBranches && (
-            <p className="text-red-400 text-sm mt-1">{errors.numberOfBranches.message}</p>
+            <p className="text-red-400 text-sm mt-1">{copy(errors.numberOfBranches.message)}</p>
           )}
         </div>
 
         <div>
           <label className="block text-sm text-gray-400 mb-2">
-            Number of Users <span className="text-red-400">*</span>
+            {copy("Number of Users")} <span className="text-red-400">*</span>
           </label>
           <input
             {...register('numberOfUsers', { valueAsNumber: true })}
@@ -153,7 +155,7 @@ export default function SubscriptionStep({ form }: SubscriptionStepProps) {
             placeholder="5"
           />
           {errors.numberOfUsers && (
-            <p className="text-red-400 text-sm mt-1">{errors.numberOfUsers.message}</p>
+            <p className="text-red-400 text-sm mt-1">{copy(errors.numberOfUsers.message)}</p>
           )}
         </div>
       </div>
@@ -161,10 +163,10 @@ export default function SubscriptionStep({ form }: SubscriptionStepProps) {
       {/* Modules */}
       <div>
         <label className="block text-sm text-gray-400 mb-4">
-          Required Modules <span className="text-red-400">*</span>
+          {copy("Required Modules")} <span className="text-red-400">*</span>
         </label>
         <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
-          {modules.map((module) => (
+          {registrationModules.map((module) => (
             <label
               key={module.key}
               className={`cursor-pointer p-4 border rounded-lg transition-all ${
@@ -185,14 +187,14 @@ export default function SubscriptionStep({ form }: SubscriptionStepProps) {
                   {selectedModules?.[module.key] && <Check className="w-3 h-3 text-white" />}
                 </div>
                 <div className="flex-1">
-                  <h4 className="font-semibold text-white text-sm">{module.label}</h4>
-                  <p className="text-xs text-gray-400 mt-0.5">{module.description}</p>
+                  <h4 className="font-semibold text-white text-sm">{copy(module.label)}</h4>
+                  <p className="text-xs text-gray-400 mt-0.5">{copy(module.description)}</p>
                 </div>
               </div>
             </label>
           ))}
         </div>
-        {errors.modules && <p className="text-red-400 text-sm mt-2">{errors.modules.message}</p>}
+        {errors.modules && <p className="text-red-400 text-sm mt-2">{copy(errors.modules.message)}</p>}
       </div>
     </motion.div>
   );

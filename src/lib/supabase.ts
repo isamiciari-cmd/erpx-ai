@@ -1,6 +1,7 @@
 import { createClient, type User } from '@supabase/supabase-js';
 import { isDevBypassEnabled } from './devMode';
 import { demoRole } from './authAccess';
+import { mutationDeniedEvent } from './accessDrafts';
 
 const supabaseUrl = (import.meta.env.VITE_SUPABASE_URL || '').trim();
 const supabaseAnonKey = (import.meta.env.VITE_SUPABASE_ANON_KEY || '').trim();
@@ -31,6 +32,25 @@ export const supabase = createClient(
   hasSupabaseConfig ? supabaseUrl : 'http://127.0.0.1:9',
   hasSupabaseConfig ? supabaseAnonKey : 'unconfigured-public-key',
   {
+    global: {
+      fetch: async (input, init) => {
+        const response = await fetch(input, init);
+        if (response.status === 403 || response.status === 400) {
+          const request = input instanceof Request ? input : undefined;
+          const method = init?.method ?? request?.method ?? 'GET';
+          const pathname = new URL(request?.url ?? String(input)).pathname;
+          if (!['POST', 'PATCH', 'PUT', 'DELETE'].includes(method) ||
+            !/^\/(rest|functions)\/v1\//.test(pathname)) return response;
+          // The legacy settings RPC raises an exception without an explicit SQLSTATE.
+          const legacyDenial = response.status === 400 &&
+            pathname === '/rest/v1/rpc/update_company_settings' &&
+            await response.clone().json().then((body) =>
+              body?.code === 'P0001' && body.message === 'Company administrator required', () => false);
+          if (response.status === 403 || legacyDenial) window.dispatchEvent(new Event(mutationDeniedEvent));
+        }
+        return response;
+      },
+    },
     auth: {
       persistSession: hasSupabaseConfig,
       autoRefreshToken: hasSupabaseConfig,

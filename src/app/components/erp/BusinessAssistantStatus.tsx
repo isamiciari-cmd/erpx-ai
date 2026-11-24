@@ -1,9 +1,10 @@
-import { useTranslation } from 'react-i18next';
-import { RefreshCw } from 'lucide-react';
+﻿import { useTranslation } from 'react-i18next';
+import { RefreshCw, Server } from 'lucide-react';
 import {
   businessAssistantErrorMessage,
   type BusinessAssistantStatus as AssistantStatus,
 } from '../../../services/aiGatewayService';
+import { Button, StatusBadge } from './WorkspaceUI';
 
 interface Props {
   status: AssistantStatus | null;
@@ -19,96 +20,80 @@ export default function BusinessAssistantStatus({
   refresh,
   compact = false,
 }: Props) {
-  const { i18n } = useTranslation();
-  const ar = (i18n.resolvedLanguage || i18n.language).startsWith('ar');
-  const provider =
-    status?.provider === 'ollama'
-      ? ar
-        ? 'نموذج محلي مجاني'
-        : 'Free local model'
-      : status?.provider === 'openai'
-        ? ar
-          ? 'خدمة نموذج مدفوعة'
-          : 'Paid model service'
-        : ar
-          ? 'المساعد الذكي'
-          : 'AI assistant';
+  const { t, i18n } = useTranslation('workspace');
+  const isRtl = (i18n.resolvedLanguage || i18n.language).startsWith('ar');
   const connected =
     status?.available === true && status.healthChecked && status.healthScope === 'gateway';
+  const provider =
+    status?.provider === 'ollama'
+      ? 'assistant.local'
+      : status?.provider === 'openai'
+        ? 'assistant.paid'
+        : 'assistant.title';
   const connection = loading
-    ? ar
-      ? 'جارٍ التحقق من الاتصال…'
-      : 'Checking connection…'
+    ? 'assistant.checking'
     : connected
-      ? ar
-        ? 'الخدمة المحلية متصلة'
-        : 'Local service connected'
+      ? status?.provider === 'ollama'
+        ? 'assistant.connectedLocal'
+        : 'assistant.connectedHosted'
       : status?.available
-        ? ar
-          ? 'الاتصال غير مؤكّد'
-          : 'Connection unverified'
+        ? 'assistant.unverified'
         : status
-          ? ar
-            ? 'النموذج غير متصل'
-            : 'Model offline'
-          : ar
-            ? 'تعذر التحقق من الاتصال'
-            : 'Connection unavailable';
+          ? 'assistant.offline'
+          : 'assistant.unavailable';
   return (
     <div
-      dir={ar ? 'rtl' : 'ltr'}
+      dir={isRtl ? 'rtl' : 'ltr'}
       className={
         compact
-          ? 'min-w-0 text-xs'
-          : 'rounded-xl border border-[var(--app-border)] bg-[var(--app-surface-2)] p-4'
+          ? 'min-w-0 space-y-3'
+          : 'rounded-xl border border-[var(--app-border)] bg-[var(--app-surface)] p-4'
       }
       aria-live="polite"
+      aria-busy={loading}
     >
       <div className="flex items-start justify-between gap-3">
         <div className="min-w-0">
-          <p className="font-semibold">{provider}</p>
-          <p className="mt-1 flex items-center gap-2">
-            <span
-              aria-hidden="true"
-              className={`h-2 w-2 shrink-0 rounded-full ${connected && !loading ? 'bg-emerald-500' : 'bg-amber-500'}`}
-            />
-            {connection}
+          <p className="flex items-center gap-2 text-sm font-semibold">
+            <Server size={16} aria-hidden="true" />
+            {t(provider)}
           </p>
-          {status?.model && (
-            <p
-              dir="ltr"
-              className="mt-1 truncate font-mono text-xs opacity-75"
-              title={status.model}
+          <div className="mt-3">
+            <StatusBadge
+              tone={
+                connected && !loading
+                  ? 'success'
+                  : status && !status.available && !loading
+                    ? 'warning'
+                    : 'neutral'
+              }
             >
+              {t(connection)}
+            </StatusBadge>
+          </div>
+          {status?.model && (
+            <p dir="ltr" className="mt-2 break-all font-mono text-xs ws-muted" title={status.model}>
               {status.model}
             </p>
           )}
         </div>
-        <button
-          type="button"
+        <Button
+          variant="ghost"
           disabled={loading}
+          aria-label={t('assistant.refresh')}
+          title={t('assistant.refresh')}
           onClick={() => void refresh()}
-          aria-label={ar ? 'تحديث حالة النموذج' : 'Refresh model status'}
-          title={ar ? 'تحديث حالة النموذج' : 'Refresh model status'}
-          className="rounded-lg border border-current/20 p-2 disabled:opacity-40"
-        >
-          <RefreshCw className={`h-4 w-4 ${loading ? 'animate-spin' : ''}`} />
-        </button>
+          icon={<RefreshCw size={16} className={loading ? 'ws-spin' : ''} />}
+        />
       </div>
       {error != null && (
-        <p role="alert" className="mt-2 text-xs text-amber-600 dark:text-amber-300">
-          {businessAssistantErrorMessage(error, ar ? 'ar' : 'en')}
+        <p role="alert" className="ws-inline-message ws-warning mt-3 text-sm">
+          {businessAssistantErrorMessage(error, isRtl ? 'ar' : 'en')}
         </p>
       )}
       {!compact && (
-        <p className="mt-3 text-sm opacity-75">
-          {status?.provider === 'ollama'
-            ? ar
-              ? 'أبقِ جهاز النموذج المحلي مشغّلاً ومتصلاً. يفحص هذا المؤشر اتصال الخدمة فقط؛ لا يتأكد تشغيل النموذج إلا بعد وصول إجابة ناجحة.'
-              : 'Keep the local model device powered on and connected. This check confirms the service connection; model generation is confirmed only by a successful answer.'
-            : ar
-              ? 'تظهر الإجابة فقط بعد اتصال المساعد بالنموذج الفعلي.'
-              : 'An answer is shown only after the assistant connects to the actual model.'}
+        <p className="ws-muted mt-3 text-sm">
+          {t(status?.provider === 'ollama' ? 'assistant.localHint' : 'assistant.hostedHint')}
         </p>
       )}
     </div>

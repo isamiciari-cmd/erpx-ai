@@ -206,6 +206,98 @@ try {
     const warehouse=await one('SELECT branch_id FROM public.warehouses WHERE company_id=$1',[profile.company_id]); assert.equal(warehouse.branch_id,profile.branch_id);
     assert.equal(Number((await one('SELECT count(*) FROM public.companies WHERE onboarding_owner_id=$1',[actor])).count),1);
   });
+  const pilot = {
+    cashier: key(), accountant: key(), shift: key(), stockRequest: key(), saleRequest: key(),
+    draftRequest: key(), firstReceipt: key(), secondReceipt: key(),
+  };
+  await db.query("INSERT INTO public.roles(id,name,company_id,permissions) VALUES($1,'accountant',$2,'{\"finance\":true}')",[key(),ids.otherCompany]);
+  await db.query('INSERT INTO auth.users(id) VALUES($1),($2)',[pilot.cashier,pilot.accountant]);
+  await db.query(`INSERT INTO public.users(id,company_id,branch_id,role_id,email) VALUES
+    ($1,$3,$4,(SELECT id FROM public.roles WHERE name='cashier'),'cashier@b.test'),
+    ($2,$3,$4,(SELECT id FROM public.roles WHERE name='accountant' AND company_id=$3),'accountant@b.test')`,
+  [pilot.cashier,pilot.accountant,ids.otherCompany,ids.otherBranch]);
+  await db.query('UPDATE public.products SET unit_price=100,cost_price=30 WHERE id=$1',[ids.otherProduct]);
+
+  const receivePilotStock = () => one('SELECT public.receive_stock($1,$2,$3,10,$4,$5) AS result',
+    [ids.otherCompany,ids.otherProduct,ids.otherWarehouse,'Pilot goods receipt',pilot.stockRequest]);
+  const savePilotInvoice = () => one('SELECT public.save_invoice_draft($1,$2,$3::jsonb,current_date+7,NULL,$4) AS result',
+    [ids.otherCompany,ids.otherCustomer,JSON.stringify([item(ids.otherProduct)]),pilot.draftRequest]);
+  await test('pilot admin, cashier and accountant are scoped to their company and allowed operations', async () => {
+    for (const actor of [ids.otherUser,pilot.cashier,pilot.accountant]) {
+      await user(actor, async () => {
+        const visible = await db.query('SELECT id FROM public.products WHERE id IN ($1,$2)',[ids.product,ids.otherProduct]);
+        assert.deepEqual(visible.rows,[{ id: ids.otherProduct }]);
+        const update = await db.query('UPDATE public.products SET unit_price=1 WHERE id=$1 RETURNING id',[ids.product]);
+        assert.equal(update.rows.length,0);
+      });
+    }
+    await user(ids.admin, () => assert.rejects(receivePilotStock(),/Inventory permission/));
+    await user(pilot.accountant, () => assert.rejects(receivePilotStock(),/Inventory permission/));
+    await user(pilot.cashier, () => assert.rejects(savePilotInvoice(),/Invoice access denied/));
+  });
+
+  await test('pilot company completes the October journey and replays committed requests without duplicate effects', async () => {
+    await user(ids.otherUser, async () => {
+      await receivePilotStock(); // Ignore the committed response, then resend the same request.
+      assert.ok((await receivePilotStock()).result);
+    });
+    const stock = () => one('SELECT quantity_available,quantity_reserved FROM public.inventory WHERE product_id=$1 AND warehouse_id=$2',[ids.otherProduct,ids.otherWarehouse]);
+    assert.deepEqual(await stock(),{ quantity_available:10,quantity_reserved:0 });
+
+    const sell = () => checkout({
+      company: ids.otherCompany, branch: ids.otherBranch, cashier: pilot.cashier, shift: pilot.shift,
+      customer: ids.otherCustomer, warehouse: ids.otherWarehouse, items: [item(ids.otherProduct,2)], key: pilot.saleRequest,
+    });
+    const sale = await user(pilot.cashier, async () => {
+      await db.query('INSERT INTO public.shifts(id,company_id,branch_id,cashier_id,shift_number,opening_cash) VALUES($1,$2,$3,$4,$5,0)',
+        [pilot.shift,ids.otherCompany,ids.otherBranch,pilot.cashier,'Pilot shift']);
+      await sell(); // Simulate the caller losing the response after commit.
+      return sell();
+    });
+    assert.equal(sale.total_amount,230);
+    assert.deepEqual(await stock(),{ quantity_available:8,quantity_reserved:0 });
+
+    await user(pilot.accountant, async () => {
+      const { result: draft } = await savePilotInvoice();
+      const issue = () => one('SELECT public.issue_invoice($1) AS result',[draft.invoice_id]);
+      const pay = (amount,request) => one("SELECT public.record_invoice_payment($1,$2,'cash',NULL,$3) AS result",[draft.invoice_id,amount,request]);
+      assert.equal((await issue()).result.amount_due,115);
+      await pay(40,pilot.firstReceipt);
+      const partial = (await pay(40,pilot.firstReceipt)).result;
+      assert.equal(partial.status,'partial');
+      assert.equal(partial.amount_due,75);
+      const paid = (await pay(75,pilot.secondReceipt)).result;
+      assert.equal(paid.status,'paid');
+      assert.equal(paid.amount_due,0);
+    });
+
+    const closed = await user(pilot.cashier, () => one('SELECT * FROM public.close_pos_shift($1,230)',[pilot.shift]));
+    assert.equal(closed.status,'closed');
+    assert.equal(Number(closed.expected_cash),230);
+    assert.equal(Number(closed.cash_difference),0);
+    const scopedCounts = await one(`SELECT
+      (SELECT count(*)::int FROM public.sales WHERE company_id=$1) AS sales,
+      (SELECT count(*)::int FROM public.invoices WHERE company_id=$1 AND status='paid') AS paid_invoices,
+      (SELECT count(*)::int FROM public.payments WHERE company_id=$1) AS payments,
+      (SELECT count(*)::int FROM public.inventory_movements WHERE product_id=$2) AS movements`,[ids.otherCompany,ids.otherProduct]);
+    assert.deepEqual(scopedCounts,{ sales:1,paid_invoices:2,payments:3,movements:2 });
+    const journals = (await db.query(`SELECT j.status, sum(l.debit_amount) AS debit, sum(l.credit_amount) AS credit
+      FROM public.journal_entries j LEFT JOIN public.journal_entry_lines l ON l.journal_entry_id=j.id
+      WHERE j.company_id=$1 GROUP BY j.id`,[ids.otherCompany])).rows;
+    assert.equal(journals.length,5);
+    for (const journal of journals) {
+      assert.equal(journal.status,'posted');
+      assert.ok(Number(journal.debit)>0);
+      assert.equal(journal.debit,journal.credit);
+    }
+    assert.equal(journals.reduce((total,journal) => total+Number(journal.debit),0),820);
+    const balance = (code) => one(`SELECT sum(l.debit_amount-l.credit_amount) AS amount
+      FROM public.chart_of_accounts a JOIN public.journal_entry_lines l ON l.account_id=a.id
+      WHERE a.company_id=$1 AND a.account_code=$2`,[ids.otherCompany,code]);
+    assert.equal(Number((await balance('ERPX-AR')).amount),0);
+    assert.equal(Number((await balance('ERPX-POS-CASH')).amount),345);
+    assert.equal(Number((await balance('ERPX-POS-STOCK')).amount),240);
+  });
   console.log(`\n${count} PostgreSQL database checks passed.`);
 } catch (error) {
   console.error(`FAIL ${error.message}${error.where ? `\n${error.where}` : ''}`);

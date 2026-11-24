@@ -1,0 +1,321 @@
+.erpx-company small {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.ws-dashboard-hero {
+  padding: clamp(16px, 2.6vw, 32px);
+  border: 1px solid var(--app-border);
+  border-radius: 16px;
+  background:
+    linear-gradient(#65a4ff0d 1px, transparent 1px),
+    linear-gradient(90deg, #65a4ff0d 1px, transparent 1px),
+    radial-gradient(ellipse at top, var(--app-accent-soft), transparent 75%),
+    var(--app-surface);
+  background-size: 32px 32px, 32px 32px, auto, auto;
+}
+
+.ws-dashboard-hero .ws-page-header {
+  margin: 0;
+}
+
+.dark .ws-dashboard-hero {
+  background:
+    linear-gradient(#659fff08 1px, transparent 1px),
+    linear-gradient(90deg, #659fff08 1px, transparent 1px),
+    radial-gradient(ellipse at top, #152745, transparent 78%),
+    var(--app-surface);
+  background-size: 32px 32px, 32px 32px, auto, auto;
+}
+
+.dark .ws-dashboard .ws-stat {
+  background: linear-gradient(145deg, #111b30, var(--app-surface));
+}
+
+.dark .ws-dashboard .ws-stat-icon {
+  color: #83b7ff;
+}
+
+.ws-dashboard .ws-table td,
+.ws-invoices .ws-table td {
+  padding-block: 8px;
+}
+
+.erpx-auth-language {
+  position: absolute;
+  inset-block-start: 16px;
+  inset-inline-end: 16px;
+  z-index: 2;
+}
+
+.ws-invoice-balance {
+  padding: 20px;
+  border: 1px solid var(--app-border);
+  border-radius: 12px;
+  background: var(--app-surface-2);
+}
+
+.ws-invoice-balance-line {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 8px;
+  font-weight: 500;
+}
+
+.ws-invoice-balance-line[data-highlight='true'] {
+  padding-block-start: 8px;
+  border-block-start: 1px solid var(--app-border);
+  font-weight: 700;
+}
+
+.ws-number {
+  direction: ltr;
+  unicode-bidi: isolate;
+  font-variant-numeric: tabular-nums;
+}
+
+.erpx-login {
+  min-height: 100dvh;
+}
+
+.erpx-login-panel {
+  position: relative;
+  display: grid;
+  place-items: center;
+  padding: 112px clamp(20px, 5vw, 72px) 40px;
+  background: #080e19;
+}
+
+.erpx-login-toolbar {
+  position: absolute;
+  inset-block-start: 20px;
+  inset-inline-end: clamp(20px, 4vw, 40px);
+  inset-inline-start: 20px;
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: flex-end;
+  align-items: center;
+  gap: 8px;
+}
+
+.erpx-login-input {
+  width: 100%;
+  min-height: 48px;
+  padding: 10px 14px;
+  border: 1px solid #405575;
+  border-radius: 8px;
+  background: #132036;
+  color: #f1f5f9;
+}
+
+.erpx-login-input::placeholder {
+  color: #a6b4c7;
+}
+
+.erpx-login-password {
+  padding-right: 52px;
+}
+
+.erpx-login-visibility {
+  position: absolute;
+  top: 50%;
+  right: 6px;
+  display: grid;
+  place-items: center;
+  width: 40px;
+  height: 40px;
+  border-radius: 6px;
+  transform: translateY(-50%);
+  color: #afc0db;
+}
+
+.erpx-login-register {
+  background: #382865;
+  border: 1px solid #745ba9;
+}
+
+.erpx-login-submit {
+  min-height: 48px;
+  background: #2963e7;
+  color: #fff;
+}
+
+.erpx-login-submit:hover:enabled {
+  background: #2053c7;
+}
+
+.erpx-login-register:hover {
+  background: #49347e;
+}
+
+:is(.erpx-login, .erpx-cashier-shell, .erpx-pos) :is(button, a, input, select):focus-visible {
+  outline: 3px solid #83b7ff;
+  outline-offset: 3px;
+}
+
+.erpx-cashier-shell,
+.erpx-pos {
+  --app-bg: #080e19;
+  --app-surface: #101a2c;
+  --app-surface-2: #17253c;
+  --app-text: #f1f5f9;
+  --app-muted: #a6b4c7;
+  --app-border: #2c3d57;
+  --app-primary: #2963e7;
+  --app-primary-hover: #2053c7;
+  background: var(--app-bg);
+  color: var(--app-text);
+}
+
+.erpx-cashier-shell {
+  min-height: 100dvh;
+}
+
+.erpx-cashier-header {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  padding: 12px clamp(12px, 2vw, 24px);
+  border-bottom: 1px solid var(--app-border);
+  background: var(--app-surface);
+}
+
+.erpx-cashier-actions {
+  flex-wrap: wrap;
+}
+
+.erpx-pos {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(320px, 390px);
+  align-items: start;
+  gap: clamp(12px, 2vw, 24px);
+  padding: clamp(12px, 2vw, 24px);
+  min-width: 0;
+}
+
+.erpx-pos-catalog,
+.erpx-pos-cart {
+  min-width: 0;
+  background: var(--app-surface);
+  border: 1px solid var(--app-border);
+  border-radius: 14px;
+}
+
+.erpx-pos-toolbar,
+.erpx-pos-products,
+.erpx-pos-cart-header,
+.erpx-pos-items,
+.erpx-pos-payment,
+.erpx-pos-summary {
+  padding: clamp(12px, 2vw, 20px);
+}
+
+.erpx-pos-toolbar,
+.erpx-pos-cart-header {
+  border-block-end: 1px solid var(--app-border);
+}
+
+.erpx-pos-search-icon {
+  position: absolute;
+  inset-inline-start: 12px;
+  top: 50%;
+  transform: translateY(-50%);
+  color: var(--app-muted);
+  pointer-events: none;
+}
+
+.erpx-pos-search {
+  padding-inline-start: 40px;
+}
+
+.erpx-pos-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(min(100%, 138px), 1fr));
+  gap: 12px;
+}
+
+.erpx-pos-product {
+  min-width: 0;
+  padding: 12px;
+  overflow-wrap: anywhere;
+  border: 1px solid var(--app-border);
+  border-radius: 10px;
+  background: var(--app-surface);
+  text-align: start;
+}
+
+.erpx-pos-product:hover {
+  border-color: #83b7ff;
+  background: var(--app-surface-2);
+}
+
+.erpx-pos-product-icon {
+  display: grid;
+  place-items: center;
+  min-height: 78px;
+  margin-block-end: 8px;
+  border-radius: 7px;
+  background: var(--app-surface-2);
+}
+
+.erpx-pos-cart {
+  position: sticky;
+  top: 12px;
+  scroll-margin-block-start: 12px;
+}
+
+.erpx-pos-payment,
+.erpx-pos-summary {
+  border-block-start: 1px solid var(--app-border);
+}
+
+.erpx-pos-summary {
+  border-end-start-radius: 14px;
+  border-end-end-radius: 14px;
+  background: var(--app-surface-2);
+}
+
+.erpx-pos-checkout {
+  width: 100%;
+  min-height: 48px;
+  font-size: 16px;
+}
+
+.erpx-pos-cart-link {
+  display: none;
+}
+
+@media (max-width: 800px) {
+  .erpx-cashier-clock {
+    display: none;
+  }
+
+  .erpx-pos {
+    grid-template-columns: minmax(0, 1fr);
+  }
+
+  .erpx-pos-cart {
+    position: static;
+  }
+
+  .erpx-pos-cart-link {
+    display: inline-flex;
+  }
+
+  .erpx-pos-products {
+    max-block-size: 45dvh;
+    overflow: auto;
+  }
+
+  .erpx-pos-toolbar > div {
+    flex-wrap: wrap;
+  }
+
+  .erpx-pos-toolbar > div > div:first-child {
+    flex: 1 0 100%;
+  }
+}

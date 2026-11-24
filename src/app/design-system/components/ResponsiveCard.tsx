@@ -222,7 +222,7 @@ export function StatCard({ label, value, change, trend, icon, className = '' }: 
           </h3>
         </div>
         {icon && (
-          <div className="w-12 h-12 sm:w-14 sm:h-14 rounded-xl bg-yellow-400 flex items-center justify-center flex-shrink-0">
+          <div className="w-12 h-12 sm:w-14 sm:h-14 rounded-xl bg-[var(--app-accent)] flex items-center justify-center flex-shrink-0">
             {icon}
           </div>
         )}

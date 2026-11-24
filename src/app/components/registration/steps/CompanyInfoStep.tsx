@@ -1,3 +1,4 @@
+import { useLocalizedCopy } from '@/i18n/localizedCopy';
 import { motion } from 'motion/react';
 import { UseFormReturn } from 'react-hook-form';
 import type { CompanyInfo } from '../../../../lib/validation/registrationSchema';
@@ -34,6 +35,7 @@ const countries = [
 ];
 
 export default function CompanyInfoStep({ form }: CompanyInfoStepProps) {
+  const copy = useLocalizedCopy();
   const {
     register,
     formState: { errors },
@@ -49,16 +51,16 @@ export default function CompanyInfoStep({ form }: CompanyInfoStepProps) {
       {/* Company Name */}
       <div>
         <label className="block text-sm text-gray-400 mb-2">
-          Company Name <span className="text-red-400">*</span>
+          {copy("Company Name")} <span className="text-red-400">*</span>
         </label>
         <input
           {...register('companyName')}
           type="text"
           className="w-full px-4 py-3 bg-white/5 border border-white/10 rounded-lg text-white placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-blue-500"
-          placeholder="Enter company name"
+          placeholder={copy("Enter company name")}
         />
         {errors.companyName && (
-          <p className="text-red-400 text-sm mt-1">{errors.companyName.message}</p>
+          <p className="text-red-400 text-sm mt-1">{copy(errors.companyName.message)}</p>
         )}
       </div>
 
@@ -66,7 +68,7 @@ export default function CompanyInfoStep({ form }: CompanyInfoStepProps) {
       <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
         <div>
           <label className="block text-sm text-gray-400 mb-2">
-            Commercial Registration Number <span className="text-red-400">*</span>
+            {copy("Commercial Registration Number")} <span className="text-red-400">*</span>
           </label>
           <input
             {...register('commercialRegistrationNumber')}
@@ -76,21 +78,21 @@ export default function CompanyInfoStep({ form }: CompanyInfoStepProps) {
           />
           {errors.commercialRegistrationNumber && (
             <p className="text-red-400 text-sm mt-1">
-              {errors.commercialRegistrationNumber.message}
+              {copy(errors.commercialRegistrationNumber.message)}
             </p>
           )}
         </div>
 
         <div>
-          <label className="block text-sm text-gray-400 mb-2">VAT Number</label>
+          <label className="block text-sm text-gray-400 mb-2">{copy("VAT Number")}</label>
           <input
             {...register('vatNumber')}
             type="text"
             className="w-full px-4 py-3 bg-white/5 border border-white/10 rounded-lg text-white placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-blue-500"
-            placeholder="Optional"
+            placeholder={copy("Optional")}
           />
           {errors.vatNumber && (
-            <p className="text-red-400 text-sm mt-1">{errors.vatNumber.message}</p>
+            <p className="text-red-400 text-sm mt-1">{copy(errors.vatNumber.message)}</p>
           )}
         </div>
       </div>
@@ -99,41 +101,41 @@ export default function CompanyInfoStep({ form }: CompanyInfoStepProps) {
       <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
         <div>
           <label className="block text-sm text-gray-400 mb-2">
-            Business Sector <span className="text-red-400">*</span>
+            {copy("Business Sector")} <span className="text-red-400">*</span>
           </label>
           <select
             {...register('businessSector')}
             className="w-full px-4 py-3 bg-white/5 border border-white/10 rounded-lg text-white focus:outline-none focus:ring-2 focus:ring-blue-500"
           >
-            <option value="">Select sector</option>
+            <option value="">{copy("Select sector")}</option>
             {businessSectors.map((sector) => (
               <option key={sector} value={sector}>
-                {sector}
+                {copy(sector)}
               </option>
             ))}
           </select>
           {errors.businessSector && (
-            <p className="text-red-400 text-sm mt-1">{errors.businessSector.message}</p>
+            <p className="text-red-400 text-sm mt-1">{copy(errors.businessSector.message)}</p>
           )}
         </div>
 
         <div>
           <label className="block text-sm text-gray-400 mb-2">
-            Company Size <span className="text-red-400">*</span>
+            {copy("Company Size")} <span className="text-red-400">*</span>
           </label>
           <select
             {...register('companySize')}
             className="w-full px-4 py-3 bg-white/5 border border-white/10 rounded-lg text-white focus:outline-none focus:ring-2 focus:ring-blue-500"
           >
-            <option value="">Select size</option>
-            <option value="1-10">1-10 employees</option>
-            <option value="11-50">11-50 employees</option>
-            <option value="51-200">51-200 employees</option>
-            <option value="201-500">201-500 employees</option>
-            <option value="500+">500+ employees</option>
+            <option value="">{copy("Select size")}</option>
+            <option value="1-10">{copy("1-10 employees")}</option>
+            <option value="11-50">{copy("11-50 employees")}</option>
+            <option value="51-200">{copy("51-200 employees")}</option>
+            <option value="201-500">{copy("201-500 employees")}</option>
+            <option value="500+">{copy("500+ employees")}</option>
           </select>
           {errors.companySize && (
-            <p className="text-red-400 text-sm mt-1">{errors.companySize.message}</p>
+            <p className="text-red-400 text-sm mt-1">{copy(errors.companySize.message)}</p>
           )}
         </div>
       </div>
@@ -142,60 +144,60 @@ export default function CompanyInfoStep({ form }: CompanyInfoStepProps) {
       <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
         <div>
           <label className="block text-sm text-gray-400 mb-2">
-            Country <span className="text-red-400">*</span>
+            {copy("Country")} <span className="text-red-400">*</span>
           </label>
           <select
             {...register('country')}
             className="w-full px-4 py-3 bg-white/5 border border-white/10 rounded-lg text-white focus:outline-none focus:ring-2 focus:ring-blue-500"
           >
-            <option value="">Select country</option>
+            <option value="">{copy("Select country")}</option>
             {countries.map((country) => (
               <option key={country} value={country}>
-                {country}
+                {copy(country)}
               </option>
             ))}
           </select>
-          {errors.country && <p className="text-red-400 text-sm mt-1">{errors.country.message}</p>}
+          {errors.country && <p className="text-red-400 text-sm mt-1">{copy(errors.country.message)}</p>}
         </div>
 
         <div>
           <label className="block text-sm text-gray-400 mb-2">
-            City <span className="text-red-400">*</span>
+            {copy("City")} <span className="text-red-400">*</span>
           </label>
           <input
             {...register('city')}
             type="text"
             className="w-full px-4 py-3 bg-white/5 border border-white/10 rounded-lg text-white placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-blue-500"
-            placeholder="Enter city"
+            placeholder={copy("Enter city")}
           />
-          {errors.city && <p className="text-red-400 text-sm mt-1">{errors.city.message}</p>}
+          {errors.city && <p className="text-red-400 text-sm mt-1">{copy(errors.city.message)}</p>}
         </div>
       </div>
 
       {/* Address */}
       <div>
         <label className="block text-sm text-gray-400 mb-2">
-          Address <span className="text-red-400">*</span>
+          {copy("Address")} <span className="text-red-400">*</span>
         </label>
         <textarea
           {...register('address')}
           rows={3}
           className="w-full px-4 py-3 bg-white/5 border border-white/10 rounded-lg text-white placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-blue-500"
-          placeholder="Enter complete address"
+          placeholder={copy("Enter complete address")}
         />
-        {errors.address && <p className="text-red-400 text-sm mt-1">{errors.address.message}</p>}
+        {errors.address && <p className="text-red-400 text-sm mt-1">{copy(errors.address.message)}</p>}
       </div>
 
       {/* Website */}
       <div>
-        <label className="block text-sm text-gray-400 mb-2">Official Website</label>
+        <label className="block text-sm text-gray-400 mb-2">{copy("Official Website")}</label>
         <input
           {...register('website')}
           type="url"
           className="w-full px-4 py-3 bg-white/5 border border-white/10 rounded-lg text-white placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-blue-500"
-          placeholder="https://example.com (optional)"
+          placeholder={copy("https://example.com (optional)")}
         />
-        {errors.website && <p className="text-red-400 text-sm mt-1">{errors.website.message}</p>}
+        {errors.website && <p className="text-red-400 text-sm mt-1">{copy(errors.website.message)}</p>}
       </div>
     </motion.div>
   );

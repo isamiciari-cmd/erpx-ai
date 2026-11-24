@@ -12,6 +12,7 @@ import {
   EyeOff,
 } from 'lucide-react';
 import { useTranslation } from 'react-i18next';
+import { useLocalizedCopy } from '@/i18n/localizedCopy';
 import { LanguageSwitcher } from '../../components/LanguageSwitcher';
 import { supabase, isDemoMode, hasSupabaseConfig } from '../../lib/supabase';
 import { useAuth } from '../../contexts/AuthContext';
@@ -21,7 +22,9 @@ interface ProductionLoginProps {
 }
 
 export default function ProductionLogin({ onLoginSuccess }: ProductionLoginProps) {
-  const { t } = useTranslation();
+  const { t, i18n } = useTranslation();
+  const copy = useLocalizedCopy();
+  const arabic = (i18n.resolvedLanguage || i18n.language).startsWith('ar');
   const { signIn, currentUser, loading: authLoading } = useAuth();
   const navigate = useNavigate();
   const [email, setEmail] = useState('');
@@ -73,14 +76,14 @@ export default function ProductionLogin({ onLoginSuccess }: ProductionLoginProps
       });
 
       if (error) {
-        alert(error.message);
+        alert(copy('Failed to send reset email'));
         return;
       }
 
       alert(t('auth.passwordResetSent'));
     } catch (err) {
       console.error('Forgot password error:', err);
-      alert('Failed to send reset password email');
+      alert(copy('Failed to send reset email'));
     }
   };
 
@@ -88,7 +91,7 @@ export default function ProductionLogin({ onLoginSuccess }: ProductionLoginProps
   if (currentUser) return <Navigate to="/dashboard" replace />;
 
   return (
-    <div className="h-screen flex bg-black">
+    <div className="erpx-login flex bg-black">
       {/* Left side - Illustration */}
       <motion.div
         initial={{ opacity: 0, x: -50 }}
@@ -151,10 +154,10 @@ export default function ProductionLogin({ onLoginSuccess }: ProductionLoginProps
         initial={{ opacity: 0, x: 50 }}
         animate={{ opacity: 1, x: 0 }}
         transition={{ duration: 0.8 }}
-        className="w-full lg:w-1/2 flex items-center justify-center px-8 bg-gray-950 relative"
+        className="erpx-login-panel w-full lg:w-1/2"
       >
         {/* Language Switcher and Website Button - Top Right */}
-        <div className="absolute top-8 right-8 flex items-center gap-3">
+        <div className="erpx-login-toolbar">
           <LanguageSwitcher variant="compact" />
           <Link to="/">
             <motion.div
@@ -169,23 +172,25 @@ export default function ProductionLogin({ onLoginSuccess }: ProductionLoginProps
           </Link>
         </div>
 
-        <div className="w-full max-w-md">
+        <div className="erpx-login-content w-full max-w-md">
           <motion.div
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: 0.3, duration: 0.6 }}
             className="mb-12"
           >
-            <h2 className="text-3xl font-bold text-white mb-2">{t('auth.signIn')}</h2>
-            <p className="text-gray-500">{t('auth.enterCredentials')}</p>
+            <h1 className="text-3xl font-bold text-white mb-2">{t('auth.signIn')}</h1>
+            <p className="text-gray-400">{t('auth.enterCredentials')}</p>
           </motion.div>
 
           {isDemoMode && <p className="mb-4 text-sm text-amber-400" role="status">وضع تجريبي محلي: لا يمثل اتصالاً بقاعدة بيانات الإنتاج.</p>}
-          <form onSubmit={handleLogin} className="space-y-6">
+          <form onSubmit={handleLogin} className="space-y-6" aria-busy={isSubmitting}>
             {error && (
               <motion.div
                 initial={{ opacity: 0, y: -10 }}
                 animate={{ opacity: 1, y: 0 }}
+                role="alert"
+                id="login-error"
                 className="p-4 bg-red-500/10 border border-red-500/50 rounded-lg flex items-start gap-3"
               >
                 <AlertCircle className="w-5 h-5 text-red-500 mt-0.5 flex-shrink-0" />
@@ -203,10 +208,12 @@ export default function ProductionLogin({ onLoginSuccess }: ProductionLoginProps
               </label>
               <input
                 id="email"
+                dir="ltr"
+                aria-describedby={error ? "login-error" : undefined}
                 type="email"
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
-                className="w-full px-4 py-3 bg-white/5 backdrop-blur-sm border border-white/10 rounded-lg text-white placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all"
+                className="erpx-login-input"
                 placeholder="you@company.com"
                 required
                 autoComplete="email"
@@ -224,10 +231,12 @@ export default function ProductionLogin({ onLoginSuccess }: ProductionLoginProps
               <div className="relative">
                 <input
                   id="password"
+                  dir="ltr"
+                  aria-describedby={error ? "login-error" : undefined}
                   type={showPassword ? 'text' : 'password'}
                   value={password}
                   onChange={(e) => setPassword(e.target.value)}
-                  className="w-full px-4 py-3 bg-white/5 backdrop-blur-sm border border-white/10 rounded-lg text-white placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all pr-12"
+                  className="erpx-login-input erpx-login-password"
                   placeholder="••••••••"
                   required
                   autoComplete="current-password"
@@ -235,7 +244,8 @@ export default function ProductionLogin({ onLoginSuccess }: ProductionLoginProps
                 <button
                   type="button"
                   onClick={() => setShowPassword(!showPassword)}
-                  className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400 hover:text-white transition-colors"
+                  aria-label={showPassword ? (arabic ? "إخفاء كلمة المرور" : "Hide password") : (arabic ? "إظهار كلمة المرور" : "Show password")}
+                  className="erpx-login-visibility"
                 >
                   {showPassword ? <EyeOff className="w-5 h-5" /> : <Eye className="w-5 h-5" />}
                 </button>
@@ -263,13 +273,9 @@ export default function ProductionLogin({ onLoginSuccess }: ProductionLoginProps
               transition={{ delay: 0.7, duration: 0.6 }}
               type="submit"
               disabled={isSubmitting || (!hasSupabaseConfig && !isDemoMode)}
-              className="relative w-full py-3 bg-gradient-to-r from-blue-600 to-blue-500 text-white rounded-lg font-medium overflow-hidden group disabled:opacity-70 disabled:cursor-not-allowed"
+              className="erpx-login-submit w-full rounded-lg font-semibold disabled:cursor-not-allowed disabled:opacity-70"
             >
-              <div className="absolute inset-0 bg-gradient-to-r from-blue-500 to-cyan-500 opacity-0 group-hover:opacity-100 transition-opacity" />
-              <span className="relative flex items-center justify-center gap-2">
-                {isSubmitting ? 'Signing in...' : t('auth.signIn')}
-              </span>
-              <div className="absolute inset-0 shadow-[0_0_20px_rgba(59,130,246,0.5)] opacity-0 group-hover:opacity-100 transition-opacity" />
+              {isSubmitting ? (arabic ? 'جارٍ تسجيل الدخول…' : 'Signing in…') : t('auth.signIn')}
             </motion.button>
           </form>
 
@@ -282,16 +288,11 @@ export default function ProductionLogin({ onLoginSuccess }: ProductionLoginProps
             {/* Register New Company Button */}
             <Link
               to="/register"
-              className="block w-full py-3 px-6 bg-gradient-to-r from-purple-600 to-purple-500 hover:from-purple-500 hover:to-pink-500 text-white rounded-lg font-semibold transition-all text-center"
+              className="block w-full py-3 px-6 erpx-login-register text-white rounded-lg font-semibold transition-all text-center"
             >
               {t('auth.registerNewCompany')}
             </Link>
 
-            <div className="flex items-center gap-4">
-              <div className="flex-1 h-px bg-gray-700"></div>
-              <p className="text-xs text-gray-500">OR</p>
-              <div className="flex-1 h-px bg-gray-700"></div>
-            </div>
           </motion.div>
         </div>
       </motion.div>

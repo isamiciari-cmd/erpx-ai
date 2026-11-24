@@ -27,6 +27,18 @@ APP_ORIGIN = 'https://code-isamiciari-5169s-projects.vercel.app'
 PREFIX = 'ERPX RELEASE ACCEPTANCE '
 FIXTURE = ROOT / '.tmp/release-acceptance/live-fixture.private.json'
 MARKER_KEY = 'erpx_release_acceptance'
+QA_ACCOUNTS = ('admin', 'cashier', 'cashier2', 'accountant')
+
+
+def account_names(receipt):
+    kind = receipt['metadata'].get('qaKind')
+    if kind == 'roles':
+        return (*QA_ACCOUNTS, 'roleSubject')
+    return QA_ACCOUNTS if kind else QA_ACCOUNTS[:2]
+
+
+def account_role(name):
+    return {'cashier2': 'cashier', 'roleSubject': 'admin'}.get(name, name)
 
 
 class FixtureError(RuntimeError):
@@ -240,17 +252,20 @@ def validate_receipt(receipt):
     public_key = receipt.get('supabaseAnonKey', '')
     if not isinstance(public_key, str) or (not public_key.startswith('sb_publishable_') and jwt_role(public_key) != 'anon'):
         raise FixtureError('Only a public browser key may be persisted with the fixture.')
-    for name in ('admin', 'cashier'):
+    if metadata.get('qaKind') not in (None, 'race', 'workflow', 'roles'):
+        raise FixtureError('Unknown QA fixture type.')
+    account_ids = []
+    for name in account_names(receipt):
         row = receipt.get(name, {})
-        if row.get('email') != 'erpx.acceptance.' + run_id.lower() + '.' + name + '@example.test' or not isinstance(row.get('password'), str) or len(row['password']) < 24:
+        if row.get('email') != 'erpx.acceptance.' + run_id.lower() + '.' + name.lower() + '@example.test' or not isinstance(row.get('password'), str) or len(row['password']) < 24:
             raise FixtureError('Private fixture credentials do not match the isolated run.')
         if row.get('userId'):
-            identifier(row['userId'])
+            account_ids.append(identifier(row['userId']))
     for name in ('companyId', 'branchId', 'warehouseId', 'customerId', 'tenantId'):
         if receipt.get(name):
             identifier(receipt[name])
-    if receipt.get('admin', {}).get('userId') and receipt['admin']['userId'] == receipt.get('cashier', {}).get('userId'):
-        raise FixtureError('Fixture administrator and cashier must be separate identities.')
+    if len(set(account_ids)) != len(account_ids):
+        raise FixtureError('Fixture accounts must be separate identities.')
 
 
 def new_receipt(anon_key, base_url):
@@ -295,7 +310,7 @@ def verify_ready(gateway, receipt, require_active=False):
     company = verify_company(gateway, receipt)
     if require_active and (company.get('status') != 'active' or company.get('currency') != 'SAR'):
         raise FixtureError('The prepared fixture company is no longer active in SAR; it will not be reactivated.')
-    for name in ('admin', 'cashier'):
+    for name in account_names(receipt):
         verify_auth(gateway, receipt, name)
         auth_profile = exactly_one(gateway.rows('profiles', id=receipt[name]['userId']), 'Fixture Auth profile is unavailable.')
         if auth_profile.get('email') != receipt[name]['email'] or (require_active and auth_profile.get('status') != 'active'):
@@ -306,7 +321,7 @@ def verify_ready(gateway, receipt, require_active=False):
         if require_active and profile.get('status') != 'active':
             raise FixtureError('A fixture ERP identity is no longer active; it will not be reactivated.')
         role = exactly_one(gateway.rows('roles', id=profile.get('role_id')), 'Fixture user role is unavailable.')
-        if role.get('name') != name or role.get('company_id') not in (None, receipt['companyId']) or role.get('status') != 'active':
+        if role.get('name') != account_role(name) or role.get('company_id') not in (None, receipt['companyId']) or role.get('status') != 'active':
             raise FixtureError('Fixture identity role is not the reviewed active company role.')
     for table, field in (('branches', 'branchId'), ('warehouses', 'warehouseId'), ('customers', 'customerId')):
         row = exactly_one(gateway.rows(table, id=receipt[field]), 'Fixture company resource is unavailable.')
@@ -318,9 +333,11 @@ def verify_ready(gateway, receipt, require_active=False):
             raise FixtureError('Fixture customer no longer matches the unique acceptance run.')
 
 
-def provision(gateway, store, anon_key, base_url):
+def provision(gateway, store, anon_key, base_url, qa_kind=None):
     receipt = store.read()
     if receipt:
+        if receipt['metadata'].get('qaKind') != qa_kind:
+            raise FixtureError('Private receipt does not match the requested QA run.')
         if receipt['metadata']['state'] in ('finalizing', 'finalized'):
             raise FixtureError('This receipt has been finalized. Preserve it and prepare a separately reviewed new run instead of reusing identities.')
         if receipt['metadata']['state'] == 'ready':
@@ -328,8 +345,13 @@ def provision(gateway, store, anon_key, base_url):
             return receipt
     else:
         receipt = new_receipt(anon_key, base_url)
+        if qa_kind:
+            receipt['metadata']['qaKind'] = qa_kind
+            for name in account_names(receipt)[2:]:
+                receipt[name] = {'userId': None, 'email': receipt['admin']['email'].replace('.admin@', '.' + name.lower() + '@'),
+                    'password': secrets.token_urlsafe(32) + 'aA9!', 'creationRequested': False}
         store.save(receipt)
-    for name in ('admin', 'cashier'):
+    for name in account_names(receipt):
         user = receipt[name]
         if not user['userId']:
             if user['creationRequested']:
@@ -353,7 +375,7 @@ def provision(gateway, store, anon_key, base_url):
             'p_company_name':receipt['companyName'], 'p_legal_name':receipt['companyName'], 'p_tax_id':'', 'p_vat_number':'',
             'p_business_sector':'Acceptance testing', 'p_company_size':'test', 'p_country':'SA', 'p_city':'Release acceptance',
             'p_address':'Synthetic test fixture', 'p_website':'', 'p_branch_name':'Acceptance Branch', 'p_branch_code':'ACCEPTANCE',
-            'p_subscription_plan':'trial', 'p_billing_cycle':'trial', 'p_max_branches':1, 'p_max_users':2,
+            'p_subscription_plan':'trial', 'p_billing_cycle':'trial', 'p_max_branches':1, 'p_max_users':len(account_names(receipt)),
             'p_modules':['sales','inventory','finance'], 'p_full_name':'Release Acceptance Admin', 'p_job_title':'Acceptance tester', 'p_mobile_number':'',
         })
         if not isinstance(result, dict) or result.get('success') is not True or result.get('user_id') != receipt['admin']['userId']:
@@ -374,22 +396,26 @@ def provision(gateway, store, anon_key, base_url):
     receipt['tenantId'] = identifier(company.get('tenant_id'))
     warehouse = exactly_one(gateway.rows('warehouses', company_id=receipt['companyId'], branch_id=receipt['branchId'], is_active='true'), 'Exactly one active branch warehouse is required for acceptance.')
     receipt['warehouseId'] = identifier(warehouse['id'])
-    role = exactly_one(gateway.rows('roles', name='cashier', company_id=None, status='active'), 'One active trusted global cashier role is required; no shared role was altered.')
-    if role.get('company_id') is not None or role.get('name') != 'cashier' or role.get('status') != 'active':
-        raise FixtureError('Cashier role is not the reviewed active global cashier role.')
-    existing = gateway.rows('users', id=receipt['cashier']['userId'])
-    fields = {'id':receipt['cashier']['userId'], 'company_id':receipt['companyId'], 'branch_id':receipt['branchId'], 'role_id':role['id'], 'email':receipt['cashier']['email'], 'first_name':'Release Acceptance', 'last_name':'Cashier', 'status':'active'}
-    if existing:
-        if any(existing[0].get(key) != fields[key] for key in ('id','company_id','branch_id','role_id','email')):
-            raise FixtureError('Cashier profile belongs to another identity/role/company; no changes were made.')
-    else:
-        gateway.write('users', fields)
-    if not gateway.rows('profiles', id=receipt['cashier']['userId']):
-        gateway.write('profiles', {'id':receipt['cashier']['userId'], 'email':receipt['cashier']['email'], 'full_name':'Release Acceptance Cashier', 'status':'active'})
-    if not gateway.rows('user_roles', user_id=receipt['cashier']['userId'], role_id=role['id']):
-        gateway.write('user_roles', {'user_id':receipt['cashier']['userId'], 'role_id':role['id']})
-    if not gateway.rows('user_tenants', user_id=receipt['cashier']['userId'], tenant_id=receipt['tenantId']):
-        gateway.write('user_tenants', {'user_id':receipt['cashier']['userId'], 'tenant_id':receipt['tenantId']})
+    for name in account_names(receipt)[1:]:
+        role_name = account_role(name)
+        role = exactly_one(gateway.rows('roles', name=role_name, company_id=None, status='active'), 'An active trusted global role is required.')
+        if role.get('company_id') is not None or role.get('name') != role_name or role.get('status') != 'active':
+            raise FixtureError('The fixture role is not the reviewed active global role.')
+        user = receipt[name]
+        user_id = user['userId']
+        existing = gateway.rows('users', id=user_id)
+        fields = {'id':user_id, 'company_id':receipt['companyId'], 'branch_id':receipt['branchId'], 'role_id':role['id'], 'email':user['email'], 'first_name':'Release Acceptance', 'last_name':role_name.title(), 'status':'active'}
+        if existing:
+            if any(existing[0].get(key) != fields[key] for key in ('id','company_id','branch_id','role_id','email')):
+                raise FixtureError('Fixture profile belongs to another identity, role or company.')
+        else:
+            gateway.write('users', fields)
+        if not gateway.rows('profiles', id=user_id):
+            gateway.write('profiles', {'id':user_id, 'email':user['email'], 'full_name':'Release Acceptance ' + role_name.title(), 'status':'active'})
+        if not gateway.rows('user_roles', user_id=user_id, role_id=role['id']):
+            gateway.write('user_roles', {'user_id':user_id, 'role_id':role['id']})
+        if not gateway.rows('user_tenants', user_id=user_id, tenant_id=receipt['tenantId']):
+            gateway.write('user_tenants', {'user_id':user_id, 'tenant_id':receipt['tenantId']})
     customer_code = 'ACCEPT-' + receipt['metadata']['runId']
     customers = gateway.rows('customers', company_id=receipt['companyId'], customer_code=customer_code)
     customer = exactly_one(customers, 'Acceptance customer lookup is ambiguous.') if customers else exactly_one(gateway.write('customers', {
@@ -404,23 +430,47 @@ def provision(gateway, store, anon_key, base_url):
 
 
 def summary(receipt):
+    qa_kind = receipt['metadata'].get('qaKind')
     return {'project_ref':PROJECT_REF, 'run_id':receipt['metadata']['runId'], 'state':receipt['metadata']['state'], 'company_id':receipt['companyId'],
-        'private_fixture':'.tmp/release-acceptance/live-fixture.private.json', 'emails_sent':False, 'original_companies_modified':False}
+        'private_fixture':f'.tmp/release-acceptance/qa-{qa_kind}.private.json' if qa_kind else '.tmp/release-acceptance/live-fixture.private.json',
+        'emails_sent':False, 'original_companies_modified':False}
+
+
+def prepare_role_probes(gateway, receipt):
+    race = Store(ROOT / '.tmp/release-acceptance/qa-race.private.json').read()
+    if not race or race['metadata'].get('qaKind') != 'race' or race['metadata']['state'] != 'ready' or race['companyId'] == receipt['companyId']:
+        raise FixtureError('A separate ready, marked race fixture is required for the cross-company role probe.')
+    verify_ready(gateway, race, require_active=True)
+    subject = receipt['roleSubject']['userId']
+    subject_profile = exactly_one(gateway.rows('users', id=subject, company_id=receipt['companyId']), 'Role subject unavailable.')
+    subject_role = exactly_one(gateway.rows('roles', id=subject_profile['role_id']), 'Role subject role unavailable.')
+    if subject_role['name'] != 'admin':
+        raise FixtureError('The role subject has already changed roles; do not reseed the probe.')
+    accountant = exactly_one(gateway.rows('users', id=receipt['accountant']['userId'], company_id=receipt['companyId']), 'Test accountant unavailable.')
+    independent = {'user_id': subject, 'role_id': accountant['role_id']}
+    if not gateway.rows('user_roles', **independent):
+        gateway.write('user_roles', independent)
+    membership = {'user_id': receipt['cashier2']['userId'], 'tenant_id': race['tenantId']}
+    if not gateway.rows('user_tenants', **membership):
+        gateway.write('user_tenants', membership)
 
 
 def main(arguments=None):
     args = sys.argv[1:] if arguments is None else arguments
-    if args not in ([], ['--plan'], ['--apply']):
-        raise FixtureError('Usage: python scripts/provision-live-fixture.py [--plan | --apply]. Private credentials/project overrides are never accepted as arguments.')
-    if args != ['--apply']:
+    qa_kind = args[1] if len(args) == 2 and args[0] == '--apply-qa' and args[1] in ('race', 'workflow', 'roles') else None
+    if args not in ([], ['--plan'], ['--apply']) and not qa_kind:
+        raise FixtureError('Usage: python scripts/provision-live-fixture.py [--plan | --apply | --apply-qa race|workflow|roles].')
+    if args != ['--apply'] and not qa_kind:
         print(json.dumps({'mode':'offline_plan', 'project_ref':PROJECT_REF, 'base_url':APP_ORIGIN, 'company_prefix':PREFIX, 'auth_users_created_on_apply':2,
             'emails_sent':False, 'original_companies_modified':False, 'private_fixture':str(FIXTURE.relative_to(ROOT)), 'applied':False}))
         return
     key = public_configuration()
     gateway = Gateway(private_configuration(), key)
-    store = Store()
+    store = Store(ROOT / f'.tmp/release-acceptance/qa-{qa_kind}.private.json') if qa_kind else Store()
     with store.lock():
-        receipt = provision(gateway, store, key, APP_ORIGIN)
+        receipt = provision(gateway, store, key, APP_ORIGIN, qa_kind)
+        if qa_kind == 'roles':
+            prepare_role_probes(gateway, receipt)
     print(json.dumps(summary(receipt)))
 
 

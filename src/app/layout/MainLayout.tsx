@@ -1,117 +1,71 @@
-import AIAssistant from '../components/AIAssistant';
-﻿import { useEffect, useState } from 'react';
-import { Outlet, useLocation } from 'react-router-dom';
-import { AnimatePresence, motion } from 'motion/react';
+import { useEffect, useState } from 'react';
+import { Link, Outlet, useLocation } from 'react-router-dom';
+import { ChevronLeft, ChevronRight, Home } from 'lucide-react';
+import { useTranslation } from 'react-i18next';
 import Sidebar from './Sidebar';
 import Topbar from './Topbar';
+import AIAssistant from '../components/AIAssistant';
 import DevModeIndicator from '../components/DevModeIndicator';
+import { workspaceRoute } from './workspaceNavigation';
 
 export default function MainLayout() {
-  const [sidebarCollapsed, setSidebarCollapsed] = useState(false);
+  const { t, i18n } = useTranslation('workspace');
+  const [sidebarCollapsed, setSidebarCollapsed] = useState(
+    () => localStorage.getItem('erpx-sidebar-collapsed') === 'true',
+  );
   const [mobileOpen, setMobileOpen] = useState(false);
-  const location = useLocation();
-
+  const { pathname } = useLocation();
+  const route = workspaceRoute(pathname);
+  const rtl = (i18n.resolvedLanguage || i18n.language).startsWith('ar');
+  const Separator = rtl ? ChevronLeft : ChevronRight;
   useEffect(() => {
-    const handleResize = () => {
-      if (window.innerWidth >= 1024) {
-        setMobileOpen(false);
-      }
-    };
-
-    window.addEventListener('resize', handleResize);
-
-    return () => {
-      window.removeEventListener('resize', handleResize);
-    };
-  }, []);
-
+    localStorage.setItem('erpx-sidebar-collapsed', String(sidebarCollapsed));
+  }, [sidebarCollapsed]);
   useEffect(() => {
     setMobileOpen(false);
-  }, [location.pathname]);
-
+  }, [pathname]);
+  useEffect(() => {
+    const media = window.matchMedia('(min-width: 1024px)');
+    const close = () => {
+      if (media.matches) setMobileOpen(false);
+    };
+    media.addEventListener('change', close);
+    return () => media.removeEventListener('change', close);
+  }, []);
   return (
-    <div className="erpx-shell min-h-screen text-[var(--app-text)]">
+    <div className="erpx-shell" dir={rtl ? 'rtl' : 'ltr'}>
+      <a className="ws-skip" href="#workspace-content">
+        {t('shell.skip')}
+      </a>
       <DevModeIndicator />
-      <AIAssistant />
-
       <Sidebar
         collapsed={sidebarCollapsed}
         mobileOpen={mobileOpen}
         onToggle={() => setSidebarCollapsed((value) => !value)}
         onMobileClose={() => setMobileOpen(false)}
       />
-
-      <div
-        className={`erpx-main ${
-          sidebarCollapsed ? 'erpx-main-collapsed' : ''
-        }`}
-      >
+      <div className={`erpx-main ${sidebarCollapsed ? 'erpx-main-collapsed' : ''}`}>
         <Topbar onMenu={() => setMobileOpen(true)} />
-
-        <main className="erpx-content">
+        <main className="erpx-content" id="workspace-content" tabIndex={-1}>
           <div className="erpx-content-inner">
-            <AnimatePresence mode="wait" initial={false}>
-              <motion.div
-                key={location.pathname}
-                initial={{ opacity: 0, y: 5 }}
-                animate={{ opacity: 1, y: 0 }}
-                exit={{ opacity: 0, y: -3 }}
-                transition={{
-                  duration: 0.18,
-                  ease: 'easeOut',
-                }}
-                className="min-h-full"
-              >
-                <Outlet />
-              </motion.div>
-            </AnimatePresence>
+            <nav className="ws-breadcrumbs" aria-label={t('shell.breadcrumbs')}>
+              <Link to="/dashboard" aria-label={t('shell.home')}>
+                <Home size={13} />
+              </Link>
+              {route && (
+                <>
+                  <Separator size={11} aria-hidden="true" />
+                  <span>{t('nav.' + route.section)}</span>
+                  <Separator size={11} aria-hidden="true" />
+                  <span aria-current="page">{t('nav.' + route.key)}</span>
+                </>
+              )}
+            </nav>
+            <Outlet />
           </div>
         </main>
-
-        <nav className="erpx-mobile-bottom-nav" aria-label="Quick navigation">
-          <a
-            href="/dashboard"
-            className={
-              location.pathname === '/dashboard' ? 'is-active' : ''
-            }
-          >
-            <span>⌂</span>
-            <span>Home</span>
-          </a>
-
-          <a
-            href="/sales"
-            className={
-              location.pathname.startsWith('/sales') ? 'is-active' : ''
-            }
-          >
-            <span>↗</span>
-            <span>Sales</span>
-          </a>
-
-          <a
-            href="/inventory"
-            className={
-              location.pathname.startsWith('/inventory') ? 'is-active' : ''
-            }
-          >
-            <span>▦</span>
-            <span>Inventory</span>
-          </a>
-
-          <a
-            href="/ai/recommendations"
-            className={
-              location.pathname.startsWith('/ai/')
-                ? 'is-active'
-                : ''
-            }
-          >
-            <span>✦</span>
-            <span>AI</span>
-          </a>
-        </nav>
       </div>
+      <AIAssistant />
     </div>
   );
 }

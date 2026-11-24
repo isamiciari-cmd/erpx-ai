@@ -5,6 +5,7 @@ import { ErrorBoundary } from './app/components/ErrorBoundary';
 // Keep Tailwind's theme and class-based dark variant in the same CSS context.
 import './styles/index.css';
 import './styles/erpx-v2.css';
+import './styles/erpx-workspaces.css';
 
 ReactDOM.createRoot(document.getElementById('root')!).render(
   <React.StrictMode>

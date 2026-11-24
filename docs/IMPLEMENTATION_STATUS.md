@@ -1,6 +1,132 @@
 # ERPX implementation and next steps
 
-Updated 2026-10-29. This document supersedes historical claims that all modules or integrations are complete.
+Updated 2026-11-23. This document supersedes historical claims that all modules or integrations are complete.
+
+## First customer acceptance — one branch (2026-11-23)
+
+The workspace was based on Git `485df4dcf` with local changes. The November
+acceptance used the published application for the main browser journey, the
+local worktree for the cashier rejection message, and the linked Supabase
+project with two newly marked synthetic companies. The worktree was not
+published as part of acceptance. Run ID `20261123T140809Z-d5b63a035835`.
+The local report is
+`.tmp/release-acceptance/20261123T140809Z-d5b63a035835/report.json`.
+
+- The browser journey passed all 11 steps with no browser errors, HTTP
+  failures or blocked mutation attempts. Administrator, cashier and
+  accountant each saw their own company. Cross-company reads and stock writes
+  were denied, and the targeted synthetic stock stayed unchanged.
+- Received 10 units and sold 2 for SAR 230 cash, leaving 8. Issued a separate
+  SAR 115 invoice and collected SAR 40 then 75, leaving zero receivable.
+  Shift expected and counted cash were both SAR 230. The five journals
+  balanced at SAR 820 on each side.
+- Two cashier sessions raced for one unit using distinct keys. One sale
+  completed, one request was rejected for insufficient stock and final stock
+  was zero. There was one sale payment, one outbound movement and one sales
+  journal. The independent browser check showed the stock rejection and left
+  those totals unchanged.
+- In the browser, the successful sale response and first receipt response
+  were dropped after commit. Each persisted result was checked before retry.
+  The UI reused each request key, leaving one sale, three payments, two
+  inventory movements (receipt and sale) and five journals in the workflow
+  company. Independent read-only Supabase counts matched.
+- Test credentials were kept in Git-ignored files under
+  `.tmp/release-acceptance/`. No file under `.tmp/` was tracked in the
+  reviewed worktree.
+- The current local registration form was submitted in a browser as a
+  confirmed synthetic Auth user with no ERP profile. The published Supabase
+  RPC created an active company, its main branch and branch-linked warehouse,
+  and assigned the signed-in user the administrator role. The UI reached
+  the registration-success screen and the authenticated session independently
+  verified the persisted records. Signup email delivery was outside this
+  check. Evidence is in `.tmp/release-acceptance/first-client-ui-report.json`.
+  Registration now sends enabled module names as an array, which is accepted
+  by the hosted JSONB signature and matches the canonical `text[]` signature.
+- A live administration UI change of a synthetic cashier to accountant
+  saved the new primary role and preserved the branch. A fresh Auth session
+  still returned the old cashier grant from the legacy `user_roles` table.
+  The original cashier role was restored through the UI. Migration
+  `supabase/migrations/20261123000100_retire_replaced_primary_role.sql` is
+  prepared and tested locally. It retires the replaced primary-role link
+  atomically and preserves unrelated explicit grants. It does not remove
+  historical links for accounts that are not changed. It blocks a role
+  change when the old global link might be shared across memberships.
+  Isolated tests verified cashier checkout and immediate denial of former
+  administrator writes with an unchanged request identity and a new one.
+  Applied to the linked Supabase project on 2026-11-23 after confirming that
+  the six reviewed authorization definitions matched and verifying DPAPI backup
+  `public-backup-20261123T143520Z.dpapi`. The live role-QA run
+  `20261123T143624Z-0808121a59a0` verified one cashier sale and one denied
+  stock receipt with each of the unchanged token and a new Auth session.
+  The independent accountant grant was preserved. A separate synthetic
+  global-role change was refused while its two tenant memberships stayed
+  intact. The open tab retained the administrator UI until reload, then
+  redirected to cashier POS. See the
+  [application and verification runbook](../database/upgrades/20261026-existing-project/README.md#primary-role-replacement-2026-11-23).
+- Post-change local verification passed TypeScript, the production build,
+  346 Vitest tests, 59 isolated PostgreSQL checks and 9 browser security checks.
+
+### First customer sign-off
+
+| Scope | Status and owner |
+| --- | --- |
+| Company, one branch, warehouse and staff | **Company bootstrap and single-company role reassignment passed technical acceptance.** Development reviews ambiguous legacy grants individually when needed. The branch manager approves the staff roster and verifies sign-in and branch access on each terminal. Test invitation email and password recovery separately if used for this customer. |
+| Catalog and opening inventory | **Receipt flow passed with synthetic data.** The branch manager approves SKUs, barcodes, units and the physical count. The customer's accountant signs quantities, unit costs, valuation date and the opening inventory/clearing treatment before posting. Development verifies repeat submissions and the reconciliation to the approved opening ledger. |
+| Opening ledger and daily/period close | **Cash sale, individual receivable and shift closing passed.** The customer's accountant approves the opening trial balance, opening cash/bank, receivables and payables by account and document, and reconciles cash, bank and receivables. The accountant signs the daily close, period close, corrections and settlements. An opening goods receipt uses an inventory/clearing journal; any opening reclassification needs approval. |
+| Cashier hardware | **Physical acceptance pending.** The branch manager tests the actual receipt printer and paper size, Arabic layout and reprint, popup permissions, and the scanner's SKU/barcode entry on the POS terminal. Development resolves hardware or browser integration issues. |
+| Returns, credit notes and mixed payments | **Outside the accepted flow.** One full payment method is supported per POS sale. Credit-note domain types and validation exist. A transactional return, linked credit note, inventory reversal, refund and accounting reconciliation still require an end-to-end implementation. The branch manager identifies required scenarios, the accountant approves treatment and development implements and verifies the flows required before use. |
+| ZATCA | **Gateway implemented. Integration acceptance pending.** The accountant confirms taxpayer identity and applicable invoice flows. Development configures the establishment/device and certificate lifecycle, generates compliant UBL XML, computes hashes and applies the required cryptographic signing and QR, then verifies clearance/reporting and reconciliation in simulation before production enablement. |
+
+The ZATCA page lists invoice statuses and enables submission for issued
+invoices with XML. The Edge function requires a prepared signed XML document,
+UUID and SHA-256 hash, selects clearance or reporting, and records authority
+responses and uncertain outcomes. It does not generate or sign the XML.
+No registration, certificate provisioning, submission or activation with
+ZATCA was performed in this acceptance. See the
+[ZATCA technical guideline](https://zatca.gov.sa/en/E-Invoicing/Introduction/Guidelines/Documents/E-invoicing-Detailed-Technical-Guideline.pdf).
+
+### First branch rehearsal
+
+Use the approved branch and warehouse throughout. The branch manager checks
+SKU, barcode, unit, VAT category and physical quantity against the signed
+opening catalog. The accountant signs the valuation date and unit costs,
+then reconciles opening stock to the inventory/clearing journal and approves
+the opening trial balance, cash/bank, receivables by invoice and settlements.
+Enter the counted opening drawer cash when opening the shift. Record each
+payment and reconcile the shift to counted cash and the ledger before closing.
+
+The rehearsal on the existing synthetic workflow company received **3 units
+at SAR 25**, with **SAR 75** on each side of the opening inventory journal.
+The cashier opened with **SAR 50**, entered the test SKU through Scan, sold
+one unit for **SAR 115** (including SAR 15 VAT), and closed at **SAR 165
+expected and counted**, difference **SAR 0**. Final stock was **2** and
+receivables were **SAR 0** before and after. The browser invoked print and
+the generated receipt showed the item, VAT and paid amount. The branch
+manager still needs to test the physical thermal printer, paper width,
+Arabic rendering, scanner and Enter suffix on the actual workstation.
+Evidence is in `.tmp/release-acceptance/first-branch-rehearsal-report.json`.
+
+The local app reuses the authenticated access snapshot refresh on focus,
+visibility, every 30 seconds while visible, and when a write is denied.
+When access is lost, the app keeps edited inputs from the protected forms in
+memory for the same session. The recovery panel is read-only and is cleared
+on logout or when the user dismisses it.
+The two-session live browser test reopened the role-QA subject as an
+administrator, edited the legal name and demoted the subject from a separate
+administrator session. The real settings RPC rejected the stale save. The
+same browser document hid the administrator page and reached cashier POS.
+The edited legal name was recoverable and the company record stayed unchanged.
+The synthetic account ended on its original cashier role. Evidence is in
+`.tmp/release-acceptance/first-branch-access-ui-report.json`.
+
+| Conditional workflow | Acceptance required before use |
+| --- | --- |
+| Returns | No approved end-to-end return exists. Development must test full and partial returns against an original sale, stock/COGS reversal, refund, drawer/ledger/receivable reconciliation and replay without duplicate effects. The accountant approves the accounting and the branch manager verifies the return at the counter. |
+| Credit notes | Document types and validation exist. Development must test original invoice linkage, partial and full credit, tax and receivable adjustments, audit trail and the required electronic output. The accountant signs the values, reference and treatment. |
+| Split tender | POS accepts one full payment method. If the branch needs mixed tender, development must test cash plus card, zero remainder, failed or retried second payment, and matching the two payments to a single sale and drawer/clearing journals. The branch manager supplies scenarios and the accountant approves reconciliation. |
+| ZATCA simulation | The accountant supplies the legal seller name, VAT number (and group/member identifiers if applicable), national address and branch, activity and standard/simplified invoice scenarios. Development supplies the EGS unit name, unique serial, software/provider version and invoice capability for the CSR, then prepares test credentials, signed XML, hash and QR as applicable. Check tax categories, references and both clearance/reporting paths in simulation before any production activation. Keep private keys and credentials in secure configuration. No ZATCA activation or submission was made in this rehearsal. |
+
+[ZATCA security features and CSR fields](https://www.zatca.gov.sa/ar/E-Invoicing/SystemsDevelopers/Documents/20230519_ZATCA_Electronic_Invoice_Security_Features_Implementation_Standards_vF.pdf)
 
 ## Local AI pilot activated (2026-10-29)
 

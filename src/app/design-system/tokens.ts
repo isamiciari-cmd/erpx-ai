@@ -87,16 +87,16 @@ export const designTokens = {
     },
   },
 
-  // Colors - Food Delivery Theme (Black + Yellow)
+  // ERPX-AI brand and semantic colors
   colors: {
     // Brand Colors
     brand: {
-      primary: '#FFC107', // Yellow
-      primaryDark: '#FFA000',
-      primaryLight: '#FFECB3',
-      secondary: '#000000', // Black
-      secondaryDark: '#121212',
-      secondaryLight: '#1E1E1E',
+      primary: '#2963E7',
+      primaryDark: '#2053C7',
+      primaryLight: '#83B7FF',
+      secondary: '#101A2C',
+      secondaryDark: '#080E19',
+      secondaryLight: '#17253C',
     },
 
     // Semantic Colors

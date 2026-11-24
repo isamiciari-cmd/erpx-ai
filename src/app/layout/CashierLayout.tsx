@@ -1,11 +1,15 @@
 ﻿import { useState, useEffect, useRef } from 'react';
 import { Outlet, useNavigate } from 'react-router-dom';
+import { useTranslation } from 'react-i18next';
 import { LogOut, Clock, User, Building2, PlayCircle, StopCircle, ArrowLeft } from 'lucide-react';
 import { useAuth } from '../../contexts/AuthContext';
+import { LanguageSwitcher } from '../../components/LanguageSwitcher';
 import { getCurrentShift, openShift, closeShift, type Shift } from '../../services/salesService';
 
 export default function CashierLayout() {
   const { user, signOut } = useAuth();
+  const { i18n } = useTranslation();
+  const arabic = (i18n.resolvedLanguage || i18n.language).startsWith('ar');
   const navigate = useNavigate();
   const [currentTime, setCurrentTime] = useState(new Date());
   const [shift, setShift] = useState<Shift | null>(null);
@@ -81,16 +85,16 @@ export default function CashierLayout() {
   });
 
   return (
-    <div className="h-screen flex flex-col bg-gray-950">
+    <div className="erpx-cashier-shell">
       {/* Cashier Top Bar */}
-      <div className="h-16 bg-gray-900 border-b border-gray-800 flex items-center justify-between px-6">
+      <div className="erpx-cashier-header">
         {/* Left Section - Branch & Cashier Info */}
-        <div className="flex items-center gap-6">
+        <div className="erpx-cashier-identity flex items-center gap-4">
           <div className="flex items-center gap-2">
             <Building2 className="w-5 h-5 text-blue-400" />
             <div>
-              <p className="text-xs text-gray-500">Branch</p>
-              <p className="text-sm font-semibold text-white">{user?.branch?.name || (user?.branch_id ? 'Branch name unavailable' : 'Branch not assigned')}</p>
+              <p className="text-xs text-gray-400">{arabic ? 'الفرع' : 'Branch'}</p>
+              <p className="text-sm font-semibold text-white">{user?.branch?.name || (user?.branch_id ? (arabic ? 'اسم الفرع غير متاح' : 'Branch name unavailable') : (arabic ? 'لا يوجد فرع معيّن' : 'Branch not assigned'))}</p>
             </div>
           </div>
 
@@ -99,7 +103,7 @@ export default function CashierLayout() {
           <div className="flex items-center gap-2">
             <User className="w-5 h-5 text-blue-400" />
             <div>
-              <p className="text-xs text-gray-500">Cashier</p>
+              <p className="text-xs text-gray-400">{arabic ? 'الكاشير' : 'Cashier'}</p>
               <p className="text-sm font-semibold text-white">
                 {user?.first_name} {user?.last_name}
               </p>
@@ -108,7 +112,7 @@ export default function CashierLayout() {
         </div>
 
         {/* Center Section - Time & Date */}
-        <div className="flex items-center gap-2">
+        <div className="erpx-cashier-clock flex items-center gap-2">
           <Clock className="w-5 h-5 text-gray-400" />
           <div className="text-center">
             <p className="text-lg font-bold text-white">{formattedTime}</p>
@@ -117,15 +121,16 @@ export default function CashierLayout() {
         </div>
 
         {/* Right Section - Dashboard, Shift & Logout */}
-        <div className="flex items-center gap-3">
+        <div className="erpx-cashier-actions flex items-center gap-2">
+          <LanguageSwitcher variant="minimal" />
           <button
             type="button"
             onClick={() => navigate('/dashboard')}
             className="flex items-center gap-2 px-4 py-2 bg-white/5 hover:bg-white/10 border border-gray-700 hover:border-blue-500/50 rounded-lg text-gray-300 hover:text-white transition-all"
-            title="Back to Dashboard"
+            title={arabic ? 'العودة إلى لوحة التحكم' : 'Back to Dashboard'}
           >
             <ArrowLeft className="w-4 h-4" />
-            <span className="text-sm font-semibold">Dashboard</span>
+            <span className="text-sm font-semibold">{arabic ? 'لوحة التحكم' : 'Dashboard'}</span>
           </button>
           <div className="h-8 w-px bg-gray-700" />
           <button
@@ -140,12 +145,12 @@ export default function CashierLayout() {
             {shiftActive ? (
               <>
                 <StopCircle className="w-4 h-4" />
-                <span className="text-sm font-semibold">{shiftBusy ? 'Saving…' : 'Close Shift'}</span>
+                <span className="text-sm font-semibold">{shiftBusy ? (arabic ? 'جارٍ الحفظ…' : 'Saving…') : (arabic ? 'إغلاق الوردية' : 'Close Shift')}</span>
               </>
             ) : (
               <>
                 <PlayCircle className="w-4 h-4" />
-                <span className="text-sm font-semibold">{shiftBusy ? 'Loading…' : 'Open Shift'}</span>
+                <span className="text-sm font-semibold">{shiftBusy ? (arabic ? 'جارٍ التحميل…' : 'Loading…') : (arabic ? 'فتح الوردية' : 'Open Shift')}</span>
               </>
             )}
           </button>
@@ -157,7 +162,7 @@ export default function CashierLayout() {
             className="flex items-center gap-2 px-4 py-2 bg-red-500/20 hover:bg-red-500/30 border border-red-500/50 rounded-lg text-red-400 transition-all"
           >
             <LogOut className="w-4 h-4" />
-            <span className="text-sm font-semibold">Logout</span>
+            <span className="text-sm font-semibold">{arabic ? 'خروج' : 'Logout'}</span>
           </button>
         </div>
       </div>
@@ -165,7 +170,7 @@ export default function CashierLayout() {
       {shiftError && <div role="alert" className="bg-red-950 px-6 py-2 text-sm text-red-200">{shiftError}</div>}
 
       {/* POS Content */}
-      <div className="flex-1 overflow-hidden">
+      <div className="erpx-cashier-content">
         <Outlet />
       </div>
     </div>

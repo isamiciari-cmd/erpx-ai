@@ -4,6 +4,7 @@ import type { User as SupabaseUser, Session } from '@supabase/supabase-js';
 import { supabase, isDemoMode, getDemoUser, hasSupabaseConfig } from '../lib/supabase';
 import { demoRole, legacyPermissions, roleFromName, withAuthTimeout, type Permission, type UserRole } from '../lib/authAccess';
 import { readAccessSnapshot } from '../lib/authSession';
+import { mutationDeniedEvent, preserveAccessDrafts, type AccessDraft } from '../lib/accessDrafts';
 import type { UserWithDetails as User } from '../services/usersService';
 
 interface AuthState {
@@ -21,6 +22,8 @@ interface AuthContextType extends AuthState {
   signUp: (email: string, password: string, userData: unknown) => Promise<void>;
   signOut: () => Promise<void>;
   refreshAccess: () => Promise<void>;
+  recoveredDrafts: AccessDraft[];
+  dismissRecoveredDrafts: () => void;
   canAccessTenant: (tenantId: string) => Promise<boolean>;
   hasPermission: (permission: string) => Promise<boolean>;
   isAdmin: () => Promise<boolean>;
@@ -72,29 +75,48 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   stateRef.current = state;
   const generationRef = useRef(0);
   const mountedRef = useRef(false);
+  const refreshInFlight = useRef<Promise<void> | null>(null);
+  const [recoveredDrafts, setRecoveredDrafts] = useState<AccessDraft[]>([]);
+  const dismissRecoveredDrafts = useCallback(() => setRecoveredDrafts([]), []);
+  const recoverDrafts = useCallback(() => {
+    const drafts = preserveAccessDrafts();
+    if (drafts.length) setRecoveredDrafts((previous) => [...previous, ...drafts]);
+  }, []);
 
   const applySession = useCallback(async (nextSession: Session | null) => {
     const generation = ++generationRef.current;
+    const before = stateRef.current;
+    const sameIdentity = !!nextSession && before.currentUser?.id === nextSession.user.id;
+    const keepView = sameIdentity && !!before.user && !before.accessError;
     const pending: AuthState = {
       ...emptyState, session: nextSession, currentUser: nextSession?.user ?? null, loading: !!nextSession,
     };
     // Clear the previous identity's privileges before fetching the next profile.
-    stateRef.current = pending;
-    if (mountedRef.current) setState(pending);
+    if (!keepView) {
+      stateRef.current = pending;
+      if (mountedRef.current) setState(pending);
+    }
+    if (!sameIdentity && mountedRef.current) setRecoveredDrafts([]);
     if (!nextSession) return;
     try {
       const access = await withAuthTimeout(readAccessSnapshot(supabase, nextSession.user.id));
       if (!mountedRef.current || generation !== generationRef.current) return;
+      if (keepView && before.user?.company_id !== access.user.company_id) setRecoveredDrafts([]);
+      else if (keepView && (before.user?.role_id !== access.user.role_id ||
+        before.roles.some((role) => !access.roles.some((next) => next.role_name === role.role_name)) ||
+        before.permissions.some((permission) =>
+          !access.permissions.some((next) => next.permission_key === permission.permission_key)))) recoverDrafts();
       const resolved = { ...pending, ...access, loading: false };
       stateRef.current = resolved;
       setState(resolved);
     } catch (cause) {
       if (!mountedRef.current || generation !== generationRef.current) return;
+      if (keepView) recoverDrafts();
       const failed = { ...pending, loading: false, accessError: cause instanceof Error ? cause : new Error('Unable to verify access.') };
       stateRef.current = failed;
       setState(failed);
     }
-  }, []);
+  }, [recoverDrafts]);
 
   useEffect(() => {
     let disposed = false;
@@ -119,10 +141,17 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       if (disposed || !mountedRef.current) return;
       authEventReceived = true;
       // Immediately revoke old access. Do not await Supabase work inside its auth callback lock.
-      const pending = { ...emptyState, session: nextSession, currentUser: nextSession?.user ?? null, loading: !!nextSession };
-      stateRef.current = pending;
       generationRef.current++;
-      if (mountedRef.current) setState(pending);
+      const before = stateRef.current;
+      const keepsIdentity = !!nextSession && before.currentUser?.id === nextSession.user.id;
+      if (!keepsIdentity || !before.user) {
+        const pending = { ...emptyState, session: nextSession, currentUser: nextSession?.user ?? null, loading: !!nextSession };
+        stateRef.current = pending;
+        setState(pending);
+      } else {
+        stateRef.current = { ...before, session: nextSession, currentUser: nextSession.user };
+      }
+      if (!keepsIdentity) setRecoveredDrafts([]);
       const eventGeneration = generationRef.current;
       setTimeout(() => {
         if (!disposed && mountedRef.current && eventGeneration === generationRef.current) void applySession(nextSession);
@@ -171,6 +200,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     generationRef.current++;
     stateRef.current = emptyState;
     setState(emptyState);
+    setRecoveredDrafts([]);
     localStorage.removeItem('erpx_demo_email');
     localStorage.removeItem('erpx_demo_password');
     if (isDemoMode || !hasSupabaseConfig) return;
@@ -181,8 +211,33 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   const refreshAccess = useCallback(async () => {
     if (isDemoMode) return;
     if (!hasSupabaseConfig) throw configError();
-    await applySession(stateRef.current.session);
+    if (refreshInFlight.current) return refreshInFlight.current;
+    const pending = applySession(stateRef.current.session);
+    refreshInFlight.current = pending;
+    try { await pending; }
+    finally { if (refreshInFlight.current === pending) refreshInFlight.current = null; }
   }, [applySession]);
+
+  useEffect(() => {
+    if (isDemoMode || !hasSupabaseConfig) return;
+    const refreshVisible = () => {
+      if (document.visibilityState === 'visible' && stateRef.current.session && !stateRef.current.loading)
+        void refreshAccess();
+    };
+    const refreshOnDenial = () => {
+      if (stateRef.current.user && !stateRef.current.loading) void refreshAccess();
+    };
+    window.addEventListener('focus', refreshVisible);
+    document.addEventListener('visibilitychange', refreshVisible);
+    window.addEventListener(mutationDeniedEvent, refreshOnDenial);
+    const interval = window.setInterval(refreshVisible, 30_000);
+    return () => {
+      window.removeEventListener('focus', refreshVisible);
+      document.removeEventListener('visibilitychange', refreshVisible);
+      window.removeEventListener(mutationDeniedEvent, refreshOnDenial);
+      window.clearInterval(interval);
+    };
+  }, [refreshAccess]);
 
   const canAccessTenant = useCallback(async (tenantId: string): Promise<boolean> => {
     const before = stateRef.current;
@@ -203,13 +258,13 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     const ready = !state.loading && !state.accessError && !!state.user;
     const hasRole = (names: string[]) => ready && state.roles.some((role) => names.includes(role.role_name));
     return {
-      ...state, signIn, signUp, signOut, refreshAccess, canAccessTenant,
+      ...state, signIn, signUp, signOut, refreshAccess, canAccessTenant, recoveredDrafts, dismissRecoveredDrafts,
       hasPermission: async (key) => ready && state.permissions.some((permission) => permission.permission_key === key),
       isAdmin: async () => hasRole(['owner', 'developer', 'super_admin', 'admin']),
       isManager: async () => hasRole(['owner', 'developer', 'super_admin', 'admin', 'manager']),
       isCashier: async () => hasRole(['cashier']),
     };
-  }, [state, signIn, signUp, signOut, refreshAccess, canAccessTenant]);
+  }, [state, signIn, signUp, signOut, refreshAccess, canAccessTenant, recoveredDrafts, dismissRecoveredDrafts]);
 
   return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>;
 }

@@ -1,9 +1,12 @@
+import { LanguageSwitcher } from '@/components/LanguageSwitcher';
+import { useLocalizedCopy } from '@/i18n/localizedCopy';
 import { motion } from 'motion/react';
 import { useLocation, useNavigate } from 'react-router-dom';
 import { CheckCircle, Mail, ArrowRight } from 'lucide-react';
 import { useEffect } from 'react';
 
 export default function RegistrationSuccessPage() {
+  const copy = useLocalizedCopy();
   const location = useLocation();
   const navigate = useNavigate();
   const { email, companyName } = location.state || {};
@@ -17,6 +20,7 @@ export default function RegistrationSuccessPage() {
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-gray-950 via-blue-950 to-gray-950 flex items-center justify-center p-8">
+      <div className="erpx-auth-language"><LanguageSwitcher variant="compact" /></div>
       <motion.div
         initial={{ opacity: 0, scale: 0.9 }}
         animate={{ opacity: 1, scale: 1 }}
@@ -39,7 +43,7 @@ export default function RegistrationSuccessPage() {
           transition={{ delay: 0.3 }}
           className="text-4xl font-bold text-white mb-4"
         >
-          Registration Successful!
+          {copy("Registration Successful!")}
         </motion.h1>
 
         <motion.p
@@ -48,7 +52,7 @@ export default function RegistrationSuccessPage() {
           transition={{ delay: 0.4 }}
           className="text-xl text-gray-300 mb-8"
         >
-          Welcome to ERPX-AI, <span className="text-blue-400 font-semibold">{companyName}</span>
+          {copy("Welcome to ERPX-AI,")} <span className="text-blue-400 font-semibold">{companyName}</span>
         </motion.p>
 
         {/* Email Verification Notice */}
@@ -63,14 +67,13 @@ export default function RegistrationSuccessPage() {
               <Mail className="w-6 h-6 text-blue-400" />
             </div>
             <div className="text-left flex-1">
-              <h3 className="font-semibold text-white mb-2">Verify Your Email</h3>
-              <p className="text-sm text-gray-300 mb-3">We've sent a verification email to:</p>
+              <h3 className="font-semibold text-white mb-2">{copy("Verify Your Email")}</h3>
+              <p className="text-sm text-gray-300 mb-3">{copy("We've sent a verification email to:")}</p>
               <p className="text-blue-400 font-mono text-sm bg-blue-500/10 px-3 py-2 rounded">
                 {email}
               </p>
               <p className="text-sm text-gray-400 mt-3">
-                Please click the verification link in the email to activate your account. If you
-                don't see it, check your spam folder.
+                {copy("Please click the verification link in the email to activate your account. If you don't see it, check your spam folder.")}
               </p>
             </div>
           </div>
@@ -83,16 +86,16 @@ export default function RegistrationSuccessPage() {
           transition={{ delay: 0.6 }}
           className="bg-white/5 border border-white/10 rounded-xl p-6 mb-8 text-left"
         >
-          <h3 className="font-semibold text-white mb-4">Next Steps:</h3>
+          <h3 className="font-semibold text-white mb-4">{copy("Next Steps:")}</h3>
           <ul className="space-y-3">
             <li className="flex items-start gap-3">
               <div className="w-6 h-6 bg-blue-500 rounded-full flex items-center justify-center flex-shrink-0 mt-0.5">
                 <span className="text-white text-xs font-bold">1</span>
               </div>
               <div>
-                <p className="text-white font-medium">Verify your email address</p>
+                <p className="text-white font-medium">{copy("Verify your email address")}</p>
                 <p className="text-sm text-gray-400">
-                  Click the link in the verification email we sent you
+                  {copy("Click the link in the verification email we sent you")}
                 </p>
               </div>
             </li>
@@ -101,9 +104,9 @@ export default function RegistrationSuccessPage() {
                 <span className="text-white text-xs font-bold">2</span>
               </div>
               <div>
-                <p className="text-white font-medium">Log in to your account</p>
+                <p className="text-white font-medium">{copy("Log in to your account")}</p>
                 <p className="text-sm text-gray-400">
-                  Use your email and password to access the dashboard
+                  {copy("Use your email and password to access the dashboard")}
                 </p>
               </div>
             </li>
@@ -112,9 +115,9 @@ export default function RegistrationSuccessPage() {
                 <span className="text-white text-xs font-bold">3</span>
               </div>
               <div>
-                <p className="text-white font-medium">Complete your setup</p>
+                <p className="text-white font-medium">{copy("Complete your setup")}</p>
                 <p className="text-sm text-gray-400">
-                  Configure your company settings and invite team members
+                  {copy("Configure your company settings and invite team members")}
                 </p>
               </div>
             </li>
@@ -131,7 +134,7 @@ export default function RegistrationSuccessPage() {
             onClick={() => navigate('/login')}
             className="w-full md:w-auto px-8 py-4 bg-gradient-to-r from-blue-600 to-blue-500 text-white rounded-lg font-semibold hover:from-blue-500 hover:to-cyan-500 transition-all flex items-center justify-center gap-2 mx-auto"
           >
-            Go to Login
+            {copy("Go to Login")}
             <ArrowRight className="w-5 h-5" />
           </button>
         </motion.div>
@@ -143,7 +146,7 @@ export default function RegistrationSuccessPage() {
           transition={{ delay: 0.8 }}
           className="text-sm text-gray-500 mt-6"
         >
-          Need help? Contact our support team at{' '}
+          {copy("Need help? Contact our support team at")}{' '}
           <a href="mailto:support@erpx-ai.com" className="text-blue-400 hover:text-blue-300">
             support@erpx-ai.com
           </a>

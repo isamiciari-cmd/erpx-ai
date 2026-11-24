@@ -28,6 +28,7 @@ export interface UserWithDetails extends User {
     id: string;
     name: string;
     currency: string;
+    timezone?: string;
   };
   branch: {
     id: string;
@@ -48,7 +49,7 @@ export async function getCurrentUser(authId: string): Promise<UserWithDetails | 
       `
       *,
       role:roles(*),
-      company:companies(id, name, currency),
+      company:companies(id, name, currency, timezone),
       branch:branches(id, name)
     `,
     )

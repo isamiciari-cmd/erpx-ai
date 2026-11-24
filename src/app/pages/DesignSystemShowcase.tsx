@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useTheme } from '../context/ThemeContext';
 import { Plus, Download, Heart, Share, Trash2, Edit, Settings, Star } from 'lucide-react';
 import {
   ResponsiveContainer,
@@ -15,10 +15,10 @@ import { ResponsiveCard, FoodCard, StatCard } from '../design-system/components/
 import { designTokens } from '../design-system/tokens';
 
 export default function DesignSystemShowcase() {
-  const [darkMode, setDarkMode] = useState(false);
+  const { theme, toggleTheme } = useTheme();
 
   return (
-    <div className={`min-h-screen ${darkMode ? 'dark bg-gray-950' : 'bg-gray-50'}`}>
+    <div className="min-h-screen rounded-xl bg-[var(--app-surface)]">
       <ResponsiveContainer className="py-12">
         {/* Header */}
         <div className="mb-16">
@@ -27,10 +27,10 @@ export default function DesignSystemShowcase() {
               Design System
             </h1>
             <button
-              onClick={() => setDarkMode(!darkMode)}
+              onClick={toggleTheme}
               className="px-4 py-2 bg-gray-900 dark:bg-white text-white dark:text-black rounded-xl font-semibold"
             >
-              {darkMode ? '☀️ Light' : '🌙 Dark'}
+              {theme === 'dark' ? 'Light' : 'Dark'}
             </button>
           </div>
           <p className="text-lg text-gray-600 dark:text-gray-400">
@@ -311,7 +311,7 @@ export default function DesignSystemShowcase() {
                 {[1, 2, 3, 4, 5, 6].map((i) => (
                   <div
                     key={i}
-                    className="h-32 bg-yellow-400 rounded-xl flex items-center justify-center text-black font-bold text-2xl"
+                    className="h-32 bg-[var(--app-primary)] rounded-xl flex items-center justify-center text-[var(--app-on-primary)] font-bold text-2xl"
                   >
                     {i}
                   </div>
@@ -343,12 +343,12 @@ export default function DesignSystemShowcase() {
             <div>
               <h3 className="text-xl font-bold text-gray-900 dark:text-white mb-4">Brand Colors</h3>
               <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-4">
-                <ColorSwatch name="Primary" color="#FFC107" />
-                <ColorSwatch name="Primary Dark" color="#FFA000" />
-                <ColorSwatch name="Primary Light" color="#FFECB3" />
-                <ColorSwatch name="Secondary" color="#000000" />
-                <ColorSwatch name="Secondary Dark" color="#121212" />
-                <ColorSwatch name="Secondary Light" color="#1E1E1E" />
+                <ColorSwatch name="Primary" color={designTokens.colors.brand.primary} />
+                <ColorSwatch name="Primary Dark" color={designTokens.colors.brand.primaryDark} />
+                <ColorSwatch name="Primary Light" color={designTokens.colors.brand.primaryLight} />
+                <ColorSwatch name="Secondary" color={designTokens.colors.brand.secondary} />
+                <ColorSwatch name="Secondary Dark" color={designTokens.colors.brand.secondaryDark} />
+                <ColorSwatch name="Secondary Light" color={designTokens.colors.brand.secondaryLight} />
               </div>
             </div>
 

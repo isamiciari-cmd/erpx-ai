@@ -19,6 +19,8 @@ const uuid = /^[a-f\d]{8}(?:-[a-f\d]{4}){3}-[a-f\d]{12}$/i;
 const prefix = 'ERPX RELEASE ACCEPTANCE ';
 // Resume only the catalog-only attempt: no posted record may be replayed.
 const resumeUnpostedProduct = process.argv.includes('--resume-unposted-product');
+const dropCommittedReplies = process.argv.includes('--drop-committed-replies');
+const droppedReplies = new Map();
 const delay = (ms) => new Promise((done) => setTimeout(done, ms));
 const money = (value) => Math.round(Number(value) * 100);
 class WorkflowError extends Error {
@@ -152,6 +154,13 @@ async function loadConfig() {
     .replace(/[^a-zA-Z0-9-]/g, '')
     .slice(0, 42);
   ensure(runTag.length >= 6, 'fixture_run_id_required');
+  if (dropCommittedReplies) ensure(config.metadata?.qaKind === 'workflow' &&
+    config.metadata.state === 'ready' && config.supabaseUrl === 'https://svxmlejmhlocsjjtftxd.supabase.co',
+  'lost_reply_testing_requires_a_ready_workflow_qa_receipt');
+  if (dropCommittedReplies) ensure(uuid.test(config.accountant?.userId || '') &&
+    [config.admin, config.cashier].every(({ userId }) => userId !== config.accountant.userId) &&
+    typeof config.accountant.email === 'string' && typeof config.accountant.password === 'string',
+  'workflow_accountant_required');
   return { ...config, runTag };
 }
 
@@ -339,9 +348,7 @@ async function protectContext(context, identity) {
         target.searchParams.get('grant_type') === 'password'
       ) {
         const body = bodyOf(request);
-        allowed = [config.admin, config.cashier].some(
-          (identity) => body?.email === identity.email && body?.password === identity.password,
-        );
+        allowed = body?.email === identity.email && body?.password === identity.password;
       } else if (
         target.pathname === '/auth/v1/token' &&
         target.searchParams.get('grant_type') === 'refresh_token'
@@ -354,7 +361,28 @@ async function protectContext(context, identity) {
       }
       else allowed = allowedBusinessMutation(target.pathname, method, bodyOf(request));
     }
-    if (allowed) return route.continue();
+    if (allowed) {
+      const body = bodyOf(request);
+      const checkout = target.pathname === '/rest/v1/rpc/complete_pos_sale';
+      const firstReceipt = target.pathname === '/rest/v1/rpc/record_invoice_payment' && Number(body?.p_amount) === 40;
+      if (dropCommittedReplies && (checkout || firstReceipt)) {
+        const key = checkout ? body.p_idempotency_key : body.p_request_id;
+        const previous = droppedReplies.get(target.pathname);
+        if (!uuid.test(key || '') || (previous && (previous.key !== key || previous.retried))) {
+          state.blockedMutations.push({ path: target.pathname, reason: 'unexpected_retry_key' });
+          return route.abort('blockedbyclient');
+        }
+        if (previous) {
+          previous.retried = true;
+        } else {
+          const upstream = await route.fetch({ maxRedirects: 0, maxRetries: 0 });
+          if (!upstream.ok()) return route.fulfill({ response: upstream });
+          droppedReplies.set(target.pathname, { key, retried: false });
+          return route.abort('failed');
+        }
+      }
+      return route.continue();
+    }
     state.blockedMutations.push({
       origin:
         target.origin === config.baseUrl
@@ -399,6 +427,14 @@ function watchPage(page) {
       /Counted cash/i.test(dialog.message())
     )
       return dialog.accept('230');
+    if (
+      dialog.type() === 'alert' &&
+      pending === 'checkout_lost_reply' &&
+      /^Checkout failed/.test(dialog.message())
+    ) {
+      state.pendingDialog = null;
+      return dialog.accept();
+    }
     if (
       dialog.type() === 'alert' &&
       pending === 'checkout' &&
@@ -520,7 +556,8 @@ try {
   });
   await step('verify dedicated acceptance fixture before UI writes', async () => {
     const clients = [];
-    for (const identity of [config.admin, config.cashier]) {
+    const identities = [config.admin, config.cashier, ...(dropCommittedReplies ? [config.accountant] : [])];
+    for (const identity of identities) {
       const client = createClient(config.supabaseUrl, config.supabaseAnonKey, {
         auth: { persistSession: false, autoRefreshToken: false, detectSessionInUrl: false },
       });
@@ -529,6 +566,12 @@ try {
         password: identity.password,
       });
       ensure(!error && data.user?.id === identity.userId, 'fixture_sign_in_or_identity_mismatch');
+      if (dropCommittedReplies) {
+        const marker = data.user.app_metadata?.erpx_release_acceptance;
+        ensure(data.user.email === identity.email && identity.email.endsWith('@example.test') &&
+          marker?.run_id === config.metadata.runId && marker?.marker === config.metadata.marker,
+        'workflow_auth_marker_mismatch');
+      }
       const profile = await queryResult(
         client
           .from('users')
@@ -554,7 +597,7 @@ try {
       ensure(
         identity === config.admin
           ? ['admin', 'super_admin', 'owner', 'developer'].includes(role.name)
-          : role.name === 'cashier',
+          : role.name === (identity === config.accountant ? 'accountant' : 'cashier'),
         'fixture_role_mismatch',
       );
       clients.push(client);
@@ -563,11 +606,56 @@ try {
     const company = await queryResult(
       adminDb
         .from('companies')
-        .select('id,name,status,currency')
+        .select(dropCommittedReplies ? 'id,name,status,currency,settings,onboarding_owner_id' : 'id,name,status,currency')
         .eq('id', config.companyId)
         .single(),
       'companies',
     );
+    if (dropCommittedReplies) {
+      const marker = company.settings?.erpx_release_acceptance;
+      ensure(company.onboarding_owner_id === config.admin.userId &&
+        marker?.run_id === config.metadata.runId && marker?.marker === config.metadata.marker,
+      'workflow_company_marker_mismatch');
+      const racePath = resolve(workspace, '.tmp/release-acceptance/qa-race.private.json');
+      const race = JSON.parse(await readFile(racePath, 'utf8'));
+      ensure(race.projectRef === 'svxmlejmhlocsjjtftxd' && race.supabaseUrl === config.supabaseUrl &&
+        race.metadata?.qaKind === 'race' && race.metadata.state === 'ready' && race.companyId !== config.companyId &&
+        uuid.test(race.companyId ?? '') && uuid.test(race.warehouseId ?? ''), 'independent_race_company_required');
+      const raceDb = createClient(config.supabaseUrl, config.supabaseAnonKey, {
+        auth: { persistSession: false, autoRefreshToken: false, detectSessionInUrl: false },
+      });
+      const raceLogin = await raceDb.auth.signInWithPassword({ email: race.admin.email, password: race.admin.password });
+      const raceUser = raceLogin.data?.user;
+      ensure(!raceLogin.error && raceUser?.id === race.admin.userId &&
+        raceUser.app_metadata?.erpx_release_acceptance?.marker === race.metadata.marker,
+      'other_company_fixture_identity_not_verified');
+      const opposite = await queryResult(raceDb.from('companies').select('id,name,settings')
+        .eq('id', race.companyId).single(), 'verified_other_company');
+      ensure(opposite.name === race.companyName && opposite.settings?.erpx_release_acceptance?.marker === race.metadata.marker,
+        'other_company_marker_mismatch');
+      const products = await queryResult(raceDb.from('products').select('id').eq('company_id', race.companyId)
+        .like('sku', 'RACE-%'), 'verified_other_synthetic_product');
+      ensure(products.length === 1, 'one_other_synthetic_product_required');
+      const readOppositeStock = () => queryResult(raceDb.from('inventory').select('quantity_available')
+        .eq('product_id', products[0].id).eq('warehouse_id', race.warehouseId).single(), 'other_synthetic_stock');
+      const before = await readOppositeStock();
+      const checks = [];
+      for (const [index, client] of clients.entries()) {
+        const own = await queryResult(client.from('companies').select('id').eq('id', config.companyId), 'own_company');
+        const foreign = await queryResult(client.from('companies').select('id').eq('id', race.companyId), 'foreign_company');
+        const write = await client.rpc('receive_stock', {
+          p_company_id: race.companyId, p_product_id: products[0].id, p_warehouse_id: race.warehouseId,
+          p_quantity: 1, p_reference: 'Isolated cross-company denial probe', p_request_id: crypto.randomUUID(),
+        });
+        ensure(own.length === 1 && foreign.length === 0 && write.error?.code === '42501',
+          'cross_company_read_or_write_was_not_denied');
+        checks.push({ role: ['admin', 'cashier', 'accountant'][index], ownCompanyVisible: true, foreignReadDenied: true, foreignWriteDenied: true });
+      }
+      const reverse = await queryResult(raceDb.from('companies').select('id').eq('id', config.companyId), 'reverse_company_isolation');
+      ensure(reverse.length === 0 && Number((await readOppositeStock()).quantity_available) === Number(before.quantity_available),
+        'cross_company_probe_changed_inventory_or_reverse_isolation_failed');
+      report.evidence.companyIsolation = { checks, reverseReadDenied: true, foreignStockUnchanged: true };
+    }
     ensure(
       company.name === config.companyName &&
         company.name.startsWith(prefix) &&
@@ -825,6 +913,16 @@ try {
       await productButton.click();
       await productButton.click();
       await cashierPage.getByRole('button', { name: 'Cash', exact: true }).click();
+      if (dropCommittedReplies) {
+        state.pendingDialog = 'checkout_lost_reply';
+        await cashierPage.getByRole('button', { name: 'Complete Payment', exact: true }).click();
+        await eventually(async () => state.pendingDialog, (value) => value === null, 'checkout_network_error_not_shown');
+        const lost = droppedReplies.get('/rest/v1/rpc/complete_pos_sale');
+        ensure(Boolean(lost), 'checkout_reply_was_not_dropped');
+        const committed = await queryResult(adminDb.from('sales').select('id').eq('company_id', config.companyId)
+          .eq('idempotency_key', lost.key).single(), 'committed_checkout_before_retry');
+        ensure(Boolean(committed.id), 'checkout_commit_not_observed_before_retry');
+      }
       state.pendingDialog = 'checkout';
       await mutation(cashierPage, '/rest/v1/rpc/complete_pos_sale', () =>
         cashierPage.getByRole('button', { name: 'Complete Payment', exact: true }).click(),
@@ -845,6 +943,8 @@ try {
         'sales',
       );
       ensure(sales.length === 1, 'cashier_sale_count_mismatch');
+      if (dropCommittedReplies) ensure(droppedReplies.get('/rest/v1/rpc/complete_pos_sale')?.retried,
+        'checkout_same_key_retry_not_observed');
       state.sale = sales[0];
       ensure(
         state.sale.status === 'completed' &&
@@ -897,9 +997,19 @@ try {
     cashierPage,
   );
   await step(
-    'administrator creates a standalone invoice draft in the published UI',
+    dropCommittedReplies ? 'accountant creates a standalone invoice draft in the published UI' :
+      'administrator creates a standalone invoice draft in the published UI',
     async () => {
-      await goto(adminPage, '/finance/invoicing');
+      if (dropCommittedReplies) {
+        const financeContext = await browser.newContext({ viewport: { width: 1440, height: 1000 }, locale: 'en-US' });
+        await protectContext(financeContext, config.accountant);
+        adminPage = await financeContext.newPage();
+        adminPage.setDefaultTimeout(30000);
+        watchPage(adminPage);
+        await login(adminPage, config.accountant, '/finance/invoicing');
+      } else {
+        await goto(adminPage, '/finance/invoicing');
+      }
       await adminPage.getByRole('button', { name: 'New draft', exact: true }).click();
       await adminPage.getByRole('combobox', { name: 'Customer', exact: true }).selectOption(config.customerId);
       await adminPage
@@ -993,6 +1103,15 @@ try {
         await dialog
           .getByLabel('Bank / card reference', { exact: true })
           .fill(`REL-${config.runTag}-RECEIPT-${index}`);
+        if (dropCommittedReplies && index === 1) {
+          await dialog.getByRole('button', { name: 'Save receipt', exact: true }).click();
+          await dialog.getByRole('alert').waitFor();
+          const lost = droppedReplies.get('/rest/v1/rpc/record_invoice_payment');
+          ensure(Boolean(lost), 'receipt_reply_was_not_dropped');
+          const committed = await scopedInvoice(state.draft.id);
+          ensure(money(committed.amount_due) === 7500 && money(committed.amount_paid) === 4000,
+            'receipt_commit_not_observed_before_retry');
+        }
         await mutation(adminPage, '/rest/v1/rpc/record_invoice_payment', () =>
           dialog.getByRole('button', { name: 'Save receipt', exact: true }).click(),
         );
@@ -1019,6 +1138,8 @@ try {
           payments.length === index && payments.every((payment) => payment.status === 'completed'),
           'standalone_receipt_count_mismatch',
         );
+        if (dropCommittedReplies && index === 1) ensure(droppedReplies.get('/rest/v1/rpc/record_invoice_payment')?.retried,
+          'receipt_same_key_retry_not_observed');
         const payment = payments.find((payment) => money(payment.amount) === money(amount));
         ensure(Boolean(payment), 'receipt_amount_not_found');
         const journal = await queryResult(

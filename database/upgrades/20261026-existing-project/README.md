@@ -27,6 +27,67 @@ Private evidence under gitignored `.tmp/supabase-review/` includes the encrypted
 
 ## Recovery and verification
 
+### Primary-role replacement (2026-11-23)
+
+The company UI sends an update to `manage-users`. The function verifies the
+actor's current primary role and company, checks the target and branch, and
+updates `public.users.role_id`. On the linked legacy schema, explicit extra
+grants reside in `user_roles(user_id, role_id)`, while memberships reside in
+`user_tenants`. The deployed `get_user_roles` and `get_user_permissions`
+combine the primary role with active in-scope grants. POS and stock RPCs
+re-evaluate `user_has_permission` or `business_can_access` using the current
+primary role on each request. These live helpers and the company fences agree
+with the target-specific upgrade path. A clean canonical install has no
+legacy grant table and the trigger safely does nothing there.
+
+The migration retires only the link matching the replaced primary role, in the
+same transaction. A separately granted different role is preserved. The two
+legacy columns cannot distinguish an independent grant of the **same role** from
+a mirror. For a single-company account the replacement revokes that old pair.
+For a global role with another tenant membership and the old pair present, the
+update aborts for manual review and neither membership or role is changed.
+No historical grant cleanup or backfill is included.
+
+Isolated PostgreSQL checks exercised the deployed role-resolution logic with
+synthetic data. Both the same request identity and a newly initialized one
+could sell after demotion and were denied stock receiving. PGlite models a
+request JWT subject on a single database connection. The hosted verification
+below uses the original access token and a second Auth sign-in. An open tab
+can still display a cached role snapshot until access is fetched again. Reload
+or sign in again to update the display. The database does not require token
+renewal to enforce permissions.
+
+Review the offline plan first. Apply only after approval and a fresh verified
+DPAPI backup of the pinned project, using the existing backup procedure. The
+writer targets only this migration through the Management API and reruns the
+isolated tests before its one-time write. Do not use the fresh baseline.
+
+```powershell
+python database/upgrades/20261026-existing-project/apply-role-retirement.py
+python database/upgrades/20261026-existing-project/apply-role-retirement.py --apply --backup ".tmp/supabase-review/<verified-backup>.dpapi"
+```
+
+After an approved apply, provision a **new synthetic** fixture and run the
+hosted verification. The verifier uses the normal user-management endpoint to
+demote a marked test administrator, then checks both sessions and keeps the
+synthetic transactions. If it fails, inspect fixture state before retrying.
+
+```powershell
+python scripts/provision-live-fixture.py --apply-qa roles
+node.exe scripts/verify-live-role-change.mjs
+```
+
+Before commit a failure rolls back both trigger creation and migration history.
+After commit, use a separately approved corrective migration to drop trigger
+`retire_replaced_primary_role` on `public.users`, then drop function
+`public.retire_replaced_primary_role()`. This stops future retirement.
+It does not recreate grants removed by intervening role changes. Reconcile
+those pairs individually against the backup and approved role history. Never
+regrant former administrator access automatically. An uncertain API response
+requires a read-only history and trigger check before any further apply.
+
+### Original upgrade recovery
+
 Before commit, a failure rolls back the upgrade. After a successful commit, prefer a reviewed corrective migration; do not drop new accounting tables or reset the live database. For a genuine data incident, stop writes, preserve the current state, verify the backup SHA256/DPAPI archive, and restore it first in an isolated clone using `database/inspection/clone-live.mjs`. Reconcile original Auth IDs and later business activity before any owner-reviewed live restore. No destructive automatic rollback is supplied.
 
 After applying, capture a new redacted catalog and application-contract report, compare original-column fingerprints, check role/tenant access read-only, and build/typecheck/test the application. Run financial smoke transactions only in a separate staging project or for an actual authorized business transaction. AI provider activation, taxpayer certificates/signing and payment acquiring remain separate external integrations.

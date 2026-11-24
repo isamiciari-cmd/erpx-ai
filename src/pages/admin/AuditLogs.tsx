@@ -1,3 +1,4 @@
+import { useLocalizedCopy } from '@/i18n/localizedCopy';
 import { useState, useEffect } from 'react';
 import { supabase } from '../../lib/supabase';
 import { RequirePermission } from '../../components/auth';
@@ -23,6 +24,7 @@ interface AuditLog {
 type LogFilter = 'all' | 'users' | 'tenants' | 'finance' | 'hr' | 'inventory' | 'sales';
 
 export function AuditLogs() {
+  const copy = useLocalizedCopy();
   const { user } = useAuth();
   const { isOwner, isDeveloper } = usePermissions();
   const [logs, setLogs] = useState<AuditLog[]>([]);
@@ -87,7 +89,7 @@ export function AuditLogs() {
       setLogs(enrichedLogs);
     } catch (err) {
       console.error('Error loading audit logs:', err);
-      setError(err instanceof Error ? err.message : 'Failed to load audit logs');
+      setError("Failed to load audit logs");
     } finally {
       setLoading(false);
     }
@@ -110,14 +112,14 @@ export function AuditLogs() {
     if (action.includes('DELETE') || action.includes('REMOVE')) return 'bg-red-100 text-red-800';
     if (action.includes('LOGIN') || action.includes('LOGOUT'))
       return 'bg-purple-100 text-purple-800';
-    return 'bg-gray-100 text-gray-800';
+    return 'bg-[var(--app-surface-2)] text-[var(--app-text)]';
   };
 
   if (!isOwner && !isDeveloper) {
     return (
       <div className="p-6">
         <div className="bg-yellow-50 border border-yellow-200 text-yellow-700 px-4 py-3 rounded">
-          Access Denied: Only Owner and Developer roles can view audit logs
+          {copy("Access Denied: Only Owner and Developer roles can view audit logs")}
         </div>
       </div>
     );
@@ -126,7 +128,7 @@ export function AuditLogs() {
   if (loading) {
     return (
       <div className="flex items-center justify-center h-64">
-        <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600"></div>
+        <span role="status">{copy("Loading...")}</span>
       </div>
     );
   }
@@ -135,26 +137,26 @@ export function AuditLogs() {
     <RequirePermission permission="audit.view">
       <div className="p-6">
         <div className="mb-6">
-          <h1 className="text-3xl font-bold text-gray-900">Audit Logs</h1>
-          <p className="text-gray-600 mt-1">Complete system audit trail</p>
+          <h1 className="text-3xl font-bold text-[var(--app-text)]">{copy("Audit Logs")}</h1>
+          <p className="text-[var(--app-muted)] mt-1">{copy("Complete system audit trail")}</p>
         </div>
 
         {error && (
           <div className="bg-red-50 border border-red-200 text-red-700 px-4 py-3 rounded mb-4">
-            {error}
+            {copy(error ?? undefined)}
           </div>
         )}
 
         {/* Filters */}
-        <div className="bg-white rounded-lg shadow p-4 mb-6">
+        <div className="bg-[var(--app-surface)] rounded-lg shadow p-4 mb-6">
           <div className="flex flex-col md:flex-row gap-4">
             <div className="flex-1">
               <input
                 type="text"
-                placeholder="Search by action, table, or user..."
+                placeholder={copy("Search by action, table, or user...")}
                 value={searchTerm}
                 onChange={(e) => setSearchTerm(e.target.value)}
-                className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                className="ws-input"
               />
             </div>
             <div className="flex gap-2 flex-wrap">
@@ -167,10 +169,10 @@ export function AuditLogs() {
                   className={`px-4 py-2 rounded-lg transition ${
                     filter === f
                       ? 'bg-blue-600 text-white'
-                      : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
+                      : 'bg-[var(--app-surface-2)] text-[var(--app-muted)] hover:bg-[var(--app-accent-soft)]'
                   }`}
                 >
-                  {f.charAt(0).toUpperCase() + f.slice(1)}
+                  {copy({ all: 'All', users: 'Users', tenants: 'Tenants', finance: 'Finance', hr: 'Human Resources', inventory: 'Inventory', sales: 'Sales' }[f])}
                 </button>
               ))}
             </div>
@@ -178,39 +180,39 @@ export function AuditLogs() {
         </div>
 
         {/* Logs Table */}
-        <div className="bg-white rounded-lg shadow overflow-hidden">
+        <div className="bg-[var(--app-surface)] rounded-lg shadow overflow-hidden">
           <div className="overflow-x-auto">
-            <table className="min-w-full divide-y divide-gray-200">
-              <thead className="bg-gray-50">
+            <table className="min-w-full divide-y divide-[var(--app-border)]">
+              <thead className="bg-[var(--app-surface-2)]">
                 <tr>
-                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                    Timestamp
+                  <th className="px-6 py-3 text-start text-xs font-medium text-[var(--app-muted)] uppercase tracking-wider">
+                    {copy("Timestamp")}
                   </th>
-                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                    Action
+                  <th className="px-6 py-3 text-start text-xs font-medium text-[var(--app-muted)] uppercase tracking-wider">
+                    {copy("Action")}
                   </th>
-                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                    User
+                  <th className="px-6 py-3 text-start text-xs font-medium text-[var(--app-muted)] uppercase tracking-wider">
+                    {copy("User")}
                   </th>
-                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                    Table
+                  <th className="px-6 py-3 text-start text-xs font-medium text-[var(--app-muted)] uppercase tracking-wider">
+                    {copy("Table")}
                   </th>
-                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                    Tenant
+                  <th className="px-6 py-3 text-start text-xs font-medium text-[var(--app-muted)] uppercase tracking-wider">
+                    {copy("Tenant")}
                   </th>
-                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                    Details
+                  <th className="px-6 py-3 text-start text-xs font-medium text-[var(--app-muted)] uppercase tracking-wider">
+                    {copy("Details")}
                   </th>
                 </tr>
               </thead>
-              <tbody className="bg-white divide-y divide-gray-200">
+              <tbody className="bg-[var(--app-surface)] divide-y divide-[var(--app-border)]">
                 {filteredLogs.map((log) => (
                   <tr
                     key={log.id}
-                    className="hover:bg-gray-50 cursor-pointer"
+                    className="hover:bg-[var(--app-surface-2)] cursor-pointer"
                     onClick={() => setSelectedLog(log)}
                   >
-                    <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                    <td className="px-6 py-4 whitespace-nowrap text-sm text-[var(--app-muted)]">
                       {new Date(log.created_at).toLocaleString()}
                     </td>
                     <td className="px-6 py-4 whitespace-nowrap">
@@ -220,17 +222,17 @@ export function AuditLogs() {
                         {log.action}
                       </span>
                     </td>
-                    <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
+                    <td className="px-6 py-4 whitespace-nowrap text-sm text-[var(--app-text)]">
                       {log.user_email}
                     </td>
-                    <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                    <td className="px-6 py-4 whitespace-nowrap text-sm text-[var(--app-muted)]">
                       {log.table_name || 'N/A'}
                     </td>
-                    <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                    <td className="px-6 py-4 whitespace-nowrap text-sm text-[var(--app-muted)]">
                       {log.tenant_name}
                     </td>
-                    <td className="px-6 py-4 text-sm text-gray-500">
-                      <button className="text-blue-600 hover:text-blue-900">View Details →</button>
+                    <td className="px-6 py-4 text-sm text-[var(--app-muted)]">
+                      <button className="text-blue-600 hover:text-blue-900">{copy("View Details →")}</button>
                     </td>
                   </tr>
                 ))}
@@ -240,7 +242,7 @@ export function AuditLogs() {
 
           {filteredLogs.length === 0 && (
             <div className="text-center py-12">
-              <p className="text-gray-500">No audit logs found</p>
+              <p className="text-[var(--app-muted)]">{copy("No audit logs found")}</p>
             </div>
           )}
         </div>
@@ -248,12 +250,12 @@ export function AuditLogs() {
         {/* Details Modal */}
         {selectedLog && (
           <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center p-4 z-50">
-            <div className="bg-white rounded-lg max-w-2xl w-full max-h-[80vh] overflow-y-auto">
-              <div className="px-6 py-4 border-b border-gray-200 flex justify-between items-center">
-                <h3 className="text-lg font-semibold text-gray-900">Audit Log Details</h3>
+            <div className="bg-[var(--app-surface)] rounded-lg max-w-2xl w-full max-h-[80vh] overflow-y-auto">
+              <div className="px-6 py-4 border-b border-[var(--app-border)] flex justify-between items-center">
+                <h3 className="text-lg font-semibold text-[var(--app-text)]">{copy("Audit Log Details")}</h3>
                 <button
                   onClick={() => setSelectedLog(null)}
-                  className="text-gray-400 hover:text-gray-600"
+                  className="text-[var(--app-muted)] hover:text-[var(--app-muted)]"
                 >
                   <svg className="h-6 w-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path
@@ -267,7 +269,7 @@ export function AuditLogs() {
               </div>
               <div className="p-6 space-y-4">
                 <div>
-                  <label className="block text-sm font-medium text-gray-700">Action</label>
+                  <label className="block text-sm font-medium text-[var(--app-muted)]">{copy("Action")}</label>
                   <span
                     className={`mt-1 inline-block px-3 py-1 text-sm font-semibold rounded-full ${getActionBadgeColor(selectedLog.action)}`}
                   >
@@ -275,45 +277,45 @@ export function AuditLogs() {
                   </span>
                 </div>
                 <div>
-                  <label className="block text-sm font-medium text-gray-700">Timestamp</label>
-                  <p className="mt-1 text-sm text-gray-900">
+                  <label className="block text-sm font-medium text-[var(--app-muted)]">{copy("Timestamp")}</label>
+                  <p className="mt-1 text-sm text-[var(--app-text)]">
                     {new Date(selectedLog.created_at).toLocaleString()}
                   </p>
                 </div>
                 <div>
-                  <label className="block text-sm font-medium text-gray-700">User</label>
-                  <p className="mt-1 text-sm text-gray-900">{selectedLog.user_email}</p>
+                  <label className="block text-sm font-medium text-[var(--app-muted)]">{copy("User")}</label>
+                  <p className="mt-1 text-sm text-[var(--app-text)]">{selectedLog.user_email}</p>
                 </div>
                 <div>
-                  <label className="block text-sm font-medium text-gray-700">Table</label>
-                  <p className="mt-1 text-sm text-gray-900">{selectedLog.table_name || 'N/A'}</p>
+                  <label className="block text-sm font-medium text-[var(--app-muted)]">{copy("Table")}</label>
+                  <p className="mt-1 text-sm text-[var(--app-text)]">{selectedLog.table_name || 'N/A'}</p>
                 </div>
                 <div>
-                  <label className="block text-sm font-medium text-gray-700">Record ID</label>
-                  <p className="mt-1 text-sm text-gray-900 font-mono">
+                  <label className="block text-sm font-medium text-[var(--app-muted)]">{copy("Record ID")}</label>
+                  <p className="mt-1 text-sm text-[var(--app-text)] font-mono">
                     {selectedLog.record_id || 'N/A'}
                   </p>
                 </div>
                 {selectedLog.old_data && (
                   <div>
-                    <label className="block text-sm font-medium text-gray-700">Old Data</label>
-                    <pre className="mt-1 text-xs bg-gray-50 p-3 rounded border border-gray-200 overflow-x-auto">
+                    <label className="block text-sm font-medium text-[var(--app-muted)]">{copy("Old Data")}</label>
+                    <pre className="mt-1 text-xs bg-[var(--app-surface-2)] p-3 rounded border border-[var(--app-border)] overflow-x-auto">
                       {JSON.stringify(selectedLog.old_data, null, 2)}
                     </pre>
                   </div>
                 )}
                 {selectedLog.new_data && (
                   <div>
-                    <label className="block text-sm font-medium text-gray-700">New Data</label>
-                    <pre className="mt-1 text-xs bg-gray-50 p-3 rounded border border-gray-200 overflow-x-auto">
+                    <label className="block text-sm font-medium text-[var(--app-muted)]">{copy("New Data")}</label>
+                    <pre className="mt-1 text-xs bg-[var(--app-surface-2)] p-3 rounded border border-[var(--app-border)] overflow-x-auto">
                       {JSON.stringify(selectedLog.new_data, null, 2)}
                     </pre>
                   </div>
                 )}
                 {selectedLog.ip_address && (
                   <div>
-                    <label className="block text-sm font-medium text-gray-700">IP Address</label>
-                    <p className="mt-1 text-sm text-gray-900 font-mono">{selectedLog.ip_address}</p>
+                    <label className="block text-sm font-medium text-[var(--app-muted)]">{copy("IP Address")}</label>
+                    <p className="mt-1 text-sm text-[var(--app-text)] font-mono">{selectedLog.ip_address}</p>
                   </div>
                 )}
               </div>

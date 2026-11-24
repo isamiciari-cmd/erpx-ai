@@ -123,6 +123,38 @@ class FixtureTests(unittest.TestCase):
         self.assertEqual(receipt,replay)
         self.assertEqual(len(gateway.mutations),count)
 
+    def test_qa_receipt_provisions_four_marked_accounts_on_one_branch(self):
+        gateway, store = FakeGateway(), MemoryStore()
+        gateway.data['roles'].append({
+            'id': str(uuid.uuid4()), 'name': 'accountant', 'status': 'active', 'company_id': None,
+        })
+        receipt = provision.provision(gateway, store, PUBLIC_KEY, provision.APP_ORIGIN, 'race')
+        roles = {role['id']: role['name'] for role in gateway.data['roles']}
+        self.assertEqual(gateway.create_count, 4)
+        self.assertEqual([roles[user['role_id']] for user in gateway.data['users']],
+            ['admin', 'cashier', 'cashier', 'accountant'])
+        self.assertTrue(all(user['branch_id'] == receipt['branchId'] and user['company_id'] == receipt['companyId']
+            for user in gateway.data['users']))
+        count = len(gateway.mutations)
+        with self.assertRaisesRegex(provision.FixtureError, 'does not match'):
+            provision.provision(gateway, store, PUBLIC_KEY, provision.APP_ORIGIN, 'workflow')
+        self.assertEqual(len(gateway.mutations), count)
+
+    def test_roles_qa_contains_an_administrator_subject_distinct_from_the_operator(self):
+        gateway, store = FakeGateway(), MemoryStore()
+        gateway.data['roles'].append({
+            'id': str(uuid.uuid4()), 'name': 'accountant', 'status': 'active', 'company_id': None,
+        })
+        receipt = provision.provision(gateway, store, PUBLIC_KEY, provision.APP_ORIGIN, 'roles')
+        subject = receipt['roleSubject']
+        self.assertEqual(gateway.create_count, 5)
+        self.assertNotEqual(subject['userId'], receipt['admin']['userId'])
+        profile = next(user for user in gateway.data['users'] if user['id'] == subject['userId'])
+        self.assertEqual(profile['company_id'], receipt['companyId'])
+        self.assertEqual(profile['branch_id'], receipt['branchId'])
+        self.assertIn({'user_id': subject['userId'], 'role_id': profile['role_id']},
+            [{key: grant[key] for key in ('user_id', 'role_id')} for grant in gateway.data['user_roles']])
+
     def test_active_global_cashier_with_legacy_false_system_flag_is_reused_unchanged(self):
         gateway,store=FakeGateway(),MemoryStore()
         role=next(row for row in gateway.data['roles'] if row['name']=='cashier')

@@ -44,13 +44,9 @@ export function ResponsiveButton({
 
   const variantStyles = {
     primary: `
-      bg-gradient-to-r from-yellow-400 to-yellow-500
-      text-black
-      hover:from-yellow-500 hover:to-yellow-600
-      active:from-yellow-600 active:to-yellow-700
-      focus:ring-yellow-500
-      shadow-lg shadow-yellow-500/30
-      hover:shadow-xl hover:shadow-yellow-500/40
+      bg-[var(--app-primary)] text-[var(--app-on-primary)]
+      hover:bg-[var(--app-primary-hover)] active:bg-[var(--app-primary-hover)]
+      focus:ring-[var(--app-focus)]
     `,
     secondary: `
       bg-gray-900

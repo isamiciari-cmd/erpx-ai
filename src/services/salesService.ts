@@ -199,7 +199,7 @@ export async function completePOSSale(
       if (error.code === 'PGRST202' || error.code === '42883') {
         throw new Error('The transactional POS migration has not been deployed to this database');
       }
-      throw error;
+      throw Object.assign(new Error(error.message), error);
     }
     if (!data || data.success !== true) throw new Error('POS transaction failed');
     checkoutKeys.delete(fingerprint);

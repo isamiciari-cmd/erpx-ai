@@ -157,7 +157,10 @@ export async function registerCompany(
 
         p_max_branches: data.subscription.numberOfBranches,
         p_max_users: data.subscription.numberOfUsers,
-        p_modules: data.subscription.modules,
+        // Hosted projects accept JSONB. Fresh installations expect text[].
+        p_modules: Object.entries(data.subscription.modules)
+          .filter(([, enabled]) => enabled)
+          .map(([name]) => name),
 
         /*
          * Administrator

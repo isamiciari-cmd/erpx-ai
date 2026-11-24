@@ -1,3 +1,5 @@
+import { LanguageSwitcher } from '@/components/LanguageSwitcher';
+import { useLocalizedCopy } from '@/i18n/localizedCopy';
 import { useState } from 'react';
 import { motion } from 'motion/react';
 import { AlertCircle, Loader2, Eye, EyeOff, CheckCircle } from 'lucide-react';
@@ -5,6 +7,7 @@ import { updatePassword } from '../../services/authService';
 import { useNavigate } from 'react-router-dom';
 
 export default function ResetPasswordPage() {
+  const copy = useLocalizedCopy();
   const [newPassword, setNewPassword] = useState('');
   const [confirmPassword, setConfirmPassword] = useState('');
   const [showPassword, setShowPassword] = useState(false);
@@ -20,13 +23,13 @@ export default function ResetPasswordPage() {
 
     // Validate passwords match
     if (newPassword !== confirmPassword) {
-      setError('Passwords do not match');
+      setError("Passwords do not match");
       return;
     }
 
     // Validate password strength
     if (newPassword.length < 8) {
-      setError('Password must be at least 8 characters long');
+      setError("Password must be at least 8 characters long");
       return;
     }
 
@@ -36,7 +39,7 @@ export default function ResetPasswordPage() {
       const result = await updatePassword({ newPassword });
 
       if (result.error) {
-        setError(result.error.message || 'Failed to update password');
+        setError("Failed to update password");
         setLoading(false);
         return;
       }
@@ -49,7 +52,7 @@ export default function ResetPasswordPage() {
         navigate('/login');
       }, 3000);
     } catch (err: any) {
-      setError(err.message || 'An unexpected error occurred');
+      setError("An unexpected error occurred");
       setLoading(false);
     }
   };
@@ -57,6 +60,7 @@ export default function ResetPasswordPage() {
   if (success) {
     return (
       <div className="min-h-screen bg-black flex items-center justify-center px-4">
+      <div className="erpx-auth-language"><LanguageSwitcher variant="compact" /></div>
         <motion.div
           initial={{ opacity: 0, scale: 0.9 }}
           animate={{ opacity: 1, scale: 1 }}
@@ -67,15 +71,15 @@ export default function ResetPasswordPage() {
             <div className="w-16 h-16 bg-green-500/10 rounded-full flex items-center justify-center mx-auto mb-4">
               <CheckCircle className="w-8 h-8 text-green-400" />
             </div>
-            <h2 className="text-2xl font-bold text-white mb-2">Password Updated</h2>
+            <h2 className="text-2xl font-bold text-white mb-2">{copy("Password Updated")}</h2>
             <p className="text-gray-400 mb-6">
-              Your password has been successfully updated. Redirecting to login...
+              {copy("Your password has been successfully updated. Redirecting to login...")}
             </p>
             <button
               onClick={() => navigate('/login')}
               className="w-full px-4 py-3 bg-blue-500 hover:bg-blue-600 text-white rounded-xl font-semibold transition-colors"
             >
-              Sign In Now
+              {copy("Sign In Now")}
             </button>
           </div>
         </motion.div>
@@ -85,6 +89,7 @@ export default function ResetPasswordPage() {
 
   return (
     <div className="min-h-screen bg-black flex items-center justify-center px-4">
+      <div className="erpx-auth-language"><LanguageSwitcher variant="compact" /></div>
       <motion.div
         initial={{ opacity: 0, scale: 0.9 }}
         animate={{ opacity: 1, scale: 1 }}
@@ -93,11 +98,11 @@ export default function ResetPasswordPage() {
       >
         <div className="bg-gray-950 border border-gray-800 rounded-2xl p-8">
           <div className="mb-8">
-            <h2 className="text-3xl font-bold text-white mb-2">Set New Password</h2>
-            <p className="text-gray-500">Enter your new password below</p>
+            <h2 className="text-3xl font-bold text-white mb-2">{copy("Set New Password")}</h2>
+            <p className="text-gray-500">{copy("Enter your new password below")}</p>
           </div>
 
-          <form onSubmit={handleSubmit} className="space-y-6">
+          <form onSubmit={handleSubmit} className="space-y-6" aria-busy={loading}>
             {error && (
               <motion.div
                 initial={{ opacity: 0, y: -10 }}
@@ -105,18 +110,18 @@ export default function ResetPasswordPage() {
                 className="p-4 bg-red-500/10 border border-red-500/50 rounded-lg flex items-start gap-3"
               >
                 <AlertCircle className="w-5 h-5 text-red-500 mt-0.5 flex-shrink-0" />
-                <p className="text-sm text-red-400">{error}</p>
+                <p className="text-sm text-red-400" role="alert">{copy(error)}</p>
               </motion.div>
             )}
 
             <div>
               <label htmlFor="newPassword" className="block text-sm text-gray-400 mb-2">
-                New Password
+                {copy("New Password")}
               </label>
               <div className="relative">
                 <input
                   id="newPassword"
-                  type={showPassword ? 'text' : 'password'}
+                  type={showPassword ? 'text' : 'password'} dir="ltr"
                   value={newPassword}
                   onChange={(e) => setNewPassword(e.target.value)}
                   className="w-full px-4 py-3 bg-white/5 backdrop-blur-sm border border-white/10 rounded-lg text-white placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all pr-12"
@@ -132,17 +137,17 @@ export default function ResetPasswordPage() {
                   {showPassword ? <EyeOff className="w-5 h-5" /> : <Eye className="w-5 h-5" />}
                 </button>
               </div>
-              <p className="text-xs text-gray-500 mt-1">Must be at least 8 characters</p>
+              <p className="text-xs text-gray-500 mt-1">{copy("Must be at least 8 characters")}</p>
             </div>
 
             <div>
               <label htmlFor="confirmPassword" className="block text-sm text-gray-400 mb-2">
-                Confirm Password
+                {copy("Confirm Password")}
               </label>
               <div className="relative">
                 <input
                   id="confirmPassword"
-                  type={showConfirmPassword ? 'text' : 'password'}
+                  type={showConfirmPassword ? 'text' : 'password'} dir="ltr"
                   value={confirmPassword}
                   onChange={(e) => setConfirmPassword(e.target.value)}
                   className="w-full px-4 py-3 bg-white/5 backdrop-blur-sm border border-white/10 rounded-lg text-white placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all pr-12"
@@ -172,7 +177,7 @@ export default function ResetPasswordPage() {
               <div className="absolute inset-0 bg-gradient-to-r from-blue-500 to-cyan-500 opacity-0 group-hover:opacity-100 transition-opacity" />
               <span className="relative flex items-center justify-center gap-2">
                 {loading && <Loader2 className="w-4 h-4 animate-spin" />}
-                {loading ? 'Updating...' : 'Update Password'}
+                {loading ? copy("Updating...") : copy("Update Password")}
               </span>
             </button>
           </form>

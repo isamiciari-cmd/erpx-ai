@@ -1,3 +1,5 @@
+import { LanguageSwitcher } from '@/components/LanguageSwitcher';
+import { useLocalizedCopy } from '@/i18n/localizedCopy';
 import { useState } from 'react';
 import { motion, AnimatePresence } from 'motion/react';
 import { useNavigate } from 'react-router-dom';
@@ -55,6 +57,7 @@ const steps = [
 ];
 
 export default function CompanyRegistrationForm() {
+  const copy = useLocalizedCopy();
   const navigate = useNavigate();
 
   const [currentStep, setCurrentStep] = useState(1);
@@ -206,7 +209,7 @@ export default function CompanyRegistrationForm() {
 
     if (!validationResult.success) {
       setError(
-        'Some registration information is incomplete or invalid. Please review your information.'
+        "Some registration information is incomplete or invalid. Please review your information."
       );
       return;
     }
@@ -220,9 +223,7 @@ export default function CompanyRegistrationForm() {
 
       if (!result.success) {
         setError(
-          result.error
-            ? `${result.message}: ${result.error}`
-            : result.message || 'Registration failed. Please try again.'
+          "Registration failed. Please try again."
         );
         return;
       }
@@ -247,11 +248,7 @@ export default function CompanyRegistrationForm() {
         submitError
       );
 
-      setError(
-        submitError instanceof Error
-          ? submitError.message
-          : 'An unexpected error occurred during registration.'
-      );
+      setError("An unexpected error occurred during registration.");
     } finally {
       setLoading(false);
     }
@@ -260,7 +257,8 @@ export default function CompanyRegistrationForm() {
   const StepIcon = steps[currentStep - 1].icon;
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-gray-950 via-blue-950 to-gray-950 flex items-center justify-center p-4">
+    <div className="min-h-screen bg-gradient-to-br from-gray-950 via-blue-950 to-gray-950 flex items-center justify-center px-4 pb-4 pt-16">
+      <div className="erpx-auth-language"><LanguageSwitcher variant="compact" /></div>
       <div className="w-full max-w-4xl">
         <motion.div
           initial={{ opacity: 0, y: -20 }}
@@ -268,11 +266,11 @@ export default function CompanyRegistrationForm() {
           className="text-center mb-8"
         >
           <h1 className="text-4xl font-bold text-white mb-2">
-            Register New Company
+            {copy("Register New Company")}
           </h1>
 
           <p className="text-gray-400">
-            Create your ERPX-AI enterprise account
+            {copy("Create your ERPX-AI enterprise account")}
           </p>
         </motion.div>
 
@@ -301,7 +299,7 @@ export default function CompanyRegistrationForm() {
                   </div>
 
                   <p className="text-xs text-gray-400 mt-2 text-center hidden sm:block">
-                    {step.title}
+                    {copy(step.title)}
                   </p>
                 </div>
 
@@ -331,11 +329,11 @@ export default function CompanyRegistrationForm() {
 
             <div>
               <h2 className="text-2xl font-bold text-white">
-                {steps[currentStep - 1].title}
+                {copy(steps[currentStep - 1].title)}
               </h2>
 
               <p className="text-sm text-gray-400">
-                Step {currentStep} of {steps.length}
+                {copy("Step")} {currentStep} {copy("of")} {steps.length}
               </p>
             </div>
           </div>
@@ -343,7 +341,7 @@ export default function CompanyRegistrationForm() {
           {error && (
             <div className="mb-6 p-4 bg-red-500/10 border border-red-500/50 rounded-lg">
               <p className="text-sm text-red-400">
-                {error}
+                {copy(error)}
               </p>
             </div>
           )}
@@ -390,7 +388,7 @@ export default function CompanyRegistrationForm() {
                 className="px-6 py-3 bg-gray-800 hover:bg-gray-700 text-white rounded-lg font-semibold transition-all disabled:opacity-50 flex items-center gap-2"
               >
                 <ArrowLeft className="w-5 h-5" />
-                Previous
+                {copy("Previous")}
               </button>
             )}
 
@@ -400,7 +398,7 @@ export default function CompanyRegistrationForm() {
               disabled={loading}
               className="px-6 py-3 text-gray-400 hover:text-white transition-colors disabled:opacity-50"
             >
-              Cancel
+              {copy("Cancel")}
             </button>
 
             <div className="flex-1" />
@@ -412,7 +410,7 @@ export default function CompanyRegistrationForm() {
                 disabled={loading}
                 className="px-6 py-3 bg-gradient-to-r from-blue-600 to-blue-500 text-white rounded-lg font-semibold hover:from-blue-500 hover:to-cyan-500 transition-all disabled:opacity-50 flex items-center gap-2"
               >
-                Next
+                {copy("Next")}
                 <ArrowRight className="w-5 h-5" />
               </button>
             ) : (
@@ -427,8 +425,8 @@ export default function CompanyRegistrationForm() {
                 )}
 
                 {loading
-                  ? 'Creating Account...'
-                  : 'Create Company Account'}
+                  ? copy("Creating Account...")
+                  : copy("Create Company Account")}
               </button>
             )}
           </div>

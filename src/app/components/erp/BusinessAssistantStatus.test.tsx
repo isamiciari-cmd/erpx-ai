@@ -1,16 +1,32 @@
-import { beforeEach, describe, expect, it, vi } from 'vitest';
+﻿import { beforeEach, describe, expect, it, vi } from 'vitest';
 import { renderToStaticMarkup } from 'react-dom/server';
 import {
   BusinessAssistantError,
   type BusinessAssistantStatus as Status,
 } from '../../../services/aiGatewayService';
+import { workspaceResources } from '../../../i18n/workspace';
 import BusinessAssistantStatus from './BusinessAssistantStatus';
 
 const locale = vi.hoisted(() => ({ language: 'en' }));
 vi.mock('react-i18next', () => ({
-  useTranslation: () => ({ i18n: { language: locale.language } }),
+  useTranslation: () => ({
+    i18n: { language: locale.language },
+    t: (key: string) => {
+      const resources = locale.language === 'ar' ? workspaceResources.ar : workspaceResources.en;
+      return (
+        key
+          .split('.')
+          .reduce<unknown>(
+            (value, part) =>
+              value && typeof value === 'object'
+                ? (value as Record<string, unknown>)[part]
+                : undefined,
+            resources,
+          ) ?? key
+      );
+    },
+  }),
 }));
-
 const status: Status = {
   provider: 'ollama',
   model: 'qwen2.5:3b',
@@ -40,29 +56,29 @@ beforeEach(() => {
 });
 
 describe('Assistant connection display', () => {
-  it('identifies the free local model while distinguishing gateway health from generation', () => {
+  it('identifies the real returned model while distinguishing gateway health from generation', () => {
     const html = render();
-    expect(html).toContain('Free local model');
+    expect(html).toContain(workspaceResources.en.assistant.local);
     expect(html).toContain('qwen2.5:3b');
-    expect(html).toContain('Local service connected');
-    expect(html).toContain('model generation is confirmed only by a successful answer');
+    expect(html).toContain(workspaceResources.en.assistant.connectedLocal);
+    expect(html).toContain(workspaceResources.en.assistant.localHint);
   });
   it('does not claim a model is connected from configuration alone', () => {
     const html = render({
       status: { ...status, healthChecked: false, healthScope: 'configuration' },
     });
-    expect(html).toContain('Connection unverified');
-    expect(html).not.toContain('Local service connected');
+    expect(html).toContain(workspaceResources.en.assistant.unverified);
+    expect(html).not.toContain(workspaceResources.en.assistant.connectedLocal);
   });
   it('shows offline state without retaining the connected indicator', () => {
     const html = render({ status: { ...status, available: false } });
-    expect(html).toContain('Model offline');
-    expect(html).not.toContain('Local service connected');
+    expect(html).toContain(workspaceResources.en.assistant.offline);
+    expect(html).not.toContain(workspaceResources.en.assistant.connectedLocal);
   });
   it('does not claim a connection before a status check finishes', () => {
     const html = render({ status: null, loading: true });
-    expect(html).toContain('Checking connection');
-    expect(html).not.toContain('Local service connected');
+    expect(html).toContain(workspaceResources.en.assistant.checking);
+    expect(html).not.toContain(workspaceResources.en.assistant.connectedLocal);
   });
   it('localizes the actual model state and safe error in Arabic', () => {
     locale.language = 'ar';
@@ -71,8 +87,29 @@ describe('Assistant connection display', () => {
       error: new BusinessAssistantError('provider_unavailable'),
     });
     expect(html).toContain('dir="rtl"');
-    expect(html).toContain('نموذج محلي مجاني');
-    expect(html).toContain('النموذج غير متصل');
-    expect(html).toContain('أبقِ جهاز النموذج المحلي');
+    expect(html).toContain(workspaceResources.ar.assistant.local);
+    expect(html).toContain(workspaceResources.ar.assistant.offline);
+    expect(html).toContain(workspaceResources.ar.assistant.localHint);
+    expect(html).toContain('النموذج غير متصل أو مشغول');
+  });
+  it('does not claim hosted configuration is verified connectivity or model inference', () => {
+    const html = render({
+      status: {
+        ...status,
+        provider: 'openai',
+        deploymentMode: 'hosted_api',
+        healthChecked: false,
+        healthScope: 'configuration',
+      },
+    });
+    expect(html).toContain(workspaceResources.en.assistant.paid);
+    expect(html).toContain(workspaceResources.en.assistant.unverified);
+    expect(html).not.toContain(workspaceResources.en.assistant.connectedHosted);
+  });
+  it('shows an unavailable neutral state when no check result exists', () => {
+    const html = render({ status: null });
+    expect(html).toContain(workspaceResources.en.assistant.unavailable);
+    expect(html).not.toContain('ws-tone-success');
+    expect(html).not.toContain('qwen2.5:3b');
   });
 });

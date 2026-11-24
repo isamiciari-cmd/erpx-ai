@@ -24,6 +24,13 @@ describe('transactional checkout boundary',() => {
     await completePOSSale(sale);
     expect(rpc.mock.calls[0][1].p_idempotency_key).toBe(rpc.mock.calls[1][1].p_idempotency_key);
   });
+  it('preserves the database rejection as a readable checkout error', async () => {
+    rpc.mockResolvedValue({
+      data: null,
+      error: { code: 'P0001', message: 'Insufficient available stock' },
+    });
+    await expect(completePOSSale(input('stock rejection'))).rejects.toThrow('Insufficient available stock');
+  });
   it('merges simultaneous submission of the same cart',async () => {
     let resolve!:(value:unknown) => void;
     rpc.mockReturnValue(new Promise(done => { resolve=done; }));

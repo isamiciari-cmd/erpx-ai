@@ -1,12 +1,5 @@
 @custom-variant dark (&:is(.dark *));
 
-/* Force RTL and proper font for Arabic */
-html[lang='ar'] * {
-  direction: rtl !important;
-  font-family: 'IBM Plex Sans Arabic', 'Cairo', 'Tajawal', sans-serif !important;
-  unicode-bidi: isolate !important;
-}
-
 :root {
   --font-size: 16px;
   --background: #ffffff;
@@ -49,25 +42,25 @@ html[lang='ar'] * {
 }
 
 .dark {
-  --background: oklch(0.145 0 0);
+  --background: var(--app-bg);
   --foreground: oklch(0.985 0 0);
-  --card: oklch(0.145 0 0);
+  --card: var(--app-surface);
   --card-foreground: oklch(0.985 0 0);
-  --popover: oklch(0.145 0 0);
+  --popover: var(--app-surface-2);
   --popover-foreground: oklch(0.985 0 0);
-  --primary: oklch(0.985 0 0);
-  --primary-foreground: oklch(0.205 0 0);
-  --secondary: oklch(0.269 0 0);
+  --primary: var(--app-primary);
+  --primary-foreground: var(--app-on-primary);
+  --secondary: var(--app-surface-2);
   --secondary-foreground: oklch(0.985 0 0);
-  --muted: oklch(0.269 0 0);
-  --muted-foreground: oklch(0.708 0 0);
-  --accent: oklch(0.269 0 0);
+  --muted: var(--app-surface-2);
+  --muted-foreground: var(--app-muted);
+  --accent: var(--app-accent-soft);
   --accent-foreground: oklch(0.985 0 0);
   --destructive: oklch(0.396 0.141 25.723);
   --destructive-foreground: oklch(0.637 0.237 25.331);
-  --border: oklch(0.269 0 0);
-  --input: oklch(0.269 0 0);
-  --ring: oklch(0.439 0 0);
+  --border: var(--app-border);
+  --input: var(--app-border);
+  --ring: var(--app-focus);
   --font-weight-medium: 500;
   --font-weight-normal: 400;
   --chart-1: oklch(0.488 0.243 264.376);

@@ -1,4 +1,19 @@
-import BusinessRecordsPage, { type BusinessField } from './BusinessRecordsPage';
+import { useTranslation } from 'react-i18next';
+import RecordsPage, {
+  type BusinessField,
+  type BusinessRecordsPageProps,
+} from './BusinessRecordsPage';
+
+function BusinessRecordsPage(props: BusinessRecordsPageProps) {
+  const { t } = useTranslation('finance');
+  return (
+    <RecordsPage
+      {...props}
+      title={t(`modules.${props.module}.title`)}
+      description={t(`modules.${props.module}.description`)}
+    />
+  );
+}
 
 const notes: BusinessField = { key: 'notes', label: 'Notes', type: 'textarea' };
 const employee: BusinessField = { key: 'employee_id', label: 'Employee', required: true };

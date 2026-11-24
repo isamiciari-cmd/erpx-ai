@@ -111,6 +111,97 @@ try {
     const afterHelpers = (await db.query("SELECT proname,pg_get_functiondef(oid) AS definition,proacl::text FROM pg_proc WHERE oid IN ('public.get_user_company_id()'::regprocedure,'public.user_has_permission(text)'::regprocedure) ORDER BY proname")).rows;
     assert.deepEqual(afterHelpers, beforeHelpers);
   });
+  const primaryRoleMigration = '20261123000100_retire_replaced_primary_role.sql';
+  await db.exec(await readFile(new URL(primaryRoleMigration, migrations), 'utf8'));
+  await test('primary role updates work on a fresh schema without user_roles', async () => {
+    await db.query('UPDATE public.users SET role_id=$1 WHERE id=$2', [ids.role, ids.viewer]);
+    assert.equal((await one('SELECT role_id FROM public.users WHERE id=$1', [ids.viewer])).role_id, ids.role);
+    await db.query('UPDATE public.users SET role_id=$1 WHERE id=$2', [ids.viewerRole, ids.viewer]);
+  });
+  await test('replacing a primary role retires its mirror, preserves other grants and rolls back together', async () => {
+    await db.exec('CREATE TABLE public.user_roles (user_id uuid NOT NULL, role_id uuid NOT NULL, PRIMARY KEY(user_id, role_id))');
+    const additional = (await one("INSERT INTO public.roles(company_id,name) VALUES($1,'additional fixture grant') RETURNING id", [ids.company])).id;
+    await db.query('INSERT INTO public.user_roles VALUES ($1,$2),($1,$3),($4,$2)', [ids.viewer, ids.viewerRole, additional, ids.admin]);
+
+    await db.query('UPDATE public.users SET role_id=$1 WHERE id=$2', [ids.viewerRole, ids.viewer]);
+    assert.equal((await one('SELECT count(*)::int AS count FROM public.user_roles WHERE user_id=$1', [ids.viewer])).count, 2);
+    await db.exec('BEGIN');
+    await db.query('UPDATE public.users SET role_id=$1 WHERE id=$2', [ids.role, ids.viewer]);
+    assert.equal(await one('SELECT role_id FROM public.user_roles WHERE user_id=$1 AND role_id=$2', [ids.viewer, ids.viewerRole]), undefined);
+    await db.exec('ROLLBACK');
+    assert.equal((await one('SELECT role_id FROM public.users WHERE id=$1', [ids.viewer])).role_id, ids.viewerRole);
+    assert.ok(await one('SELECT role_id FROM public.user_roles WHERE user_id=$1 AND role_id=$2', [ids.viewer, ids.viewerRole]));
+    await db.query('UPDATE public.users SET role_id=$1 WHERE id=$2', [ids.role, ids.viewer]);
+    assert.deepEqual((await db.query('SELECT role_id FROM public.user_roles WHERE user_id=$1', [ids.viewer])).rows, [{ role_id: additional }]);
+    assert.ok(await one('SELECT role_id FROM public.user_roles WHERE user_id=$1 AND role_id=$2', [ids.admin, ids.viewerRole]));
+    assert.equal((await one("SELECT has_function_privilege('authenticated','public.retire_replaced_primary_role()','EXECUTE') AS allowed")).allowed, false);
+  });
+  await db.exec(`
+    CREATE TABLE public.tenants(id uuid PRIMARY KEY, status text);
+    CREATE TABLE public.user_tenants(user_id uuid, tenant_id uuid);
+    ALTER TABLE public.companies ADD COLUMN tenant_id uuid;
+    ALTER TABLE public.roles ADD COLUMN level integer;
+    INSERT INTO public.tenants VALUES ('${ids.company}','active'),('${ids.otherCompany}','active');
+    UPDATE public.companies SET tenant_id=id WHERE id IN ('${ids.company}','${ids.otherCompany}');
+  `);
+  const liveOverrides = await readFile(new URL('../upgrades/20261026-existing-project/target-overrides.sql', import.meta.url), 'utf8');
+  for (const name of ['get_user_company_id', 'user_has_permission', 'get_user_roles']) {
+    const start = liveOverrides.indexOf('CREATE OR REPLACE FUNCTION public.' + name + '(');
+    assert.notEqual(start, -1);
+    await db.exec(liveOverrides.slice(start, liveOverrides.indexOf('$$;', start) + 3));
+  }
+  const globalAdmin = (await one("SELECT id FROM public.roles WHERE name='admin' AND company_id IS NULL")).id;
+  const cashier = (await one("INSERT INTO public.roles(company_id,name,permissions) VALUES($1,'cashier','{\"pos_access\":true}') RETURNING id", [ids.company])).id;
+  const foreignRole = (await one("INSERT INTO public.roles(company_id,name) VALUES($1,'foreign fixture grant') RETURNING id", [ids.otherCompany])).id;
+  const branch = (await one("INSERT INTO public.branches(company_id,name,code) VALUES($1,'QA branch','QA') RETURNING id", [ids.company])).id;
+  const warehouse = (await one("INSERT INTO public.warehouses(company_id,branch_id,name,code) VALUES($1,$2,'QA warehouse','QA') RETURNING id", [ids.company, branch])).id;
+  const product = (await one("INSERT INTO public.products(company_id,sku,product_name,unit_price,cost_price,vat_rate) VALUES($1,'QA','QA product',100,30,15) RETURNING id", [ids.company])).id;
+  await db.query('UPDATE public.users SET role_id=$1,branch_id=$2 WHERE id=$3', [globalAdmin, branch, ids.viewer]);
+  await db.query('INSERT INTO public.user_roles VALUES ($1,$2),($1,$3)', [ids.viewer, globalAdmin, foreignRole]);
+  await db.query('INSERT INTO public.user_tenants VALUES ($1,$2),($1,$3)', [ids.viewer, ids.company, ids.otherCompany]);
+  await test('ambiguous old global grant with another membership blocks the update and preserves both companies', async () => {
+    await assert.rejects(db.query('UPDATE public.users SET role_id=$1 WHERE id=$2', [cashier, ids.viewer]), /Review the old global role/);
+    assert.equal((await one('SELECT role_id FROM public.users WHERE id=$1', [ids.viewer])).role_id, globalAdmin);
+    assert.ok(await one('SELECT role_id FROM public.user_roles WHERE user_id=$1 AND role_id=$2', [ids.viewer, globalAdmin]));
+    assert.deepEqual((await db.query('SELECT tenant_id FROM public.user_tenants WHERE user_id=$1 ORDER BY tenant_id', [ids.viewer])).rows,
+      [{ tenant_id: ids.company }, { tenant_id: ids.otherCompany }]);
+    assert.ok(await one('SELECT role_id FROM public.user_roles WHERE user_id=$1 AND role_id=$2', [ids.viewer, foreignRole]));
+  });
+
+  await db.query('DELETE FROM public.user_tenants WHERE user_id=$1 AND tenant_id=$2', [ids.viewer, ids.otherCompany]);
+  const receive = () => one('SELECT public.receive_stock($1,$2,$3,2,$4,gen_random_uuid()) AS receipt',
+    [ids.company, product, warehouse, 'Isolated authorization check']);
+  const roleNames = async () => (await db.query('SELECT role_name FROM public.get_user_roles($1) ORDER BY role_name', [ids.viewer])).rows.map(row => row.role_name);
+  const shift = (await one("INSERT INTO public.shifts(company_id,branch_id,cashier_id,shift_number) VALUES($1,$2,$3,'QA') RETURNING id",
+    [ids.company, branch, ids.viewer])).id;
+  const checkout = () => one(`SELECT public.complete_pos_sale($1,$2,$3,$4,'cash',NULL,
+    jsonb_build_array(jsonb_build_object('product_id',$5::uuid,'quantity',1)),0,NULL,gen_random_uuid(),$6) AS result`,
+  [ids.company, branch, ids.viewer, shift, product, warehouse]);
+  const checkCashier = async () => {
+    const names = await roleNames();
+    assert.ok(names.includes('cashier'));
+    assert.ok(names.includes('additional fixture grant'));
+    assert.ok(!names.includes('admin') && !names.includes('foreign fixture grant'));
+    assert.equal((await one("SELECT public.user_has_permission('admin') AS allowed")).allowed, false);
+    await assert.rejects(receive(), /Inventory permission required/);
+    assert.equal((await checkout()).result.success, true);
+  };
+
+  await test('existing request identity loses manager writes immediately and can still complete checkout', async () =>
+    asRole('authenticated', ids.viewer, async () => {
+      assert.ok((await roleNames()).includes('admin'));
+      assert.ok((await receive()).receipt);
+      // The test executor models another connection's committed administration
+      // update, then resumes the same request identity without resetting its JWT subject.
+      await db.exec('RESET ROLE');
+      await db.query('UPDATE public.users SET role_id=$1 WHERE id=$2', [cashier, ids.viewer]);
+      await db.exec('SET ROLE authenticated');
+      await checkCashier();
+    }));
+  await test('a freshly initialized request identity sees the same cashier authorization', async () =>
+    asRole('authenticated', ids.viewer, checkCashier));
+  assert.ok(await one('SELECT role_id FROM public.user_roles WHERE user_id=$1 AND role_id=$2', [ids.viewer, foreignRole]));
+  assert.equal(Number((await one('SELECT quantity_available FROM public.inventory WHERE product_id=$1', [product])).quantity_available), 0);
   console.log('\n' + count + ' role security PostgreSQL checks passed.');
 } catch (error) {
   console.error('FAIL ' + error.message + (error.where ? '\n' + error.where : ''));

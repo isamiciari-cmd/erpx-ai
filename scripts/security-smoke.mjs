@@ -104,7 +104,7 @@ try {
   // Vite build sets NODE_ENV=production process-wide. Restore development before
   // testing the explicitly local demo branch in this same Node process.
   process.env.NODE_ENV = 'development';
-  const development = await createServer({ ...config(true), mode: 'development', server: { host: '127.0.0.1', port: 0, strictPort: true } });
+  const development = await createServer({ ...config(true), mode: 'development', server: { host: '127.0.0.1', port: 0 } });
   await development.listen();
   servers.push(development);
   const base = origin(development);

@@ -1,3 +1,4 @@
+import { useLocalizedCopy } from '@/i18n/localizedCopy';
 import { useState, useEffect } from 'react';
 import { supabase } from '../../lib/supabase';
 import { RequireRole } from '../../components/auth';
@@ -22,6 +23,7 @@ interface Profile {
 }
 
 export function EmergencyAccess() {
+  const copy = useLocalizedCopy();
   const [logs, setLogs] = useState<EmergencyAccessLog[]>([]);
   const [profiles, setProfiles] = useState<Profile[]>([]);
   const [loading, setLoading] = useState(true);
@@ -89,7 +91,7 @@ export function EmergencyAccess() {
       setProfiles(profilesData || []);
     } catch (err) {
       console.error('Error loading emergency access data:', err);
-      setError(err instanceof Error ? err.message : 'Failed to load emergency access data');
+      setError("Failed to load emergency access data");
     } finally {
       setLoading(false);
     }
@@ -97,7 +99,7 @@ export function EmergencyAccess() {
 
   const grantEmergencyAccess = async () => {
     if (!selectedUser || !reason) {
-      alert('Please select a user and provide a reason');
+      alert(copy("Please select a user and provide a reason"));
       return;
     }
 
@@ -113,21 +115,21 @@ export function EmergencyAccess() {
 
       if (error) throw error;
 
-      alert('Emergency access granted successfully');
+      alert(copy("Emergency access granted successfully"));
       setSelectedUser('');
       setReason('');
       setDurationHours(24);
       loadData();
     } catch (err) {
       console.error('Error granting emergency access:', err);
-      setError(err instanceof Error ? err.message : 'Failed to grant emergency access');
+      setError("Failed to grant emergency access");
     } finally {
       setGranting(false);
     }
   };
 
   const revokeEmergencyAccess = async (accessId: string) => {
-    if (!confirm('Are you sure you want to revoke this emergency access?')) {
+    if (!confirm(copy("Are you sure you want to revoke this emergency access?"))) {
       return;
     }
 
@@ -138,11 +140,11 @@ export function EmergencyAccess() {
 
       if (error) throw error;
 
-      alert('Emergency access revoked successfully');
+      alert(copy("Emergency access revoked successfully"));
       loadData();
     } catch (err) {
       console.error('Error revoking emergency access:', err);
-      alert(err instanceof Error ? err.message : 'Failed to revoke emergency access');
+      alert(err instanceof Error ? err.message : copy("Failed to revoke emergency access"));
     }
   };
 
@@ -153,7 +155,7 @@ export function EmergencyAccess() {
   if (loading) {
     return (
       <div className="flex items-center justify-center h-64">
-        <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600"></div>
+        <span role="status">{copy("Loading...")}</span>
       </div>
     );
   }
@@ -162,30 +164,30 @@ export function EmergencyAccess() {
     <RequireRole role="owner">
       <div className="p-6">
         <div className="mb-6">
-          <h1 className="text-3xl font-bold text-gray-900">Emergency Access</h1>
-          <p className="text-gray-600 mt-1">
-            Grant temporary elevated access with full audit trail
+          <h1 className="text-3xl font-bold text-[var(--app-text)]">{copy("Emergency Access")}</h1>
+          <p className="text-[var(--app-muted)] mt-1">
+            {copy("Grant temporary elevated access with full audit trail")}
           </p>
         </div>
 
         {error && (
           <div className="bg-red-50 border border-red-200 text-red-700 px-4 py-3 rounded mb-4">
-            {error}
+            {copy(error ?? undefined)}
           </div>
         )}
 
         {/* Grant Access Form */}
-        <div className="bg-white rounded-lg shadow p-6 mb-6">
-          <h2 className="text-lg font-semibold text-gray-900 mb-4">Grant Emergency Access</h2>
+        <div className="bg-[var(--app-surface)] rounded-lg shadow p-6 mb-6">
+          <h2 className="text-lg font-semibold text-[var(--app-text)] mb-4">{copy("Grant Emergency Access")}</h2>
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-1">Select User</label>
+              <label className="block text-sm font-medium text-[var(--app-muted)] mb-1">{copy("Select User")}</label>
               <select
                 value={selectedUser}
                 onChange={(e) => setSelectedUser(e.target.value)}
-                className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500"
+                className="ws-input"
               >
-                <option value="">-- Select User --</option>
+                <option value="">{copy("-- Select User --")}</option>
                 {profiles.map((profile) => (
                   <option key={profile.id} value={profile.id}>
                     {profile.full_name || profile.email} ({profile.email})
@@ -194,8 +196,8 @@ export function EmergencyAccess() {
               </select>
             </div>
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-1">
-                Duration (hours)
+              <label className="block text-sm font-medium text-[var(--app-muted)] mb-1">
+                {copy("Duration (hours)")}
               </label>
               <input
                 type="number"
@@ -203,19 +205,19 @@ export function EmergencyAccess() {
                 onChange={(e) => setDurationHours(parseInt(e.target.value))}
                 min="1"
                 max="168"
-                className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500"
+                className="ws-input"
               />
             </div>
             <div className="md:col-span-2">
-              <label className="block text-sm font-medium text-gray-700 mb-1">
-                Reason (Required)
+              <label className="block text-sm font-medium text-[var(--app-muted)] mb-1">
+                {copy("Reason (Required)")}
               </label>
               <textarea
                 value={reason}
                 onChange={(e) => setReason(e.target.value)}
-                placeholder="Explain why emergency access is needed..."
+                placeholder={copy("Explain why emergency access is needed...")}
                 rows={3}
-                className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500"
+                className="ws-input"
               />
             </div>
             <div className="md:col-span-2">
@@ -224,70 +226,70 @@ export function EmergencyAccess() {
                 disabled={granting}
                 className="px-6 py-2 bg-orange-600 text-white rounded-lg hover:bg-orange-700 transition disabled:opacity-50"
               >
-                {granting ? 'Granting...' : 'Grant Emergency Access'}
+                {granting ? 'Granting...' : copy("Grant Emergency Access")}
               </button>
             </div>
           </div>
         </div>
 
         {/* Emergency Access Logs */}
-        <div className="bg-white rounded-lg shadow overflow-hidden">
-          <div className="px-6 py-4 border-b border-gray-200">
-            <h2 className="text-lg font-semibold text-gray-900">Emergency Access History</h2>
+        <div className="bg-[var(--app-surface)] rounded-lg shadow overflow-hidden">
+          <div className="px-6 py-4 border-b border-[var(--app-border)]">
+            <h2 className="text-lg font-semibold text-[var(--app-text)]">{copy("Emergency Access History")}</h2>
           </div>
           <div className="overflow-x-auto">
-            <table className="min-w-full divide-y divide-gray-200">
-              <thead className="bg-gray-50">
+            <table className="min-w-full divide-y divide-[var(--app-border)]">
+              <thead className="bg-[var(--app-surface-2)]">
                 <tr>
-                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                    User
+                  <th className="px-6 py-3 text-start text-xs font-medium text-[var(--app-muted)] uppercase tracking-wider">
+                    {copy("User")}
                   </th>
-                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                    Reason
+                  <th className="px-6 py-3 text-start text-xs font-medium text-[var(--app-muted)] uppercase tracking-wider">
+                    {copy("Reason")}
                   </th>
-                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                    Granted
+                  <th className="px-6 py-3 text-start text-xs font-medium text-[var(--app-muted)] uppercase tracking-wider">
+                    {copy("Granted")}
                   </th>
-                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                    Expires
+                  <th className="px-6 py-3 text-start text-xs font-medium text-[var(--app-muted)] uppercase tracking-wider">
+                    {copy("Expires")}
                   </th>
-                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                    Status
+                  <th className="px-6 py-3 text-start text-xs font-medium text-[var(--app-muted)] uppercase tracking-wider">
+                    {copy("Status")}
                   </th>
-                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                    Actions
+                  <th className="px-6 py-3 text-start text-xs font-medium text-[var(--app-muted)] uppercase tracking-wider">
+                    {copy("Actions")}
                   </th>
                 </tr>
               </thead>
-              <tbody className="bg-white divide-y divide-gray-200">
+              <tbody className="bg-[var(--app-surface)] divide-y divide-[var(--app-border)]">
                 {logs.map((log) => (
-                  <tr key={log.id} className="hover:bg-gray-50">
-                    <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">
+                  <tr key={log.id} className="hover:bg-[var(--app-surface-2)]">
+                    <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-[var(--app-text)]">
                       {log.user_email}
                     </td>
-                    <td className="px-6 py-4 text-sm text-gray-900">{log.reason}</td>
-                    <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                    <td className="px-6 py-4 text-sm text-[var(--app-text)]">{log.reason}</td>
+                    <td className="px-6 py-4 whitespace-nowrap text-sm text-[var(--app-muted)]">
                       {new Date(log.granted_at).toLocaleString()}
                     </td>
-                    <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                    <td className="px-6 py-4 whitespace-nowrap text-sm text-[var(--app-muted)]">
                       {new Date(log.expires_at).toLocaleString()}
                     </td>
                     <td className="px-6 py-4 whitespace-nowrap">
                       {isActive(log) ? (
                         <span className="px-2 py-1 text-xs font-semibold rounded-full bg-green-100 text-green-800">
-                          Active
+                          {copy("Active")}
                         </span>
                       ) : log.revoked_at ? (
                         <span className="px-2 py-1 text-xs font-semibold rounded-full bg-red-100 text-red-800">
-                          Revoked
+                          {copy("Revoked")}
                         </span>
                       ) : isExpired(log.expires_at) ? (
-                        <span className="px-2 py-1 text-xs font-semibold rounded-full bg-gray-100 text-gray-800">
-                          Expired
+                        <span className="px-2 py-1 text-xs font-semibold rounded-full bg-[var(--app-surface-2)] text-[var(--app-text)]">
+                          {copy("Expired")}
                         </span>
                       ) : (
                         <span className="px-2 py-1 text-xs font-semibold rounded-full bg-yellow-100 text-yellow-800">
-                          Inactive
+                          {copy("Inactive")}
                         </span>
                       )}
                     </td>
@@ -297,12 +299,12 @@ export function EmergencyAccess() {
                           onClick={() => revokeEmergencyAccess(log.id)}
                           className="text-red-600 hover:text-red-900"
                         >
-                          Revoke
+                          {copy("Revoke")}
                         </button>
                       ) : log.revoked_at ? (
-                        <span className="text-gray-400">Revoked by {log.revoked_by_email}</span>
+                        <span className="text-[var(--app-muted)]">{copy("Revoked by")} {log.revoked_by_email}</span>
                       ) : (
-                        <span className="text-gray-400">-</span>
+                        <span className="text-[var(--app-muted)]">-</span>
                       )}
                     </td>
                   </tr>
@@ -312,7 +314,7 @@ export function EmergencyAccess() {
 
             {logs.length === 0 && (
               <div className="text-center py-12">
-                <p className="text-gray-500">No emergency access records</p>
+                <p className="text-[var(--app-muted)]">{copy("No emergency access records")}</p>
               </div>
             )}
           </div>

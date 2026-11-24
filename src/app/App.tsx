@@ -1,10 +1,17 @@
 import React, { lazy, Suspense } from 'react';
-import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom';
+import {
+  createBrowserRouter,
+  createRoutesFromElements,
+  RouterProvider,
+  Route,
+  Navigate,
+} from 'react-router-dom';
 import { ToastProvider } from './components/ui/Toast';
 import { ThemeProvider } from './context/ThemeContext';
-import { AuthProvider } from '../contexts/AuthContext';
+import { AuthProvider, useAuth } from '../contexts/AuthContext';
 import '../i18n/config';
 import { ErrorBoundary } from './components/ErrorBoundary';
+import { useTranslation } from 'react-i18next';
 const ProductionLogin = lazy(() => import('./components/ProductionLogin'));
 import ProtectedRoute from '../components/ProtectedRoute';
 const ForgotPasswordPage = lazy(() => import('./pages/ForgotPasswordPage'));
@@ -29,7 +36,10 @@ const ControlTowerPage = lazy(() => import('./pages/ControlTowerPage'));
 const AutomationRulesPage = lazy(() => import('./pages/AutomationRulesPage'));
 const PermissionsPage = lazy(() => import('./pages/PermissionsPage'));
 const SupabaseDiagnosticPage = lazy(() => import('./pages/SupabaseDiagnosticPage'));
-const CompanyRegistrationForm = lazy(() => import('./components/registration/CompanyRegistrationForm'));
+const CompanySettingsPage = lazy(() => import('./pages/CompanySettingsPage'));
+const CompanyRegistrationForm = lazy(
+  () => import('./components/registration/CompanyRegistrationForm'),
+);
 const RegistrationSuccessPage = lazy(() => import('./pages/RegistrationSuccessPage'));
 const OAuthConsentPage = lazy(() => import('./pages/OAuthConsentPage'));
 const SalesPage = lazy(() => import('./pages/SalesPage'));
@@ -73,328 +83,357 @@ const AIHRAssistantPage = lazy(() => import('./pages/hr/AIHRAssistantPage'));
 const CashierPOSPage = lazy(() => import('./pages/cashier/CashierPOSPage'));
 
 // RBAC Admin Pages
-const UserManagement = lazy(() => import('../pages/admin/UserManagement').then(m => ({ default: m.UserManagement })));
-const RolesPermissions = lazy(() => import('../pages/admin/RolesPermissions').then(m => ({ default: m.RolesPermissions })));
-const PermissionMatrix = lazy(() => import('../pages/admin/PermissionMatrix').then(m => ({ default: m.PermissionMatrix })));
-const AuditLogs = lazy(() => import('../pages/admin/AuditLogs').then(m => ({ default: m.AuditLogs })));
-const DeveloperMode = lazy(() => import('../pages/admin/DeveloperMode').then(m => ({ default: m.DeveloperMode })));
-const EmergencyAccess = lazy(() => import('../pages/admin/EmergencyAccess').then(m => ({ default: m.EmergencyAccess })));
+const UserManagement = lazy(() =>
+  import('../pages/admin/UserManagement').then((m) => ({ default: m.UserManagement })),
+);
+const RolesPermissions = lazy(() =>
+  import('../pages/admin/RolesPermissions').then((m) => ({ default: m.RolesPermissions })),
+);
+const PermissionMatrix = lazy(() =>
+  import('../pages/admin/PermissionMatrix').then((m) => ({ default: m.PermissionMatrix })),
+);
+const AuditLogs = lazy(() =>
+  import('../pages/admin/AuditLogs').then((m) => ({ default: m.AuditLogs })),
+);
+const DeveloperMode = lazy(() =>
+  import('../pages/admin/DeveloperMode').then((m) => ({ default: m.DeveloperMode })),
+);
+const EmergencyAccess = lazy(() =>
+  import('../pages/admin/EmergencyAccess').then((m) => ({ default: m.EmergencyAccess })),
+);
 
 const EnergyPage = lazy(() => import('./pages/bms/EnergyPage'));
 const CCTVLivePage = lazy(() => import('./pages/bms/CCTVLivePage'));
 const AIWorkspacePage = lazy(() => import('./pages/AIWorkspacePage'));
 
-export default function App() {
-  const adminRoles = ['owner', 'developer', 'super_admin', 'admin'];
+function RouteLoading() {
+  const { t } = useTranslation('workspace');
+  return (
+    <div role="status" className="p-8">
+      {t('common.loading')}
+    </div>
+  );
+}
 
+const adminRoles = ['owner', 'developer', 'super_admin', 'admin'];
+const router = createBrowserRouter(
+  createRoutesFromElements(
+    <>
+      {/* Public Routes - No Authentication Required */}
+      <Route path="/" element={<LandingPage />} />
+      <Route path="/register" element={<CompanyRegistrationForm />} />
+      <Route path="/registration-success" element={<RegistrationSuccessPage />} />
+      <Route path="/login" element={<ProductionLogin />} />
+      <Route path="/oauth/consent" element={<OAuthConsentPage />} />
+      <Route path="/forgot-password" element={<ForgotPasswordPage />} />
+      <Route path="/reset-password" element={<ResetPasswordPage />} />
+
+      {/* Cashier Routes - Separate Layout (nested) */}
+      <Route
+        path="/cashier/*"
+        element={
+          <ProtectedRoute requiredRole="cashier">
+            <CashierLayout />
+          </ProtectedRoute>
+        }
+      >
+        <Route path="pos" element={<CashierPOSPage />} />
+        <Route path="*" element={<Navigate to="pos" replace />} />
+      </Route>
+
+      {/* Authenticated Routes (nested under MainLayout) */}
+      <Route
+        path="/*"
+        element={
+          <ProtectedRoute>
+            <MainLayout />
+          </ProtectedRoute>
+        }
+      >
+        <Route path="dashboard" element={<DashboardPage />} />
+
+        {/* Finance */}
+        <Route path="finance/dashboard" element={<FinanceDashboardPage />} />
+        <Route path="finance/journal-entries" element={<JournalEntriesPage />} />
+        <Route path="finance/general-ledger" element={<GeneralLedgerPage />} />
+        <Route path="finance/trial-balance" element={<TrialBalancePage />} />
+        <Route path="finance/accounts-receivable" element={<AccountsReceivablePage />} />
+        <Route path="finance/accounts-payable" element={<AccountsPayablePage />} />
+        <Route path="finance/cash-bank" element={<CashBankManagementPage />} />
+        <Route path="finance/budgets" element={<BudgetManagementPage />} />
+        <Route path="finance/expenses" element={<ExpenseManagementPage />} />
+        <Route path="finance/fixed-assets" element={<FixedAssetsPage />} />
+        <Route path="finance/vat-tax" element={<VATTaxPage />} />
+        <Route path="finance/reports" element={<FinancialReportsPage />} />
+        <Route path="finance/ai-assistant" element={<AIFinanceAssistantPage />} />
+        <Route path="finance/accounting" element={<ChartOfAccountsPage />} />
+        <Route path="reports" element={<FinancialReportsPage />} />
+        <Route path="finance/invoicing" element={<InvoicingPage />} />
+        <Route path="finance/currency" element={<CurrencyPage />} />
+        <Route path="finance/zatca" element={<ZATCAPage />} />
+
+        {/* Sales & CRM */}
+        <Route
+          path="crm"
+          element={<GenericPage title="CRM" description="Customer Relationship Management" />}
+        />
+        <Route path="sales" element={<SalesPage />} />
+        <Route path="pos" element={<POSPage />} />
+        <Route
+          path="subscriptions"
+          element={
+            <GenericPage title="Subscriptions" description="Recurring billing and subscriptions" />
+          }
+        />
+
+        {/* Operations */}
+        <Route path="inventory" element={<InventoryPage />} />
+        <Route path="inventory/manage" element={<InventoryManagementPage />} />
+        <Route path="purchase" element={<PurchasesPage />} />
+        <Route
+          path="mrp"
+          element={<GenericPage title="MRP" description="Material Requirements Planning" />}
+        />
+        <Route
+          path="plm"
+          element={<GenericPage title="PLM" description="Product Lifecycle Management" />}
+        />
+
+        {/* HR */}
+        <Route path="hr/dashboard" element={<HRDashboardPage />} />
+        <Route path="hr/employees" element={<EmployeeListPage />} />
+        <Route path="hr/attendance" element={<AttendancePage />} />
+        <Route path="hr/leaves" element={<LeaveManagementPage />} />
+        <Route path="hr/payroll" element={<PayrollPage />} />
+        <Route path="hr/recruitment" element={<RecruitmentPage />} />
+        <Route path="hr/reports" element={<HRReportsPage />} />
+        <Route path="hr/ai-assistant" element={<AIHRAssistantPage />} />
+
+        {/* Projects */}
+        <Route
+          path="projects"
+          element={<GenericPage title="Projects" description="Project management and tracking" />}
+        />
+        <Route
+          path="timesheets"
+          element={<GenericPage title="Timesheets" description="Time logging and billing" />}
+        />
+        <Route
+          path="field-service"
+          element={<GenericPage title="Field Service" description="On-site service management" />}
+        />
+        <Route
+          path="helpdesk"
+          element={
+            <GenericPage title="Helpdesk" description="Support tickets and customer service" />
+          }
+        />
+
+        {/* Design System & Demo Pages */}
+        <Route path="design-system" element={<DesignSystemShowcase />} />
+        <Route path="bms/energy" element={<EnergyPage />} />
+        <Route path="bms/cctv" element={<CCTVLivePage />} />
+        <Route path="food-delivery" element={<FoodDeliveryDashboard />} />
+        <Route path="executive" element={<ExecutiveDashboard />} />
+
+        {/* AI Center */}
+        <Route path="ai/assistant" element={<AIWorkspacePage />} />
+        <Route path="ai/predictions" element={<AIWorkspacePage title="AI Predictions" />} />
+        <Route path="ai/recommendations" element={<AIWorkspacePage title="AI Recommendations" />} />
+        <Route path="ai/alerts" element={<AIWorkspacePage title="AI Alerts" />} />
+
+        {/* System */}
+        <Route
+          path="system/users"
+          element={
+            <ProtectedRoute requiredRole={adminRoles}>
+              <UserManagement />
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="system/permissions"
+          element={
+            <ProtectedRoute requiredRole={adminRoles}>
+              <PermissionsPage />
+            </ProtectedRoute>
+          }
+        />
+
+        {/* Admin */}
+        <Route
+          path="admin/supabase-diagnostic"
+          element={
+            <ProtectedRoute requiredRole={adminRoles}>
+              <SupabaseDiagnosticPage />
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="admin/control-tower"
+          element={
+            <ProtectedRoute requiredRole={adminRoles}>
+              <ControlTowerPage />
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="admin/tenants"
+          element={
+            <ProtectedRoute requiredRole={adminRoles}>
+              <TenantManagementPage />
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="admin/studio"
+          element={
+            <ProtectedRoute requiredRole={adminRoles}>
+              <StudioPage />
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="admin/metrics"
+          element={
+            <ProtectedRoute requiredRole={adminRoles}>
+              <SaaSMetricsPage />
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="admin/usage"
+          element={
+            <ProtectedRoute requiredRole={adminRoles}>
+              <UsageTrackingPage />
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="admin/automation"
+          element={
+            <ProtectedRoute requiredRole={adminRoles}>
+              <AutomationRulesPage />
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="admin/webhooks"
+          element={
+            <ProtectedRoute requiredRole={adminRoles}>
+              <WebhookSimulatorPage />
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="admin/auth-docs"
+          element={
+            <ProtectedRoute requiredRole={adminRoles}>
+              <AuthenticationDocsPage />
+            </ProtectedRoute>
+          }
+        />
+
+        {/* RBAC Admin Pages */}
+        <Route
+          path="admin/users"
+          element={
+            <ProtectedRoute requiredRole={adminRoles}>
+              <UserManagement />
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="admin/roles"
+          element={
+            <ProtectedRoute requiredRole={adminRoles}>
+              <RolesPermissions />
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="admin/permissions-matrix"
+          element={
+            <ProtectedRoute requiredRole={adminRoles}>
+              <PermissionMatrix />
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="admin/audit-logs"
+          element={
+            <ProtectedRoute requiredRole={adminRoles}>
+              <AuditLogs />
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="admin/developer-mode"
+          element={
+            <ProtectedRoute requiredRole={['owner', 'developer']}>
+              <DeveloperMode />
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="admin/emergency-access"
+          element={
+            <ProtectedRoute requiredRole={['owner']}>
+              <EmergencyAccess />
+            </ProtectedRoute>
+          }
+        />
+
+        <Route
+          path="settings"
+          element={
+            <ProtectedRoute requiredRole={adminRoles}>
+              <CompanySettingsPage />
+            </ProtectedRoute>
+          }
+        />
+      </Route>
+
+      {/* Redirect unknown to root */}
+      <Route path="*" element={<Navigate to="/" replace />} />
+    </>,
+  ),
+);
+
+function RecoveredDrafts() {
+  const { currentUser, recoveredDrafts, dismissRecoveredDrafts } = useAuth();
+  const { i18n } = useTranslation();
+  const arabic = i18n.language.startsWith('ar');
+  if (!currentUser || !recoveredDrafts.length) return null;
+  const heading = arabic ? 'مدخلات غير محفوظة بعد تحديث الصلاحيات' : 'Unsaved inputs after access changed';
+  return (
+    <aside aria-label={heading} className="fixed bottom-4 end-4 z-[100] max-w-sm rounded-lg border bg-[var(--app-surface)] p-4 shadow-lg">
+      <details open>
+        <summary>{heading}</summary>
+        {recoveredDrafts.map((draft, index) => (
+          <label key={index} className="mt-2 block">
+            <span>{draft.title}</span>
+            <textarea className="ws-input w-full" readOnly rows={4} value={JSON.stringify(draft.input, null, 2)} />
+          </label>
+        ))}
+        <button type="button" className="ws-btn ws-btn-secondary mt-2" onClick={dismissRecoveredDrafts}>
+          {arabic ? 'مسح المدخلات المحفوظة مؤقتاً' : 'Clear recovered inputs'}
+        </button>
+      </details>
+    </aside>
+  );
+}
+
+export default function App() {
   return (
     <ErrorBoundary>
       <AuthProvider>
         <ThemeProvider>
           <ToastProvider>
-            <BrowserRouter>
-              <Suspense fallback={<div role="status" className="p-8">Loading page?</div>}>
-              <Routes>
-                {/* Public Routes - No Authentication Required */}
-                <Route path="/" element={<LandingPage />} />
-                <Route path="/register" element={<CompanyRegistrationForm />} />
-                <Route path="/registration-success" element={<RegistrationSuccessPage />} />
-                <Route path="/login" element={<ProductionLogin />} />
-                <Route path="/oauth/consent" element={<OAuthConsentPage />} />
-                <Route path="/forgot-password" element={<ForgotPasswordPage />} />
-                <Route path="/reset-password" element={<ResetPasswordPage />} />
-                <Route
-                  path="/admin/supabase-diagnostic"
-                  element={
-                    <ProtectedRoute requiredRole={adminRoles}>
-                      <SupabaseDiagnosticPage />
-                    </ProtectedRoute>
-                  }
-                />
-
-                {/* Cashier Routes - Separate Layout (nested) */}
-                <Route
-                  path="/cashier/*"
-                  element={
-                    <ProtectedRoute requiredRole="cashier">
-                      <CashierLayout />
-                    </ProtectedRoute>
-                  }
-                >
-                  <Route path="pos" element={<CashierPOSPage />} />
-                  <Route path="*" element={<Navigate to="pos" replace />} />
-                </Route>
-
-                {/* Authenticated Routes (nested under MainLayout) */}
-                <Route
-                  path="/*"
-                  element={
-                    <ProtectedRoute>
-                      <MainLayout />
-                    </ProtectedRoute>
-                  }
-                >
-                  <Route index element={<ExecutiveDashboard />} />
-                  <Route path="dashboard" element={<DashboardPage />} />
-
-                  {/* Finance */}
-                  <Route path="finance/dashboard" element={<FinanceDashboardPage />} />
-                  <Route path="finance/journal-entries" element={<JournalEntriesPage />} />
-                  <Route path="finance/general-ledger" element={<GeneralLedgerPage />} />
-                  <Route path="finance/trial-balance" element={<TrialBalancePage />} />
-                  <Route path="finance/accounts-receivable" element={<AccountsReceivablePage />} />
-                  <Route path="finance/accounts-payable" element={<AccountsPayablePage />} />
-                  <Route path="finance/cash-bank" element={<CashBankManagementPage />} />
-                  <Route path="finance/budgets" element={<BudgetManagementPage />} />
-                  <Route path="finance/expenses" element={<ExpenseManagementPage />} />
-                  <Route path="finance/fixed-assets" element={<FixedAssetsPage />} />
-                  <Route path="finance/vat-tax" element={<VATTaxPage />} />
-                  <Route path="finance/reports" element={<FinancialReportsPage />} />
-                  <Route path="finance/ai-assistant" element={<AIFinanceAssistantPage />} />
-                  <Route path="finance/accounting" element={<ChartOfAccountsPage />} />
-                  <Route path="reports" element={<FinancialReportsPage />} />
-                  <Route path="finance/invoicing" element={<InvoicingPage />} />
-                  <Route path="finance/currency" element={<CurrencyPage />} />
-                  <Route path="finance/zatca" element={<ZATCAPage />} />
-
-                  {/* Sales & CRM */}
-                  <Route
-                    path="crm"
-                    element={
-                      <GenericPage title="CRM" description="Customer Relationship Management" />
-                    }
-                  />
-                  <Route path="sales" element={<SalesPage />} />
-                  <Route path="pos" element={<POSPage />} />
-                  <Route
-                    path="subscriptions"
-                    element={
-                      <GenericPage
-                        title="Subscriptions"
-                        description="Recurring billing and subscriptions"
-                      />
-                    }
-                  />
-
-                  {/* Operations */}
-                  <Route path="inventory" element={<InventoryPage />} />
-                  <Route path="inventory/manage" element={<InventoryManagementPage />} />
-                  <Route path="purchase" element={<PurchasesPage />} />
-                  <Route
-                    path="mrp"
-                    element={
-                      <GenericPage title="MRP" description="Material Requirements Planning" />
-                    }
-                  />
-                  <Route
-                    path="plm"
-                    element={<GenericPage title="PLM" description="Product Lifecycle Management" />}
-                  />
-
-                  {/* HR */}
-                  <Route path="hr/dashboard" element={<HRDashboardPage />} />
-                  <Route path="hr/employees" element={<EmployeeListPage />} />
-                  <Route path="hr/attendance" element={<AttendancePage />} />
-                  <Route path="hr/leaves" element={<LeaveManagementPage />} />
-                  <Route path="hr/payroll" element={<PayrollPage />} />
-                  <Route path="hr/recruitment" element={<RecruitmentPage />} />
-                  <Route path="hr/reports" element={<HRReportsPage />} />
-                  <Route path="hr/ai-assistant" element={<AIHRAssistantPage />} />
-
-                  {/* Projects */}
-                  <Route
-                    path="projects"
-                    element={
-                      <GenericPage title="Projects" description="Project management and tracking" />
-                    }
-                  />
-                  <Route
-                    path="timesheets"
-                    element={
-                      <GenericPage title="Timesheets" description="Time logging and billing" />
-                    }
-                  />
-                  <Route
-                    path="field-service"
-                    element={
-                      <GenericPage title="Field Service" description="On-site service management" />
-                    }
-                  />
-                  <Route
-                    path="helpdesk"
-                    element={
-                      <GenericPage
-                        title="Helpdesk"
-                        description="Support tickets and customer service"
-                      />
-                    }
-                  />
-
-                  {/* Design System & Demo Pages */}
-                  <Route path="design-system" element={<DesignSystemShowcase />} />
-                  <Route path="bms/energy" element={<EnergyPage />} />
-                  <Route path="bms/cctv" element={<CCTVLivePage />} />
-                  <Route path="food-delivery" element={<FoodDeliveryDashboard />} />
-                  <Route path="executive" element={<ExecutiveDashboard />} />
-
-                  {/* AI Center */}
-                  <Route
-                    path="ai/predictions"
-                    element={
-                      <AIWorkspacePage title="AI Predictions" />
-                    }
-                  />
-                  <Route
-                    path="ai/recommendations"
-                    element={
-                      <AIWorkspacePage title="AI Recommendations" />
-                    }
-                  />
-                  <Route
-                    path="ai/alerts"
-                    element={
-                      <AIWorkspacePage title="AI Alerts" />
-                    }
-                  />
-
-                  {/* System */}
-                  <Route
-                    path="system/users"
-                    element={
-                      <ProtectedRoute requiredRole={adminRoles}><UserManagement /></ProtectedRoute>
-                    }
-                  />
-                  <Route path="system/permissions" element={<ProtectedRoute requiredRole={adminRoles}><PermissionsPage /></ProtectedRoute>} />
-
-                  {/* Admin */}
-                  <Route
-                    path="admin/control-tower"
-                    element={
-                      <ProtectedRoute requiredRole={adminRoles}>
-                        <ControlTowerPage />
-                      </ProtectedRoute>
-                    }
-                  />
-                  <Route
-                    path="admin/tenants"
-                    element={
-                      <ProtectedRoute requiredRole={adminRoles}>
-                        <TenantManagementPage />
-                      </ProtectedRoute>
-                    }
-                  />
-                  <Route
-                    path="admin/studio"
-                    element={
-                      <ProtectedRoute requiredRole={adminRoles}>
-                        <StudioPage />
-                      </ProtectedRoute>
-                    }
-                  />
-                  <Route
-                    path="admin/metrics"
-                    element={
-                      <ProtectedRoute requiredRole={adminRoles}>
-                        <SaaSMetricsPage />
-                      </ProtectedRoute>
-                    }
-                  />
-                  <Route
-                    path="admin/usage"
-                    element={
-                      <ProtectedRoute requiredRole={adminRoles}>
-                        <UsageTrackingPage />
-                      </ProtectedRoute>
-                    }
-                  />
-                  <Route
-                    path="admin/automation"
-                    element={
-                      <ProtectedRoute requiredRole={adminRoles}>
-                        <AutomationRulesPage />
-                      </ProtectedRoute>
-                    }
-                  />
-                  <Route
-                    path="admin/webhooks"
-                    element={
-                      <ProtectedRoute requiredRole={adminRoles}>
-                        <WebhookSimulatorPage />
-                      </ProtectedRoute>
-                    }
-                  />
-                  <Route
-                    path="admin/auth-docs"
-                    element={
-                      <ProtectedRoute requiredRole={adminRoles}>
-                        <AuthenticationDocsPage />
-                      </ProtectedRoute>
-                    }
-                  />
-
-                  {/* RBAC Admin Pages */}
-                  <Route
-                    path="admin/users"
-                    element={
-                      <ProtectedRoute requiredRole={adminRoles}>
-                        <UserManagement />
-                      </ProtectedRoute>
-                    }
-                  />
-                  <Route
-                    path="admin/roles"
-                    element={
-                      <ProtectedRoute requiredRole={adminRoles}>
-                        <RolesPermissions />
-                      </ProtectedRoute>
-                    }
-                  />
-                  <Route
-                    path="admin/permissions-matrix"
-                    element={
-                      <ProtectedRoute requiredRole={adminRoles}>
-                        <PermissionMatrix />
-                      </ProtectedRoute>
-                    }
-                  />
-                  <Route
-                    path="admin/audit-logs"
-                    element={
-                      <ProtectedRoute requiredRole={adminRoles}>
-                        <AuditLogs />
-                      </ProtectedRoute>
-                    }
-                  />
-                  <Route
-                    path="admin/developer-mode"
-                    element={
-                      <ProtectedRoute requiredRole={['owner', 'developer']}>
-                        <DeveloperMode />
-                      </ProtectedRoute>
-                    }
-                  />
-                  <Route
-                    path="admin/emergency-access"
-                    element={
-                      <ProtectedRoute requiredRole={['owner']}>
-                        <EmergencyAccess />
-                      </ProtectedRoute>
-                    }
-                  />
-
-                  <Route
-                    path="settings"
-                    element={
-                      <ProtectedRoute requiredRole={adminRoles}><TenantManagementPage /></ProtectedRoute>
-                    }
-                  />
-                </Route>
-
-                {/* Redirect unknown to root */}
-                <Route path="*" element={<Navigate to="/" replace />} />
-              </Routes>
-              </Suspense>
-            </BrowserRouter>
+            <Suspense fallback={<RouteLoading />}>
+              <RouterProvider router={router} />
+            </Suspense>
+            <RecoveredDrafts />
           </ToastProvider>
         </ThemeProvider>
       </AuthProvider>

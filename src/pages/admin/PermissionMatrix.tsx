@@ -1,2 +1,4 @@
 import { RolePermissionsView } from './RolesPermissions';
-export function PermissionMatrix() { return <RolePermissionsView matrix />; }
+export function PermissionMatrix() {
+  return <RolePermissionsView matrix />;
+}

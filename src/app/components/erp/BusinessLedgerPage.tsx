@@ -1,5 +1,7 @@
-import { useCallback, useEffect, useMemo, useState } from 'react';
-import { Link } from 'react-router-dom';
+import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
+import { Link, useSearchParams } from 'react-router-dom';
+import { Download, FileText, Printer, RefreshCw, Scale, Wallet } from 'lucide-react';
+import { useTranslation } from 'react-i18next';
 import { useAuth } from '../../../contexts/AuthContext';
 import { buildTrialBalance, recordsToCsv, toMinorUnits } from '../../../services/businessRules';
 import {
@@ -7,6 +9,113 @@ import {
   downloadBusinessCsv,
   type LedgerJournal,
 } from '../../../services/businessRecordsService';
+import { useBusinessAccess } from './BusinessRecordsPage';
+import {
+  Button,
+  DataTable,
+  DetailDrawer,
+  ErrorState,
+  FilterBar,
+  FormField,
+  LoadingSkeleton,
+  PageHeader,
+  Panel,
+  StatCard,
+  StatusBadge,
+  useWorkspaceFormat,
+  type TableColumn,
+} from './WorkspaceUI';
+
+export interface AccountPeriodBalance {
+  account_id: string;
+  account_code: string;
+  account_name: string;
+  account_type: string;
+  opening: number;
+  debit: number;
+  credit: number;
+  balance: number;
+  closing: number;
+}
+export interface LedgerDetail {
+  id: string;
+  accountId: string;
+  accountCode: string;
+  accountName: string;
+  date: string;
+  reference: string;
+  description: string;
+  debit: number;
+  credit: number;
+}
+/** Uses complete posted journals, never the current table page, for accounting. */
+export function buildLedgerReport(journals: LedgerJournal[], from = '', to = '') {
+  if (from && to && from > to) throw new Error('invalid_period');
+  const posted = journals.filter(
+    (journal) => journal.status === 'posted' && (!to || journal.entry_date <= to),
+  );
+  const before = from ? posted.filter((journal) => journal.entry_date < from) : [];
+  const period = posted.filter((journal) => !from || journal.entry_date >= from);
+  const aggregate = (entries: LedgerJournal[]) =>
+    buildTrialBalance(
+      entries.map((journal) => ({
+        status: journal.status,
+        data: {
+          lines: journal.lines.map((line) => ({
+            account_id: line.account_id,
+            account_code: line.account?.account_code || line.account_id,
+            account_name: line.account?.account_name || line.account_id,
+            debit: Number(line.debit_amount),
+            credit: Number(line.credit_amount),
+          })),
+        },
+      })),
+    );
+  const all = aggregate(posted);
+  const opening = new Map(
+    aggregate(before).map((account) => [account.account_id, account.balance]),
+  );
+  const movement = new Map(aggregate(period).map((account) => [account.account_id, account]));
+  const types = new Map(
+    posted.flatMap((journal) =>
+      journal.lines.map((line) => [line.account_id, line.account?.account_type || ''] as const),
+    ),
+  );
+  const balances: AccountPeriodBalance[] = all.map((account) => {
+    const current = movement.get(account.account_id);
+    const start = opening.get(account.account_id) || 0;
+    const debit = current?.debit || 0;
+    const credit = current?.credit || 0;
+    const balance = (toMinorUnits(debit) - toMinorUnits(credit)) / 100;
+    return {
+      account_id: account.account_id,
+      account_code: account.account_code,
+      account_name: account.account_name,
+      account_type: types.get(account.account_id) || '',
+      opening: start,
+      debit,
+      credit,
+      balance,
+      closing: (toMinorUnits(start) + toMinorUnits(balance)) / 100,
+    };
+  });
+  const details: LedgerDetail[] = [...period]
+    .sort((a, b) => a.entry_date.localeCompare(b.entry_date) || a.id.localeCompare(b.id))
+    .flatMap((journal) =>
+      journal.lines.map((line, index) => ({
+        id: `${journal.id}:${index}`,
+        accountId: line.account_id,
+        accountCode: line.account?.account_code || line.account_id,
+        accountName: line.account?.account_name || line.account_id,
+        date: journal.entry_date,
+        reference: journal.entry_number,
+        description: journal.description,
+        debit: Number(line.debit_amount),
+        credit: Number(line.credit_amount),
+      })),
+    );
+  return { balances, details, journalCount: period.length };
+}
 
 export default function BusinessLedgerPage({
   mode = 'ledger',
@@ -14,283 +123,432 @@ export default function BusinessLedgerPage({
   mode?: 'ledger' | 'trial' | 'reports' | 'cash' | 'dashboard';
 }) {
   const { user } = useAuth();
-  const companyId = user?.company_id ?? '';
+  const { t } = useTranslation('finance');
+  const fmt = useWorkspaceFormat();
+  const access = useBusinessAccess('finance_journal');
+  const [params] = useSearchParams();
+  const companyId = user?.company_id || '';
   const [journals, setJournals] = useState<LedgerJournal[]>([]);
-  const [loadError, setError] = useState('');
+  const [loadedCompany, setLoadedCompany] = useState('');
   const [loading, setLoading] = useState(true);
+  const [loadError, setError] = useState('');
   const [from, setFrom] = useState('');
   const [to, setTo] = useState('');
   const [search, setSearch] = useState('');
-  const titles = {
-    ledger: 'General ledger',
-    trial: 'Trial balance',
-    reports: 'Financial reports',
-    cash: 'Cash and bank ledger',
-    dashboard: 'Finance dashboard',
-  };
+  const [account, setAccount] = useState(params.get('account') || 'all');
+  const [view, setView] = useState<'entries' | 'balances'>(
+    mode === 'ledger' ? 'entries' : 'balances',
+  );
+  const [selected, setSelected] = useState<string>();
+  const generation = useRef(0);
   const load = useCallback(async () => {
+    const id = ++generation.current;
     setLoading(true);
     setError('');
-    setJournals([]);
     try {
-      setJournals(await listBusinessLedger(companyId));
+      const result = await listBusinessLedger(companyId);
+      if (id === generation.current) {
+        setJournals(result);
+        setLoadedCompany(companyId);
+      }
     } catch (err) {
-      setError(
-        err instanceof Error
-          ? err.message
-          : (err as { message?: string }).message || 'Could not load the ledger.',
-      );
+      if (id === generation.current) setError(err instanceof Error ? err.message : 'unavailable');
     } finally {
-      setLoading(false);
+      if (id === generation.current) setLoading(false);
     }
   }, [companyId]);
   useEffect(() => {
     void load();
+    return () => {
+      generation.current++;
+    };
   }, [load]);
-  const filtered = useMemo(
-    () => journals.filter((j) => (!from || j.entry_date >= from) && (!to || j.entry_date <= to)),
-    [journals, from, to],
-  );
-  const aggregation = useMemo(() => {
+  useEffect(() => {
+    setSelected(undefined);
+    setSearch('');
+    setFrom('');
+    setTo('');
+    setAccount(params.get('account') || 'all');
+  }, [companyId, params]);
+  const source = loadedCompany === companyId ? journals : [];
+  const report = useMemo(() => {
     try {
-      return {
-        totals: buildTrialBalance(
-          filtered.map((j) => ({
-            status: j.status,
-            data: {
-              lines: j.lines.map((l) => ({
-                account_id: l.account_id,
-                account_code: l.account?.account_code || l.account_id,
-                account_name: l.account?.account_name || 'Unavailable account',
-                debit: Number(l.debit_amount),
-                credit: Number(l.credit_amount),
-              })),
-            },
-          })),
-        ),
-        error: '',
-      };
+      return { ...buildLedgerReport(source, from, to), error: '' };
     } catch (err) {
       return {
-        totals: [],
-        error: `Posted ledger data failed validation: ${err instanceof Error ? err.message : 'Review imported entries.'}`,
+        balances: [] as AccountPeriodBalance[],
+        details: [] as LedgerDetail[],
+        journalCount: 0,
+        error:
+          err instanceof Error && err.message === 'invalid_period'
+            ? 'common.dateRange'
+            : 'ledger.invalid',
       };
     }
-  }, [filtered]);
-  const totals = aggregation.totals;
-  const error = loadError || aggregation.error;
-  const types = useMemo(
-    () =>
-      new Map(
-        journals.flatMap((j) =>
-          j.lines.map((l) => [l.account_id, l.account?.account_type] as const),
-        ),
+  }, [source, from, to]);
+  const isCash = (value: string) => /cash|bank|card|نقد|بنك|مصرف|بطاق/i.test(value);
+  const matches = (id: string, code: string, name: string) =>
+    (account === 'all' || id === account) &&
+    `${code} ${name}`.toLowerCase().includes(search.toLowerCase()) &&
+    (mode !== 'cash' || isCash(code + name));
+  const balances = report.balances.filter((row) =>
+    matches(row.account_id, row.account_code, row.account_name),
+  );
+  const details = report.details.filter((row) =>
+    matches(row.accountId, row.accountCode, row.accountName),
+  );
+  const sum = (key: 'opening' | 'debit' | 'credit' | 'balance' | 'closing') =>
+    balances.reduce((total, row) => total + toMinorUnits(row[key]), 0) / 100;
+  const periodResult =
+    balances
+      .filter((row) => ['revenue', 'income', 'expense'].includes(row.account_type))
+      .reduce((total, row) => total - toMinorUnits(row.balance), 0) / 100;
+  const error = !!loadError || !!report.error;
+  const selectedBalance = report.balances.find((row) => row.account_id === selected);
+  const selectedLines = report.details.filter((row) => row.accountId === selected);
+  const balanceColumns: TableColumn<AccountPeriodBalance>[] = [
+    {
+      key: 'code',
+      label: t('accounts.code'),
+      sortValue: (row) => row.account_code,
+      render: (row) => <bdi className="font-mono text-xs">{row.account_code}</bdi>,
+    },
+    {
+      key: 'name',
+      label: t('common.account'),
+      sortValue: (row) => row.account_name,
+      render: (row) => (
+        <button
+          className="text-start font-semibold hover:underline"
+          onClick={() => setSelected(row.account_id)}
+        >
+          {row.account_name}
+        </button>
       ),
-    [journals],
-  );
-  const money = (amount: number) =>
-    new Intl.NumberFormat(undefined, {
-      style: 'currency',
-      currency: user?.company?.currency || 'SAR',
-    }).format(amount);
-  const matches = (code: string, name: string) =>
-    `${code} ${name}`.toLowerCase().includes(search.toLowerCase());
-  const visible = totals.filter(
-    (a) =>
-      matches(a.account_code, a.account_name) &&
-      (mode !== 'cash' || /cash|bank|card|نقد|بنك/i.test(a.account_name + a.account_code)),
-  );
-  const debit = totals.reduce((s, a) => s + toMinorUnits(a.debit), 0) / 100;
-  const credit = totals.reduce((s, a) => s + toMinorUnits(a.credit), 0) / 100;
-  const revenue = totals
-    .filter((a) => ['revenue', 'income'].includes(types.get(a.account_id) || ''))
-    .reduce((s, a) => s - a.balance, 0);
-  const expenses = totals
-    .filter((a) => types.get(a.account_id) === 'expense')
-    .reduce((s, a) => s + a.balance, 0);
-  const detail = filtered.flatMap((j) =>
-    j.lines
-      .filter((l) => matches(l.account?.account_code || '', l.account?.account_name || ''))
-      .map((l) => ({
-        date: j.entry_date,
-        reference: j.entry_number,
-        description: j.description,
-        account: `${l.account?.account_code} · ${l.account?.account_name}`,
-        debit: Number(l.debit_amount),
-        credit: Number(l.credit_amount),
-      })),
-  );
+    },
+    ...(['opening', 'debit', 'credit', 'balance', 'closing'] as const).map((key) => ({
+      key,
+      label: t(`ledger.${key === 'balance' ? 'net' : key}`),
+      className: 'tabular-nums',
+      sortValue: (row: AccountPeriodBalance) => row[key],
+      render: (row: AccountPeriodBalance) => fmt.money(row[key]),
+    })),
+  ];
+  const detailColumns: TableColumn<LedgerDetail>[] = [
+    {
+      key: 'date',
+      label: t('common.date'),
+      sortValue: (row) => row.date,
+      render: (row) => fmt.date(row.date),
+    },
+    {
+      key: 'journal',
+      label: t('ledger.journal'),
+      sortValue: (row) => row.reference,
+      render: (row) => (
+        <div>
+          <bdi className="font-medium">{row.reference}</bdi>
+          <p className="ws-muted text-xs">{row.description}</p>
+        </div>
+      ),
+    },
+    {
+      key: 'account',
+      label: t('common.account'),
+      sortValue: (row) => row.accountCode,
+      render: (row) => (
+        <button className="text-start hover:underline" onClick={() => setSelected(row.accountId)}>
+          <bdi>{row.accountCode}</bdi> · {row.accountName}
+        </button>
+      ),
+    },
+    {
+      key: 'debit',
+      label: t('common.debit'),
+      sortValue: (row) => row.debit,
+      className: 'tabular-nums',
+      render: (row) => fmt.money(row.debit),
+    },
+    {
+      key: 'credit',
+      label: t('common.credit'),
+      sortValue: (row) => row.credit,
+      className: 'tabular-nums',
+      render: (row) => fmt.money(row.credit),
+    },
+  ];
   function exportCsv() {
-    const isDetail = mode === 'ledger';
+    const headers =
+      view === 'entries'
+        ? [
+            t('common.date'),
+            t('ledger.journal'),
+            t('ledger.descriptionColumn'),
+            t('accounts.code'),
+            t('common.account'),
+            t('common.debit'),
+            t('common.credit'),
+          ]
+        : [
+            t('accounts.code'),
+            t('common.account'),
+            ...['opening', 'debit', 'credit', 'net', 'closing'].map((key) => t(`ledger.${key}`)),
+          ];
+    const rows =
+      view === 'entries'
+        ? details.map((row) => [
+            row.date,
+            row.reference,
+            row.description,
+            row.accountCode,
+            row.accountName,
+            row.debit,
+            row.credit,
+          ])
+        : balances.map((row) => [
+            row.account_code,
+            row.account_name,
+            row.opening,
+            row.debit,
+            row.credit,
+            row.balance,
+            row.closing,
+          ]);
     downloadBusinessCsv(
       `${mode}-${new Date().toISOString().slice(0, 10)}.csv`,
-      recordsToCsv(
-        isDetail
-          ? ['Date', 'Journal', 'Description', 'Account', 'Debit', 'Credit']
-          : ['Account code', 'Account', 'Debit movement', 'Credit movement', 'Net debit movement'],
-        isDetail
-          ? detail.map((l) => [l.date, l.reference, l.description, l.account, l.debit, l.credit])
-          : visible.map((a) => [a.account_code, a.account_name, a.debit, a.credit, a.balance]),
-      ),
+      recordsToCsv(headers, rows),
     );
   }
   return (
-    <section className="space-y-6 text-slate-900 dark:text-slate-100">
-      <div className="flex flex-wrap justify-between gap-3">
-        <div>
-          <h1 className="text-3xl font-bold">{titles[mode]}</h1>
-          <p className="mt-2 text-slate-500">
-            Posted accounting entries, including POS and approved manual journals. Date filters show
-            period movements; unposted workflow records are excluded.
-          </p>
-        </div>
-        <div className="flex gap-2">
-          <button
-            className="rounded border px-4 py-2"
-            disabled={loading}
-            onClick={() => void load()}
-          >
-            Refresh
-          </button>
-          <button
-            className="rounded bg-blue-600 px-4 py-2 text-white disabled:opacity-50"
-            disabled={loading || !!error}
-            onClick={exportCsv}
-          >
-            Export CSV
-          </button>
-        </div>
-      </div>
-      {error && (
-        <p role="alert" className="rounded bg-red-50 p-4 text-red-800">
-          {error}
-        </p>
-      )}
-      <nav className="flex flex-wrap gap-3 text-sm text-blue-600">
+    <section className="ws-page">
+      <PageHeader
+        title={t(`ledger.${mode}`)}
+        description={t('ledger.description')}
+        eyebrow={t('common.finance')}
+        actions={
+          <>
+            <Button icon={<RefreshCw size={16} />} onClick={() => void load()} disabled={loading}>
+              {t('common.refresh')}
+            </Button>
+            {access.canExport && (
+              <>
+                <Button
+                  icon={<Printer size={16} />}
+                  onClick={() => window.print()}
+                  disabled={error || loading}
+                >
+                  {t('common.print')}
+                </Button>
+                <Button
+                  icon={<Download size={16} />}
+                  variant="primary"
+                  disabled={error || loading || !(view === 'entries' ? details : balances).length}
+                  onClick={exportCsv}
+                >
+                  {t('common.export')}
+                </Button>
+              </>
+            )}
+          </>
+        }
+      />
+      <nav className="flex flex-wrap gap-2">
         {[
-          ['Journal entries', '/finance/journal-entries'],
-          ['Chart of accounts', '/finance/accounting'],
-          ['Receivables', '/finance/accounts-receivable'],
-          ['Supplier bills', '/finance/accounts-payable'],
-        ].map(([name, href]) => (
-          <Link key={href} to={href}>
-            {name}
+          ['ledger.journalEntries', '/finance/journal-entries'],
+          ['accounts.title', '/finance/accounting'],
+          ['ledger.receivables', '/finance/accounts-receivable'],
+          ['ledger.payables', '/finance/accounts-payable'],
+        ].map(([key, href]) => (
+          <Link className="ws-btn ws-btn-secondary" key={href} to={href}>
+            {t(key)}
           </Link>
         ))}
       </nav>
-      <div className="grid gap-3 sm:grid-cols-4">
-        {[
-          ['Posted journals', filtered.length],
-          ['Debit movement', money(debit)],
-          ['Credit movement', money(credit)],
-          ['Period result', money(revenue - expenses)],
-        ].map(([name, value]) => (
-          <div className="rounded-xl border p-4" key={String(name)}>
-            <p className="text-sm text-slate-500">{name}</p>
-            <strong className="text-xl">{loading || error ? '—' : value}</strong>
-          </div>
-        ))}
-      </div>
-      {!error && !loading && toMinorUnits(debit) !== toMinorUnits(credit) && (
-        <p role="alert" className="rounded bg-red-50 p-4 text-red-800">
-          The ledger is out of balance. Review the imported or legacy entries before relying on
-          reports.
-        </p>
+      {loadError && (
+        <ErrorState
+          message={t(
+            /permission|denied/i.test(loadError)
+              ? 'common.permissionError'
+              : 'common.connectionError',
+          )}
+          onRetry={() => void load()}
+        />
       )}
-      <div className="flex flex-wrap gap-3">
-        <label>
-          From
-          <input
-            className="ml-2 rounded border bg-transparent p-2"
-            type="date"
-            value={from}
-            onChange={(e) => setFrom(e.target.value)}
-          />
-        </label>
-        <label>
-          To
-          <input
-            className="ml-2 rounded border bg-transparent p-2"
-            type="date"
-            value={to}
-            onChange={(e) => setTo(e.target.value)}
-          />
-        </label>
-        <input
-          className="rounded border bg-transparent p-2"
-          aria-label="Search account"
-          placeholder="Search account"
-          value={search}
-          onChange={(e) => setSearch(e.target.value)}
+      {report.error && <ErrorState message={t(report.error)} />}
+      <div className="ws-stats">
+        <StatCard
+          label={t('ledger.postedCount')}
+          value={
+            error || (loading && !source.length)
+              ? '—'
+              : fmt.number(new Set(details.map((row) => row.id.split(':')[0])).size)
+          }
+          icon={<FileText size={20} />}
+        />
+        <StatCard
+          label={t('ledger.debit')}
+          value={error || (loading && !source.length) ? '—' : fmt.money(sum('debit'))}
+        />
+        <StatCard
+          label={t('ledger.credit')}
+          value={error || (loading && !source.length) ? '—' : fmt.money(sum('credit'))}
+          icon={<Scale size={20} />}
+        />
+        <StatCard
+          label={t('ledger.result')}
+          value={error || (loading && !source.length) ? '—' : fmt.money(periodResult)}
+          hint={t('ledger.resultHint')}
+          icon={<Wallet size={20} />}
         />
       </div>
-      <div className="overflow-x-auto rounded-xl border">
-        <table className="w-full text-sm">
-          <thead className="bg-slate-100 dark:bg-slate-800">
-            <tr>
-              {(mode === 'ledger'
-                ? ['Date', 'Journal / description', 'Account', 'Debit', 'Credit']
-                : [
-                    'Account code',
-                    'Account',
-                    'Debit movement',
-                    'Credit movement',
-                    'Net debit movement',
-                  ]
-              ).map((h) => (
-                <th className="p-4 text-start" key={h}>
-                  {h}
-                </th>
+      <Panel
+        title={t(view === 'entries' ? 'ledger.entries' : 'ledger.balances')}
+        description={t('ledger.periodScope')}
+        actions={
+          <>
+            <Button
+              variant={view === 'entries' ? 'primary' : 'ghost'}
+              onClick={() => setView('entries')}
+            >
+              {t('ledger.entries')}
+            </Button>
+            <Button
+              variant={view === 'balances' ? 'primary' : 'ghost'}
+              onClick={() => setView('balances')}
+            >
+              {t('ledger.balances')}
+            </Button>
+          </>
+        }
+      >
+        <FilterBar>
+          <FormField label={t('common.from')}>
+            <input
+              className="ws-input"
+              aria-label={t('common.from')}
+              type="date"
+              value={from}
+              onChange={(event) => setFrom(event.target.value)}
+            />
+          </FormField>
+          <FormField label={t('common.to')}>
+            <input
+              className="ws-input"
+              aria-label={t('common.to')}
+              type="date"
+              value={to}
+              onChange={(event) => setTo(event.target.value)}
+            />
+          </FormField>
+          <FormField label={t('common.account')}>
+            <select
+              className="ws-input"
+              aria-label={t('common.account')}
+              value={account}
+              onChange={(event) => setAccount(event.target.value)}
+            >
+              <option value="all">{t('common.allAccounts')}</option>
+              {report.balances.map((row) => (
+                <option key={row.account_id} value={row.account_id}>
+                  {row.account_code} · {row.account_name}
+                </option>
               ))}
-            </tr>
-          </thead>
-          <tbody>
-            {loading ? (
-              <tr>
-                <td colSpan={5} className="p-6">
-                  Loading ledger…
-                </td>
-              </tr>
-            ) : error ? (
-              <tr>
-                <td colSpan={5} className="p-6">
-                  Ledger unavailable.
-                </td>
-              </tr>
-            ) : mode === 'ledger' ? (
-              detail.map((row, index) => (
-                <tr className="border-t" key={index}>
-                  <td className="p-4">{row.date}</td>
-                  <td className="p-4">
-                    {row.reference}
-                    <p className="text-xs text-slate-500">{row.description}</p>
-                  </td>
-                  <td className="p-4">{row.account}</td>
-                  <td className="p-4">{money(row.debit)}</td>
-                  <td className="p-4">{money(row.credit)}</td>
-                </tr>
-              ))
-            ) : (
-              visible.map((a) => (
-                <tr className="border-t" key={a.account_id}>
-                  <td className="p-4">{a.account_code}</td>
-                  <td className="p-4">{a.account_name}</td>
-                  <td className="p-4">{money(a.debit)}</td>
-                  <td className="p-4">{money(a.credit)}</td>
-                  <td className="p-4">{money(a.balance)}</td>
-                </tr>
-              ))
-            )}
-            {!loading && !error && (mode === 'ledger' ? detail : visible).length === 0 && (
-              <tr>
-                <td colSpan={5} className="p-8 text-center text-slate-500">
-                  No posted activity for this period.
-                </td>
-              </tr>
-            )}
-          </tbody>
-        </table>
-      </div>
+            </select>
+          </FormField>
+          <FormField label={t('common.search')}>
+            <input
+              className="ws-input"
+              aria-label={t('common.search')}
+              value={search}
+              onChange={(event) => setSearch(event.target.value)}
+              placeholder={t('common.account')}
+            />
+          </FormField>
+          <Button
+            variant="ghost"
+            onClick={() => {
+              setFrom('');
+              setTo('');
+              setSearch('');
+              setAccount('all');
+            }}
+          >
+            {t('common.clearFilters')}
+          </Button>
+        </FilterBar>
+        {loading && !source.length ? (
+          <LoadingSkeleton rows={6} />
+        ) : (
+          !error &&
+          (view === 'entries' ? (
+            <DataTable
+              columns={detailColumns}
+              rows={details}
+              getRowKey={(row) => row.id}
+              caption={t('ledger.entries')}
+              emptyTitle={t('ledger.empty')}
+              emptyDescription={t('ledger.emptyHint')}
+            />
+          ) : (
+            <DataTable
+              columns={balanceColumns}
+              rows={balances}
+              getRowKey={(row) => row.account_id}
+              caption={t('ledger.balances')}
+              emptyTitle={t('ledger.empty')}
+              emptyDescription={t('ledger.emptyHint')}
+            />
+          ))
+        )}
+        {!error && (
+          <div className="flex flex-wrap gap-5 border-t p-4 text-sm">
+            <strong>{t('ledger.totals')}</strong>
+            <span>
+              {t('ledger.debit')}: {fmt.money(sum('debit'))}
+            </span>
+            <span>
+              {t('ledger.credit')}: {fmt.money(sum('credit'))}
+            </span>
+            <span>
+              {t('ledger.net')}: {fmt.money(sum('balance'))}
+            </span>
+          </div>
+        )}
+      </Panel>
+      <p className="ws-muted text-sm">
+        {t('ledger.balanceHint')} {t('ledger.legacyScope')}{' '}
+        {mode === 'cash' && t('ledger.cashScope')}
+      </p>
+      <DetailDrawer
+        open={!!selectedBalance}
+        onClose={() => setSelected(undefined)}
+        title={selectedBalance?.account_name || t('ledger.accountDetail')}
+        description={selectedBalance?.account_code}
+        wide
+      >
+        {selectedBalance && (
+          <>
+            <StatusBadge status="posted">{t('status.posted')}</StatusBadge>
+            <div className="my-5 grid gap-4 sm:grid-cols-2">
+              {(['opening', 'debit', 'credit', 'closing'] as const).map((key) => (
+                <StatCard
+                  key={key}
+                  label={t(`ledger.${key}`)}
+                  value={fmt.money(selectedBalance[key])}
+                />
+              ))}
+            </div>
+            <p className="mb-4 ws-muted text-sm">{t('ledger.balanceHint')}</p>
+            <DataTable
+              columns={detailColumns.filter((column) => column.key !== 'account')}
+              rows={selectedLines}
+              getRowKey={(row) => row.id}
+              caption={t('ledger.accountDetail')}
+              emptyTitle={t('ledger.empty')}
+            />
+          </>
+        )}
+      </DetailDrawer>
     </section>
   );
 }

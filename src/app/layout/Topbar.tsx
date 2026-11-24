@@ -1,450 +1,353 @@
-import { listInvoices } from '../../services/invoicesService';
-﻿import {
-  FormEvent,
-  useEffect,
-  useRef,
-  useState,
-} from 'react';
-import { AnimatePresence, motion } from 'motion/react';
+import { useEffect, useMemo, useRef, useState } from 'react';
+import { Link, useNavigate } from 'react-router-dom';
+import * as Dialog from '@radix-ui/react-dialog';
+import * as Popover from '@radix-ui/react-popover';
 import {
+  ArrowUpRight,
   Bell,
-  Command,
-  Globe,
+  Building2,
+  ChevronDown,
+  Globe2,
   LogOut,
   Menu,
   Moon,
   Search,
+  Settings,
   Sparkles,
   Sun,
   X,
 } from 'lucide-react';
-import { useNavigate } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
 import { useAuth } from '../../contexts/AuthContext';
+import { listInvoices, type Invoice } from '../../services/invoicesService';
 import { useTheme } from '../context/ThemeContext';
+import { allWorkspaceLinks, workspaceAdminRoles } from './workspaceNavigation';
+import {
+  EmptyState,
+  ErrorState,
+  LoadingSkeleton,
+  useWorkspaceFormat,
+} from '../components/erp/WorkspaceUI';
 
-type Props = {
-  onMenu: () => void;
-};
-
-const commands = [
-  { label: 'Dashboard', path: '/dashboard' },
-  { label: 'Sales', path: '/sales' },
-  { label: 'Inventory', path: '/inventory' },
-  { label: 'Purchases', path: '/purchase' },
-  { label: 'Finance', path: '/finance/accounting' },
-  { label: 'HR', path: '/hr/employees' },
-  { label: 'Reports', path: '/reports' },
-  { label: 'AI Recommendations', path: '/ai/recommendations' },
-  { label: 'AI Alerts', path: '/ai/alerts' },
-];
-
-export default function Topbar({ onMenu }: Props) {
-  const [showNotifications, setShowNotifications] =
-    useState(false);
+export default function Topbar({ onMenu }: { onMenu: () => void }) {
+  const { t, i18n } = useTranslation('workspace');
+  const { user, roles, signOut } = useAuth();
+  const { theme, toggleTheme } = useTheme();
+  const { date, isRtl, timeZone } = useWorkspaceFormat();
+  const navigate = useNavigate();
   const [commandOpen, setCommandOpen] = useState(false);
   const [search, setSearch] = useState('');
-
-  const commandRef = useRef<HTMLInputElement>(null);
-
-  const { i18n } = useTranslation();
-  const { user, signOut } = useAuth();
-  const { theme, toggleTheme } = useTheme();
-  const navigate = useNavigate();
-
-  const handleLogout = async () => {
-    try {
-      await signOut();
-      navigate('/login');
-    } catch (error) {
-      console.error('Logout error:', error);
-    }
-  };
-
+  const [notificationsOpen, setNotificationsOpen] = useState(false);
+  const [notifications, setNotifications] = useState<Invoice[]>([]);
+  const [notificationsBusy, setNotificationsBusy] = useState(false);
+  const [notificationError, setNotificationError] = useState('');
+  const [logoutError, setLogoutError] = useState('');
+  const [loggingOut, setLoggingOut] = useState(false);
+  const notificationCache = useRef({ company: '', at: 0 });
+  const admin = roles.some((role) => workspaceAdminRoles.includes(role.role_name));
+  const commands = useMemo(
+    () => allWorkspaceLinks().filter((link) => !link.admin || admin),
+    [admin],
+  );
+  const results = commands.filter((link) =>
+    `${t('nav.' + link.key)} ${link.path}`.toLowerCase().includes(search.toLowerCase()),
+  );
   useEffect(() => {
-    const handleKeyboard = (event: KeyboardEvent) => {
-      if ((event.ctrlKey || event.metaKey) && event.key === 'k') {
+    const handler = (event: KeyboardEvent) => {
+      if ((event.ctrlKey || event.metaKey) && event.key.toLowerCase() === 'k') {
         event.preventDefault();
         setCommandOpen(true);
       }
-
-      if (event.key === 'Escape') {
-        setCommandOpen(false);
-        setShowNotifications(false);
-      }
     };
-
-    window.addEventListener('keydown', handleKeyboard);
-
-    return () =>
-      window.removeEventListener('keydown', handleKeyboard);
+    window.addEventListener('keydown', handler);
+    return () => window.removeEventListener('keydown', handler);
   }, []);
-
   useEffect(() => {
-    if (commandOpen) {
-      window.setTimeout(() => {
-        commandRef.current?.focus();
-      }, 50);
-    }
-  }, [commandOpen]);
-
-  const filteredCommands = commands.filter((command) =>
-    command.label.toLowerCase().includes(search.toLowerCase()),
-  );
-
-  const handleSearch = (event: FormEvent) => {
-    event.preventDefault();
-
-    const value = search.trim();
-
-    if (!value) {
-      setCommandOpen(true);
+    setNotifications([]);
+    setNotificationError('');
+    notificationCache.current = { company: '', at: 0 };
+    setSearch('');
+    setCommandOpen(false);
+  }, [user?.id, user?.company_id]);
+  useEffect(() => {
+    if (!notificationsOpen || !user?.company_id) return;
+    if (
+      notificationCache.current.company === user.company_id &&
+      Date.now() - notificationCache.current.at < 60000
+    )
       return;
+    let current = true;
+    setNotificationsBusy(true);
+    setNotificationError('');
+    void listInvoices(user.company_id)
+      .then((invoices) => {
+        if (!current) return;
+        const today = new Intl.DateTimeFormat('en-CA', { timeZone }).format(new Date());
+        setNotifications(
+          invoices
+            .filter(
+              (invoice) =>
+                ['issued', 'sent', 'partial', 'paid', 'overdue'].includes(
+                  invoice.status.toLowerCase(),
+                ) &&
+                Number(invoice.amount_due) > 0 &&
+                invoice.due_date &&
+                invoice.due_date < today,
+            )
+            .sort((a, b) => a.due_date.localeCompare(b.due_date)),
+        );
+        notificationCache.current = { company: user.company_id, at: Date.now() };
+      })
+      .catch(() => {
+        if (current) setNotificationError(t('shell.notificationError'));
+      })
+      .finally(() => {
+        if (current) setNotificationsBusy(false);
+      });
+    return () => {
+      current = false;
+    };
+  }, [notificationsOpen, user?.company_id, timeZone, t]);
+  async function logout() {
+    setLoggingOut(true);
+    setLogoutError('');
+    try {
+      await signOut();
+      navigate('/login');
+    } catch {
+      setLogoutError(t('shell.logoutError'));
+    } finally {
+      setLoggingOut(false);
     }
-
-    const match = commands.find((command) =>
-      command.label.toLowerCase().includes(value.toLowerCase()),
-    );
-
-    if (match) {
-      navigate(match.path);
-      setSearch('');
-      setCommandOpen(false);
-    } else {
-      setCommandOpen(true);
-    }
-  };
-
-  const [notifications, setNotifications] = useState<{id:string;text:string;time:string}[]>([]);
-  const [notificationError, setNotificationError] = useState('');
-  const [notificationsLoading, setNotificationsLoading] = useState(false);
-  useEffect(() => {
-    let active = true;
-    setNotifications([]); setNotificationError('');
-    if (!showNotifications || !user?.company_id) { setNotificationsLoading(false); return; }
-    setNotificationsLoading(true);
-    void listInvoices(user.company_id).then(invoices => {
-      if (!active) return;
-      const today = new Date().toISOString().slice(0,10);
-      setNotifications(invoices.filter(invoice => !['draft','cancelled','void','refunded'].includes(invoice.status.toLowerCase()) && Number(invoice.total_amount) > Number(invoice.amount_paid) && invoice.due_date < today)
-        .sort((a,b) => a.due_date.localeCompare(b.due_date)).slice(0,10)
-        .map(invoice => ({ id:invoice.id,text:`Overdue invoice ${invoice.invoice_number}`,time:`Due ${invoice.due_date}` })));
-    }).catch(error => { if (active) setNotificationError(error instanceof Error ? error.message : 'Notifications unavailable.'); })
-      .finally(() => { if (active) setNotificationsLoading(false); });
-    return () => { active = false; };
-  }, [showNotifications, user?.company_id]);
-
-  const firstName =
-    user?.first_name ||
-    user?.email?.charAt(0).toUpperCase() ||
-    'U';
-
-  const displayName =
-    user?.first_name && user?.last_name
-      ? `${user.first_name} ${user.last_name}`
-      : user?.email || 'User';
-
-  const role =
-    user?.role?.display_name ||
-    user?.role?.name ||
-    'User';
-
+  }
+  const name =
+    [user?.first_name, user?.last_name].filter(Boolean).join(' ') || user?.email || t('shell.user');
+  const role = user?.role?.display_name || user?.role?.name || t('shell.user');
   return (
     <>
-      <header className="sticky top-0 z-40 border-b border-[var(--app-border)] bg-[color:var(--app-surface)]/90 backdrop-blur-xl">
-        <div className="flex min-h-[72px] items-center gap-3 px-3 sm:px-5 lg:px-7">
-          <button
-            type="button"
-            onClick={onMenu}
-            className="grid h-10 w-10 shrink-0 place-items-center rounded-xl border border-[var(--app-border)] bg-[var(--app-surface-2)] text-[var(--app-muted)] transition hover:text-[var(--app-text)] lg:hidden"
-            aria-label="Open navigation"
-          >
-            <Menu size={19} />
-          </button>
-
-          <form
-            onSubmit={handleSearch}
-            className="min-w-0 flex-1"
-          >
-            <div className="relative max-w-3xl">
-              <Search
-                size={18}
-                className="absolute left-4 top-1/2 -translate-y-1/2 text-[var(--app-muted)]"
-              />
-
-              <input
-                value={search}
-                onChange={(event) => setSearch(event.target.value)}
-                onFocus={() => setCommandOpen(true)}
-                placeholder="Search ERPX-AI..."
-                className="h-11 w-full rounded-xl border border-[var(--app-border)] bg-[var(--app-surface-2)] pl-11 pr-24 text-sm font-medium text-[var(--app-text)] outline-none transition placeholder:text-[var(--app-muted-2)] focus:border-[var(--app-accent)] focus:ring-2 focus:ring-[var(--app-accent-soft)]"
-              />
-
-              <div className="pointer-events-none absolute right-3 top-1/2 hidden -translate-y-1/2 items-center gap-1 rounded-lg border border-[var(--app-border)] bg-[var(--app-surface)] px-2 py-1 text-[10px] font-bold text-[var(--app-muted)] sm:flex">
-                <Command size={11} />
-                K
-              </div>
-            </div>
-          </form>
-
-          <div className="flex shrink-0 items-center gap-1.5">
-            <button
-              type="button"
-              onClick={() =>
-                i18n.changeLanguage(
-                  i18n.language === 'ar' ? 'en' : 'ar',
-                )
-              }
-              className="hidden h-10 items-center gap-2 rounded-xl border border-[var(--app-border)] bg-[var(--app-surface-2)] px-3 text-[var(--app-muted)] transition hover:text-[var(--app-text)] sm:flex"
-              title="Change language"
-            >
-              <Globe size={16} />
-              <span className="text-xs font-bold">
-                {i18n.language === 'ar' ? 'EN' : 'AR'}
-              </span>
-            </button>
-
-            <button
-              type="button"
-              onClick={toggleTheme}
-              className="grid h-10 w-10 place-items-center rounded-xl border border-[var(--app-border)] bg-[var(--app-surface-2)] text-[var(--app-muted)] transition hover:text-[var(--app-text)]"
-              title={
-                theme === 'dark'
-                  ? 'Switch to light mode'
-                  : 'Switch to dark mode'
-              }
-            >
-              {theme === 'dark' ? (
-                <Sun size={17} />
-              ) : (
-                <Moon size={17} />
-              )}
-            </button>
-
-            <button
-              type="button"
-              onClick={() =>
-                window.dispatchEvent(new Event('erpx:open-ai'))
-              }
-              className="hidden h-10 w-10 place-items-center rounded-xl bg-[var(--app-accent)] text-slate-900 shadow-lg shadow-yellow-500/10 transition hover:scale-105 sm:grid"
-              title="AI Assistant"
-            >
-              <Sparkles size={17} />
-            </button>
-
-            <div className="relative">
-              <button
-                type="button"
-                onClick={() =>
-                  setShowNotifications((value) => !value)
-                }
-                className="relative grid h-10 w-10 place-items-center rounded-xl border border-[var(--app-border)] bg-[var(--app-surface-2)] text-[var(--app-muted)] transition hover:text-[var(--app-text)]"
-                aria-label="Notifications"
-              >
-                <Bell size={17} />
-
-                {notifications.length > 0 && (
-                  <span className="absolute right-1 top-1 grid min-h-4 min-w-4 place-items-center rounded-full bg-red-500 px-1 text-[8px] font-bold text-white">
-                    {notifications.length}
-                  </span>
-                )}
-              </button>
-
-              <AnimatePresence>
-                {showNotifications && (
-                  <motion.div
-                    initial={{
-                      opacity: 0,
-                      y: -8,
-                      scale: 0.98,
-                    }}
-                    animate={{
-                      opacity: 1,
-                      y: 0,
-                      scale: 1,
-                    }}
-                    exit={{
-                      opacity: 0,
-                      y: -8,
-                      scale: 0.98,
-                    }}
-                    className="absolute right-0 mt-3 w-[min(360px,calc(100vw-24px))] overflow-hidden rounded-2xl border border-[var(--app-border)] bg-[var(--app-surface)] shadow-2xl"
-                  >
-                    <div className="flex items-center justify-between border-b border-[var(--app-border)] px-4 py-4">
-                      <div>
-                        <div className="text-sm font-bold text-[var(--app-text)]">
-                          Notifications
-                        </div>
-                        <div className="mt-0.5 text-[11px] text-[var(--app-muted)]">
-                          Overdue invoice reminders
-                        </div>
-                      </div>
-
-                      <span className="rounded-full bg-[var(--app-accent-soft)] px-2 py-1 text-[10px] font-bold text-[var(--app-text)]">
-                        {notifications.length} new
-                      </span>
-                    </div>
-
-                    <div className="max-h-80 overflow-y-auto">
-                      {notificationsLoading && <p role="status" className="p-4">Loading?</p>}
-                      {notificationError && <p role="alert" className="p-4">{notificationError}</p>}
-                      {!notificationsLoading && !notificationError && !notifications.length && <p className="p-4">No overdue invoices.</p>}
-                      {notifications.map((notification) => (
-                        <button
-                          type="button"
-                          key={notification.id}
-                          onClick={() => { setShowNotifications(false); navigate('/finance/accounts-receivable'); }}
-                          className="flex w-full gap-3 border-b border-[var(--app-border)] px-4 py-4 text-left transition hover:bg-[var(--app-surface-2)]"
-                        >
-                          <span className="mt-1 h-2 w-2 shrink-0 rounded-full bg-[var(--app-accent)]" />
-
-                          <span className="min-w-0">
-                            <span className="block text-sm font-semibold text-[var(--app-text)]">
-                              {notification.text}
-                            </span>
-
-                            <span className="mt-1 block text-[11px] text-[var(--app-muted)]">
-                              {notification.time}
-                            </span>
-                          </span>
-                        </button>
-                      ))}
-                    </div>
-
-                    <button
-                      type="button"
-                      onClick={() => { setShowNotifications(false); navigate('/finance/accounts-receivable'); }}
-                      className="w-full px-4 py-3 text-center text-xs font-bold text-[var(--app-muted)] transition hover:text-[var(--app-text)]"
-                    >
-                      View all receivables
-                    </button>
-                  </motion.div>
-                )}
-              </AnimatePresence>
-            </div>
-
-            <div className="hidden h-8 w-px bg-[var(--app-border)] md:block" />
-
-            <div className="hidden items-center gap-3 md:flex">
-              <div className="grid h-10 w-10 place-items-center rounded-xl bg-[var(--app-accent)] font-extrabold text-slate-900">
-                {firstName.charAt(0).toUpperCase()}
-              </div>
-
-              <div className="max-w-[150px]">
-                <div className="truncate text-xs font-bold text-[var(--app-text)]">
-                  {displayName}
-                </div>
-                <div className="truncate text-[10px] font-medium text-[var(--app-muted)]">
-                  {role}
-                </div>
-              </div>
-            </div>
-
-            <button
-              type="button"
-              onClick={handleLogout}
-              className="grid h-10 w-10 place-items-center rounded-xl border border-[var(--app-border)] bg-[var(--app-surface-2)] text-[var(--app-muted)] transition hover:border-red-500/30 hover:bg-red-500/10 hover:text-red-500"
-              title="Logout"
-              aria-label="Logout"
-            >
-              <LogOut size={17} />
-            </button>
+      <header className="erpx-topbar">
+        <button
+          className="ws-icon-btn erpx-mobile-menu"
+          aria-label={t('shell.openNavigation')}
+          onClick={onMenu}
+        >
+          <Menu size={20} />
+        </button>
+        <div className="erpx-company">
+          <div className="erpx-company-icon">
+            <Building2 size={17} />
+          </div>
+          <div className="min-w-0">
+            <small>{t('shell.company')}</small>
+            <strong title={user?.company?.name}>
+              {user?.company?.name || t('shell.companyFallback')}
+            </strong>
+            {user?.branch?.name && (
+              <small title={user.branch.name}>{t('shell.branch')} · <bdi>{user.branch.name}</bdi></small>
+            )}
           </div>
         </div>
-      </header>
-
-      <AnimatePresence>
-        {commandOpen && (
-          <>
-            <motion.button
-              type="button"
-              className="fixed inset-0 z-[80] bg-black/40 backdrop-blur-sm"
-              initial={{ opacity: 0 }}
-              animate={{ opacity: 1 }}
-              exit={{ opacity: 0 }}
-              onClick={() => setCommandOpen(false)}
-              aria-label="Close command palette"
-            />
-
-            <motion.div
-              initial={{
-                opacity: 0,
-                y: -16,
-                scale: 0.98,
-              }}
-              animate={{
-                opacity: 1,
-                y: 0,
-                scale: 1,
-              }}
-              exit={{
-                opacity: 0,
-                y: -16,
-                scale: 0.98,
-              }}
-              className="fixed left-1/2 top-[12vh] z-[90] w-[min(680px,calc(100vw-24px))] -translate-x-1/2 overflow-hidden rounded-2xl border border-[var(--app-border)] bg-[var(--app-surface)] shadow-2xl"
-            >
-              <div className="flex items-center gap-3 border-b border-[var(--app-border)] px-4">
-                <Search
-                  size={18}
-                  className="text-[var(--app-muted)]"
-                />
-
-                <input
-                  ref={commandRef}
-                  value={search}
-                  onChange={(event) =>
-                    setSearch(event.target.value)
-                  }
-                  placeholder="Search pages, modules and actions..."
-                  className="h-14 min-w-0 flex-1 bg-transparent text-sm font-medium text-[var(--app-text)] outline-none placeholder:text-[var(--app-muted-2)]"
-                />
-
-                <button
-                  type="button"
-                  onClick={() => {
-                    setSearch('');
-                    setCommandOpen(false);
-                  }}
-                  className="grid h-8 w-8 place-items-center rounded-lg text-[var(--app-muted)] hover:bg-[var(--app-surface-2)]"
-                  aria-label="Close"
-                >
-                  <X size={16} />
-                </button>
-              </div>
-
-              <div className="max-h-[55vh] overflow-y-auto p-2">
-                {filteredCommands.length > 0 ? (
-                  filteredCommands.map((command) => (
-                    <button
-                      type="button"
-                      key={command.path}
-                      onClick={() => {
-                        navigate(command.path);
-                        setSearch('');
-                        setCommandOpen(false);
-                      }}
-                      className="flex w-full items-center justify-between rounded-xl px-4 py-3 text-left transition hover:bg-[var(--app-surface-2)]"
-                    >
-                      <span className="text-sm font-semibold text-[var(--app-text)]">
-                        {command.label}
-                      </span>
-
-                      <span className="text-[10px] font-medium text-[var(--app-muted)]">
-                        {command.path}
-                      </span>
-                    </button>
-                  ))
+        <button
+          className="erpx-topbar-search"
+          onClick={() => setCommandOpen(true)}
+          aria-label={t('shell.navigationSearch')}
+        >
+          <Search size={16} />
+          <span>{t('shell.searchPlaceholder')}</span>
+          <kbd dir="ltr">⌘ K</kbd>
+        </button>
+        <div className="erpx-topbar-actions">
+          <button
+            className="ws-icon-btn"
+            aria-label={t('shell.openAssistant')}
+            title={t('assistant.title')}
+            onClick={() => window.dispatchEvent(new Event('erpx:open-ai'))}
+          >
+            <Sparkles size={18} />
+          </button>
+          <Popover.Root open={notificationsOpen} onOpenChange={setNotificationsOpen}>
+            <Popover.Trigger asChild>
+              <button
+                className="ws-icon-btn"
+                aria-label={t('shell.notifications')}
+                title={t('shell.notifications')}
+              >
+                <Bell size={18} />
+              </button>
+            </Popover.Trigger>
+            <Popover.Portal>
+              <Popover.Content
+                className="ws-popover"
+                sideOffset={12}
+                align="end"
+                dir={isRtl ? 'rtl' : 'ltr'}
+              >
+                <div className="ws-popover-header">
+                  <h2>{t('shell.notifications')}</h2>
+                  <p>{t('shell.notificationsDescription')}</p>
+                </div>
+                {notificationsBusy ? (
+                  <LoadingSkeleton rows={3} />
+                ) : notificationError ? (
+                  <ErrorState message={notificationError} />
+                ) : !notifications.length ? (
+                  <EmptyState
+                    title={t('shell.noNotifications')}
+                    description={t('shell.noNotificationsHint')}
+                    icon={<Bell size={22} />}
+                  />
                 ) : (
-                  <div className="px-4 py-10 text-center text-sm text-[var(--app-muted)]">
-                    No matching page found.
+                  <div>
+                    {notifications.slice(0, 8).map((invoice) => (
+                      <Link
+                        key={invoice.id}
+                        className="ws-menu-item"
+                        to="/finance/invoicing"
+                        onClick={() => setNotificationsOpen(false)}
+                      >
+                        <span>
+                          <span>
+                            {t('shell.overdueInvoice', { number: invoice.invoice_number })}
+                          </span>
+                          <small className="block ws-muted">
+                            {t('shell.dueOn', { date: date(invoice.due_date) })}
+                          </small>
+                        </span>
+                      </Link>
+                    ))}
                   </div>
                 )}
-              </div>
-            </motion.div>
-          </>
-        )}
-      </AnimatePresence>
+                <Link
+                  to="/finance/invoicing"
+                  className="ws-menu-item"
+                  onClick={() => setNotificationsOpen(false)}
+                >
+                  {t('shell.viewNotifications')}
+                  <ArrowUpRight size={14} />
+                </Link>
+              </Popover.Content>
+            </Popover.Portal>
+          </Popover.Root>
+          <button
+            className="ws-icon-btn erpx-theme-toggle"
+            onClick={toggleTheme}
+            aria-label={t(theme === 'dark' ? 'shell.light' : 'shell.dark')}
+            title={t('shell.theme')}
+          >
+            {theme === 'dark' ? <Sun size={18} /> : <Moon size={18} />}
+          </button>
+          <button
+            className="ws-icon-btn"
+            onClick={() => void i18n.changeLanguage(isRtl ? 'en' : 'ar')}
+            aria-label={t('shell.language')}
+            title={isRtl ? 'English' : 'العربية'}
+          >
+            <Globe2 size={18} />
+          </button>
+          <span className="erpx-topbar-divider" />
+          <Popover.Root>
+            <Popover.Trigger asChild>
+              <button className="erpx-account-button" aria-label={t('shell.menu')}>
+                <span className="erpx-avatar">{name.slice(0, 1)}</span>
+                <span className="erpx-account-name">
+                  {name}
+                  <span className="erpx-account-role">{role}</span>
+                </span>
+                <ChevronDown size={12} />
+              </button>
+            </Popover.Trigger>
+            <Popover.Portal>
+              <Popover.Content
+                className="ws-popover"
+                sideOffset={12}
+                align="end"
+                dir={isRtl ? 'rtl' : 'ltr'}
+              >
+                <div className="ws-popover-header">
+                  <h2>{name}</h2>
+                  <p dir="ltr">{user?.email}</p>
+                </div>
+                {admin && (
+                  <Link className="ws-menu-item" to="/settings">
+                    <Settings size={16} />
+                    {t('shell.settings')}
+                  </Link>
+                )}
+                <button className="ws-menu-item" onClick={toggleTheme}>
+                  {theme === 'dark' ? <Sun size={16} /> : <Moon size={16} />}
+                  {t(theme === 'dark' ? 'shell.light' : 'shell.dark')}
+                </button>
+                <button
+                  className="ws-menu-item"
+                  onClick={() => void logout()}
+                  disabled={loggingOut}
+                >
+                  <LogOut size={16} />
+                  {t('shell.logout')}
+                </button>
+                {logoutError && (
+                  <p role="alert" className="ws-inline-message ws-error">
+                    {logoutError}
+                  </p>
+                )}
+              </Popover.Content>
+            </Popover.Portal>
+          </Popover.Root>
+        </div>
+      </header>
+      <Dialog.Root open={commandOpen} onOpenChange={setCommandOpen}>
+        <Dialog.Portal>
+          <Dialog.Overlay className="ws-overlay" />
+          <Dialog.Content
+            className="ws-search-dialog"
+            dir={isRtl ? 'rtl' : 'ltr'}
+            aria-describedby={undefined}
+          >
+            <div className="ws-panel-header">
+              <Dialog.Title>{t('shell.searchHint')}</Dialog.Title>
+              <Dialog.Close asChild>
+                <button className="ws-icon-btn" aria-label={t('common.close')}>
+                  <X size={18} />
+                </button>
+              </Dialog.Close>
+            </div>
+            <input
+              autoFocus
+              className="ws-input"
+              aria-label={t('shell.navigationSearch')}
+              placeholder={t('shell.searchPlaceholder')}
+              value={search}
+              onChange={(event) => setSearch(event.target.value)}
+              onKeyDown={(event) => {
+                if (event.key === 'Enter' && results[0]) {
+                  navigate(results[0].path);
+                  setCommandOpen(false);
+                  setSearch('');
+                }
+              }}
+            />
+            <div className="ws-search-results">
+              {results.length ? (
+                results.map((link) => (
+                  <Link
+                    to={link.path}
+                    key={link.path}
+                    onClick={() => {
+                      setCommandOpen(false);
+                      setSearch('');
+                    }}
+                  >
+                    <span>{t('nav.' + link.key)}</span>
+                    <span className="ws-muted">{t('nav.' + link.section)}</span>
+                  </Link>
+                ))
+              ) : (
+                <EmptyState title={t('shell.searchEmpty')} icon={<Search size={20} />} />
+              )}
+            </div>
+          </Dialog.Content>
+        </Dialog.Portal>
+      </Dialog.Root>
     </>
   );
 }
