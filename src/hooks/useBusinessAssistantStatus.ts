@@ -27,7 +27,7 @@ export function useBusinessAssistantStatus(enabled = true) {
     } finally {
       if (request === generation.current) setLoading(false);
     }
-  }, [enabled, user?.id, user?.company_id]);
+  }, [enabled, user?.id, user?.company_id, user?.branch_id, user?.role_id]);
   useEffect(() => {
     setStatus(null);
     setError(null);

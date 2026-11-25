@@ -1,4 +1,4 @@
-export type AIErrorCode = 'configuration_required' | 'provider_unavailable' | 'rate_limited' | 'auth_error' | 'invalid_request' | 'data_unavailable';
+export type AIErrorCode = 'configuration_required' | 'provider_unavailable' | 'rate_limited' | 'auth_error' | 'invalid_request' | 'data_unavailable' | 'timeout';
 export class AIError extends Error {
   constructor(public status: number, public code: AIErrorCode, message: string) { super(message); }
 }

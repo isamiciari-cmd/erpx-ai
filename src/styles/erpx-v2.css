@@ -1244,20 +1244,14 @@ textarea.ws-input {
   line-height: 1.9;
   font-size: 14px;
 }
-.ws-assistant-fab {
+.erpx-assistant-launch.ws-assistant-fab {
   position: fixed;
   inset-inline-end: 24px;
   inset-block-end: 24px;
   z-index: 35;
-  width: 48px;
-  height: 48px;
-  display: grid;
-  place-items: center;
-  border: 1px solid #e0b000;
-  border-radius: 12px;
-  background: var(--app-accent);
-  color: #111827;
-  box-shadow: 0 3px 12px #0f172a15;
+}
+.ws-drawer-footer:has(.ws-assistant-fab) {
+  padding-inline-end: 84px;
 }
 .ws-chat-message {
   border: 1px solid var(--app-border);
@@ -1523,11 +1517,10 @@ textarea.ws-input {
   .ws-error-state {
     flex-wrap: wrap;
   }
-  .ws-assistant-fab {
+  .erpx-assistant-launch.ws-assistant-fab {
     inset-inline-end: 16px;
     inset-block-end: 18px;
-    width: 44px;
-    height: 44px;
+    --erpx-assistant-button-size: 44px;
   }
 }
 @media (prefers-reduced-motion: reduce) {

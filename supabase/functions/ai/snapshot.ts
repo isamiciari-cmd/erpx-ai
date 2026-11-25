@@ -28,7 +28,7 @@ export function moneyCents(value: unknown): bigint {
   if (cents > MAX_CENTS) return dataError();
   return match[1] ? -cents : cents;
 }
-function decimal(cents: bigint): string {
+export function decimal(cents: bigint): string {
   const absolute = cents < 0n ? -cents : cents;
   return (cents < 0n ? '-' : '') + (absolute / 100n).toString() + '.' + (absolute % 100n).toString().padStart(2, '0');
 }

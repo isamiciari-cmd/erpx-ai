@@ -15,10 +15,16 @@ import { build, preview } from 'vite';
 import { chromium } from 'playwright';
 
 const root = resolve(dirname(fileURLToPath(import.meta.url)), '..');
+const unifiedPreview = process.argv.includes('--assistant-preview');
+const launcherOnly = process.argv.includes('--assistant-launcher');
+const receiptPreview = unifiedPreview || process.argv.includes('--assistant-receipt');
+const receiptPostgres = unifiedPreview || (receiptPreview && process.argv.includes('--receipt-postgres'));
 const finalReview = process.argv.includes('--final');
 const visualOnly = finalReview || process.argv.includes('--visual');
-const skipInteractions = visualOnly && !process.argv.includes('--quick');
-const output = resolve(root, finalReview ? '.tmp/ui-final-review' : visualOnly ? '.tmp/ui-visual-review' : '.tmp/ui-redesign');
+const skipInteractions = launcherOnly || receiptPreview || (visualOnly && !process.argv.includes('--quick'));
+const output = resolve(root, launcherOnly ? '.tmp/assistant-launcher' : unifiedPreview ? '.tmp/assistant-preview' : receiptPostgres ? '.tmp/assistant-receipt-postgres-ui' : receiptPreview ? '.tmp/assistant-receipt' : finalReview ? '.tmp/ui-final-review' : visualOnly ? '.tmp/ui-visual-review' : '.tmp/ui-redesign');
+let receiptFixture;
+let receiptDatabase;
 const API = 'https://erpx-ui-test.supabase.co';
 const uuid = (index) => `aaaaaaaa-aaaa-4aaa-8aaa-${String(index).padStart(12, '0')}`;
 const companyId = uuid(1),
@@ -31,6 +37,7 @@ const companyId = uuid(1),
 const now = new Date(),
   date = now.toISOString().slice(0, 10);
 const cashierRoleId = uuid(9);
+const accountantRoleId = uuid(19);
 const recoveryShiftId = uuid(10);
 const ownerRoleId = uuid(11);
 const developerRoleId = uuid(12);
@@ -91,6 +98,8 @@ const company = {
   logo_url: null,
 };
 const roles = [
+  { id: accountantRoleId, company_id: null, name: 'accountant', display_name: 'Accountant',
+    level: 400, status: 'active', permissions: { finance: true }, is_system_role: true },
   {
     id: developerRoleId,
     company_id: null,
@@ -353,7 +362,8 @@ function ensure(value, code) {
 }
 function fixtureState(variant = 'normal') {
   const roleId = {
-    viewer: viewerRoleId, 'sale-recovery': cashierRoleId, owner: ownerRoleId, developer: developerRoleId,
+    viewer: viewerRoleId, 'sale-recovery': cashierRoleId, cashier: cashierRoleId, accountant: accountantRoleId,
+    owner: ownerRoleId, developer: developerRoleId,
   }[variant] ?? adminRoleId;
   const profile = {
     id: userId,
@@ -517,12 +527,13 @@ function filterRows(rows, query) {
   }
   return result;
 }
-function syntheticSession(viewer = false) {
+function syntheticSession(viewer = false, sessionId) {
   const claims = {
     sub: userId,
     aud: 'authenticated',
     role: 'authenticated',
     exp: Math.floor(Date.now() / 1000) + 3600,
+    ...(sessionId ? { jti: sessionId } : {}),
   };
   const token = `${Buffer.from(JSON.stringify({ alg: 'HS256', typ: 'JWT' })).toString('base64url')}.${Buffer.from(JSON.stringify(claims)).toString('base64url')}.SYNTHETIC-NOT-A-REAL-TOKEN`;
   return {
@@ -543,8 +554,9 @@ function syntheticSession(viewer = false) {
     viewer,
   };
 }
-async function mockContext(browser, base, language, variant = 'normal', dark = false) {
+async function mockContext(browser, base, language, variant = 'normal', dark = false, receiptActor) {
   const state = fixtureState(variant);
+  const session = variant === 'public' ? null : syntheticSession(variant === 'viewer', receiptActor?.user);
   const context = await browser.newContext({
     viewport: { width: 1440, height: 1000 },
     locale: language === 'ar' ? 'ar-SA' : 'en-GB',
@@ -567,7 +579,7 @@ async function mockContext(browser, base, language, variant = 'normal', dark = f
       localStorage.setItem('theme', dark ? 'dark' : 'light');
       if (dark) document.documentElement?.classList.add('dark');
     },
-    { session: variant === 'public' ? null : syntheticSession(variant === 'viewer'), language, dark },
+    { session, language, dark },
   );
   await context.route('**/*', async (route) => {
     const request = route.request(),
@@ -618,6 +630,15 @@ async function mockContext(browser, base, language, variant = 'normal', dark = f
       return reply(syntheticSession());
     if (target.pathname.startsWith('/rest/v1/rpc/') && method === 'POST') {
       const rpc = target.pathname.split('/').at(-1);
+      if (receiptPreview && receiptActor && state.normalReceipt && rpc === 'record_invoice_payment') {
+        const invoice = state.normalReceipt;
+        if (await request.headerValue('authorization') !== 'Bearer ' + session?.access_token ||
+            body?.p_invoice_id !== invoice.id || body?.p_amount !== 10 || body?.p_method !== 'cash' ||
+            !/^[\da-f-]{36}$/i.test(body?.p_request_id ?? '')) return reply({ message:'Invalid local test receipt' },400);
+        const { result } = await receiptFixture.pay(invoice.id,10,body.p_request_id,receiptActor);
+        Object.assign(invoice,{ amount_paid:result.amount_paid,amount_due:result.amount_due,status:result.status });
+        return reply(invoice);
+      }
       const saleRecovery = variant === 'sale-recovery' && rpc === 'complete_pos_sale';
       const receiptRecovery = variant === 'receipt-recovery' && rpc === 'record_invoice_payment';
       if (saleRecovery || receiptRecovery) {
@@ -674,6 +695,8 @@ async function mockContext(browser, base, language, variant = 'normal', dark = f
                   level: role.level,
                 },
               ]
+            : variant === 'cashier' ? grants.filter(permission => permission.category === 'pos')
+            : variant === 'accountant' ? grants.filter(permission => ['finance','sales','inventory','reports'].includes(permission.category))
             : variant === 'viewer'
               ? grants.filter((permission) => permission.permission_key.endsWith('.view'))
               : grants,
@@ -692,9 +715,93 @@ async function mockContext(browser, base, language, variant = 'normal', dark = f
       );
     }
     if (target.pathname === '/functions/v1/ai/chat' && method === 'POST') {
+      if (receiptPreview) {
+        if (!receiptFixture || !session || await request.headerValue('authorization') !== 'Bearer ' + session.access_token)
+          return reply({ ok: false, code: 'auth_error' }, 403);
+        const { act, read } = receiptFixture;
+        const identity = receiptActor ?? receiptFixture.actor;
+        const actor = unifiedPreview ? await receiptFixture.resolveActor(identity) : identity;
+        if (!actor) return reply({ ok:false, code:'auth_error' },403);
+        const model = { ...aiBase, preview: true, generatedAt: new Date().toISOString() };
+        const tools = actor.role === 'cashier' ? ['shift_summary','navigation'] :
+          ['find_invoice','overdue_receivables','navigation','preview_receipt',
+            ...(actor.role === 'accountant' ? [] : ['sales_summary','low_stock']),
+            ...(actor.role === 'accountant' || !receiptPostgres ? [] : ['preview_purchase'])];
+        if (body?.action === 'status') return reply({ ...aiStatus, preview: true, tools });
+        try {
+          if (actor.role === 'cashier') {
+            const question = String(body?.message ?? '');
+            if (/\bpos\b|نقطة البيع/iu.test(question))
+              return reply({ ...model, message:'افتح نقطة البيع.', recordPath:'/cashier/pos' });
+            if (/shift|وردية/iu.test(question)) {
+              const shift = await receiptFixture.assistantShift(actor);
+              return reply({ ...model, message:shift ? `${shift.shift_number} · ${actor.branchName} · ${shift.total_sales}` : 'لا توجد وردية مفتوحة.' });
+            }
+            return reply({ ok:false,code:'auth_error' },403);
+          }
+          if (receiptPostgres && ['confirm_purchase','cancel_purchase'].includes(body?.action)) {
+            const result = await receiptFixture.actPurchase(actor, body);
+            if (result.status === 'confirmed' && state.dropPurchaseReply) {
+              state.dropPurchaseReply = false;
+              return route.abort('failed');
+            }
+            return reply({ ok:true, ...result });
+          }
+          if (body?.action === 'confirm_receipt' || body?.action === 'cancel_receipt') {
+            const result = await act(actor, body);
+            if (result.status === 'denied') return reply({ ok: false, code: 'auth_error' },403);
+            if (result.status === 'invalid' || result.status === 'busy') return reply({ ok:false,code:'invalid_request' },400);
+            if (result.status === 'confirmed' && state.dropReceiptReply) {
+              state.dropReceiptReply = false;
+              return route.abort('failed');
+            }
+            return reply({ ok:true, ...result });
+          }
+          const question = typeof body?.message === 'string' ? body.message : '';
+          if (unifiedPreview && /sales|مبيعات/iu.test(question)) {
+            const end = new Date(Date.parse(date) + 86400000).toISOString();
+            const result = await receiptFixture.assistantSales(actor, date, end);
+            return reply({ ...model, message: `المبيعات المكتملة · ${actor.branchName} · ${date} (UTC) · ${result ? result.total + ' ' + result.currency : '0.00'}`, recordPath:'/finance/invoicing' });
+          }
+          if (unifiedPreview && /overdue|متأخرة/iu.test(question)) {
+            const results = await receiptFixture.assistantOverdue(actor);
+            return reply({ ...model, message: results.length ? results.map(row => `${row.total} ${row.currency_code}`).join('\n') : 'لا توجد ذمم متأخرة ضمن النطاق.' });
+          }
+          if (receiptPostgres && /purchase|شراء/u.test(question) && /stock|مخزون/u.test(question)) {
+            const purchaseProposal = await receiptFixture.actPurchase(actor, { action:'preview_purchase' });
+            const arabic = /\p{Script=Arabic}/u.test(question);
+            const message = purchaseProposal
+              ? (arabic ? 'اختر الأصناف والكميات من المستودع.' : 'Select items and quantities from the warehouse.')
+              : (arabic ? 'لا توجد أصناف منخفضة المخزون ضمن النطاق.' : 'No low-stock items in this scope.');
+            return reply({ ...model, purchaseProposal, message });
+          }
+          if (unifiedPreview && /low stock|منخفض/iu.test(question)) {
+            const stock = await receiptFixture.purchaseStock(actor);
+            return reply({ ...model, message: stock.map(row => `${row.warehouse} · ${row.sku}: ${row.available} / ${row.minimum}`).join('\n') || 'لا توجد أصناف منخفضة المخزون.', recordPath:'/inventory/manage' });
+          }
+          if (unifiedPreview && /\bpos\b|نقطة البيع/iu.test(question))
+            return reply({ ...model, message:'افتح نقطة البيع.', recordPath:'/pos' });
+          const number = question.match(/\bQA-RECEIPT-\d{2}\b/i)?.[0];
+          if (!number) return reply({ ok:false,code:'invalid_request' },400);
+          if (/تحصيل|collect/i.test(question)) {
+            const result = await act(actor, { action:'preview_receipt', invoiceNumber:number });
+            const preferredMethod = [[/\bcash\b|نقد/iu,'cash'],[/\bmada\b|مدى/iu,'mada'],[/apple pay|آبل باي/iu,'apple_pay'],
+              [/bank transfer|تحويل بنكي/iu,'bank_transfer'],[/\bcard\b|بطاقة/iu,'card']].find(([pattern])=>pattern.test(question))?.[1];
+            return reply({ ...model, message: result.proposal ? 'راجع بيانات التحصيل قبل التأكيد.' : 'التحصيل غير متاح لهذه الفاتورة.',
+              receiptProposal:result.proposal ? { ...result.proposal, preferredMethod } : undefined });
+          }
+          const invoice = await read(actor,number);
+          return reply({ ...model, message: invoice
+            ? `${invoice.number} · الإجمالي / المدفوع / المتبقي: ${invoice.total} / ${invoice.paid} / ${invoice.due} ${invoice.currency}`
+            : 'لم تظهر فاتورة مطابقة.' });
+        } catch (error) {
+          return reply({ ok:false,code:error.code === '42501' ? 'auth_error' : 'data_unavailable' },error.code === '42501' ? 403 : 503);
+        }
+      }
       if (body?.action === 'status' && Object.keys(body).length === 1) return reply(aiStatus);
       if (typeof body?.message === 'string' && Object.keys(body).length === 1) {
         state.aiChats++;
+        if (state.waitForAssistantReply) await state.waitForAssistantReply;
         if (state.failNextChat) {
           state.failNextChat = false;
           state.expectedFailures++;
@@ -725,7 +832,20 @@ async function mockContext(browser, base, language, variant = 'normal', dark = f
         state.blocked.push({ reason: 'unknown_table', table, method });
         return reply({ message: 'Unknown synthetic table', code: '42P01' }, 404);
       }
-      let rows = filterRows(state.tables[table], target.searchParams);
+      const purchaseRead = receiptPostgres && session && table === 'business_records' &&
+        target.searchParams.get('company_id') === 'eq.' + companyId &&
+        target.searchParams.get('module') === 'eq.purchases_requests';
+      // The mocked profile uses the browser fixture's company ID; SQL still
+      // reads only the authenticated actor's original company.
+      const invoiceRead = unifiedPreview && session && state.assistantInvoiceReport && table === 'invoices';
+      const records = invoiceRead
+        ? (await receiptFixture.assistantInvoices(receiptActor ?? receiptFixture.actor))
+          .filter(row => row.invoice_number === state.assistantInvoiceReport)
+          .map(row => ({ ...row, company_id: companyId, branch_id: branchId }))
+        : purchaseRead
+        ? (await receiptFixture.purchases(receiptActor ?? receiptFixture.actor)).map(row => ({ ...row, company_id: companyId }))
+        : state.tables[table];
+      let rows = filterRows(records, target.searchParams);
       const total = rows.length,
         offset = Number(target.searchParams.get('offset') || 0),
         limit = Number(target.searchParams.get('limit') || 1000);
@@ -768,6 +888,16 @@ async function mockContext(browser, base, language, variant = 'normal', dark = f
   return { context, page, state };
 }
 
+async function captureAssistantRole(page, role) {
+  for (const [width, height, label] of [[1440,1000,'desktop'],[390,844,'mobile']]) {
+    await page.setViewportSize({ width, height });
+    const filename = `assistant-${role}-${label}.png`;
+    await page.getByRole('dialog').screenshot({ path:resolve(output,filename), animations:'disabled' });
+    report.screenshots.push(filename);
+  }
+  await page.setViewportSize({ width:1440,height:1000 });
+}
+
 const report = {
   format: 'erpx_ui_redesign_acceptance_v1',
   mode: 'local_actual_app_mocked_http',
@@ -786,8 +916,10 @@ const report = {
   unexpectedWrites: [],
   pageErrors: [],
   limitations: [
-    'All records/auth/provider replies are synthetic HTTP fixtures. This validates the real local UI, not a live database or LLM.',
-    'No external payment, invitation, tax submission, production request or database mutation is permitted.',
+    receiptPostgres
+      ? 'Browser authentication and provider replies are synthetic. Receipt operations use independent connections to an isolated, loopback PostgreSQL server.'
+      : 'All records, authentication and provider replies use synthetic HTTP fixtures.',
+    'External payments, invitations, tax submissions and production requests are blocked.',
   ],
 };
 let server, browser, base;
@@ -992,6 +1124,395 @@ try {
   });
   base = `http://127.0.0.1:${server.httpServer.address().port}`;
   browser = await chromium.launch({ headless: true });
+  if (launcherOnly) await record('assistant-launcher', async item => {
+    const { context, page, state } = await mockContext(browser, base, 'en', 'normal', true);
+    let releaseReply;
+    try {
+      item.stage = 'open single launcher by keyboard';
+      await page.emulateMedia({ reducedMotion:'no-preference' });
+      await ready(page, '/dashboard');
+      const launcher = page.locator('#assistant-launcher');
+      assert.equal(await page.getByRole('button', { name:'Open business assistant' }).count(), 1);
+      assert.equal(await launcher.getAttribute('aria-expanded'), 'false');
+      await launcher.focus();
+      await launcher.press('Enter');
+      const dialog = page.getByRole('dialog');
+      await dialog.waitFor();
+      assert.equal(await launcher.count(), 1);
+      assert.equal(await launcher.getAttribute('aria-controls'), await dialog.getAttribute('id'));
+      assert.equal(await launcher.getAttribute('aria-expanded'), 'true');
+      assert.equal(await launcher.getAttribute('aria-label'), 'Close business assistant');
+      item.stage = 'render animated busy state';
+      state.waitForAssistantReply = new Promise(resolve => { releaseReply = resolve; });
+      const input = page.locator('#assistant-drawer-message');
+      await input.fill('Show my dashboard');
+      await dialog.locator('form').filter({ has:input }).locator('button[type=submit]').click();
+      await page.locator('#assistant-launcher[aria-busy="true"] [data-playing="true"] canvas').waitFor();
+      const canvas = page.locator('#assistant-launcher canvas');
+      const before = await canvas.evaluate(node => node.toDataURL());
+      await page.waitForFunction(({ before }) =>
+        document.querySelector('#assistant-launcher canvas')?.toDataURL() !== before, { before });
+      releaseReply();
+      await page.locator('#assistant-launcher[aria-busy="false"]').waitFor();
+      item.stage = 'close and verify reduced-motion fallback';
+      await launcher.click();
+      await dialog.waitFor({ state:'hidden' });
+      await page.waitForFunction(() => document.activeElement?.id === 'assistant-launcher');
+      await page.emulateMedia({ reducedMotion:'reduce' });
+      await launcher.locator('canvas').waitFor({ state:'detached' });
+      await launcher.locator('.erpx-assistant-launch__fallback').waitFor();
+      assert.equal(await launcher.count(), 1);
+      item.evidence = { singleButton:true, keyboardOpen:true, clickClose:true, panelLinked:true,
+        animatedBusyFrames:true, focusRestored:true, reducedMotionFallback:true };
+      delete item.stage;
+    } finally {
+      releaseReply?.();
+      collect(state);
+      await context.close();
+    }
+  });
+  if (receiptPreview) {
+    const { createAssistantReceiptFixture } = await import('../database/tests/assistant-receipt-fixture.mjs');
+    const runtime = receiptPostgres ? await import('../database/tests/assistant-receipt-postgres.mjs') : undefined;
+    receiptDatabase = runtime ? await runtime.openLocalReceiptPostgres() : undefined;
+    receiptFixture = await createAssistantReceiptFixture(receiptDatabase ? () => receiptDatabase : undefined);
+    const invoice = await receiptFixture.createInvoice('QA-RECEIPT-01');
+    const accountantInvoice = unifiedPreview ? await receiptFixture.createInvoice('QA-RECEIPT-04') : null;
+    const branchInvoice = unifiedPreview ? await receiptFixture.createInvoice('QA-RECEIPT-05') : null;
+    if (unifiedPreview) await receiptFixture.seedAssistantDemo(invoice);
+    const { context, page, state } = await mockContext(browser, base, 'ar', 'normal', true);
+    const peer = receiptPostgres
+      ? await mockContext(browser, base, 'ar', 'normal', true, receiptFixture.peer) : undefined;
+    await record('assistant-receipt-card-cancel-confirm-and-retry', async item => {
+      item.stage = 'open dashboard and assistant';
+      await ready(page, '/dashboard');
+      await page.locator('.ws-assistant-fab').click();
+      const input = page.locator('#assistant-drawer-message');
+      const send = page.locator('form').filter({ has: input }).locator('button[type=submit]');
+      const ask = async message => { await input.fill(message); await send.click(); };
+      item.stage = 'show invoice';
+      await ask('اعرض الفاتورة QA-RECEIPT-01');
+      await page.getByRole('log').getByText(/115\.00 \/ 40\.00 \/ 75\.00/).waitFor();
+      const pending = () => page.getByRole('region', { name: 'مراجعة تحصيل الفاتورة' }).last();
+      item.stage = 'cancel a review card';
+      await ask('حصّل المتبقي من الفاتورة QA-RECEIPT-01 - طلب تحصيل');
+      await pending().waitFor();
+      const counts = () => receiptFixture.counts(invoice);
+      assert.deepEqual(await counts(), { payments:1,journals:1 });
+      const first = pending();
+      await first.getByRole('button', { name:'إلغاء',exact:true }).click();
+      await first.getByText('أُلغي التحصيل.', { exact:true }).waitFor();
+      assert.deepEqual(await counts(), { payments:1,journals:1 });
+      item.stage = 'select payment method on a fresh card';
+      await ask('أريد تحصيل المتبقي للفاتورة QA-RECEIPT-01');
+      const card = pending();
+      await card.getByRole('combobox', { name:'وسيلة الدفع' }).waitFor();
+      const confirm = card.getByRole('button', { name:'تأكيد التحصيل',exact:true });
+      assert.equal(await confirm.isEnabled(), false);
+      await card.getByRole('combobox').selectOption('cash');
+      await card.scrollIntoViewIfNeeded();
+      await card.screenshot({ path:resolve(output,'receipt-review-ar.png') });
+      report.screenshots.push('receipt-review-ar.png');
+      state.dropReceiptReply = true;
+      item.stage = 'confirm and retry after network loss';
+      await confirm.click();
+      await card.getByRole('alert').waitFor();
+      assert.deepEqual(await counts(), { payments:2,journals:2 });
+      await confirm.click();
+      await card.getByText('سُجّل سند التحصيل.',{exact:true}).waitFor();
+      assert.deepEqual(await counts(), { payments:2,journals:2 });
+      const final = await receiptFixture.read(receiptFixture.actor,'QA-RECEIPT-01');
+      assert.equal(final.due,'0.00');
+      item.evidence = { initial:[115,40,75], amount:75, newReceipts:1, newJournalEntries:1, due:0 };
+      delete item.stage;
+    });
+    if (peer) await record('assistant-receipt-two-browser-sessions-race', async item => {
+      const number = 'QA-RECEIPT-11';
+      const id = await receiptFixture.createInvoice(number);
+      const prepare = async target => {
+        const input = target.locator('#assistant-drawer-message');
+        const count = await target.getByRole('region',{ name:'مراجعة تحصيل الفاتورة' }).count();
+        await input.fill('أريد تحصيل المتبقي للفاتورة ' + number);
+        await target.locator('form').filter({ has:input }).locator('button[type=submit]').click();
+        const card = target.getByRole('region',{ name:'مراجعة تحصيل الفاتورة' }).nth(count);
+        await card.getByRole('combobox').selectOption('cash');
+        return card;
+      };
+      await ready(peer.page,'/dashboard');
+      await peer.page.locator('.ws-assistant-fab').click();
+      const cards = await Promise.all([prepare(page),prepare(peer.page)]);
+      const blocker = await receiptDatabase.pool.connect();
+      let sessions, operations;
+      try {
+        await blocker.query('BEGIN');
+        await blocker.query('SELECT id FROM invoices WHERE id=$1 FOR UPDATE',[id]);
+        const confirmation = target => target.waitForRequest(req => req.url().endsWith('/functions/v1/ai/chat') &&
+          req.method() === 'POST' && req.postDataJSON()?.action === 'confirm_receipt');
+        const reqs = Promise.all([confirmation(page),confirmation(peer.page)]);
+        await Promise.all(cards.map(card=>card.getByRole('button',{name:'تأكيد التحصيل',exact:true}).click()));
+        operations = (await reqs).map(req=>req.postDataJSON().operationId);
+        assert.notEqual(...operations);
+        sessions = await runtime.waitForReceiptSessions(receiptDatabase);
+        await blocker.query('COMMIT');
+      } finally {
+        await blocker.query('ROLLBACK').catch(()=>{});
+        blocker.release();
+      }
+      const messages = await Promise.all(cards.map(card => card.getByRole('status').innerText()));
+      assert.equal(messages.filter(message=>message.includes('سُجّل سند التحصيل.')).length,1);
+      assert.equal(messages.filter(message=>message.includes('سُدّدت الفاتورة بالفعل.')).length,1);
+      const loser = cards[messages.findIndex(message=>message.includes('سُدّدت الفاتورة بالفعل.'))];
+      assert.equal(await loser.getByRole('button',{name:'تأكيد التحصيل',exact:true}).count(),0);
+      assert.deepEqual(await receiptFixture.counts(id),{payments:2,journals:2});
+      assert.equal((await receiptFixture.read(receiptFixture.actor,number)).due,'0.00');
+      item.evidence = { backendPids:sessions, differentOperations:true, sessions:messages, newReceipts:1, newJournalEntries:1, due:0 };
+    });
+    await record('assistant-receipt-card-rechecks-stale-balance-and-role', async item => {
+      item.stage = 'open assistant review';
+      const stale = await receiptFixture.createInvoice('QA-RECEIPT-02');
+      const input = page.locator('#assistant-drawer-message');
+      const submit = page.locator('form').filter({ has:input }).locator('button[type=submit]');
+      const before = await page.getByRole('region',{ name:'مراجعة تحصيل الفاتورة' }).count();
+      await input.fill('أريد تحصيل المتبقي للفاتورة QA-RECEIPT-02');
+      await submit.click();
+      const card = page.getByRole('region',{ name:'مراجعة تحصيل الفاتورة' }).nth(before);
+      await card.getByRole('combobox').selectOption('cash');
+      if (peer) {
+        const { context: standardContext, page: standardPage, state: standardState } =
+          await mockContext(browser,base,'en','normal',true,receiptFixture.peer);
+        try {
+          const standardInvoice = { ...standardState.tables.invoices[0], id:stale, invoice_number:'QA-RECEIPT-02',
+            amount_paid:40, amount_due:75, status:'partial', payment_status:'partial' };
+          standardState.tables.invoices = [standardInvoice];
+          standardState.normalReceipt = standardInvoice;
+          item.stage = 'open ordinary invoice';
+          await ready(standardPage,'/finance/invoicing');
+          await standardPage.getByRole('button',{ name:'QA-RECEIPT-02',exact:true }).click();
+          const drawer = standardPage.getByRole('dialog');
+          item.stage = 'open ordinary receipt editor';
+          await drawer.getByRole('button',{ name:'Record receipt',exact:true }).click();
+          await drawer.locator('#receipt-method').selectOption('cash');
+          await drawer.locator('#receipt-amount').fill('10');
+          item.stage = 'submit ordinary receipt';
+          const [success] = await Promise.all([
+            standardPage.waitForResponse(res=>res.url().endsWith('/rpc/record_invoice_payment') && res.ok()),
+            drawer.getByRole('button',{name:'Save receipt',exact:true}).click(),
+          ]);
+          assert.equal(Number((await success.json()).amount_due),65);
+          assert.equal((await receiptFixture.read(receiptFixture.actor,'QA-RECEIPT-02')).due,'65.00');
+        } catch (error) {
+          await screenshot(standardPage,'ordinary-receipt-debug');
+          throw error;
+        } finally { collect(standardState); await standardContext.close(); }
+      } else {
+        await receiptFixture.pay(stale,10);
+      }
+      const confirm = card.getByRole('button',{ name:'تأكيد التحصيل',exact:true });
+      item.stage = 'reject stale review and return 65';
+      await confirm.click();
+      await card.getByRole('status').filter({hasText:'تغيّر الرصيد'}).waitFor();
+      await card.getByText('65.00 SAR',{exact:true}).waitFor();
+      assert.deepEqual(await receiptFixture.counts(stale),{payments:2,journals:2});
+      let protectedInvoice = stale, protectedCard = card;
+      if (peer) {
+        item.stage = 'confirm updated review';
+        await confirm.click();
+        await card.getByText('سُجّل سند التحصيل.',{exact:true}).waitFor();
+        assert.deepEqual(await receiptFixture.counts(stale),{payments:3,journals:3});
+        assert.equal((await receiptFixture.read(receiptFixture.actor,'QA-RECEIPT-02')).due,'0.00');
+        item.stage = 'prepare separate role revocation case';
+        protectedInvoice = await receiptFixture.createInvoice('QA-RECEIPT-03');
+        await input.fill('أريد تحصيل المتبقي للفاتورة QA-RECEIPT-03');
+        await submit.click();
+        protectedCard = page.getByRole('region',{ name:'مراجعة تحصيل الفاتورة' }).nth(before+1);
+        await protectedCard.getByRole('combobox').selectOption('cash');
+      }
+      const beforeRevocation = await receiptFixture.counts(protectedInvoice);
+      await receiptFixture.revoke();
+      item.stage = 'reject revoked role';
+      await protectedCard.getByRole('button',{ name:'تأكيد التحصيل',exact:true }).click();
+      await protectedCard.getByRole('alert').waitFor();
+      assert.deepEqual(await receiptFixture.counts(protectedInvoice),beforeRevocation);
+      item.evidence = { ordinaryScreen:!!peer, ordinaryAmount:10, refreshedDue:65, writesAfterStaleConfirmation:0,
+        ...(peer ? { explicitlyConfirmed:65, finalDue:0, newReceipts:2, newJournalEntries:2 } : {}), writesAfterRevocation:0 };
+      delete item.stage;
+    });
+    if (peer) await record('assistant-purchase-draft', async item => {
+      const { page, state } = peer;
+      await ready(page, '/dashboard');
+      await page.locator('.ws-assistant-fab').click();
+      const input = page.locator('#assistant-drawer-message');
+      const send = page.locator('form').filter({ has: input }).locator('button[type=submit]');
+      const cards = page.getByRole('region', { name: 'مسودة طلب شراء' });
+      if (unifiedPreview) {
+        item.stage = 'match manager sales to the filtered invoice report';
+        state.assistantInvoiceReport = 'QA-RECEIPT-01';
+        await page.getByRole('button', { name:'إعداد مسودة شراء' }).waitFor();
+        await captureAssistantRole(page, 'manager');
+        await input.fill('ما الأصناف منخفضة المخزون؟');
+        await send.click();
+        await page.getByRole('log').getByText(/QA warehouse.*QA: 2 \/ 5/).waitFor();
+        await input.fill('ما إجمالي المبيعات المكتملة اليوم؟');
+        await send.click();
+        await page.getByRole('log').getByText(/115\.00 SAR/).waitFor();
+        await page.getByRole('log').getByRole('link').last().click();
+        await page.locator('#invoice-search').fill('QA-RECEIPT-01');
+        await page.getByText('QA-RECEIPT-01', { exact:true }).waitFor();
+        const invoiceRow = page.getByRole('row').filter({ hasText:'QA-RECEIPT-01' });
+        await invoiceRow.getByText(/115|١١٥/).first().waitFor();
+        await ready(page, '/dashboard');
+        await page.locator('.ws-assistant-fab').click();
+      }
+      const ask = async () => {
+        const index = await cards.count();
+        await input.fill('جهّز مسودة طلب شراء من المخزون المنخفض');
+        await send.click();
+        const card = cards.nth(index);
+        await card.waitFor();
+        return card;
+      };
+      item.stage = 'cancel without writing';
+      const before = await receiptFixture.purchaseCounts();
+      const cancelled = await ask();
+      await cancelled.getByRole('button', { name: 'إلغاء', exact: true }).click();
+      await cancelled.getByRole('status').waitFor();
+      assert.equal((await receiptFixture.purchases(receiptFixture.peer)).length, 0);
+      const review = async card => {
+        await card.getByText('2 / 5', { exact: true }).waitFor();
+        await card.getByLabel('المورد', { exact: true }).fill('QA supplier');
+        await card.getByLabel('مقدّم الطلب').fill('QA buyer');
+        await card.getByRole('checkbox', { name: 'QA' }).check();
+        await card.getByRole('spinbutton').fill('7');
+        await card.getByRole('button', { name:'مراجعة المسودة' }).click();
+        await card.getByText('راجع الكميات المختارة قبل حفظ المسودة.').waitFor();
+      };
+      item.stage = 'review and lose the response after commit';
+      const card = await ask();
+      await review(card);
+      assert.equal((await receiptFixture.purchases(receiptFixture.peer)).length, 0);
+      await card.screenshot({ path: resolve(output, 'purchase-review-ar.png') });
+      report.screenshots.push('purchase-review-ar.png');
+      state.dropPurchaseReply = true;
+      await card.getByRole('button', { name:'تأكيد حفظ المسودة' }).click();
+      await card.getByRole('alert').waitFor();
+      const [draft] = await receiptFixture.purchases(receiptFixture.peer);
+      assert.equal(draft?.status, 'draft');
+      assert.equal(draft?.data.items_description, 'QA × 7');
+      await card.getByRole('button', { name:'إعادة محاولة الحفظ' }).click();
+      const link = card.getByRole('link', { name:'فتح مسودة طلب الشراء' });
+      assert.equal(await link.getAttribute('href'), '/purchase?draft=' + draft.id);
+      assert.equal((await receiptFixture.purchases(receiptFixture.peer)).length, 1);
+      item.stage = 'open draft in purchases workspace';
+      await link.click();
+      await page.waitForURL('**/purchase');
+      await page.getByRole('dialog').getByText('QA × 7', { exact: true }).waitFor();
+      if (unifiedPreview) {
+        item.stage = 'invalidate purchase review after changing company';
+        await ready(page, '/dashboard');
+        await page.locator('.ws-assistant-fab').click();
+        const companyCard = await ask();
+        await review(companyCard);
+        const changedCompany = uuid(96), changedBranch = uuid(97);
+        await receiptFixture.changeWorkspace(receiptFixture.peer, receiptFixture.other);
+        state.tables.companies = [...state.tables.companies, { ...company, id:changedCompany, name:'Second QA company' }];
+        state.tables.branches.push({ id:changedBranch, company_id:changedCompany, name:'Second QA branch', status:'active' });
+        for (const profile of [state.profile, state.tables.users[0]])
+          Object.assign(profile, { company_id:changedCompany, branch_id:changedBranch });
+        await page.bringToFront();
+        await page.evaluate(() => window.dispatchEvent(new Event('focus')));
+        await page.getByText('تغيّر سياق العمل. افتح مراجعة جديدة قبل التأكيد.').waitFor();
+        assert.equal(await page.getByRole('button', { name:'تأكيد حفظ المسودة' }).count(), 0);
+        await receiptFixture.changeWorkspace(receiptFixture.peer, receiptFixture.peer);
+        for (const profile of [state.profile, state.tables.users[0]])
+          Object.assign(profile, { company_id:companyId, branch_id:branchId });
+        assert.equal((await receiptFixture.purchases(receiptFixture.peer)).length, 1);
+      }
+      item.stage = 'reject confirm after role revoked';
+      await ready(page, '/dashboard');
+      await page.locator('.ws-assistant-fab').click();
+      const denied = await ask();
+      await review(denied);
+      await receiptFixture.revoke(receiptFixture.peer);
+      await denied.getByRole('button', { name:'تأكيد حفظ المسودة' }).click();
+      await denied.getByRole('alert').waitFor();
+      assert.deepEqual(await receiptFixture.purchaseCounts(), before);
+      item.evidence = { available: before.available, minimum: 5, quantity: 7, newDrafts: 1,
+        purchaseWorkspaceOpened: true, lostResponseRetried: true, revokedDenied: true,
+        inventoryDelta: 0, movementsDelta: 0, journalsDelta: 0,
+        ...(unifiedPreview ? { sameBranchInvoiceReportMatched: '115.00 SAR', period: date, companyReviewBlocked:true } : {}) };
+      delete item.stage;
+    });
+    if (peer) { collect(peer.state); await peer.context.close(); }
+    if (unifiedPreview) await record('assistant-accountant-journey', async item => {
+      const who = receiptFixture.accountant;
+      const { context, page, state } = await mockContext(browser, base, 'ar', 'accountant', true, who);
+      try {
+        item.stage = 'open accountant assistant and verify suggestions';
+        await ready(page, '/dashboard');
+        await page.locator('.ws-assistant-fab').click();
+        const input = page.locator('#assistant-drawer-message');
+        const send = page.locator('form').filter({ has: input }).locator('button[type=submit]');
+        const ask = async question => { await input.fill(question); await send.click(); };
+        await page.getByRole('button', { name:'بدء التحصيل' }).waitFor();
+        assert.equal(await page.getByRole('button', { name:'إعداد مسودة شراء' }).count(), 0);
+        await captureAssistantRole(page, 'accountant');
+        await ask('ما الذمم المتأخرة في فرعي؟');
+        await page.getByRole('log').getByText('لا توجد ذمم متأخرة ضمن النطاق.').waitFor();
+        item.stage = 'find and collect a partial invoice';
+        await ask('اعرض الفاتورة QA-RECEIPT-04');
+        await page.getByRole('log').getByText(/115\.00 \/ 40\.00 \/ 75\.00/).waitFor();
+        await ask('أريد تحصيل متبقي الفاتورة QA-RECEIPT-04 نقدًا');
+        const card = page.getByRole('region', { name:'مراجعة تحصيل الفاتورة' }).last();
+        await card.getByRole('combobox').selectOption('cash');
+        await card.getByRole('button', { name:'تأكيد التحصيل' }).click();
+        await card.getByText('سُجّل سند التحصيل.', { exact:true }).waitFor();
+        assert.equal((await receiptFixture.read(who,'QA-RECEIPT-04')).due,'0.00');
+        assert.deepEqual(await receiptFixture.counts(accountantInvoice), { payments:2,journals:2 });
+        item.stage = 'invalidate review after changing branch';
+        await ask('أريد تحصيل متبقي الفاتورة QA-RECEIPT-05 نقدًا');
+        await card.getByText('QA-RECEIPT-05', { exact:true }).waitFor();
+        await receiptFixture.moveBranch(who);
+        const newBranch = uuid(99);
+        state.profile.branch_id = state.tables.users[0].branch_id = newBranch;
+        state.tables.branches.push({ id:newBranch, company_id:companyId, name:'Other preview branch', status:'active' });
+        await page.bringToFront();
+        await page.evaluate(() => window.dispatchEvent(new Event('focus')));
+        await page.getByText('تغيّر سياق العمل. افتح مراجعة جديدة قبل التأكيد.').waitFor();
+        assert.equal(await page.getByRole('button', { name:'تأكيد التحصيل' }).count(), 0);
+        assert.deepEqual(await receiptFixture.counts(branchInvoice), { payments:1,journals:1 });
+        item.evidence = { shown:[115,40,75], received:75, due:0, newReceipts:1,newJournals:1, branchReviewBlocked:true };
+        delete item.stage;
+      } finally { collect(state); await context.close(); }
+    });
+    if (unifiedPreview) await record('assistant-cashier-journey', async item => {
+      const who = receiptFixture.cashier;
+      const { context, page, state } = await mockContext(browser, base, 'ar', 'cashier', true, who);
+      try {
+        item.stage = 'open cashier assistant and verify suggestions';
+        await page.goto(base + '/cashier/pos');
+        await page.locator('.ws-assistant-fab').click();
+        const input = page.locator('#assistant-drawer-message');
+        const send = page.locator('form').filter({ has: input }).locator('button[type=submit]');
+        await page.getByRole('button', { name:'الوردية', exact:true }).waitFor();
+        assert.equal(await page.getByRole('button', { name:/بدء التحصيل|إعداد مسودة شراء/ }).count(), 0);
+        await captureAssistantRole(page, 'cashier');
+        item.stage = 'read active shift and navigate to POS';
+        await input.fill('لخّص الوردية الحالية');
+        await send.click();
+        await page.getByRole('log').getByText(/QA-SHIFT-01.*115\.00/).waitFor();
+        await input.fill('افتح نقطة البيع');
+        await send.click();
+        const posLink = page.getByRole('log').getByRole('link').last();
+        assert.equal(await posLink.getAttribute('href'), '/cashier/pos');
+        await posLink.click();
+        await page.locator('.ws-assistant-fab').waitFor({ state:'visible' });
+        item.evidence = { shift:'QA-SHIFT-01', sales:115, pos:'/cashier/pos', writeSuggestions:0 };
+        delete item.stage;
+      } finally { collect(state); await context.close(); }
+    });
+    collect(state);
+    await context.close();
+  }
   if (visualOnly) await auditRoutes();
   for (const variant of skipInteractions ? [] : ['sale-recovery', 'receipt-recovery']) {
     const { context, page, state } = await mockContext(browser, base, 'en', variant);
@@ -1287,6 +1808,7 @@ try {
   } catch {
     /* No raw runtime stacks in reports. */
   }
+  await receiptFixture?.close();
   report.finishedAt = new Date().toISOString();
   report.counts = {
     routeCases: report.cases.length,
@@ -1302,7 +1824,7 @@ try {
   console.log(
     JSON.stringify({
       status: report.status,
-      report: finalReview ? '.tmp/ui-final-review/report.json' : visualOnly ? '.tmp/ui-visual-review/report.json' : '.tmp/ui-redesign/report.json',
+      report: resolve(output, 'report.json').slice(root.length + 1).replaceAll('\\','/'),
       ...report.counts,
     }),
   );

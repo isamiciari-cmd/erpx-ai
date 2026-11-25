@@ -1,5 +1,9 @@
 ﻿import { useEffect, useRef, useState, type FormEvent } from 'react';
 import { Link } from 'react-router-dom';
+import AssistantSuggestions from './erp/AssistantSuggestions';
+import AssistantReceiptCard from './erp/AssistantReceiptCard';
+import AssistantPurchaseCard from './erp/AssistantPurchaseCard';
+import { AssistantLaunchButton } from './erpx-assistant-button/AssistantLaunchButton';
 import { useTranslation } from 'react-i18next';
 import { ArrowUpRight, Bot, RefreshCw, Send, ShieldCheck, User } from 'lucide-react';
 import { useAuth } from '../../contexts/AuthContext';
@@ -21,15 +25,20 @@ import {
 } from './erp/WorkspaceUI';
 
 type Exchange = { question: string; reply: BusinessAssistantReply };
+const panelId = 'assistant-drawer';
+const launcherId = 'assistant-launcher';
 export default function AIAssistant() {
   const { t } = useTranslation('workspace');
   const { user } = useAuth();
-  const { date, number, locale } = useWorkspaceFormat();
+  const { date, number, locale, isRtl } = useWorkspaceFormat();
   const [exchanges, setExchanges] = useState<Exchange[]>([]);
   const [input, setInput] = useState('');
   const [error, setError] = useState<unknown>(null);
   const [busy, setBusy] = useState(false);
   const [isOpen, setIsOpen] = useState(false);
+  const scope = JSON.stringify([user?.id, user?.company_id, user?.branch_id, user?.role_id]);
+  const reviewScope = useRef<string>(null);
+  const needsReview = reviewScope.current !== null && reviewScope.current !== scope;
   const status = useBusinessAssistantStatus(isOpen);
   const endRef = useRef<HTMLDivElement>(null);
   const generation = useRef(0);
@@ -38,22 +47,16 @@ export default function AIAssistant() {
     if (isOpen) endRef.current?.scrollIntoView({ behavior: 'auto', block: 'end' });
   }, [exchanges, busy, isOpen]);
   useEffect(() => {
-    const open = () => setIsOpen(true);
-    window.addEventListener('erpx:open-ai', open);
-    return () => window.removeEventListener('erpx:open-ai', open);
-  }, []);
-  useEffect(() => {
     generation.current++;
     requestLock.current = false;
     setExchanges([]);
     setInput('');
     setError(null);
     setBusy(false);
-    setIsOpen(false);
     return () => {
       generation.current++;
     };
-  }, [user?.id, user?.company_id]);
+  }, [scope]);
   const send = async (event?: FormEvent) => {
     event?.preventDefault();
     const question = input.trim();
@@ -65,6 +68,7 @@ export default function AIAssistant() {
     try {
       const reply = await askBusinessAssistantReply(question);
       if (request !== generation.current) return;
+      if (reply.receiptProposal || reply.purchaseProposal) reviewScope.current = scope;
       setExchanges((previous) => [...previous, { question, reply }]);
       setInput('');
       void status.refresh();
@@ -78,23 +82,29 @@ export default function AIAssistant() {
     }
   };
   if (!user) return null;
+  const launcher = (
+    <AssistantLaunchButton
+      id={launcherId}
+      className="ws-assistant-fab"
+      open={isOpen}
+      busy={busy}
+      label={t(isOpen ? 'shell.closeAssistant' : 'shell.openAssistant')}
+      panelId={panelId}
+      onClick={() => setIsOpen(!isOpen)}
+    />
+  );
   return (
     <>
-      <button
-        type="button"
-        className={`ws-assistant-fab ${isOpen ? 'invisible' : ''}`}
-        tabIndex={isOpen ? -1 : 0}
-        aria-hidden={isOpen}
-        aria-label={t('shell.openAssistant')}
-        title={t('assistant.title')}
-        onClick={() => setIsOpen(true)}
-      >
-        <Bot size={23} />
-      </button>
+      {!isOpen && launcher}
       <DetailDrawer
+        id={panelId}
+        returnFocusId={launcherId}
         open={isOpen}
         onClose={() => setIsOpen(false)}
-        title={t('assistant.title')}
+        title={<span className="flex flex-wrap items-center gap-2">
+          {t('assistant.title')}
+          {status.status?.preview && <StatusBadge tone="warning">{t('assistant.previewBadge')}</StatusBadge>}
+        </span>}
         description={t('assistant.description')}
         footer={
           <div className="w-full space-y-3">
@@ -105,6 +115,8 @@ export default function AIAssistant() {
               </div>
             )}
             <form className="space-y-3" onSubmit={(event) => void send(event)}>
+              <AssistantSuggestions tools={status.status?.tools} disabled={busy} onPick={setInput} />
+              {needsReview && <p role="status">{isRtl ? 'تغيّر سياق العمل. افتح مراجعة جديدة قبل التأكيد.' : 'Your workspace changed. Open a new review before confirming.'}</p>}
               <FormField label={t('assistant.question')} htmlFor="assistant-drawer-message">
                 <textarea
                   id="assistant-drawer-message"
@@ -144,19 +156,20 @@ export default function AIAssistant() {
               </div>
             </form>
             <p className="ws-muted text-xs">{t('assistant.readOnly')}</p>
+            {isOpen && launcher}
           </div>
         }
       >
         <Panel title={t('assistant.providerStatus')}>
           <BusinessAssistantStatus {...status} compact />
-          <Link
+          {user?.role?.name !== 'cashier' && <Link
             className="mt-4 inline-flex min-h-10 items-center gap-2 text-sm font-medium hover:underline"
             to="/ai/assistant"
             onClick={() => setIsOpen(false)}
           >
             {t('assistant.expand')}
             <ArrowUpRight size={15} aria-hidden="true" />
-          </Link>
+          </Link>}
         </Panel>
         <div
           className="space-y-5"
@@ -186,16 +199,19 @@ export default function AIAssistant() {
               <article className="ws-assistant-reply">
                 <p className="ws-assistant-reply-meta">
                   <Bot size={14} aria-hidden="true" />
-                  <span>{t('assistant.generated', { model: exchange.reply.model })}</span>
+                  <span>{t(exchange.reply.preview ? 'assistant.previewSource' : exchange.reply.provider === 'openai' ? 'assistant.verifiedRead' : 'assistant.generated', { model: exchange.reply.model })}</span>
                   <time dateTime={exchange.reply.generatedAt}>
                     {date(exchange.reply.generatedAt, { hour: '2-digit', minute: '2-digit' })}
                   </time>
                 </p>
                 <div className="ws-assistant-reply-text" dir="auto">
                   {exchange.reply.message}
+                  {exchange.reply.recordPath && <div><Link className="ws-btn mt-2" to={exchange.reply.recordPath} onClick={() => setIsOpen(false)}>{t('assistant.openResult')}</Link></div>}
+                  {!needsReview && exchange.reply.receiptProposal && <AssistantReceiptCard initial={exchange.reply.receiptProposal} />}
+                  {!needsReview && exchange.reply.purchaseProposal && <AssistantPurchaseCard key={exchange.reply.purchaseProposal.operationId} proposal={exchange.reply.purchaseProposal} />}
                 </div>
                 <p className="ws-muted mt-4 border-t border-[var(--app-border)] pt-3 text-xs">
-                  {t('assistant.scopeHint', { limit: number(exchange.reply.limits.invoiceLimit) })}
+                  {exchange.reply.provider === 'openai' ? exchange.reply.dataScope : t('assistant.scopeHint', { limit: number(exchange.reply.limits.invoiceLimit) })}
                 </p>
               </article>
             </div>

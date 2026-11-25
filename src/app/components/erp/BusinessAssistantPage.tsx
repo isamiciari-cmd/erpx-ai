@@ -1,5 +1,6 @@
 ﻿import { useEffect, useRef, useState, type FormEvent } from 'react';
 import { useTranslation } from 'react-i18next';
+import { Link } from 'react-router-dom';
 import { Bot, FileText, Lightbulb, RefreshCw, Send, ShieldCheck } from 'lucide-react';
 import { useAuth } from '../../../contexts/AuthContext';
 import { useBusinessAssistantStatus } from '../../../hooks/useBusinessAssistantStatus';
@@ -9,6 +10,9 @@ import {
   type BusinessAssistantReply,
 } from '../../../services/aiGatewayService';
 import BusinessAssistantStatus from './BusinessAssistantStatus';
+import AssistantSuggestions from './AssistantSuggestions';
+import AssistantReceiptCard from './AssistantReceiptCard';
+import AssistantPurchaseCard from './AssistantPurchaseCard';
 import {
   Button,
   EmptyState,
@@ -41,6 +45,9 @@ export default function BusinessAssistantPage({
   const [busy, setBusy] = useState(false);
   const generation = useRef(0);
   const requestLock = useRef(false);
+  const scope = JSON.stringify([user?.id, user?.company_id, user?.branch_id, user?.role_id, area, mode]);
+  const reviewScope = useRef<string>(null);
+  const needsReview = reviewScope.current !== null && reviewScope.current !== scope;
   useEffect(() => {
     generation.current++;
     requestLock.current = false;
@@ -51,7 +58,7 @@ export default function BusinessAssistantPage({
     return () => {
       generation.current++;
     };
-  }, [user?.id, user?.company_id, area, mode]);
+  }, [scope]);
   async function ask(event: FormEvent) {
     event.preventDefault();
     const question = message.trim();
@@ -65,6 +72,7 @@ export default function BusinessAssistantPage({
         area === 'Business' ? question : `[${area}] ${question}`,
       );
       if (request !== generation.current) return;
+      if (reply.receiptProposal || reply.purchaseProposal) reviewScope.current = scope;
       setAnswer({ question, reply });
       void status.refresh();
     } catch (cause) {
@@ -119,6 +127,8 @@ export default function BusinessAssistantPage({
             actions={<Bot size={21} className="ws-muted" />}
           >
             <form className="space-y-4" onSubmit={ask}>
+              <AssistantSuggestions tools={status.status?.tools} disabled={busy} onPick={setMessage} />
+              {needsReview && <p role="status">{isRtl ? 'تغيّر سياق العمل. افتح مراجعة جديدة قبل التأكيد.' : 'Your workspace changed. Open a new review before confirming.'}</p>}
               <FormField
                 label={t(mode === 'scenario' ? 'intelligence.assumptions' : 'assistant.question')}
                 htmlFor="assistant-message"
@@ -191,7 +201,7 @@ export default function BusinessAssistantPage({
             title={t(mode === 'default' ? 'assistant.answer' : 'intelligence.results')}
             actions={
               reply ? (
-                <StatusBadge>{t('assistant.generated', { model: reply.model })}</StatusBadge>
+                <StatusBadge>{t(reply.provider === 'openai' ? 'assistant.verifiedRead' : 'assistant.generated', { model: reply.model })}</StatusBadge>
               ) : undefined
             }
           >
@@ -212,17 +222,20 @@ export default function BusinessAssistantPage({
                   </p>
                 </div>
                 <div className="ws-assistant-reply-meta">
-                  <span>{t('assistant.generated', { model: answer.reply.model })}</span>
+                  <span>{t(answer.reply.preview ? 'assistant.previewSource' : answer.reply.provider === 'openai' ? 'assistant.verifiedRead' : 'assistant.generated', { model: answer.reply.model })}</span>
                   <time dateTime={answer.reply.generatedAt}>
                     {date(answer.reply.generatedAt, { hour: '2-digit', minute: '2-digit' })}
                   </time>
                 </div>
                 <div className="whitespace-pre-wrap ws-assistant-reply-text" dir="auto">
                   {answer.reply.message}
+                  {answer.reply.recordPath && <Link className="ws-btn mt-2" to={answer.reply.recordPath}>{t('assistant.openResult', { ns: 'workspace' })}</Link>}
+                  {!needsReview && answer.reply.receiptProposal && <AssistantReceiptCard initial={answer.reply.receiptProposal} />}
+                  {!needsReview && answer.reply.purchaseProposal && <AssistantPurchaseCard key={answer.reply.purchaseProposal.operationId} proposal={answer.reply.purchaseProposal} />}
                 </div>
                 <div className="mt-5 border-t border-[var(--app-border)] pt-4 text-xs ws-muted">
                   <p>
-                    {t('assistant.scopeHint', { limit: number(answer.reply.limits.invoiceLimit) })}
+                    {answer.reply.provider === 'openai' ? answer.reply.dataScope : t('assistant.scopeHint', { limit: number(answer.reply.limits.invoiceLimit) })}
                   </p>
                   <p className="mt-2">{t('assistant.readOnly')}</p>
                 </div>
@@ -251,7 +264,7 @@ export default function BusinessAssistantPage({
             <p className="ws-muted mt-2 text-sm">{t('intelligence.actualHint')}</p>
             {status.status && (
               <p className="ws-muted mt-3 text-xs">
-                {t('assistant.scopeHint', { limit: number(status.status.limits.invoiceLimit) })}
+                {status.status.provider === 'openai' ? t('assistant.scopedReads') : t('assistant.scopeHint', { limit: number(status.status.limits.invoiceLimit) })}
               </p>
             )}
             {mode === 'scenario' && (

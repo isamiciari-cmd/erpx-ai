@@ -1,0 +1,58 @@
+.erpx-assistant-launch {
+  position: relative;
+  display: inline-grid;
+  flex: 0 0 auto;
+  inline-size: var(--erpx-assistant-button-size, 48px);
+  block-size: var(--erpx-assistant-button-size, 48px);
+  place-items: center;
+  padding: 0;
+  isolation: isolate;
+  border: 1px solid #6492fd;
+  border-radius: 50%;
+  background: radial-gradient(circle at 30% 24%, #214bb5 0%, #101d42 59%, #101327 100%);
+  color: #eef4ff;
+  cursor: pointer;
+  box-shadow: 0 3px 12px #06102f70, inset 0 0 12px #477aff30;
+}
+
+.erpx-assistant-launch:hover,
+.erpx-assistant-launch[aria-expanded="true"] {
+  border-color: #a4baff;
+  box-shadow: 0 0 16px #376dff50, inset 0 0 14px #477aff45;
+}
+
+.erpx-assistant-launch[data-busy="true"] {
+  border-color: #c4a8ff;
+}
+
+.erpx-assistant-launch:focus-visible {
+  outline: 2px solid #d1dcff;
+  outline-offset: 3px;
+}
+
+.erpx-assistant-launch__fallback {
+  font: 25px/1 system-ui, sans-serif;
+  pointer-events: none;
+}
+
+.erpx-assistant-launch:has(.erpx-assistant-launch__art[data-playing="true"])
+  .erpx-assistant-launch__fallback {
+  visibility: hidden;
+}
+
+.erpx-assistant-launch__art {
+  position: absolute;
+  inset: 3px;
+  pointer-events: none;
+  visibility: hidden;
+}
+
+.erpx-assistant-launch__art[data-playing="true"] {
+  visibility: visible;
+}
+
+.erpx-assistant-launch__canvas {
+  display: block;
+  width: 100%;
+  height: 100%;
+}

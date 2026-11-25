@@ -1,111 +1,131 @@
-# AI provider contract
+# مساعد ERPX-AI عبر Supabase Edge Functions
 
-The browser calls the authenticated Supabase `ai` function. It cannot select a
-tenant, provider URL, model or key. The function uses the existing trusted active
-company/profile and role checks, then reads invoice summaries with the caller's
-database session. It has no business mutation tools. Quota consumption is the
-only database write in a chat request.
+تستخدم واجهة المساعد الحالية `supabase.functions.invoke('ai/chat')` بجلسة المستخدم. اختيار `AI_PROVIDER=openai` يصل مباشرة بخادم OpenAI Responses API من وظيفة Edge. مسار Ollama السابق يدعم بوابة HTTPS محلية ونفقها عند اختياره. يظل الاختيار صريحًا ويحتاج OpenAI موافقة التكلفة من خلال `AI_ALLOW_PAID_PROVIDER=true`.
 
-The default path is Ollama through a protected HTTPS gateway. That gateway
-authenticates the Edge Function, pins one installed model, and forwards only
-`/api/chat` to loopback Ollama. Connecting the hosted Edge Function to a gateway
-requires the separately approved gateway/public connection setup. These source
-files do not start processes, expose local ports, deploy functions or set secrets.
+## نموذج الوصول
 
-## Server configuration
+- يتحقق الخادم من JWT لدى Supabase Auth، ثم يتحقق من العضوية النشطة والشركة والدور الأساسي والفرع المعيّن. الشركة والفرع من ملف المستخدم على الخادم. يُستخدم JWT المستخدم ومفتاح Supabase العام في قراءات الأعمال تحت RLS.
+- يُرسل نص السؤال الذي أدخله المستخدم وتعريف الأدوات المسموحة للدور إلى OpenAI. تضبط الوظيفة `store: false`. نتائج الاستعلامات وسياق الجلسة ومعرّفات الشركة والفرع تظل داخل التطبيق، إلا ما أدخله المستخدم بنفسه في السؤال. يُفضّل السؤال برقم الفاتورة بدل إدخال تفاصيل العميل.
+- يختار النموذج أداة واحدة عبر مخطط صارم. يتحقق الخادم من الاسم والمدخلات ومطابقتها للدور ثانية. يعرض الخادم النتائج المالية مباشرة من قاعدة البيانات. حدود الاستعلام تشمل 1000 سجل مع التحقق من العدد، و90 يومًا للمبيعات، وحد عرض 20 صنفًا منخفض المخزون.
+- زمن اتصال OpenAI الأقصى 20 ثانية، جسم الطلب 16 KiB، ونص السؤال 4000 حرف، والرد من المزود 128 KiB، وحصة AI عشرة طلبات لكل مستخدم في الدقيقة. تسجيل الاستهلاك هو الكتابة الوحيدة، عبر RPC الحصة القائم.
+- لا توجد أدوات تعديل أعمال. نتيجة التنقل تعرض رابطًا محددًا وتنتظر نقرة المستخدم. صلاحيات المسار تبقى لدى التطبيق والخادم. طلبات معاينة أو تأكيد تغييرات الأعمال غير مدعومة.
 
-| Setting | Ollama | Future explicit OpenAI |
+| الخدمة | حالة التنفيذ | حدودها |
 | --- | --- | --- |
-| `AI_PROVIDER` | `ollama` (default) | `openai` |
-| Model | `OLLAMA_MODEL`, initially `qwen3:1.7b` | `OPENAI_MODEL` |
-| Credential | `OLLAMA_API_KEY`, high-entropy bearer | `OPENAI_API_KEY` |
-| Endpoint | `OLLAMA_BASE_URL`, HTTPS origin only | Fixed OpenAI Responses API |
-| Paid opt-in | None | `AI_ALLOW_PAID_PROVIDER=true` required |
+| ملخص المبيعات | مفعلة ومختبرة محليًا | المبيعات المكتملة المرتبطة بفواتير، مجموع منفصل لكل عملة، أيام UTC |
+| البحث والتحصيل | مفعلة ومختبرة محليًا | رقم فاتورة دقيق في نص السؤال، الإجمالي والمدفوع والمتبقي، ورابط الفاتورة |
+| الذمم المتأخرة | مفعلة ومختبرة محليًا | الفواتير ذات الرصيد الموجب بعد حلول الاستحقاق، المجموع لكل عملة |
+| المخزون المنخفض | مفعلة ومختبرة محليًا | الكمية المتاحة في النطاق مقابل الحد الأدنى المضبوط للصنف |
+| ملخص الوردية | مفعلة ومختبرة محليًا | الوردية المفتوحة للمستخدم نفسه. سجل الوردية لا يحتوي رمز العملة |
+| مساعدة التنقل | مفعلة ومختبرة محليًا | روابط حصرية داخل التطبيق. للكاشير رابط نقطة البيع |
+| استدعاء OpenAI الفعلي | يحتاج إعدادًا | المفتاح واسم نموذج يدعم أدوات Responses |
+| الترحيل والتحصيل والبيع والاعتمادات وتعديل السجلات | غير متاحة من المساعد | أدوات قراءة فقط، وتظل الإجراءات متاحة في وحداتها وفق صلاحياتها |
+| دفتر الأستاذ والأرباح وبيانات الموظفين والتنبؤات | غير متاحة من المساعد | لا توجد أدوات معتمدة لهذه الخدمات |
 
-These values belong only in server configuration. No `VITE_*` provider secrets
-are supported. Missing, invalid or unavailable Ollama never falls back to a paid
-provider. Upgrading the local model requires matching model configuration on
-both Edge Function and gateway, with that model installed locally. A future
-OpenAI switch requires both explicit selection and the paid opt-in.
+## تشغيل محلي
 
-## Requests and responses
+### تحصيل الفاتورة في قاعدة معزولة
 
-`POST {"action":"status"}` requires the same company/role authorization as
-chat. It consumes no quota and reads no invoices. It returns:
-
-```json
-{
-  "ok": true,
-  "provider": "ollama",
-  "model": "qwen3:1.7b",
-  "configured": true,
-  "available": true,
-  "deploymentMode": "local_gateway",
-  "healthChecked": true,
-  "healthScope": "gateway",
-  "inferenceVerified": false,
-  "readOnly": true,
-  "mode": "generative",
-  "dataScope": "...",
-  "limits": {"invoiceLimit": 1000, "messageCharacters": 4000, "responseTokens": 512, "currencyGroups": 16}
-}
-```
-
-For Ollama, a three-second authenticated health probe must confirm the exact
-configured model is installed. This proves gateway reachability/model presence,
-not a successful inference or permanent availability. Missing configuration
-returns `provider: unconfigured`, null model and false availability. Future
-OpenAI status checks configuration only (`healthChecked: false`,
-`healthScope: configuration`); status never makes a paid generation request.
-
-`POST {"message":"..."}` (optional `action: chat`) allows up to 4,000
-characters and a 16 KiB inbound body. Unknown fields are rejected. Success adds
-`message`, `provider`, `model`, `deploymentMode`, `readOnly: true`,
-`mode: generative`, `dataScope`, `generatedAt` and `limits`. Errors return
-`{ok:false,code,error}` with a safe code: `configuration_required`,
-`provider_unavailable`, `rate_limited`, `auth_error`, `invalid_request`, or
-`data_unavailable`. Provider bodies, tokens and private URLs are never echoed.
-
-## Snapshot and gateway wire
-
-The query filters issued/sent/partial/paid/overdue invoices by the trusted company
-ID before limiting. It orders issue date, creation time and ID descending,
-requests 1,001 rows, and uses the last row only as a truncation sentinel. It also
-requests the exact eligible count, so truncation remains truthful when the REST
-project row limit clamps that request to 1,000 rows. Missing/invalid counts fail
-verification. At most 1,000 invoices contribute to the summary. Decimal amounts are validated/capped
-and summed using integer cents, then formatted as exact decimal strings.
-Credit notes reduce amounts once. Different currencies remain separate. Invalid
-amounts, statuses or currencies fail the request instead of generating invented
-totals. Only counts and currency aggregates reach the provider; invoice IDs,
-customer names, company IDs, individual rows and Auth data do not.
-
-This snapshot supports invoice questions only. It is not a general ledger,
-profit/cash balance, forecast or HR report. No such data is fabricated.
-
-Ollama request:
-
-```json
-{"model":"qwen3:1.7b","messages":[{"role":"system","content":"<rules and verified invoice aggregate>"},{"role":"user","content":"<question>"}],"stream":false}
-```
-
-The bearer is sent only in the header. The gateway enforces `think:false`,
-`num_predict:512`, `num_ctx:4096`, temperature 0.2, its own pinned model and one
-concurrent inference. Edge caps outbound JSON at 16 KiB, responses at 128 KiB,
-and request time at 90 seconds. Redirects are forbidden. It accepts only complete
-assistant text for the matching model and makes no automatic retries/fallbacks.
-
-## Validation
+مسار التحصيل التجريبي يعمل فقط مع `AI_LOCAL_PREVIEW=true` وخيار `--assistant-receipt`. يشغل Playwright الواجهة محليًا ببيئة HTTP اصطناعية، ويشغل PGlite نسخة PostgreSQL في الذاكرة مع الترحيلات الفعلية. تُنشأ الفاتورة والحسابات داخل تلك النسخة. تبقى وظيفة Edge المنشورة للقراءة فقط.
 
 ```powershell
-deno check --cached-only supabase/functions/ai/index.ts
-deno test --cached-only supabase/functions/ai/ai_test.ts
+$env:AI_LOCAL_PREVIEW = 'true'
+node.exe database/tests/assistant-receipt.mjs
+node.exe scripts/redesign-acceptance.mjs --assistant-receipt
 ```
 
-Tests use mocked fetch/database/authentication only. They cover paid opt-in,
-gateway origin restrictions, trusted tenant query, quota/auth failures, status
-without quota, decimal totals/credits/currencies/truncation, response bounds,
-actual abort deadlines and sanitized errors. They do not contact a provider.
+يعرض المساعد الفاتورة `QA-RECEIPT-01`. أرسل «أريد تحصيل المتبقي للفاتورة QA-RECEIPT-01» لفتح بطاقة المراجعة، واختر وسيلة الدفع ثم أكّد. تحاكي هذه الصيغة اختيار إجراء المعاينة محليًا. تستخدم عملية التأكيد معرّفًا ثابتًا، وتعيد فحص المستخدم والشركة والفرع والصلاحية. يقارن إجراء PostgreSQL الرصيد المعروض بالرصيد الحالي تحت قفل الفاتورة، ويفوّض التسجيل إلى `record_invoice_payment` الحالي. يحل التأكيد الجديد محل المقترح السابق عند تغيّر الرصيد. عند فقد الرد، يعيد الزر المحاولة بالتفاصيل ومعرّف العملية نفسيهما.
 
-The REST row limit and exact-count option are documented in the official
-[Supabase select reference](https://supabase.com/docs/reference/javascript/select).
+في وضع PGlite، تُحفظ لقطة البطاقة وتقرير المتصفح في `.tmp/assistant-receipt/`. يبقى ملف `database/tests/assistant-receipt.sql` ضمن الاختبارات المحلية.
+
+لاختبار التزامن على PostgreSQL باتصالين مستقلين، شغّل الأوامر التالية. ينشئ المشغّل عنقودًا مؤقتًا في `.tmp/receipt-postgres/` على loopback، ويوقف العملية عند انتهاء الفحص. يحفظ فحص قاعدة البيانات تقريره في `.tmp/assistant-receipt-race/`، ويحفظ فحص المتصفح تقريره في `.tmp/assistant-receipt-postgres-ui/`.
+
+```powershell
+npm.cmd install --prefix .tmp/receipt-postgres --no-audit --no-fund embedded-postgres@18.4.0-beta.17 pg@8
+$env:AI_LOCAL_PREVIEW = 'true'
+node.exe database/tests/assistant-receipt-race.mjs
+node.exe scripts/redesign-acceptance.mjs --assistant-receipt --receipt-postgres
+```
+
+يشغّل أمر المتصفح نفسه قبول مسودة طلب الشراء محليًا. رسالة «جهّز مسودة طلب شراء من المخزون المنخفض» تفتح بطاقة اختيار المستودع والأصناف وتعديل الكميات، وتطلب اسم المورد ومقدّم الطلب. يكتب التأكيد إلى PostgreSQL المعزول عبر `save_business_record` ويعيد رابط المسودة في المشتريات. يعمل مسار الكتابة في مشغّل القبول المحلي، حيث تُحاكى المصادقة واستجابة المزوّد وتنفّذ القاعدة التحقق من الصلاحية وكتابة المسودة. يحفظ المشغّل لقطة `purchase-review-ar.png` بجوار التقرير.
+
+لتشغيل المعاينة الموحّدة من PowerShell بعد تثبيت اعتماد PostgreSQL أعلاه:
+
+```powershell
+$env:AI_LOCAL_PREVIEW = 'true'; node.exe scripts/redesign-acceptance.mjs --assistant-preview
+```
+
+يشغّل الأمر رحلات المدير والمحاسب والكاشير تلقائيًا على الواجهة المحلية، ويحفظ اللقطات والتقرير في `.tmp/assistant-preview/`. تبقى المصادقة واختيار الأدوات اصطناعيين، وتُجرى عمليات التحصيل وحفظ المسودة على عنقود PostgreSQL محلي مؤقت.
+
+يرصد الاختبار انتظار اتصالَي التأكيد لقفل PostgreSQL قبل تحريرهما. ينجح تحصيل واحد، ويعود الاتصال الآخر بحالة «سُدّدت الفاتورة بالفعل» من دون مقترح جديد. في السيناريو الآخر تنفذ شاشة الفواتير سندًا بمبلغ 10 ريالات، ثم يرفض تأكيد المعاينة القديمة التسجيل ويعرض الرصيد المحدّث 65 ريالًا لتأكيد مستقل. يُحمّل ملف SQL الخاص بالمعاينة في القاعدة المعزولة فقط.
+
+### معاينة الواجهة بمحاكاة المزوّد
+
+تستخدم المعاينة بناء ERPX-AI المحلي وملفَي حسابات الاختبار المستثنيَين من Git في `.tmp/release-acceptance/`. يصل المتصفح إلى Supabase بجلسة حساب الاختبار، ويوجّه طلب المساعد فقط إلى وظيفة Deno مرتبطة بعنوان loopback. يسمح المشغّل بمعرّف شركة الاختبار ورمز جلستها فقط. تعرض الواجهة شارة «وضع الاختبار»، ويختار الرد الاصطناعي الأداة ومدخلاتها. تقرأ الأداة الأرقام من Supabase تحت سياسات RLS. المعاينة لا تحتاج مفتاح OpenAI ولا تكتب سجل الحصة.
+
+```powershell
+npx.cmd --yes deno check scripts/ai/preview-edge.ts
+pnpm.cmd run build --configLoader runner
+$env:AI_LOCAL_PREVIEW = 'true'
+node.exe scripts/ai/preview.mjs --fixture=workflow --role=admin
+```
+
+إذا كان Deno متاحًا عبر npm فقط، اضبط مسار الملف التنفيذي المؤقت قبل تشغيل المعاينة.
+
+```powershell
+$npmCache = npm.cmd config get cache
+$env:QA_DENO_EXE = (Get-ChildItem -LiteralPath (Join-Path $npmCache '_npx') -Filter deno.exe -Recurse | Select-Object -First 1).FullName
+```
+
+استخدم `--fixture=workflow` أو `--fixture=roles` مع `--role=admin` أو `--role=accountant` أو `--role=cashier`. أضف `--verify` لتشغيل المطابقة والتقاط الصور في `.tmp/ai-assistant-preview/`. لإظهار الخطأ يدويًا أرسل `المبيعات [qa:429]` أو `المبيعات [qa:timeout]`، ثم اضغط «إعادة المحاولة» بالسؤال نفسه. يولّد كل وسم خطأً مرة واحدة لكل جلسة معاينة. اختيار وضع المعاينة محصور في مشغّل Deno المحلي ولا يُمرر إلى نقطة الدخول المنشورة. اختبار OpenAI الفعلي معلّق.
+
+طابقت المعاينة استعلام المبيعات المكتملة من 28 أغسطس إلى 25 نوفمبر 2026 بتوقيت UTC، في الفرع المعيّن بكل جلسة. ظهرت 4 مبيعات بقيمة 575 ريالًا في `workflow` ومبيعتان بقيمة 230 ريالًا في `roles`. تطابقت كذلك فواتير مسددة بالكامل في الشركتين. أعاد فحص العزل صفر فواتير من الشركة الأخرى، وأظهر حساب الكاشير في كل شركة الوردية والتنقل المحدود إلى نقطة البيع. نجحت إعادة السؤال نفسه بعد 429 والمهلة. لم تكن هناك فاتورة جزئية السداد قائمة في الفرعين، ولذلك تحققت من حالة 115 إجماليًا و40 مدفوعًا و75 متبقيًا في الفحص المعزول.
+
+### التشغيل المحلي مع OpenAI
+
+أنشئ ملفًا محليًا مستثنى من Git باسم `.tmp/ai-openai.local.env`، واضبط القيم داخل الملف دون وضعها في متغيرات `VITE_*`.
+
+```dotenv
+AI_PROVIDER=openai
+AI_ALLOW_PAID_PROVIDER=true
+OPENAI_MODEL=<Responses model enabled for this project>
+OPENAI_API_KEY=<project API key>
+```
+
+استخدم نسخة Supabase محلية معزولة وبيانات اختبار مستخدمين وفرعين. يتطلب الكاشير ترحيل `20261124000100_scope_cashier_ai_quota.sql` الذي يقيد توسيع الحصة بـAI والفرع النشط. يقرأ Vite عنوان Supabase المحلي ومفتاحه العام من وضع البيئة المحلي المخصص، وتقرأ الوظيفة ملف الأسرار منفصلًا.
+
+```powershell
+supabase start
+supabase db reset --local
+supabase functions serve ai --env-file .tmp/ai-openai.local.env
+# في طرفية أخرى بعد ضبط عنوان Supabase المحلي ومفتاحه العام
+pnpm.cmd run dev --mode ai-local
+```
+
+يستخدم وضع `ai-local` ملف `.env.ai-local.local` بمتغيرَي `VITE_SUPABASE_URL` و`VITE_SUPABASE_ANON_KEY` للبيئة المحلية، مع `VITE_DEMO_MODE=false`. تأكد من أن الطلب في المتصفح يذهب إلى عنوان Supabase المحلي قبل اختبار الحسابات. ابدأ مثلًا بسؤال عن حالة فاتورة اصطناعية برقمها أو ملخص الوردية المفتوحة.
+
+## أوامر نشر على مشروع تجريبي مستقل
+
+حدد `$StagingRef` محليًا على مشروع قبول مستقل. طبّق ترحيل الحصة فقط إن كانت الترحيلات السابقة مطبقة، باستخدام SQL Editor لهذا المشروع أو `psql -X -v ON_ERROR_STOP=1 -f supabase/migrations/20261124000100_scope_cashier_ai_quota.sql` من جلسة إعداد اتصال تخصه. أوامر الوظيفة أدناه للتشغيل حين يُعتمد النشر.
+
+```powershell
+supabase secrets set --project-ref $StagingRef --env-file .tmp/ai-openai.local.env
+supabase functions deploy ai --project-ref $StagingRef
+```
+
+يعرض إجراء `status` إعداد OpenAI فقط دون إرسال طلب مدفوع. استخدم جلسة عادية من كل دور للتحقق الفعلي بعد النشر التجريبي.
+
+## الفحوص
+
+```powershell
+npx.cmd --yes deno check supabase/functions/ai/index.ts
+npx.cmd --yes deno test supabase/functions/ai/ai_test.ts supabase/functions/ai/tools_test.ts
+node.exe database/tests/transactions.mjs
+pnpm.cmd run typecheck
+pnpm.cmd run build --configLoader runner
+pnpm.cmd test
+```
+
+شغلت قراءات وظيفة الأدوات محليًا على Supabase الفعلي بجلسات حسابات الاختبار العادية. اجتاز المدير والمحاسب في كل من شركتَي الاختبار قراءات المبيعات والفواتير والذمم والمخزون، واجتاز الكاشير في كل شركة قراءة ورديته ومسار نقطة البيع. أعادت محاولات القراءة عبر حدود الشركتين صفر سجل لكل حساب، ولم يكتب الفحص إلى بيانات الأعمال. استخدمت اختبارات عقد OpenAI ردود HTTP اصطناعية. لم يتوفر مفتاح مهيأ لاستدعاء فعلي، ولم تُنشر الوظيفة أو يُطبّق ترحيل الحصة على المشروع الحالي.
+
+مرجع عقد اختيار الأدوات في Responses. [OpenAI function calling](https://developers.openai.com/api/docs/guides/function-calling)

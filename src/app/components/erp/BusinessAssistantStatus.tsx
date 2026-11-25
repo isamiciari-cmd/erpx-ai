@@ -59,6 +59,7 @@ export default function BusinessAssistantStatus({
             {t(provider)}
           </p>
           <div className="mt-3">
+            {status?.preview && !compact && <StatusBadge tone="warning">{t('assistant.previewBadge')}</StatusBadge>}
             <StatusBadge
               tone={
                 connected && !loading

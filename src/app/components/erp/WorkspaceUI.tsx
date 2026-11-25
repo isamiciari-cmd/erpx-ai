@@ -359,6 +359,8 @@ export function FormField({
   );
 }
 export function DetailDrawer({
+  id,
+  returnFocusId,
   open,
   onClose,
   title,
@@ -367,6 +369,8 @@ export function DetailDrawer({
   footer,
   wide = false,
 }: {
+  id?: string;
+  returnFocusId?: string;
   open: boolean;
   onClose: () => void;
   title: ReactNode;
@@ -389,6 +393,7 @@ export function DetailDrawer({
       <Dialog.Portal>
         <Dialog.Overlay className="ws-overlay" />
         <Dialog.Content
+          id={id}
           dir={rtl ? 'rtl' : 'ltr'}
           className={`ws-drawer ${wide ? 'ws-drawer-wide' : ''}`}
           aria-describedby={description ? descriptionId : undefined}
@@ -398,9 +403,10 @@ export function DetailDrawer({
           }}
           onCloseAutoFocus={(event) => {
             event.preventDefault();
-            const target = opener.current?.isConnected
+            const explicitTarget = returnFocusId ? document.getElementById(returnFocusId) : null;
+            const target = explicitTarget ?? (opener.current?.isConnected
               ? opener.current
-              : document.getElementById('workspace-content');
+              : document.getElementById('workspace-content'));
             target?.focus({ preventScroll: true });
           }}
         >

@@ -13,7 +13,6 @@ import {
   Moon,
   Search,
   Settings,
-  Sparkles,
   Sun,
   X,
 } from 'lucide-react';
@@ -157,14 +156,6 @@ export default function Topbar({ onMenu }: { onMenu: () => void }) {
           <kbd dir="ltr">⌘ K</kbd>
         </button>
         <div className="erpx-topbar-actions">
-          <button
-            className="ws-icon-btn"
-            aria-label={t('shell.openAssistant')}
-            title={t('assistant.title')}
-            onClick={() => window.dispatchEvent(new Event('erpx:open-ai'))}
-          >
-            <Sparkles size={18} />
-          </button>
           <Popover.Root open={notificationsOpen} onOpenChange={setNotificationsOpen}>
             <Popover.Trigger asChild>
               <button

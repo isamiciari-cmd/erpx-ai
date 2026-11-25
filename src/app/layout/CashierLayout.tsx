@@ -1,6 +1,7 @@
 ﻿import { useState, useEffect, useRef } from 'react';
 import { Outlet, useNavigate } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
+import AIAssistant from '../components/AIAssistant';
 import { LogOut, Clock, User, Building2, PlayCircle, StopCircle, ArrowLeft } from 'lucide-react';
 import { useAuth } from '../../contexts/AuthContext';
 import { LanguageSwitcher } from '../../components/LanguageSwitcher';
@@ -173,6 +174,7 @@ export default function CashierLayout() {
       <div className="erpx-cashier-content">
         <Outlet />
       </div>
+      <AIAssistant />
     </div>
   );
 }

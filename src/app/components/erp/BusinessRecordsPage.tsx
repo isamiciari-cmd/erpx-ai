@@ -1,6 +1,7 @@
 import { useCallback, useEffect, useMemo, useRef, useState, type FormEvent } from 'react';
 import { Download, FileText, Plus, RefreshCw, Search, ShieldCheck, Users } from 'lucide-react';
 import { useTranslation } from 'react-i18next';
+import { useSearchParams } from 'react-router-dom';
 import { useAuth } from '../../../contexts/AuthContext';
 import { usePermissions } from '../../../hooks/usePermissions';
 import { useUnsavedChanges } from '../../../hooks/useUnsavedChanges';
@@ -241,6 +242,17 @@ export default function BusinessRecordsPage({
     setNotice('');
   }, [scope]);
   const scoped = loadedScope === scope ? records : [];
+  const [params, setParams] = useSearchParams();
+  const draftLink = module === 'purchases_requests' ? params.get('draft') : null;
+  useEffect(() => {
+    const draft = draftLink && loadedScope === scope
+      ? records.find(row => row.id === draftLink && row.status === 'draft') : undefined;
+    if (!draft || open) return;
+    const next = new URLSearchParams(params);
+    next.delete('draft');
+    setParams(next, { replace: true });
+    void view(draft);
+  }, [draftLink, loadedScope, scope, records, open, params, setParams]);
   const statsUnavailable = loadedScope !== scope && (loading || !!error);
   const invalidPeriod = !!from && !!to && from > to;
   const filtered = useMemo(

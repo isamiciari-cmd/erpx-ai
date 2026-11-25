@@ -61,6 +61,20 @@ try {
     GRANT SELECT,INSERT,UPDATE,DELETE ON ALL TABLES IN SCHEMA public TO authenticated,anon;
     GRANT USAGE ON SCHEMA public TO authenticated,anon;`);
   await test('anonymous callers cannot complete sales', async () => user(null, () => assert.rejects(checkout(), /permission denied/)));
+  await test('cashier AI quota requires an active branch, is rate limited, and cannot authorize ZATCA', async () => {
+    await user(ids.cashier, async () => {
+      await assert.rejects(one("SELECT public.consume_integration_quota('zatca')"), /Integration access denied/);
+      assert.equal(Number((await one('SELECT count(*) FROM public.shifts WHERE company_id=$1', [ids.otherCompany])).count), 0);
+      for (let i = 0; i < 10; i++) await one("SELECT public.consume_integration_quota('ai')");
+      await assert.rejects(one("SELECT public.consume_integration_quota('ai')"), /Integration rate limit reached/);
+    });
+    await db.query("UPDATE public.branches SET status='inactive' WHERE id=$1", [ids.branch]);
+    try {
+      await user(ids.cashier, () => assert.rejects(one("SELECT public.consume_integration_quota('ai')"), /Integration access denied/));
+    } finally {
+      await db.query("UPDATE public.branches SET status='active' WHERE id=$1", [ids.branch]);
+    }
+  });
   await test('cross tenant and spoofed cashier requests are denied', async () => user(ids.cashier, async () => {
     await assert.rejects(checkout({ company: ids.otherCompany }), /access denied/);
     await assert.rejects(checkout({ cashier: ids.admin }), /access denied/);
