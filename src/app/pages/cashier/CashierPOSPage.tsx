@@ -1,4 +1,5 @@
-﻿import { useEffect, useRef, useState } from 'react';
+import { preparePrintedDocument, printPreparedDocument } from '../../utils/printedDocument';
+import { useEffect, useRef, useState } from 'react';
 import {
   Search,
   ArrowLeft,
@@ -46,6 +47,7 @@ export default function CashierPOSPage() {
   const [isProcessing, setIsProcessing] = useState(false);
   const [heldSales,setHeldSales] = useState<Sale[]>([]);
   const [lastReceipt,setLastReceipt] = useState<Receipt | null>(null);
+  const preparedReceipts = useRef(new WeakMap<Receipt, Map<boolean, Promise<string>>>());
   const checkoutLock = useRef(false);
   const requestRef = useRef<{ fingerprint: string; key: string; codes: ReadonlyMap<string, string> } | null>(null);
   const receiptCompany = user?.company?.name || 'ERPX';
@@ -159,14 +161,25 @@ export default function CashierPOSPage() {
     finally { checkoutLock.current = false; setIsProcessing(false); }
   };
 
-  const printReceipt = () => {
-    if (!lastReceipt) return;
-    const popup = window.open('','_blank','width=480,height=700');
-    if (!popup) { alert(arabic ? 'اسمح بالنوافذ المنبثقة لطباعة الإيصال' : 'Allow popups to print your receipt'); return; }
-    popup.opener = null;
-    renderReceipt(popup.document, lastReceipt, arabic ? 'ar' : 'en');
-    popup.focus();
-    popup.print();
+  const printReceipt = async () => {
+    if (!lastReceipt || !user?.company_id) return;
+    const existing = preparedReceipts.current.get(lastReceipt);
+    const byLanguage = existing ?? new Map<boolean, Promise<string>>();
+    if (!existing) preparedReceipts.current.set(lastReceipt, byLanguage);
+    try {
+      let prepared = byLanguage.get(arabic);
+      if (!prepared) {
+        const preview = document.implementation.createHTMLDocument();
+        renderReceipt(preview, lastReceipt, arabic ? 'ar' : 'en');
+        prepared = preparePrintedDocument(preview, user.company_id, arabic);
+        byLanguage.set(arabic, prepared);
+      }
+      const html = await prepared;
+      printPreparedDocument(html, lastReceipt.invoiceNumber);
+    } catch {
+      byLanguage.delete(arabic);
+      alert(arabic ? 'تعذّر تجهيز الإيصال للطباعة.' : 'Could not prepare the receipt for printing.');
+    }
   };
 
   const handleCancelOrder = () => {

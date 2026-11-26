@@ -1,3 +1,4 @@
+import { printReport } from '../../utils/reporting';
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { Link, useSearchParams } from 'react-router-dom';
 import { Download, FileText, Printer, RefreshCw, Scale, Wallet } from 'lucide-react';
@@ -277,7 +278,7 @@ export default function BusinessLedgerPage({
       render: (row) => fmt.money(row.credit),
     },
   ];
-  function exportCsv() {
+  function reportData() {
     const headers =
       view === 'entries'
         ? [
@@ -314,6 +315,10 @@ export default function BusinessLedgerPage({
             row.balance,
             row.closing,
           ]);
+    return { headers, rows };
+  }
+  function exportCsv() {
+    const { headers, rows } = reportData();
     downloadBusinessCsv(
       `${mode}-${new Date().toISOString().slice(0, 10)}.csv`,
       recordsToCsv(headers, rows),
@@ -334,7 +339,12 @@ export default function BusinessLedgerPage({
               <>
                 <Button
                   icon={<Printer size={16} />}
-                  onClick={() => window.print()}
+                  onClick={() => {
+                    const { headers, rows } = reportData();
+                    const data = rows.map((row) => Object.fromEntries(headers.map((header, index) => [header, row[index]])));
+                    void printReport(t(`ledger.${mode}`), data, {}, user?.company_id, fmt.isRtl)
+                      .catch(() => alert(fmt.isRtl ? 'تعذّر تجهيز المستند للطباعة.' : 'Could not prepare the document for printing.'));
+                  }}
                   disabled={error || loading}
                 >
                   {t('common.print')}

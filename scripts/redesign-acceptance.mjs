@@ -17,12 +17,15 @@ import { chromium } from 'playwright';
 const root = resolve(dirname(fileURLToPath(import.meta.url)), '..');
 const unifiedPreview = process.argv.includes('--assistant-preview');
 const launcherOnly = process.argv.includes('--assistant-launcher');
+const printingOnly = process.argv.includes('--document-printing');
 const receiptPreview = unifiedPreview || process.argv.includes('--assistant-receipt');
 const receiptPostgres = unifiedPreview || (receiptPreview && process.argv.includes('--receipt-postgres'));
 const finalReview = process.argv.includes('--final');
 const visualOnly = finalReview || process.argv.includes('--visual');
-const skipInteractions = launcherOnly || receiptPreview || (visualOnly && !process.argv.includes('--quick'));
-const output = resolve(root, launcherOnly ? '.tmp/assistant-launcher' : unifiedPreview ? '.tmp/assistant-preview' : receiptPostgres ? '.tmp/assistant-receipt-postgres-ui' : receiptPreview ? '.tmp/assistant-receipt' : finalReview ? '.tmp/ui-final-review' : visualOnly ? '.tmp/ui-visual-review' : '.tmp/ui-redesign');
+const skipInteractions = printingOnly || launcherOnly || receiptPreview || (visualOnly && !process.argv.includes('--quick'));
+const output = resolve(root, printingOnly ? '.tmp/document-printing' : launcherOnly ? '.tmp/assistant-launcher' : unifiedPreview ? '.tmp/assistant-preview' : receiptPostgres ? '.tmp/assistant-receipt-postgres-ui' : receiptPreview ? '.tmp/assistant-receipt' : finalReview ? '.tmp/ui-final-review' : visualOnly ? '.tmp/ui-visual-review' : '.tmp/ui-redesign');
+const printSnapshots = [];
+let printLogo;
 let receiptFixture;
 let receiptDatabase;
 const API = 'https://erpx-ui-test.supabase.co';
@@ -562,11 +565,12 @@ async function mockContext(browser, base, language, variant = 'normal', dark = f
     locale: language === 'ar' ? 'ar-SA' : 'en-GB',
     timezoneId: 'Asia/Riyadh',
     reducedMotion: 'reduce',
-    serviceWorkers: 'block',
+    serviceWorkers: printingOnly ? 'allow' : 'block',
     acceptDownloads: true,
   });
   await context.addInitScript(
     ({ session, language, dark }) => {
+      if (window.top !== window || location.origin === 'null') return;
       if (session) localStorage.setItem('sb-erpx-ui-test-auth-token', JSON.stringify(session));
       if (location.pathname === '/registration-success') {
         history.replaceState({ ...history.state, usr: {
@@ -609,6 +613,24 @@ async function mockContext(browser, base, language, variant = 'normal', dark = f
         body: method === 'HEAD' ? '' : JSON.stringify(body),
       });
     if (method === 'OPTIONS') return reply(null, 204);
+    if (printingOnly && target.pathname === '/rest/v1/company_logos') {
+      if (method === 'POST') {
+        printLogo = request.postDataJSON().image_data;
+        return reply(null, 201);
+      }
+      if (method === 'DELETE') {
+        printLogo = undefined;
+        return reply(null, 204);
+      }
+      return reply(printLogo ? [{ image_data:printLogo }] : []);
+    }
+    if (printingOnly && target.pathname === '/rest/v1/printed_documents') {
+      if (method === 'POST') {
+        printSnapshots.push(request.postDataJSON());
+        return reply(null, 201);
+      }
+      return reply(printSnapshots.filter(row => target.searchParams.get('id') === 'eq.' + row.id));
+    }
     if (target.pathname === '/auth/v1/user') return reply(syntheticSession().user);
     if (target.pathname === '/auth/v1/health') return reply({ name: 'Synthetic UI health' });
     if (target.pathname === '/auth/v1/logout' && method === 'POST') return reply({});
@@ -884,7 +906,10 @@ async function mockContext(browser, base, language, variant = 'normal', dark = f
     });
   const page = await context.newPage();
   page.setDefaultTimeout(15000);
-  page.on('pageerror', (error) => state.pageErrors.push({ kind: error.name || 'Error' }));
+  page.on('pageerror', (error) => state.pageErrors.push({
+    kind: error.name || 'Error',
+    ...(printingOnly ? { message: error.message } : {}),
+  }));
   return { context, page, state };
 }
 
@@ -1124,6 +1149,63 @@ try {
   });
   base = `http://127.0.0.1:${server.httpServer.address().port}`;
   browser = await chromium.launch({ headless: true });
+  if (printingOnly) await record('company-logo-and-pdf', async item => {
+    const { context,page,state } = await mockContext(browser,base,'en');
+    try {
+      item.stage = 'upload and replace logo';
+      await ready(page,'/settings');
+      const png = async color => Buffer.from(await page.evaluate(color => {
+        const canvas = document.createElement('canvas');
+        canvas.width = canvas.height = 80;
+        const ctx = canvas.getContext('2d');
+        ctx.fillStyle = color;
+        ctx.fillRect(0,0,80,80);
+        return canvas.toDataURL().split(',')[1];
+      },color),'base64');
+      for (const color of ['#ff0000','#0000ff']) {
+        const before = printLogo;
+        await page.locator('#company-logo').setInputFiles({ name:'logo.png', mimeType:'image/png', buffer:await png(color) });
+        await page.getByRole('img',{ name:'Company logo' }).waitFor();
+        await page.waitForFunction(before => document.querySelector('img[alt="Company logo"]')?.getAttribute('src') !== before,before ?? '');
+      }
+      item.stage = 'print invoice and verify QR snapshot';
+      await ready(page,'/finance/invoicing');
+      await page.getByRole('row').filter({hasText:'UI-INV-001'}).getByRole('button').first().click();
+      const printed = page.waitForResponse(response => response.url().endsWith('/printed_documents') && response.request().method() === 'POST');
+      await page.getByRole('button',{name:'Print invoice',exact:true}).click();
+      assert.equal((await printed).status(),201);
+      const snapshot = printSnapshots.at(-1);
+      const path = '/printed-documents/' + snapshot.id;
+      await page.goto(base + path);
+      const frame = page.frameLocator('iframe[sandbox]');
+      await frame.locator('h1').getByText(/UI-INV-001/).waitFor();
+      const watermark = frame.locator('.erpx-watermark');
+      assert.equal(await watermark.evaluate(node => getComputedStyle(node).opacity),'0.3');
+      assert.equal(await watermark.getAttribute('src'),printLogo);
+      const pdf = await context.newPage();
+      await pdf.setContent(snapshot.html.replace('</body>',
+        '<div style="break-before:page">Second test page</div></body>'));
+      await pdf.pdf({ path:resolve(output,'invoice.pdf'),preferCSSPageSize:true,printBackground:true });
+      await pdf.close();
+      const signedOut = await mockContext(browser,base,'en','public');
+      try {
+        await signedOut.page.goto(base + path);
+        await signedOut.page.waitForURL('**/login');
+        await signedOut.page.locator('#email').fill('tester@ui-test.invalid');
+        await signedOut.page.locator('#password').fill('synthetic-local-password');
+        await signedOut.page.locator('form button[type="submit"]').click();
+        await signedOut.page.waitForURL('**' + path);
+        await signedOut.page.frameLocator('iframe[sandbox]').locator('h1').getByText(/UI-INV-001/).waitFor();
+      } finally { collect(signedOut.state); await signedOut.context.close(); }
+      item.stage = 'remove logo';
+      await ready(page,'/settings');
+      await page.getByRole('button',{name:'Remove logo'}).click();
+      await page.getByRole('img',{name:'Company logo'}).waitFor({state:'detached'});
+      assert.equal(printLogo,undefined);
+      item.evidence = { uploaded:true,replaced:true,removed:true,opacity:0.3,printedDocumentUrl:base+path };
+      delete item.stage;
+    } finally { collect(state); await context.close(); }
+  });
   if (launcherOnly) await record('assistant-launcher', async item => {
     const { context, page, state } = await mockContext(browser, base, 'en', 'normal', true);
     let releaseReply;

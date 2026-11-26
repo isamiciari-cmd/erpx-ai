@@ -204,10 +204,10 @@ export default function DashboardPage() {
             icon={<Printer size={16} />}
             disabled={!filtered.length || loading || invalidRange}
             onClick={() =>
-              printReport(t('overview.title'), exportRows, {
+              void printReport(t('overview.title'), exportRows, {
                 [t('overview.company')]: user?.company?.name || '',
                 [t('common.currency')]: selectedCurrency,
-              })
+              }, user?.company_id, format.isRtl).catch(() => setError('errors.print'))
             }
           >
             {t('common.print')}

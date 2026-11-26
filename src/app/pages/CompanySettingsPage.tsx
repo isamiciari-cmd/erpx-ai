@@ -1,3 +1,4 @@
+import CompanyLogoPanel from '../components/erp/CompanyLogoPanel';
 import { useCallback, useEffect, useRef, useState, type FormEvent } from 'react';
 import { useTranslation } from 'react-i18next';
 import { Building2, Check, Globe2, Save } from 'lucide-react';
@@ -283,6 +284,7 @@ export default function CompanySettingsPage() {
                 </FormField>
               </div>
             </Panel>
+            {companyId && <CompanyLogoPanel key={companyId} companyId={companyId} canEdit={canSave} arabic={isRtl} />}
             <Panel
               title={t('settings.regional')}
               description={t('settings.regionalHint')}

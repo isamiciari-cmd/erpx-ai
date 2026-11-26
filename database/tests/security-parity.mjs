@@ -60,6 +60,35 @@ try {
     INSERT INTO public.audit_logs(company_id,user_id,action,entity_type) VALUES
       ('${ids.company}','${ids.admin}','original','users'),('${ids.otherCompany}','${ids.otherAdmin}','other','users'),(NULL,NULL,'global','system');
   `);
+  await test('company logos are readable within the company and editable only by its administrators', async () => {
+    const image = 'data:image/png;base64,iVBORw0KGgo=';
+    await admin(() => db.query('INSERT INTO public.company_logos VALUES ($1,$2)', [ids.company, image]));
+    await user(ids.viewer, async () => {
+      assert.equal((await one('SELECT image_data FROM public.company_logos')).image_data, image);
+      const update = await db.query("DELETE FROM public.company_logos RETURNING company_id");
+      assert.equal(update.rows.length, 0);
+    });
+    await user(ids.otherAdmin, async () => {
+      assert.equal((await db.query('SELECT * FROM public.company_logos')).rows.length, 0);
+      await assert.rejects(db.query('INSERT INTO public.company_logos VALUES ($1,$2)', [ids.company, image]), /row-level security/);
+    });
+    await admin(() => db.query('DELETE FROM public.company_logos WHERE company_id=$1', [ids.company]));
+  });
+  await test('printed snapshots are available only to their original company and author', async () => {
+    const id = key();
+    await admin(async () => {
+      await db.query("INSERT INTO public.printed_documents (id,company_id,title,html) VALUES ($1,$2,'Invoice','<p>115</p>')", [id, ids.company]);
+      assert.equal((await one('SELECT title FROM public.printed_documents WHERE id=$1', [id])).title, 'Invoice');
+    });
+    for (const actor of [ids.viewer, ids.otherAdmin]) {
+      await user(actor, async () => {
+        assert.equal((await db.query('SELECT id FROM public.printed_documents WHERE id=$1', [id])).rows.length, 0);
+      });
+    }
+    await user(null, async () => {
+      await assert.rejects(db.query('SELECT id FROM public.printed_documents'), /permission denied/);
+    });
+  });
   await test('canonical install needs neither tenants nor roles.status for active helpers', async () => {
     assert.equal((await one("SELECT to_regclass('public.tenants') AS table_name")).table_name, null);
     assert.equal(Number((await one("SELECT count(*) FROM information_schema.columns WHERE table_schema='public' AND table_name='roles' AND column_name='status'")).count), 0);

@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import { motion } from 'motion/react';
-import { Link, Navigate, useNavigate } from 'react-router-dom';
+import { Link, Navigate, useLocation, useNavigate } from 'react-router-dom';
 import {
   BarChart3,
   TrendingUp,
@@ -27,6 +27,9 @@ export default function ProductionLogin({ onLoginSuccess }: ProductionLoginProps
   const arabic = (i18n.resolvedLanguage || i18n.language).startsWith('ar');
   const { signIn, currentUser, loading: authLoading } = useAuth();
   const navigate = useNavigate();
+  const { state } = useLocation();
+  const from = state?.from;
+  const destination = typeof from === 'string' && /^\/printed-documents\/[\da-f-]{36}$/i.test(from) ? from : '/dashboard';
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [showPassword, setShowPassword] = useState(false);
@@ -51,7 +54,7 @@ export default function ProductionLogin({ onLoginSuccess }: ProductionLoginProps
     try {
       await signIn(email.trim(), password);
       onLoginSuccess?.();
-      navigate('/dashboard', { replace: true });
+      navigate(destination, { replace: true });
     } catch (err) {
       console.error('[Login] Unexpected sign-in error:', err);
       setError(err instanceof Error ? err.message : 'Unable to sign in. Please try again.');
@@ -88,7 +91,7 @@ export default function ProductionLogin({ onLoginSuccess }: ProductionLoginProps
   };
 
   if (authLoading) return <div role="status" className="min-h-screen bg-black text-white p-8">جارٍ التحقق من الهوية…</div>;
-  if (currentUser) return <Navigate to="/dashboard" replace />;
+  if (currentUser) return <Navigate to={destination} replace />;
 
   return (
     <div className="erpx-login flex bg-black">

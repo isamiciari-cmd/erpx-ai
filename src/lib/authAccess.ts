@@ -85,7 +85,7 @@ export function routeAccess(input: {
   if (input.requiredPermission && !input.permissions.some((p) => p.permission_key === input.requiredPermission)) {
     return 'denied';
   }
-  if (names.includes('cashier') && !input.pathname.startsWith('/cashier/') && input.pathname !== '/cashier') {
+  if (names.includes('cashier') && !input.pathname.startsWith('/cashier/') && input.pathname !== '/cashier' && !input.pathname.startsWith('/printed-documents/')) {
     return 'cashier';
   }
   return 'allow';

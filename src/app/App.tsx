@@ -58,6 +58,7 @@ const BudgetManagementPage = lazy(() => import('./pages/finance/BudgetManagement
 const ExpenseManagementPage = lazy(() => import('./pages/finance/ExpenseManagementPage'));
 const FixedAssetsPage = lazy(() => import('./pages/finance/FixedAssetsPage'));
 const VATTaxPage = lazy(() => import('./pages/finance/VATTaxPage'));
+const PrintedDocumentPage = lazy(() => import('./pages/PrintedDocumentPage'));
 const FinancialReportsPage = lazy(() => import('./pages/finance/FinancialReportsPage'));
 const AIFinanceAssistantPage = lazy(() => import('./pages/finance/AIFinanceAssistantPage'));
 
@@ -127,6 +128,8 @@ const router = createBrowserRouter(
       <Route path="/oauth/consent" element={<OAuthConsentPage />} />
       <Route path="/forgot-password" element={<ForgotPasswordPage />} />
       <Route path="/reset-password" element={<ResetPasswordPage />} />
+
+      <Route path="/printed-documents/:id" element={<ProtectedRoute><PrintedDocumentPage /></ProtectedRoute>} />
 
       {/* Cashier Routes - Separate Layout (nested) */}
       <Route

@@ -19,7 +19,7 @@ import { useAuth } from '../../contexts/AuthContext';
 import { isDemoMode } from '../../lib/supabase';
 import { listInvoices, getInvoice, type Invoice } from '../../services/invoicesService';
 import { listProducts, type Product } from '../../services/productsService';
-import { listCustomers, type Customer } from '../../services/customersService';
+import { createCustomer, listCustomers, type Customer } from '../../services/customersService';
 import { saveInvoiceDraft } from '../../services/invoiceDraftService';
 import {
   issueBusinessInvoice,
@@ -85,6 +85,10 @@ export default function InvoicingPage() {
   const [to, setTo] = useState('');
   const [draftOpen, setDraftOpen] = useState(false);
   const [customer, setCustomer] = useState('');
+  const [newCustomer, setNewCustomer] = useState('');
+  const [customerError, setCustomerError] = useState(false);
+  const canAddCustomer = ['sales', 'sales.create'].some((key) =>
+    permissions.some((permission) => permission.permission_key === key));
   const [dueDate, setDueDate] = useState(new Date().toISOString().slice(0, 10));
   const [notes, setNotes] = useState('');
   const [items, setItems] = useState<DraftLine[]>([newLine()]);
@@ -147,6 +151,8 @@ export default function InvoicingPage() {
     setInvoices([]);
     setProducts([]);
     setCustomers([]);
+    setNewCustomer('');
+    setCustomerError(false);
     setSelected(undefined);
     setDraftOpen(false);
     setIssueTarget(undefined);
@@ -405,6 +411,34 @@ export default function InvoicingPage() {
       setBusy(false);
     }
   }
+  async function addInvoiceCustomer() {
+    const name = newCustomer.trim();
+    if (!companyId || !canAddCustomer || !name || lock.current) return;
+    const scope = generation.current;
+    lock.current = true;
+    setBusy(true);
+    setCustomerError(false);
+    try {
+      const existing = customers.find((client) => client.company_name === name && client.status === 'active');
+      const client = existing ?? await createCustomer({
+        company_id: companyId,
+        company_name: name,
+        customer_code: 'CUS-' + crypto.randomUUID(),
+        status: 'active',
+      });
+      if (scope !== generation.current) return;
+      if (!existing) setCustomers((previous) => [...previous, client]);
+      setCustomer(client.id);
+      draftRequest.current = crypto.randomUUID();
+      setNewCustomer('');
+    } catch {
+      if (scope === generation.current) setCustomerError(true);
+    } finally {
+      lock.current = false;
+      setBusy(false);
+    }
+  }
+
   async function print(invoice: Invoice) {
     const scope = generation.current;
     try {
@@ -414,7 +448,7 @@ export default function InvoicingPage() {
           : ((await getInvoice(invoice.id)) as Detail | null);
       if (!detail || detail.company_id !== companyId) throw new Error();
       if (scope !== generation.current) return;
-      printReport(
+      await printReport(
         `${t('invoices.standardInvoice')} ${invoice.invoice_number}`,
         (detail.lines || []).map((line) => ({
           [t('common.description')]: line.description,
@@ -430,6 +464,8 @@ export default function InvoicingPage() {
           [t('common.vat')]: format.money(invoice.vat_amount, invoice.currency_code),
           [t('common.paid')]: format.money(invoice.amount_paid, invoice.currency_code),
         },
+        companyId,
+        format.isRtl,
       );
     } catch {
       if (scope === generation.current) setError('errors.print');
@@ -810,6 +846,18 @@ export default function InvoicingPage() {
                 {t('invoices.customerWorkspace')}
               </Link>
             </p>
+          )}
+          {canAddCustomer && (
+            <div className="flex flex-wrap items-end gap-3">
+              <FormField label={format.isRtl ? 'اسم العميل الجديد' : 'New customer name'} htmlFor="invoice-new-customer">
+                <input id="invoice-new-customer" className="ws-input" maxLength={255}
+                  disabled={busy} value={newCustomer} onChange={(event) => setNewCustomer(event.target.value)} />
+              </FormField>
+              <Button type="button" disabled={busy || !newCustomer.trim()} onClick={() => void addInvoiceCustomer()}>
+                {format.isRtl ? 'إضافة عميل' : 'Add customer'}
+              </Button>
+              {customerError && <p role="alert">{format.isRtl ? 'تعذّر إضافة العميل.' : 'Could not add the customer.'}</p>}
+            </div>
           )}
           <fieldset disabled={busy} className="space-y-6">
             <div>
